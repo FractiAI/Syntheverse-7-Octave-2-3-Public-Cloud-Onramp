@@ -1,49 +1,79 @@
-# NextJs SaaS Starter Template
+# Syntheverse PoC Contributor UI
 
-<img width="1122" alt="image" src="https://github.com/user-attachments/assets/63e761c4-aece-47c2-a320-f1cc18bf916b">
+A production-ready web application for the Syntheverse Proof of Contribution system, featuring a dark, minimal, futuristic UI. Built for deployment on Vercel (frontend + API routes) and Supabase (auth + database) using free tiers.
 
-<img width="920" alt="image" src="https://github.com/user-attachments/assets/55384d22-cd09-46e4-b92d-e535b7d948fd">
-<img width="1115" alt="image" src="https://github.com/user-attachments/assets/9ec724e6-d46f-4849-a790-efca329d1102">
-<img width="1115" alt="image" src="https://github.com/user-attachments/assets/c5c1a61b-7ff3-49fd-9dea-8104026dd1e6">
-<img width="1141" alt="image" src="https://github.com/user-attachments/assets/06559a5a-ca19-40bb-bf00-d3d2cbd94ee1">
+## ✨ Features
 
+- **Hydrogen-Holographic Evaluation**: AI-powered contribution scoring across novelty, density, coherence, and alignment dimensions
+- **Metallic Amplifications**: Gold (1.5×), Silver (1.2×), and Copper (1.15×) reward multipliers
+- **SYNTH Token Rewards**: Blockchain-anchored token allocations with $200 registration fees
+- **Secure Authentication**: Supabase-powered auth with Google/GitHub OAuth and email/password
+- **Real-time Dashboard**: Live evaluation status and ecosystem impact visualization
+- **Stripe Integration**: Subscription management and payment processing
+- **Dark UI Theme**: Minimal, futuristic design inspired by Syntheverse aesthetics
+- **Archive-First Storage**: All contributions stored immediately for redundancy detection
 
-This is the ultimate [Next.js](https://nextjs.org/) SAAS starter kit that includes a landing page, integrations with Supabase auth(Oauth, forget password, etc), PostgresDB with DrizzleORM and Stripe to collect payments, setup subscriptions and allow users to edit subscriptions/payment options.
+## 🏗️ Architecture
 
-- Full sign up/ sign in/ logout/ forget password/ password reset flow
-- Oauth with Google and Github
-- Utilize Stripe Pricing Table and Stripe Checkout to setup customer billing
-- Integration with Stripe Customer Portal to allow users to manage billing settings
-- Protected routes under /dashboard
-- Drizzle ORM/Postgres integration
-- Tailwind CSS/shadcn
-- Stripe webhooks/ API hook to get customer current plan
+- **Frontend**: Next.js 14 with App Router, Tailwind CSS, shadcn/ui
+- **Authentication**: Supabase Auth (OAuth + email/password)
+- **Database**: PostgreSQL with Drizzle ORM
+- **Payments**: Stripe Checkout + Customer Portal
+- **Deployment**: Vercel (free tier compatible)
+- **Blockchain**: Base network integration for SYNTH token rewards
 
-## Getting Started
+## 🚀 Deployment Instructions
 
-As we will be setting up both dev and prod environments, simply use `.env.local` to develop locally and `.env` for production environments
+### 1. Deploy to Vercel
 
-### Setup Supabase
-1. Create a new project on [Supabase](https://app.supabase.io/)
-2. ADD `SUPABASE_URL` and `SUPABASE_ANON_KEY` to your .env file
-3. 
-![image](https://github.com/user-attachments/assets/c8eb5236-96f1-4824-9998-3c54a4bcce12)
-4. Add `NEXT_PUBLIC_WEBSITE_URL` to let Supabase know where to redirect the user after the Oauth flow(if using oauth).
+1. **Connect Repository**: Import this GitHub repository to Vercel
+2. **Environment Variables**: Add all required environment variables (see `.env.example`)
+3. **Build Settings**: Vercel will automatically detect Next.js and configure appropriately
+4. **Domain**: Vercel provides a free `.vercel.app` domain or connect your custom domain
 
-#### Setup Google OAUTH Social Auth
-You can easily set up social auth with this template. First navigate to google cloud and create a new project. All code is written. You just need to add the `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET` to your `.env` file.
+### 2. Create Supabase Project
 
-1. Follow these [instructions](https://supabase.com/docs/guides/auth/social-login/auth-google?queryGroups=environment&environment=server) to set up Google OAuth.
+1. **New Project**: Create a new project at [Supabase](https://app.supabase.io/)
+2. **Project Settings**: Note your Project URL and API keys
+3. **Database**: Supabase provides PostgreSQL database automatically
+4. **Environment Variables**:
+   - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon/public key
+   - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (keep secret!)
 
-#### Setup Github OAUTH Social Auth
-You can easily set up social auth with this template. First navigate to google cloud and create a new project. All code is written. You just need to add the `GITHUB_OAUTH_CLIENT_ID` and `GITHUB_OAUTH_CLIENT_SECRET` to your `.env` file.
+### 3. Configure OAuth (Optional)
 
-1. Follow these [instructions](https://supabase.com/docs/guides/auth/social-login/auth-github?queryGroups=environment&environment=server) to set up Github OAuth.
+#### Google OAuth
+1. Follow [Supabase Google OAuth setup](https://supabase.com/docs/guides/auth/social-login/auth-google)
+2. Add to environment variables:
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
 
-### Setup Postgres DB
-You can use any Postgres db with this boilerplate code. Feel free to use [Vercel's Marketplace](https://vercel.com/marketplace) to browse through a collection of first-party services to add to your Vercel project.
+#### GitHub OAuth
+1. Follow [Supabase GitHub OAuth setup](https://supabase.com/docs/guides/auth/social-login/auth-github)
+2. Add to environment variables:
+   - `GITHUB_CLIENT_ID`
+   - `GITHUB_CLIENT_SECRET`
 
-Add `DATABASE_URL` to `.env` file e.g `postgresql://${USER}:${PASSWORD}@xxxx.us-east-2.aws.neon.tech/saas-template?sslmode=require`
+### 4. Enable Stripe Test Mode
+
+1. **Create Stripe Account**: Sign up at [Stripe Dashboard](https://dashboard.stripe.com/)
+2. **Test Mode**: Ensure you're in test mode (not live mode)
+3. **API Keys**: Get your test keys from the dashboard
+4. **Environment Variables**:
+   - `STRIPE_SECRET_KEY`: Test secret key (starts with `sk_test_`)
+   - `STRIPE_WEBHOOK_SECRET`: Webhook endpoint secret
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Test publishable key (starts with `pk_test_`)
+
+### 5. Database Setup
+
+The app uses Drizzle ORM with PostgreSQL. Supabase provides the database automatically.
+
+```bash
+# Generate and run migrations
+npm run db:generate
+npm run db:migrate
+```
 ### Setup OAuth with Social Providers
 
 #### Setup redirect url
@@ -121,3 +151,47 @@ This command starts the Stripe CLI in listening mode and forwards incoming webho
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## 🛠️ Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+
+# Database setup
+npm run db:migrate
+
+# Start development server
+npm run dev
+```
+
+### Local Stripe Testing
+
+```bash
+# Install Stripe CLI
+# Start webhook listener
+npm run stripe:listen
+```
+
+## 📋 Environment Variables
+
+See `.env.example` for all required environment variables:
+
+- **Supabase**: Project URL, anon key, service role key
+- **Stripe**: Secret key, webhook secret, publishable key
+- **OAuth**: Google/GitHub client IDs and secrets (optional)
+- **Site**: Public site URL
+
+## 🔒 Security Notes
+
+- Never commit `.env` files to version control
+- Use Stripe test mode for development
+- Keep Supabase service role key secret
+- Regularly rotate API keys in production
+
+---
+
+Built with ❤️ for the Syntheverse ecosystem

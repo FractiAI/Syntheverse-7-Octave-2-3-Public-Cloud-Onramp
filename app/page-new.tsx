@@ -17,32 +17,22 @@ interface StripeProduct {
 export const revalidate = 3600 // Revalidate every hour
 
 async function getStripeProducts(): Promise<StripeProduct[]> {
-  // Handle missing Stripe key during build
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return [];
-  }
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2024-06-20'
+  });
 
-  try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2024-06-20'
-    });
+  const products = await stripe.products.list({
+    active: true,
+    expand: ['data.default_price']
+  });
 
-    const products = await stripe.products.list({
-      active: true,
-      expand: ['data.default_price']
-    });
-
-    return products.data.map(product => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      features: product.metadata?.features ? JSON.parse(product.metadata.features) : [],
-      price: product.default_price as Stripe.Price
-    }));
-  } catch (error) {
-    console.error('Error fetching Stripe products:', error);
-    return [];
-  }
+  return products.data.map(product => ({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    features: product.metadata?.features ? JSON.parse(product.metadata.features) : [],
+    price: product.default_price as Stripe.Price
+  }));
 }
 
 export default async function LandingPage() {
@@ -252,3 +242,4 @@ export default async function LandingPage() {
     </div>
   )
 }
+

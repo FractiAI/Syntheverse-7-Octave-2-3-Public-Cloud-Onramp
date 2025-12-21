@@ -131,6 +131,9 @@ export async function logout() {
     redirect('/login')
 }
 
+// Alias for compatibility
+export const signOut = logout
+
 
 export async function signInWithGoogle() {
     const supabase = createClient()
