@@ -12,35 +12,10 @@ import Link from "next/link"
 import { } from "@supabase/supabase-js"
 import { createClient } from '@/utils/supabase/server'
 import { logout } from '@/app/auth/actions'
-import { generateStripeBillingPortalLink } from "@/utils/stripe/api"
 
 export default async function DashboardHeaderProfileDropdown() {
     const supabase = createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
-    
-    // Get billing portal URL (only if user exists and has email)
-    // Default to subscribe page - we'll try to get portal URL but won't fail if it errors
-    let billingPortalURL = "/subscribe"
-    
-    if (user && user.email) {
-        try {
-            const portalURL = await generateStripeBillingPortalLink(user.email)
-            // Only use the portal URL if it's a valid external URL (Stripe portal)
-            // If it returns "/subscribe" or "/dashboard", use that as-is
-            if (portalURL) {
-                if (portalURL.startsWith("http")) {
-                    // External Stripe URL
-                    billingPortalURL = portalURL
-                } else if (portalURL.startsWith("/")) {
-                    // Internal route
-                    billingPortalURL = portalURL
-                }
-            }
-        } catch (error) {
-            // Silently fail - we already have a default
-            console.error("Error generating billing portal link:", error)
-        }
-    }
     return (
         <nav className="flex items-center">
             <Button variant="ghost" size="icon" className="mr-2">
@@ -70,7 +45,7 @@ export default async function DashboardHeaderProfileDropdown() {
                         </DropdownMenuItem>
                     </Link>
                     <DropdownMenuItem asChild>
-                        <Link href={billingPortalURL}>
+                        <Link href="/billing-portal">
                             <ReceiptText className="mr-2 h-4 w-4" />
                             <span>Billing</span>
                         </Link>
