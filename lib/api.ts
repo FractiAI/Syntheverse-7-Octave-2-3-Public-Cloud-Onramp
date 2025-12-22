@@ -1,10 +1,10 @@
 // API client for PoC backend
 
-// Only use localhost in development, require explicit API URL in production
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 
-  (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-    ? 'http://localhost:5001' 
-    : '')
+// Use internal Next.js API routes instead of external API
+// This allows PoC functionality to be self-contained in the Next.js app
+const API_BASE = typeof window !== 'undefined' 
+    ? window.location.origin  // Use same origin (internal API routes)
+    : process.env.NEXT_PUBLIC_API_URL || ''  // Fallback for SSR
 
 interface RetryOptions {
   maxRetries?: number
@@ -141,21 +141,11 @@ class PoCApi {
     const { maxRetries = 2, delayMs = 1000, backoffMultiplier = 1.5 } = retryOptions || {}
     let lastError: Error = new Error('Unknown error')
 
-    // Get GROK API key from environment (client-side accessible)
-    const grokApiKey = process.env.NEXT_PUBLIC_GROK_API_KEY || ''
-
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
           ...(options?.headers as Record<string, string> || {}),
-        }
-
-        // Add GROK API key to headers if available
-        if (grokApiKey) {
-          headers['Authorization'] = `Bearer ${grokApiKey}`
-          // Alternative: Some APIs use X-API-Key header
-          headers['X-API-Key'] = grokApiKey
         }
 
         const response = await fetch(`${this.baseUrl}${endpoint}`, {

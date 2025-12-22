@@ -109,33 +109,60 @@ export async function createStripeCheckoutSession(email: string): Promise<string
 }
 
 export async function generateStripeBillingPortalLink(email: string): Promise<string> {
+    const { debug, debugError, debugWarn } = await import('@/utils/debug')
+    
     try {
+        debug('generateStripeBillingPortalLink', 'Starting billing portal link generation', { email })
+        
         // Check if Stripe is initialized
         if (!stripe) {
-            console.warn("Stripe not initialized, returning subscribe page")
+            debugWarn('generateStripeBillingPortalLink', 'Stripe not initialized, returning subscribe page')
             return "/subscribe"
         }
 
+        debug('generateStripeBillingPortalLink', 'Querying database for user', { email })
         const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
+        
+        debug('generateStripeBillingPortalLink', 'Database query completed', { 
+            found: user?.length > 0,
+            hasStripeId: user?.[0]?.stripe_id ? true : false,
+            stripeId: user?.[0]?.stripe_id ? `${user[0].stripe_id.slice(0, 8)}...` : 'none'
+        })
         
         // If user doesn't exist or has no stripe_id, return subscribe page
         if (!user || user.length === 0 || !user[0].stripe_id) {
+            debugWarn('generateStripeBillingPortalLink', 'User not found or has no stripe_id', {
+                userExists: !!user && user.length > 0,
+                hasStripeId: user?.[0]?.stripe_id ? true : false
+            })
             return "/subscribe"
         }
+
+        debug('generateStripeBillingPortalLink', 'Creating Stripe billing portal session', {
+            customerId: user[0].stripe_id,
+            returnUrl: `${PUBLIC_URL}/dashboard`
+        })
 
         const portalSession = await stripe.billingPortal.sessions.create({
             customer: user[0].stripe_id,
             return_url: `${PUBLIC_URL}/dashboard`,
         });
         
+        debug('generateStripeBillingPortalLink', 'Stripe portal session created', {
+            hasUrl: !!portalSession.url,
+            url: portalSession.url ? `${portalSession.url.slice(0, 50)}...` : 'none'
+        })
+        
         // Validate the URL before returning
         if (portalSession.url && portalSession.url.startsWith("http")) {
+            debug('generateStripeBillingPortalLink', 'Valid portal URL generated', { url: portalSession.url })
             return portalSession.url
         }
         
+        debugWarn('generateStripeBillingPortalLink', 'Invalid portal URL format', { url: portalSession.url })
         return "/subscribe"
     } catch (error) {
-        console.error("Error generating billing portal link:", error)
+        debugError('generateStripeBillingPortalLink', 'Error generating billing portal link', error)
         // Return subscribe page as fallback
         return "/subscribe"
     }

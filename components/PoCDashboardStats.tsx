@@ -20,17 +20,9 @@ export function PoCDashboardStats() {
   const [epochInfo, setEpochInfo] = useState<EpochInfo | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [apiConfigured, setApiConfigured] = useState(true)
 
   useEffect(() => {
-    // Check if API URL is configured
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    if (!apiUrl || apiUrl === '') {
-      setApiConfigured(false)
-      setLoading(false)
-      return
-    }
-
+    // API is now internal (Next.js API routes), no need to check for external API URL
     loadData()
   }, [])
 
@@ -79,27 +71,6 @@ export function PoCDashboardStats() {
     }
   }
 
-  // If API is not configured, show info message
-  if (!apiConfigured) {
-    return (
-      <Card className="border-yellow-200 bg-yellow-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-yellow-800">
-            <AlertCircle className="h-5 w-5" />
-            PoC Evaluation API Not Configured
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-yellow-700 mb-4">
-            To view PoC evaluation statistics, please set the <code className="bg-yellow-100 px-1 rounded">NEXT_PUBLIC_API_URL</code> environment variable in Vercel.
-          </p>
-          <p className="text-xs text-yellow-600">
-            This is optional - your account and subscription information above is still available.
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
 
   if (loading) {
     return (
