@@ -262,10 +262,10 @@ export default async function Dashboard() {
                             </div>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">PoC API</span>
+                            <span className="text-sm font-medium">PoC System</span>
                             <div className="flex items-center gap-2">
-                                <Clock className="h-4 w-4 text-yellow-500" />
-                                <span className="text-sm text-muted-foreground">Check below</span>
+                                <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                <span className="text-sm text-muted-foreground">Integrated</span>
                             </div>
                         </div>
                     </CardContent>

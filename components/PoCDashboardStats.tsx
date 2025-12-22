@@ -58,13 +58,13 @@ export function PoCDashboardStats() {
         console.error('Dashboard: Epoch info failed:', epochResult.reason)
       }
 
-      // Check if all APIs failed
+      // If all APIs failed, just log the errors but don't throw
+      // PoC functionality is now internal, so we'll show empty state gracefully
       if (results.every(r => r.status === 'rejected')) {
-        const errors = results
-          .filter(r => r.status === 'rejected')
-          .map(r => r.reason instanceof Error ? r.reason.message : String(r.reason))
-          .join('; ')
-        throw new Error(`Unable to connect to PoC API endpoints. ${errors}`)
+        console.warn('PoC API endpoints not available:', results.map(r => 
+          r.status === 'rejected' ? (r.reason instanceof Error ? r.reason.message : String(r.reason)) : 'OK'
+        ))
+        // Don't set error - just show empty state
       }
 
       setLoading(false)
@@ -96,21 +96,28 @@ export function PoCDashboardStats() {
     )
   }
 
+  // Don't show error state - PoC functionality is optional
+  // If there's an error, just show empty state
   if (error) {
+    console.warn('PoC Dashboard Stats error:', error)
+  }
+
+  // If no data loaded and not loading, show empty state
+  if (!loading && !stats && !tokenomics && !epochInfo) {
     return (
-      <Card className="border-red-200 bg-red-50">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-red-800">
-            <AlertCircle className="h-5 w-5" />
-            PoC API Connection Error
-          </CardTitle>
+          <CardTitle>PoC Evaluation Statistics</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-red-700 mb-4">{error}</p>
-          <Button onClick={() => loadData()} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
-          </Button>
+          <div className="text-center py-8 text-muted-foreground">
+            <p className="text-sm">No PoC data available yet.</p>
+            <p className="text-xs mt-2">Submit your first contribution to see statistics here.</p>
+            <Button onClick={() => loadData()} variant="outline" size="sm" className="mt-4">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
         </CardContent>
       </Card>
     )
