@@ -141,14 +141,26 @@ class PoCApi {
     const { maxRetries = 2, delayMs = 1000, backoffMultiplier = 1.5 } = retryOptions || {}
     let lastError: Error = new Error('Unknown error')
 
+    // Get GROK API key from environment (client-side accessible)
+    const grokApiKey = process.env.NEXT_PUBLIC_GROK_API_KEY || ''
+
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json',
+          ...options?.headers,
+        }
+
+        // Add GROK API key to headers if available
+        if (grokApiKey) {
+          headers['Authorization'] = `Bearer ${grokApiKey}`
+          // Alternative: Some APIs use X-API-Key header
+          headers['X-API-Key'] = grokApiKey
+        }
+
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...options,
-          headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers,
-          },
+          headers,
         })
 
         if (!response.ok) {
