@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable, allocationsTable, tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
+import { contributionsTable, allocationsTable, tokenomicsTable, epochBalancesTable, pocLogTable } from '@/utils/db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
+import crypto from 'crypto'
 
 // GROK API integration for evaluation
 async function evaluateWithGrok(textContent: string): Promise<{
@@ -53,6 +54,25 @@ export async function POST(
         }
         
         const contrib = contribution[0]
+        const startTime = Date.now()
+        
+        // Log evaluation start
+        const evaluationStartLogId = crypto.randomUUID()
+        await db.insert(pocLogTable).values({
+            id: evaluationStartLogId,
+            submission_hash: submissionHash,
+            contributor: contrib.contributor,
+            event_type: 'evaluation_start',
+            event_status: 'pending',
+            title: contrib.title,
+            category: contrib.category || null,
+            request_data: {
+                submission_hash: submissionHash,
+                title: contrib.title,
+                has_text_content: !!contrib.text_content
+            },
+            created_at: new Date()
+        })
         
         // Update status to evaluating
         await db
@@ -65,7 +85,21 @@ export async function POST(
         
         // Perform evaluation with GROK
         const textContent = contrib.text_content || contrib.title
-        const evaluation = await evaluateWithGrok(textContent)
+        let grokRequest: any = null
+        let grokResponse: any = null
+        let evaluation: any = null
+        let evaluationError: Error | null = null
+        
+        try {
+            // TODO: Make actual GROK API call here
+            // For now, using mock evaluation
+            evaluation = await evaluateWithGrok(textContent)
+            grokRequest = { text_content_length: textContent.length }
+            grokResponse = { success: true, evaluation }
+        } catch (error) {
+            evaluationError = error instanceof Error ? error : new Error(String(error))
+            throw error
+        }
         
         // Determine if qualified (simplified logic)
         const qualified = evaluation.pod_score >= 7000 && evaluation.redundancy < 2000
@@ -92,6 +126,51 @@ export async function POST(
             // For now, just mark as qualified
         }
         
+        const processingTime = Date.now() - startTime
+        
+        // Log successful evaluation
+        const evaluationCompleteLogId = crypto.randomUUID()
+        await db.insert(pocLogTable).values({
+            id: evaluationCompleteLogId,
+            submission_hash: submissionHash,
+            contributor: contrib.contributor,
+            event_type: 'evaluation_complete',
+            event_status: 'success',
+            title: contrib.title,
+            category: contrib.category || null,
+            evaluation_result: {
+                coherence: evaluation.coherence,
+                density: evaluation.density,
+                redundancy: evaluation.redundancy,
+                pod_score: evaluation.pod_score,
+                metals: evaluation.metals,
+                qualified
+            },
+            grok_api_request: grokRequest,
+            grok_api_response: grokResponse,
+            response_data: {
+                success: true,
+                qualified,
+                evaluation
+            },
+            processing_time_ms: processingTime,
+            created_at: new Date()
+        })
+        
+        // Log status change
+        const statusChangeLogId = crypto.randomUUID()
+        await db.insert(pocLogTable).values({
+            id: statusChangeLogId,
+            submission_hash: submissionHash,
+            contributor: contrib.contributor,
+            event_type: 'status_change',
+            event_status: 'success',
+            title: contrib.title,
+            request_data: { old_status: 'evaluating', new_status: qualified ? 'qualified' : 'unqualified' },
+            response_data: { status: qualified ? 'qualified' : 'unqualified' },
+            created_at: new Date()
+        })
+        
         debug('EvaluateContribution', 'Evaluation completed', {
             submissionHash,
             qualified,
@@ -115,6 +194,44 @@ export async function POST(
     } catch (error) {
         debugError('EvaluateContribution', 'Error evaluating contribution', error)
         
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        const errorStack = error instanceof Error ? error.stack : undefined
+        
+        // Get contribution for logging
+        let contributor = 'unknown'
+        let title = 'unknown'
+        try {
+            const contrib = await db
+                .select()
+                .from(contributionsTable)
+                .where(eq(contributionsTable.submission_hash, submissionHash))
+                .limit(1)
+            if (contrib && contrib.length > 0) {
+                contributor = contrib[0].contributor
+                title = contrib[0].title
+            }
+        } catch (e) {
+            // Ignore error getting contribution
+        }
+        
+        // Log evaluation error
+        const errorLogId = crypto.randomUUID()
+        await db.insert(pocLogTable).values({
+            id: errorLogId,
+            submission_hash: submissionHash,
+            contributor,
+            event_type: 'evaluation_error',
+            event_status: 'error',
+            title,
+            error_message: errorMessage,
+            error_stack: errorStack,
+            response_data: {
+                success: false,
+                error: errorMessage
+            },
+            created_at: new Date()
+        })
+        
         // Update status to unqualified on error
         try {
             await db
@@ -124,6 +241,20 @@ export async function POST(
                     updated_at: new Date()
                 })
                 .where(eq(contributionsTable.submission_hash, submissionHash))
+            
+            // Log status change to unqualified
+            const statusChangeLogId = crypto.randomUUID()
+            await db.insert(pocLogTable).values({
+                id: statusChangeLogId,
+                submission_hash: submissionHash,
+                contributor,
+                event_type: 'status_change',
+                event_status: 'success',
+                title,
+                request_data: { old_status: 'evaluating', new_status: 'unqualified', reason: 'evaluation_error' },
+                response_data: { status: 'unqualified' },
+                created_at: new Date()
+            })
         } catch (updateError) {
             debugError('EvaluateContribution', 'Error updating status', updateError)
         }
@@ -131,7 +262,7 @@ export async function POST(
         return NextResponse.json(
             { 
                 success: false,
-                error: error instanceof Error ? error.message : 'Failed to evaluate contribution',
+                error: errorMessage,
                 submission_hash: submissionHash,
                 status: 'unqualified',
                 qualified: false

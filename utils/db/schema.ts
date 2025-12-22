@@ -68,3 +68,35 @@ export const allocationsTable = pgTable('allocations', {
     epoch_balance_after: numeric('epoch_balance_after', { precision: 20, scale: 0 }).notNull(),
     created_at: timestamp('created_at').defaultNow().notNull(),
 });
+
+// PoC Submission and Evaluation Log Table (audit trail)
+export const pocLogTable = pgTable('poc_log', {
+    id: text('id').primaryKey(),
+    submission_hash: text('submission_hash').notNull(),
+    contributor: text('contributor').notNull(),
+    event_type: text('event_type').notNull(), // submission, evaluation_start, evaluation_complete, evaluation_error, status_change, allocation
+    event_status: text('event_status'), // success, error, pending
+    title: text('title'),
+    category: text('category'),
+    request_data: jsonb('request_data').$type<any>(), // Full request payload
+    response_data: jsonb('response_data').$type<any>(), // Full response payload
+    evaluation_result: jsonb('evaluation_result').$type<{
+        coherence?: number;
+        density?: number;
+        redundancy?: number;
+        pod_score?: number;
+        metals?: string[];
+        qualified?: boolean;
+        error?: string;
+    }>(),
+    grok_api_request: jsonb('grok_api_request').$type<any>(), // GROK API request details
+    grok_api_response: jsonb('grok_api_response').$type<any>(), // GROK API response details
+    error_message: text('error_message'),
+    error_stack: text('error_stack'),
+    processing_time_ms: integer('processing_time_ms'), // Time taken for evaluation
+    metadata: jsonb('metadata').$type<any>(), // Additional metadata
+    created_at: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type InsertPocLog = typeof pocLogTable.$inferInsert;
+export type SelectPocLog = typeof pocLogTable.$inferSelect;

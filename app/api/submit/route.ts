@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable } from '@/utils/db/schema'
+import { contributionsTable, pocLogTable } from '@/utils/db/schema'
 import { createClient } from '@/utils/supabase/server'
 import { debug, debugError } from '@/utils/debug'
 import crypto from 'crypto'
@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
             debug('SubmitContribution', 'File received', { fileName: file.name, size: file.size })
         }
         
+        const startTime = Date.now()
+        
         // Insert contribution into database
         await db.insert(contributionsTable).values({
             submission_hash,
@@ -66,6 +68,33 @@ export async function POST(request: NextRequest) {
             category,
             metals: [],
             metadata: {}
+        })
+        
+        // Log submission event
+        const logId = crypto.randomUUID()
+        await db.insert(pocLogTable).values({
+            id: logId,
+            submission_hash,
+            contributor,
+            event_type: 'submission',
+            event_status: 'success',
+            title,
+            category,
+            request_data: {
+                title,
+                contributor,
+                category,
+                has_text_content: !!text_content,
+                has_file: !!file,
+                file_name: file?.name,
+                file_size: file?.size
+            },
+            response_data: {
+                success: true,
+                submission_hash
+            },
+            processing_time_ms: Date.now() - startTime,
+            created_at: new Date()
         })
         
         debug('SubmitContribution', 'Contribution submitted successfully', {
