@@ -8,6 +8,19 @@ export async function GET(request: NextRequest) {
     debug('ArchiveStatistics', 'Fetching archive statistics')
     
     try {
+        // Check if DATABASE_URL is configured
+        if (!process.env.DATABASE_URL) {
+            debug('ArchiveStatistics', 'DATABASE_URL not configured, returning empty stats')
+            return NextResponse.json({
+                total_contributions: 0,
+                status_counts: {},
+                metal_counts: {},
+                unique_contributors: 0,
+                unique_content_hashes: 0,
+                last_updated: new Date().toISOString()
+            })
+        }
+
         // Get total contributions count
         const totalContributions = await db
             .select({ count: count() })
@@ -76,10 +89,15 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(statistics)
     } catch (error) {
         debugError('ArchiveStatistics', 'Error fetching archive statistics', error)
-        return NextResponse.json(
-            { error: 'Failed to fetch archive statistics' },
-            { status: 500 }
-        )
+        // Return empty stats instead of 500 error to prevent UI crashes
+        return NextResponse.json({
+            total_contributions: 0,
+            status_counts: {},
+            metal_counts: {},
+            unique_contributors: 0,
+            unique_content_hashes: 0,
+            last_updated: new Date().toISOString()
+        })
     }
 }
 

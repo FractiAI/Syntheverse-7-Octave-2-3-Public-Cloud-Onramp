@@ -8,6 +8,22 @@ export async function GET(request: NextRequest) {
     debug('TokenomicsStatistics', 'Fetching tokenomics statistics')
     
     try {
+        // Check if DATABASE_URL is configured
+        if (!process.env.DATABASE_URL) {
+            debug('TokenomicsStatistics', 'DATABASE_URL not configured, returning default stats')
+            return NextResponse.json({
+                total_supply: 90000000000000,
+                total_distributed: 0,
+                total_remaining: 90000000000000,
+                epoch_balances: {},
+                current_epoch: 'founder',
+                founder_halving_count: 0,
+                total_coherence_density: 0,
+                total_holders: 0,
+                total_allocations: 0
+            })
+        }
+
         // Get main tokenomics state
         const tokenomics = await db
             .select()
@@ -16,14 +32,19 @@ export async function GET(request: NextRequest) {
             .limit(1)
         
         if (!tokenomics || tokenomics.length === 0) {
-            // Initialize default tokenomics if not exists
-            await db.insert(tokenomicsTable).values({
-                id: 'main',
-                total_supply: '90000000000000', // 90T
-                total_distributed: '0',
-                current_epoch: 'founder',
-                founder_halving_count: 0
-            })
+            // Try to initialize default tokenomics if not exists
+            try {
+                await db.insert(tokenomicsTable).values({
+                    id: 'main',
+                    total_supply: '90000000000000', // 90T
+                    total_distributed: '0',
+                    current_epoch: 'founder',
+                    founder_halving_count: 0
+                })
+            } catch (insertError) {
+                // Table might not exist, return default values
+                debug('TokenomicsStatistics', 'Could not insert default tokenomics, returning defaults', insertError)
+            }
             
             return NextResponse.json({
                 total_supply: 90000000000000,
@@ -82,10 +103,18 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(statistics)
     } catch (error) {
         debugError('TokenomicsStatistics', 'Error fetching tokenomics statistics', error)
-        return NextResponse.json(
-            { error: 'Failed to fetch tokenomics statistics' },
-            { status: 500 }
-        )
+        // Return default stats instead of 500 error to prevent UI crashes
+        return NextResponse.json({
+            total_supply: 90000000000000,
+            total_distributed: 0,
+            total_remaining: 90000000000000,
+            epoch_balances: {},
+            current_epoch: 'founder',
+            founder_halving_count: 0,
+            total_coherence_density: 0,
+            total_holders: 0,
+            total_allocations: 0
+        })
     }
 }
 
