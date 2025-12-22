@@ -60,7 +60,11 @@ export function PoCDashboardStats() {
 
       // Check if all APIs failed
       if (results.every(r => r.status === 'rejected')) {
-        throw new Error('Unable to connect to PoC API. Please check NEXT_PUBLIC_API_URL configuration.')
+        const errors = results
+          .filter(r => r.status === 'rejected')
+          .map(r => r.reason instanceof Error ? r.reason.message : String(r.reason))
+          .join('; ')
+        throw new Error(`Unable to connect to PoC API endpoints. ${errors}`)
       }
 
       setLoading(false)

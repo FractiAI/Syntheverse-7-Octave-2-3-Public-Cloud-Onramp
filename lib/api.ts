@@ -2,9 +2,18 @@
 
 // Use internal Next.js API routes instead of external API
 // This allows PoC functionality to be self-contained in the Next.js app
-const API_BASE = typeof window !== 'undefined' 
-    ? window.location.origin  // Use same origin (internal API routes)
-    : process.env.NEXT_PUBLIC_API_URL || ''  // Fallback for SSR
+// For SSR, use NEXT_PUBLIC_WEBSITE_URL or NEXT_PUBLIC_SITE_URL if available, otherwise use a default
+const getApiBase = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin  // Use same origin (internal API routes)
+  }
+  // For SSR, try to get the site URL from environment variables
+  return process.env.NEXT_PUBLIC_WEBSITE_URL || 
+         process.env.NEXT_PUBLIC_SITE_URL || 
+         'http://localhost:3000'  // Default for local development
+}
+
+const API_BASE = getApiBase()
 
 interface RetryOptions {
   maxRetries?: number
@@ -133,9 +142,9 @@ class PoCApi {
   }
 
   private async fetch(endpoint: string, options?: RequestInit, retryOptions?: RetryOptions) {
-    // Check if API URL is configured
+    // API is now internal (Next.js API routes), baseUrl should always be set
     if (!this.baseUrl) {
-      throw new Error('API URL not configured. Please set NEXT_PUBLIC_API_URL environment variable.')
+      throw new Error('Unable to determine API base URL. This may be a configuration issue.')
     }
 
     const { maxRetries = 2, delayMs = 1000, backoffMultiplier = 1.5 } = retryOptions || {}
