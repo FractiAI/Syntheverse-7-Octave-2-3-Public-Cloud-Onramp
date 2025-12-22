@@ -52,9 +52,7 @@ export async function GET(request: NextRequest) {
             }, { status: 400 })
         }
         
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-            apiVersion: '2024-12-18.acacia',
-        })
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
         
         results.push({
             step: 'Stripe Initialization',
