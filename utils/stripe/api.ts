@@ -44,24 +44,47 @@ export async function createStripeCustomer(id: string, email: string, name?: str
     return customer.id
 }
 
-export async function createStripeCheckoutSession(email: string) {
-    const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
-    const customerSession = await stripe.customerSessions.create({
-        customer: user[0].stripe_id,
-        components: {
-            pricing_table: {
-                enabled: true,
+export async function createStripeCheckoutSession(email: string): Promise<string> {
+    try {
+        const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
+        
+        // If user doesn't exist or has no stripe_id, throw error
+        if (!user || user.length === 0 || !user[0].stripe_id) {
+            throw new Error("User not found or has no Stripe customer ID")
+        }
+
+        const customerSession = await stripe.customerSessions.create({
+            customer: user[0].stripe_id,
+            components: {
+                pricing_table: {
+                    enabled: true,
+                },
             },
-        },
-    });
-    return customerSession.client_secret
+        });
+        return customerSession.client_secret
+    } catch (error) {
+        console.error("Error creating Stripe checkout session:", error)
+        throw error
+    }
 }
 
-export async function generateStripeBillingPortalLink(email: string) {
-    const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
-    const portalSession = await stripe.billingPortal.sessions.create({
-        customer: user[0].stripe_id,
-        return_url: `${PUBLIC_URL}/dashboard`,
-    });
-    return portalSession.url
+export async function generateStripeBillingPortalLink(email: string): Promise<string> {
+    try {
+        const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
+        
+        // If user doesn't exist or has no stripe_id, return dashboard URL
+        if (!user || user.length === 0 || !user[0].stripe_id) {
+            return `${PUBLIC_URL}/dashboard`
+        }
+
+        const portalSession = await stripe.billingPortal.sessions.create({
+            customer: user[0].stripe_id,
+            return_url: `${PUBLIC_URL}/dashboard`,
+        });
+        return portalSession.url
+    } catch (error) {
+        console.error("Error generating billing portal link:", error)
+        // Return dashboard URL as fallback
+        return `${PUBLIC_URL}/dashboard`
+    }
 }
