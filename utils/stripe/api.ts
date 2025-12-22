@@ -70,21 +70,33 @@ export async function createStripeCheckoutSession(email: string): Promise<string
 
 export async function generateStripeBillingPortalLink(email: string): Promise<string> {
     try {
+        // Check if Stripe is configured
+        if (!process.env.STRIPE_SECRET_KEY) {
+            console.warn("STRIPE_SECRET_KEY not configured, returning subscribe page")
+            return "/subscribe"
+        }
+
         const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
         
-        // If user doesn't exist or has no stripe_id, return dashboard URL
+        // If user doesn't exist or has no stripe_id, return subscribe page
         if (!user || user.length === 0 || !user[0].stripe_id) {
-            return `${PUBLIC_URL}/dashboard`
+            return "/subscribe"
         }
 
         const portalSession = await stripe.billingPortal.sessions.create({
             customer: user[0].stripe_id,
             return_url: `${PUBLIC_URL}/dashboard`,
         });
-        return portalSession.url
+        
+        // Validate the URL before returning
+        if (portalSession.url && portalSession.url.startsWith("http")) {
+            return portalSession.url
+        }
+        
+        return "/subscribe"
     } catch (error) {
         console.error("Error generating billing portal link:", error)
-        // Return dashboard URL as fallback
-        return `${PUBLIC_URL}/dashboard`
+        // Return subscribe page as fallback
+        return "/subscribe"
     }
 }

@@ -19,18 +19,26 @@ export default async function DashboardHeaderProfileDropdown() {
     const { data: { user }, error } = await supabase.auth.getUser()
     
     // Get billing portal URL (only if user exists and has email)
-    let billingPortalURL = "/subscribe" // Default to subscribe page if billing portal fails
+    // Default to subscribe page - we'll try to get portal URL but won't fail if it errors
+    let billingPortalURL = "/subscribe"
+    
     if (user && user.email) {
         try {
             const portalURL = await generateStripeBillingPortalLink(user.email)
-            // Only use the portal URL if it's valid (not just the fallback dashboard URL)
-            if (portalURL && portalURL !== "#" && portalURL.startsWith("http")) {
-                billingPortalURL = portalURL
+            // Only use the portal URL if it's a valid external URL (Stripe portal)
+            // If it returns "/subscribe" or "/dashboard", use that as-is
+            if (portalURL) {
+                if (portalURL.startsWith("http")) {
+                    // External Stripe URL
+                    billingPortalURL = portalURL
+                } else if (portalURL.startsWith("/")) {
+                    // Internal route
+                    billingPortalURL = portalURL
+                }
             }
         } catch (error) {
+            // Silently fail - we already have a default
             console.error("Error generating billing portal link:", error)
-            // Default to subscribe page if there's an error
-            billingPortalURL = "/subscribe"
         }
     }
     return (
