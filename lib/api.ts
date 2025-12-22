@@ -130,7 +130,7 @@ class PoCApi {
 
   private async fetch(endpoint: string, options?: RequestInit, retryOptions?: RetryOptions) {
     const { maxRetries = 2, delayMs = 1000, backoffMultiplier = 1.5 } = retryOptions || {}
-    let lastError: Error
+    let lastError: Error = new Error('Unknown error')
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
