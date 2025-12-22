@@ -146,9 +146,9 @@ class PoCApi {
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const headers: HeadersInit = {
+        const headers: Record<string, string> = {
           'Content-Type': 'application/json',
-          ...options?.headers,
+          ...(options?.headers as Record<string, string> || {}),
         }
 
         // Add GROK API key to headers if available
