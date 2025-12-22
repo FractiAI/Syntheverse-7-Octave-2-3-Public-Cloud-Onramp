@@ -14,8 +14,17 @@ import { Skeleton } from "@/components/ui/skeleton"
 export default async function DashboardHeader() {
     const supabase = createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
-    // Get the user's plan from Stripe
-    const stripePlan = getStripePlan(user!.email!)
+    
+    // Get the user's plan from Stripe (only if user exists)
+    let stripePlan = "Free"
+    if (user && user.email) {
+        try {
+            stripePlan = await getStripePlan(user.email)
+        } catch (error) {
+            console.error("Error getting Stripe plan:", error)
+            // Default to "Free" if there's an error
+        }
+    }
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

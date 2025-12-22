@@ -19,25 +19,45 @@ export default async function DashboardLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    // Check if user has plan selected. If not redirect to subscibe
+    // Check if user has plan selected. If not redirect to subscribe
     const supabase = createClient()
 
     const {
         data: { user },
+        error: authError,
     } = await supabase.auth.getUser()
 
-    // check user plan in db
-    const checkUserInDB = await db.select().from(usersTable).where(eq(usersTable.email, user!.email!))
-    if (checkUserInDB[0].plan === "none") {
-        console.log("User has no plan selected")
-        return redirect('/subscribe')
+    // If no user, redirect to login
+    if (authError || !user || !user.email) {
+        redirect('/login')
     }
 
+    try {
+        // check user plan in db
+        const checkUserInDB = await db.select().from(usersTable).where(eq(usersTable.email, user.email))
+        
+        // If user doesn't exist in DB yet, redirect to subscribe
+        if (!checkUserInDB || checkUserInDB.length === 0) {
+            console.log("User not found in database, redirecting to subscribe")
+            redirect('/subscribe')
+        }
+
+        // If user has no plan, redirect to subscribe
+        if (checkUserInDB[0].plan === "none") {
+            console.log("User has no plan selected")
+            redirect('/subscribe')
+        }
+    } catch (dbError) {
+        // If database query fails, log error but don't crash
+        console.error("Database error in dashboard layout:", dbError)
+        // Allow user to continue - they might be able to see the dashboard
+        // or the error will be caught elsewhere
+    }
 
     return (
-        <html lang="en">
+        <>
             <DashboardHeader />
             {children}
-        </html>
+        </>
     );
 }
