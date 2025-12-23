@@ -149,73 +149,79 @@ export async function POST(request: NextRequest) {
                     title: title.trim()
                 })
                 evaluation = await evaluateWithGrok(textContent, title.trim(), category || undefined, submission_hash)
+                
+                // Use qualified status from evaluation
+                const qualified = evaluation.qualified || (evaluation.pod_score >= 8000)
             
-            // Use qualified status from evaluation
-            const qualified = evaluation.qualified || (evaluation.pod_score >= 8000)
+                // Update contribution with evaluation results
+                try {
+                    await db
+                        .update(contributionsTable)
+                        .set({
+                            status: qualified ? 'qualified' : 'unqualified',
+                            metals: evaluation.metals || [],
+                            metadata: {
+                                coherence: evaluation.coherence,
+                                density: evaluation.density,
+                                redundancy: evaluation.redundancy,
+                                pod_score: evaluation.pod_score,
+                                novelty: evaluation.novelty,
+                                alignment: evaluation.alignment,
+                                classification: evaluation.classification || [],
+                                redundancy_analysis: evaluation.redundancy_analysis,
+                                metal_justification: evaluation.metal_justification,
+                                founder_certificate: evaluation.founder_certificate,
+                                homebase_intro: evaluation.homebase_intro,
+                                tokenomics_recommendation: evaluation.tokenomics_recommendation,
+                                qualified_founder: qualified,
+                                allocation_status: 'pending_admin_approval' // Token allocation requires admin approval
+                            },
+                            updated_at: new Date()
+                        })
+                        .where(eq(contributionsTable.submission_hash, submission_hash))
+                } catch (updateError) {
+                    debugError('SubmitContribution', 'Failed to update contribution with evaluation results', updateError)
+                    // Don't fail the submission if update fails
+                }
             
-            // Update contribution with evaluation results
-            await db
-                .update(contributionsTable)
-                .set({
-                    status: qualified ? 'qualified' : 'unqualified',
-                    metals: evaluation.metals,
-                    metadata: {
-                        coherence: evaluation.coherence,
-                        density: evaluation.density,
-                        redundancy: evaluation.redundancy,
-                        pod_score: evaluation.pod_score,
-                        novelty: evaluation.novelty,
-                        alignment: evaluation.alignment,
-                        classification: evaluation.classification,
-                        redundancy_analysis: evaluation.redundancy_analysis,
-                        metal_justification: evaluation.metal_justification,
-                        founder_certificate: evaluation.founder_certificate,
-                        homebase_intro: evaluation.homebase_intro,
-                        tokenomics_recommendation: evaluation.tokenomics_recommendation,
-                        qualified_founder: qualified,
-                        allocation_status: 'pending_admin_approval' // Token allocation requires admin approval
-                    },
-                    updated_at: new Date()
-                })
-                .where(eq(contributionsTable.submission_hash, submission_hash))
-            
-            // Log evaluation completion
-            try {
-                const evalLogId = crypto.randomUUID()
-                await db.insert(pocLogTable).values({
-                    id: evalLogId,
-                    submission_hash,
-                    contributor: contributor || user.email,
-                    event_type: 'evaluation_complete',
-                    event_status: 'success',
-                    title: title.trim(),
-                    category: category || 'scientific',
-                    evaluation_result: {
-                        coherence: evaluation.coherence,
-                        density: evaluation.density,
-                        redundancy: evaluation.redundancy,
-                        pod_score: evaluation.pod_score,
-                        novelty: evaluation.novelty,
-                        alignment: evaluation.alignment,
-                        metals: evaluation.metals,
-                        qualified,
-                        qualified_founder: qualified,
-                        classification: evaluation.classification,
-                        redundancy_analysis: evaluation.redundancy_analysis,
-                        metal_justification: evaluation.metal_justification
-                    },
-                    response_data: {
-                        success: true,
-                        qualified,
-                        evaluation
-                    },
-                    processing_time_ms: Date.now() - startTime,
-                    created_at: new Date()
-                })
-            } catch (logError) {
-                debugError('SubmitContribution', 'Failed to log evaluation', logError)
-            }
-            
+                // Log evaluation completion
+                try {
+                    const evalLogId = crypto.randomUUID()
+                    await db.insert(pocLogTable).values({
+                        id: evalLogId,
+                        submission_hash,
+                        contributor: contributor || user.email,
+                        event_type: 'evaluation_complete',
+                        event_status: 'success',
+                        title: title.trim(),
+                        category: category || 'scientific',
+                        evaluation_result: {
+                            coherence: evaluation.coherence,
+                            density: evaluation.density,
+                            redundancy: evaluation.redundancy,
+                            pod_score: evaluation.pod_score,
+                            novelty: evaluation.novelty,
+                            alignment: evaluation.alignment,
+                            metals: evaluation.metals || [],
+                            qualified,
+                            qualified_founder: qualified,
+                            classification: evaluation.classification || [],
+                            redundancy_analysis: evaluation.redundancy_analysis,
+                            metal_justification: evaluation.metal_justification
+                        },
+                        response_data: {
+                            success: true,
+                            qualified,
+                            evaluation
+                        },
+                        processing_time_ms: Date.now() - startTime,
+                        created_at: new Date()
+                    })
+                } catch (logError) {
+                    debugError('SubmitContribution', 'Failed to log evaluation', logError)
+                    // Don't fail submission if logging fails
+                }
+                
                 debug('SubmitContribution', 'Evaluation completed successfully', {
                     submission_hash,
                     qualified,
@@ -262,6 +268,12 @@ export async function POST(request: NextRequest) {
         }
         
         // Always return success for submission, even if evaluation failed
+        debug('SubmitContribution', 'Returning success response', {
+            submission_hash,
+            hasEvaluation: !!evaluation,
+            hasError: !!evaluationError
+        })
+        
         return NextResponse.json({
             success: true,
             submission_hash,
@@ -271,11 +283,11 @@ export async function POST(request: NextRequest) {
                 redundancy: evaluation.redundancy,
                 novelty: evaluation.novelty,
                 alignment: evaluation.alignment,
-                metals: evaluation.metals,
+                metals: evaluation.metals || [],
                 pod_score: evaluation.pod_score,
                 qualified: evaluation.qualified,
                 qualified_founder: evaluation.qualified,
-                classification: evaluation.classification,
+                classification: evaluation.classification || [],
                 redundancy_analysis: evaluation.redundancy_analysis,
                 metal_justification: evaluation.metal_justification,
                 founder_certificate: evaluation.founder_certificate,
@@ -283,24 +295,38 @@ export async function POST(request: NextRequest) {
                 tokenomics_recommendation: evaluation.tokenomics_recommendation
             } : null,
             evaluation_error: evaluationError ? evaluationError.message : null,
-            status: evaluation ? (evaluation.qualified ? 'qualified' : 'unqualified') : 'draft'
+            status: evaluation ? (evaluation.qualified ? 'qualified' : 'unqualified') : 'draft',
+            message: evaluation 
+                ? 'Contribution submitted and evaluated successfully'
+                : evaluationError 
+                    ? `Contribution submitted successfully. Evaluation skipped: ${evaluationError.message}`
+                    : 'Contribution submitted successfully'
         })
     } catch (error) {
         debugError('SubmitContribution', 'Error submitting contribution', error)
         
         const errorMessage = error instanceof Error ? error.message : String(error)
-        const errorDetails = error instanceof Error ? {
-            name: error.name,
-            stack: error.stack,
-            message: error.message
-        } : { error: String(error) }
+        const errorStack = error instanceof Error ? error.stack : undefined
         
-        // Return more detailed error for debugging (in production, you might want to hide this)
+        // Log the full error for debugging
+        console.error('SubmitContribution Error:', {
+            message: errorMessage,
+            stack: errorStack,
+            error: error
+        })
+        
+        // Return detailed error for debugging
         return NextResponse.json(
             { 
                 error: 'Failed to submit contribution',
-                details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
-                ...(process.env.NODE_ENV === 'development' ? errorDetails : {})
+                message: errorMessage,
+                details: process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development' 
+                    ? errorMessage 
+                    : 'An error occurred while submitting. Please try again.',
+                ...(process.env.NODE_ENV === 'development' ? {
+                    stack: errorStack,
+                    name: error instanceof Error ? error.name : undefined
+                } : {})
             },
             { status: 500 }
         )
