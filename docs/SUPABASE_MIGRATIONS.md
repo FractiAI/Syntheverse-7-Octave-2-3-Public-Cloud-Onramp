@@ -105,3 +105,4 @@ After running migrations, verify in Supabase Dashboard:
 - **Individual migrations**: `utils/db/migrations/`
 
 
+

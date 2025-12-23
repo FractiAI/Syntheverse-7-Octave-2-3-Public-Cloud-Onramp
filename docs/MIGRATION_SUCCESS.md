@@ -78,3 +78,4 @@ If you encounter any issues:
 4. **Verify Environment Variables** - Ensure `DATABASE_URL` is set correctly in Vercel
 
 
+
