@@ -154,7 +154,7 @@ export async function generateStripeBillingPortalLink(email: string): Promise<st
         const portalSession = await stripe.billingPortal.sessions.create({
             customer: user[0].stripe_id,
             return_url: `${PUBLIC_URL}/dashboard`,
-        });
+        })
         
         debug('generateStripeBillingPortalLink', 'Stripe portal session created', {
             hasUrl: !!portalSession.url,
