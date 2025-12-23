@@ -104,3 +104,4 @@ After running migrations, verify in Supabase Dashboard:
 - **Combined migration**: `supabase/migrations/combined_poc_migrations.sql`
 - **Individual migrations**: `utils/db/migrations/`
 
+

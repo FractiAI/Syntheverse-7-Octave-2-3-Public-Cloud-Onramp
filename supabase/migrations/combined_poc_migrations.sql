@@ -97,3 +97,4 @@ VALUES
     ('epoch_ecosystem', 'ecosystem', '11250000000000', '0', '0', 12.5)
 ON CONFLICT ("id") DO NOTHING;
 
+

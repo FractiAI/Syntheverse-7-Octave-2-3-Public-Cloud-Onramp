@@ -77,3 +77,4 @@ If you encounter any issues:
 3. **Check Application Logs** - Look for database connection errors
 4. **Verify Environment Variables** - Ensure `DATABASE_URL` is set correctly in Vercel
 
+

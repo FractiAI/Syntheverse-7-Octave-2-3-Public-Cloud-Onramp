@@ -95,17 +95,32 @@ export async function createStripeCustomer(id: string, email: string, name?: str
 
 export async function createStripeCheckoutSession(email: string): Promise<string> {
     try {
+        debug('createStripeCheckoutSession', 'Starting checkout session creation', { email })
+        
         const stripeClient = stripe || getStripeClient()
         if (!stripeClient) {
+            debugError('createStripeCheckoutSession', 'Stripe not initialized', new Error("STRIPE_SECRET_KEY not configured"))
             throw new Error("Stripe not initialized")
         }
         
+        debug('createStripeCheckoutSession', 'Querying database for user', { email })
         const user = await db.select().from(usersTable).where(eq(usersTable.email, email))
+        
+        debug('createStripeCheckoutSession', 'Database query completed', {
+            userFound: !!user && user.length > 0,
+            hasStripeId: user?.[0]?.stripe_id ? true : false,
+            stripeIdPrefix: user?.[0]?.stripe_id?.substring(0, 8) || 'none'
+        })
         
         // If user doesn't exist or has no stripe_id, throw error
         if (!user || user.length === 0 || !user[0].stripe_id) {
+            debugError('createStripeCheckoutSession', 'User not found or has no Stripe customer ID', new Error(`User: ${!!user && user.length > 0}, Stripe ID: ${user?.[0]?.stripe_id || 'missing'}`))
             throw new Error("User not found or has no Stripe customer ID")
         }
+
+        debug('createStripeCheckoutSession', 'Creating Stripe customer session', {
+            customerId: user[0].stripe_id
+        })
 
         const customerSession = await stripeClient.customerSessions.create({
             customer: user[0].stripe_id,
@@ -115,9 +130,14 @@ export async function createStripeCheckoutSession(email: string): Promise<string
                 },
             },
         });
+        
+        debug('createStripeCheckoutSession', 'Customer session created successfully', {
+            hasSecret: !!customerSession.client_secret
+        })
+        
         return customerSession.client_secret
     } catch (error) {
-        console.error("Error creating Stripe checkout session:", error)
+        debugError('createStripeCheckoutSession', 'Error creating Stripe checkout session', error)
         throw error
     }
 }

@@ -44,3 +44,4 @@ Stripe payment integration:
 - **OAuth Setup**: See `/oauth/OAUTH_QUICK_SETUP.md`
 - **Troubleshooting**: Check relevant category's troubleshooting guides
 
+
