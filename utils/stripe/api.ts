@@ -5,26 +5,38 @@ import { eq } from "drizzle-orm";
 import { debug, debugError, debugWarn } from '@/utils/debug';
 
 
-// Initialize Stripe only if secret key is available
-let stripe: Stripe | null = null
-try {
-    if (process.env.STRIPE_SECRET_KEY) {
-        stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-        debug('StripeAPI', 'Stripe initialized successfully');
-    } else {
-        debugWarn('StripeAPI', 'STRIPE_SECRET_KEY not found in environment');
+// Initialize Stripe - create function to get fresh instance
+function getStripeClient(): Stripe | null {
+    try {
+        if (process.env.STRIPE_SECRET_KEY) {
+            return new Stripe(process.env.STRIPE_SECRET_KEY)
+        } else {
+            debugWarn('StripeAPI', 'STRIPE_SECRET_KEY not found in environment');
+            return null
+        }
+    } catch (error) {
+        debugError('StripeAPI', 'Failed to initialize Stripe', error);
+        return null
     }
-} catch (error) {
-    debugError('StripeAPI', 'Failed to initialize Stripe', error);
 }
+
+// Initialize on module load
+let stripe: Stripe | null = getStripeClient()
+if (stripe) {
+    debug('StripeAPI', 'Stripe initialized successfully');
+} else {
+    debugWarn('StripeAPI', 'Stripe not initialized');
+}
+
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000"
 
 export async function getStripePlan(email: string): Promise<string> {
     debug('getStripePlan', 'Starting getStripePlan', { email });
     
     try {
-        // Check if Stripe is initialized
-        if (!stripe) {
+        // Get fresh Stripe client instance
+        const stripeClient = stripe || getStripeClient()
+        if (!stripeClient) {
             debugWarn('getStripePlan', 'Stripe not initialized, returning Free plan');
             return "Free"
         }
@@ -50,11 +62,11 @@ export async function getStripePlan(email: string): Promise<string> {
         }
 
         debug('getStripePlan', 'Retrieving Stripe subscription', { subscriptionId: user[0].plan });
-        const subscription = await stripe.subscriptions.retrieve(user[0].plan);
+        const subscription = await stripeClient.subscriptions.retrieve(user[0].plan);
         const productId = subscription.items.data[0].plan.product as string
         
         debug('getStripePlan', 'Retrieving Stripe product', { productId });
-        const product = await stripe.products.retrieve(productId)
+        const product = await stripeClient.products.retrieve(productId)
         
         debug('getStripePlan', 'Stripe plan retrieved successfully', { planName: product.name });
         return product.name
@@ -66,10 +78,11 @@ export async function getStripePlan(email: string): Promise<string> {
 }
 
 export async function createStripeCustomer(id: string, email: string, name?: string) {
-    if (!stripe) {
+    const stripeClient = stripe || getStripeClient()
+    if (!stripeClient) {
         throw new Error("Stripe not initialized")
     }
-    const customer = await stripe.customers.create({
+    const customer = await stripeClient.customers.create({
         name: name ? name : "",
         email: email,
         metadata: {
@@ -82,7 +95,8 @@ export async function createStripeCustomer(id: string, email: string, name?: str
 
 export async function createStripeCheckoutSession(email: string): Promise<string> {
     try {
-        if (!stripe) {
+        const stripeClient = stripe || getStripeClient()
+        if (!stripeClient) {
             throw new Error("Stripe not initialized")
         }
         
@@ -93,7 +107,7 @@ export async function createStripeCheckoutSession(email: string): Promise<string
             throw new Error("User not found or has no Stripe customer ID")
         }
 
-        const customerSession = await stripe.customerSessions.create({
+        const customerSession = await stripeClient.customerSessions.create({
             customer: user[0].stripe_id,
             components: {
                 pricing_table: {
@@ -114,8 +128,9 @@ export async function generateStripeBillingPortalLink(email: string): Promise<st
     try {
         debug('generateStripeBillingPortalLink', 'Starting billing portal link generation', { email })
         
-        // Check if Stripe is initialized
-        if (!stripe) {
+        // Get fresh Stripe client instance to ensure we have latest keys
+        const stripeClient = stripe || getStripeClient()
+        if (!stripeClient) {
             debugWarn('generateStripeBillingPortalLink', 'Stripe not initialized, returning subscribe page')
             return "/subscribe"
         }
@@ -151,7 +166,7 @@ export async function generateStripeBillingPortalLink(email: string): Promise<st
             return "/subscribe"
         }
 
-        const portalSession = await stripe.billingPortal.sessions.create({
+        const portalSession = await stripeClient.billingPortal.sessions.create({
             customer: user[0].stripe_id,
             return_url: `${PUBLIC_URL}/dashboard`,
         })
