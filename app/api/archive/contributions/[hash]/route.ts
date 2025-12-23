@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable } from '@/utils/db/schema'
+import { contributionsTable, pocLogTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(
     request: NextRequest,
@@ -48,6 +49,67 @@ export async function GET(
         debugError('ArchiveContribution', 'Error fetching contribution', error)
         return NextResponse.json(
             { error: 'Failed to fetch contribution' },
+            { status: 500 }
+        )
+    }
+}
+
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { hash: string } }
+) {
+    const submissionHash = params.hash
+    debug('ArchiveContribution', 'Deleting contribution', { submissionHash })
+    
+    try {
+        // Check authentication
+        const supabase = createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        
+        if (authError || !user) {
+            debug('ArchiveContribution', 'Unauthorized delete attempt')
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            )
+        }
+        
+        // Get contribution to verify it exists
+        const contribution = await db
+            .select()
+            .from(contributionsTable)
+            .where(eq(contributionsTable.submission_hash, submissionHash))
+            .limit(1)
+        
+        if (!contribution || contribution.length === 0) {
+            debug('ArchiveContribution', 'Contribution not found for deletion', { submissionHash })
+            return NextResponse.json(
+                { error: 'Contribution not found' },
+                { status: 404 }
+            )
+        }
+        
+        // Delete related poc_log entries first
+        await db
+            .delete(pocLogTable)
+            .where(eq(pocLogTable.submission_hash, submissionHash))
+        
+        // Delete the contribution
+        await db
+            .delete(contributionsTable)
+            .where(eq(contributionsTable.submission_hash, submissionHash))
+        
+        debug('ArchiveContribution', 'Contribution deleted successfully', { submissionHash })
+        
+        return NextResponse.json({
+            success: true,
+            message: 'Contribution deleted successfully',
+            submission_hash: submissionHash
+        })
+    } catch (error) {
+        debugError('ArchiveContribution', 'Error deleting contribution', error)
+        return NextResponse.json(
+            { error: 'Failed to delete contribution' },
             { status: 500 }
         )
     }

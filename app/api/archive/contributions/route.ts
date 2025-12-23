@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable } from '@/utils/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { contributionsTable, pocLogTable } from '@/utils/db/schema'
+import { eq, and, or, like, ilike } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: NextRequest) {
     debug('ArchiveContributions', 'Fetching contributions')
@@ -63,6 +64,90 @@ export async function GET(request: NextRequest) {
         debugError('ArchiveContributions', 'Error fetching contributions', error)
         return NextResponse.json(
             { error: 'Failed to fetch contributions' },
+            { status: 500 }
+        )
+    }
+}
+
+// POST endpoint to cleanup test submissions
+export async function POST(request: NextRequest) {
+    debug('ArchiveContributions', 'Cleaning up test submissions')
+    
+    try {
+        // Check authentication
+        const supabase = createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        
+        if (authError || !user) {
+            debug('ArchiveContributions', 'Unauthorized cleanup attempt')
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            )
+        }
+        
+        // Find test submissions (identified by title, contributor, or submission_hash patterns)
+        const allContributions = await db
+            .select()
+            .from(contributionsTable)
+        
+        const testSubmissions = allContributions.filter(contrib => {
+            const title = contrib.title?.toLowerCase() || ''
+            const contributor = contrib.contributor?.toLowerCase() || ''
+            const hash = contrib.submission_hash?.toLowerCase() || ''
+            
+            return (
+                title.includes('test') ||
+                title.includes('demo') ||
+                contributor.includes('test') ||
+                contributor.includes('@example.com') ||
+                hash.endsWith('-test-123') ||
+                hash.endsWith('-123')
+            )
+        })
+        
+        debug('ArchiveContributions', 'Found test submissions', { count: testSubmissions.length })
+        
+        let cleanedCount = 0
+        
+        // Delete test submissions and their logs
+        for (const submission of testSubmissions) {
+            try {
+                // Delete related poc_log entries
+                await db
+                    .delete(pocLogTable)
+                    .where(eq(pocLogTable.submission_hash, submission.submission_hash))
+                
+                // Delete the contribution
+                await db
+                    .delete(contributionsTable)
+                    .where(eq(contributionsTable.submission_hash, submission.submission_hash))
+                
+                cleanedCount++
+                debug('ArchiveContributions', 'Deleted test submission', {
+                    hash: submission.submission_hash,
+                    title: submission.title
+                })
+            } catch (error) {
+                debugError('ArchiveContributions', 'Error deleting test submission', {
+                    error,
+                    hash: submission.submission_hash
+                })
+                // Continue with other deletions even if one fails
+            }
+        }
+        
+        debug('ArchiveContributions', 'Cleanup completed', { cleanedCount })
+        
+        return NextResponse.json({
+            success: true,
+            cleaned_count: cleanedCount,
+            message: `Successfully deleted ${cleanedCount} test submission(s)`
+        })
+    } catch (error) {
+        debugError('ArchiveContributions', 'Error cleaning up test submissions', error)
+        return NextResponse.json(
+            { error: 'Failed to cleanup test submissions' },
             { status: 500 }
         )
     }
