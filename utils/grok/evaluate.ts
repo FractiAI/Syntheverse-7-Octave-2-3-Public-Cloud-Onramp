@@ -674,8 +674,9 @@ When evaluating redundancy:
 • Map the current submission to its 3D vector coordinates within the sandbox
 • Calculate vector similarity/distance to archived PoC vectors using hydrogen-holographic geometry
 • Identify overlapping or derivative content based on vector proximity in the 3D holographic space
-• Penalize derivative or overlapping content in Novelty (0–100% penalty) based on vector similarity
-• Optionally adjust Density if informational value is reduced by redundancy
+• Determine redundancy penalty percentage (0–100%) based on vector similarity
+• Apply redundancy penalty to the COMPOSITE/TOTAL score, NOT to individual category scores
+• Individual category scores (Novelty, Density, Coherence, Alignment) remain unpenalized
 • Clearly justify which archived PoC vectors (by hash/title) contributed to the penalty, referencing their positions in the 3D holographic space
 
 Scoring Dimensions (0–2,500 each; total 0–10,000)
@@ -1213,22 +1214,20 @@ Return your complete evaluation as a valid JSON object matching the specified st
         
         // Extract redundancy penalty as percentage (0-100%)
         // Prefer calculated vector-based redundancy if available, otherwise use Grok's estimate
+        // Redundancy penalty will be applied to the COMPOSITE/TOTAL score, not individual category scores
         const redundancyPenaltyPercent = calculatedRedundancy 
             ? calculatedRedundancy.redundancy_percent
-            : (novelty.redundancy_penalty_percent ?? 
-               (novelty.redundancy_penalty ? (novelty.redundancy_penalty / baseNoveltyScore * 100) : 0) ?? 0)
-        const densityPenaltyPercent = density.redundancy_penalty_percent ?? 0
+            : (evaluation.redundancy_penalty_percent ??
+               novelty.redundancy_penalty_percent ?? 
+               (novelty.redundancy_penalty && baseNoveltyScore > 0 ? (novelty.redundancy_penalty / baseNoveltyScore * 100) : 0) ?? 
+               0)
         
-        // Calculate final scores with percentage-based penalties
-        const noveltyScore = Math.max(0, Math.min(2500, baseNoveltyScore * (1 - Math.max(0, Math.min(100, redundancyPenaltyPercent)) / 100)))
-        const densityScore = Math.max(0, Math.min(2500, baseDensityScore * (1 - Math.max(0, Math.min(100, densityPenaltyPercent)) / 100)))
-        
-        // Use final_score if provided, otherwise use calculated score
-        // If base score is 0 but final_score exists, use final_score (Grok may have provided final directly)
-        const finalNoveltyScore = novelty.final_score ?? (baseNoveltyScore > 0 ? noveltyScore : baseNoveltyScore)
+        // Use final_score if provided, otherwise use base score
+        // Individual category scores are NOT penalized - penalty is applied to total composite score
+        const finalNoveltyScore = novelty.final_score ?? baseNoveltyScore
         
         // For density, try multiple fallback paths since Grok may return it in different formats
-        // Priority: final_score > score > calculated from base > direct evaluation.density
+        // Priority: final_score > score > base_score > direct evaluation.density
         let finalDensityScore = density.final_score ?? density.score ?? 0
         
         // If still 0, try more locations
@@ -1252,16 +1251,16 @@ Return your complete evaluation as a valid JSON object matching the specified st
             }
         }
         
-        // If still 0 and we have baseDensityScore, use calculated score
-        if (finalDensityScore === 0 && baseDensityScore > 0) {
-            finalDensityScore = densityScore
+        // If still 0, use base score (individual scores are NOT penalized)
+        if (finalDensityScore === 0) {
+            finalDensityScore = baseDensityScore
         }
         
         // If still 0, try to extract from nested structures
         if (finalDensityScore === 0) {
             // Check if density is in a nested evaluation object
             if (evaluation.evaluation?.density) {
-                finalDensityScore = evaluation.evaluation.density
+                finalDensityScore = typeof evaluation.evaluation.density === 'number' ? evaluation.evaluation.density : 0
             } else if (evaluation.evaluation?.scoring?.density?.score) {
                 finalDensityScore = evaluation.evaluation.scoring.density.score
             } else if (evaluation.evaluation?.scoring?.density?.final_score) {
@@ -1270,26 +1269,29 @@ Return your complete evaluation as a valid JSON object matching the specified st
         }
         
         // Use the best available density score (prefer finalDensityScore, fallback to baseDensityScore if final is 0)
-        const densityFinal = finalDensityScore > 0 ? finalDensityScore : (baseDensityScore > 0 ? baseDensityScore : 0)
+        const densityFinal = finalDensityScore > 0 ? finalDensityScore : baseDensityScore
         
         // Final debug log to see what we extracted
         debug('EvaluateWithGrok', 'Density extraction result', {
             finalDensityScore,
             baseDensityScore,
-            densityScore,
             densityFinal,
             densityObject: JSON.stringify(density),
             evaluationDensity: evaluation.density,
         })
         
-        // Calculate total score if not provided
-        let pod_score = evaluation.total_score ?? evaluation.pod_score ?? evaluation.poc_score ?? 0
-        if (!pod_score || pod_score === 0) {
-            pod_score = finalNoveltyScore + densityFinal + coherenceScore + alignmentScore
+        // Calculate composite/total score from all individual category scores (without penalty)
+        const compositeScoreBeforePenalty = finalNoveltyScore + densityFinal + coherenceScore + alignmentScore
+        
+        // Get base total score if provided by Grok
+        let pod_scoreBeforePenalty = evaluation.total_score ?? evaluation.pod_score ?? evaluation.poc_score ?? 0
+        if (!pod_scoreBeforePenalty || pod_scoreBeforePenalty === 0) {
+            pod_scoreBeforePenalty = compositeScoreBeforePenalty
         }
         
-        // Store redundancy as percentage (0-100)
+        // Apply redundancy penalty to the COMPOSITE/TOTAL score, not individual category scores
         const redundancy = Math.max(0, Math.min(100, redundancyPenaltyPercent))
+        const pod_score = Math.max(0, Math.min(10000, pod_scoreBeforePenalty * (1 - redundancy / 100)))
         
         // Extract metal alignment
         let metals: string[] = []
@@ -1367,8 +1369,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
             // Store base scores and penalty percentages for transparency
             base_novelty: baseNoveltyScore,
             base_density: baseDensityScore,
-            redundancy_penalty_percent: redundancy,
-            density_penalty_percent: densityPenaltyPercent
+            redundancy_penalty_percent: redundancy // Applied to composite score, not individual scores
         }
     } catch (error) {
         debugError('EvaluateWithGrok', 'Grok API call failed', error)
