@@ -222,6 +222,9 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                         <p className="text-xs text-muted-foreground mt-2">
                             Total score: 0-10,000. Founder qualification: ≥8,000
                         </p>
+                        <p className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                            <strong>Redundancy Penalty:</strong> A penalty is applied to the total score based on 3D vector similarity to existing archived contributions, ensuring unique contributions are prioritized.
+                        </p>
                     </CardContent>
                 </Card>
 
