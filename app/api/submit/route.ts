@@ -320,7 +320,20 @@ export async function POST(request: NextRequest) {
                             qualified_founder: qualified,
                             classification: evaluation.classification || [],
                             redundancy_analysis: evaluation.redundancy_analysis,
-                            metal_justification: evaluation.metal_justification
+                            metal_justification: evaluation.metal_justification,
+                            // Include base scores for debugging
+                            base_density: evaluation.base_density,
+                            base_novelty: evaluation.base_novelty
+                        },
+                        grok_api_response: {
+                            full_evaluation: evaluation, // Store full evaluation object for debugging
+                            scores_extracted: {
+                                coherence: evaluation.coherence,
+                                density: evaluation.density,
+                                novelty: evaluation.novelty,
+                                alignment: evaluation.alignment,
+                                pod_score: evaluation.pod_score
+                            }
                         },
                         response_data: {
                             success: true,
