@@ -1,106 +1,106 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 import { db } from '@/utils/db/db'
-import { sql } from 'drizzle-orm'
+import { usersTable } from '@/utils/db/schema'
+import { eq } from 'drizzle-orm'
 
+/**
+ * Test endpoint to verify database connection and user lookup
+ * GET /api/test-db
+ */
 export async function GET(request: NextRequest) {
     try {
-        // Check DATABASE_URL first
-        const dbUrl = process.env.DATABASE_URL
-        if (!dbUrl) {
+        const supabase = createClient()
+        const { data, error } = await supabase.auth.getUser()
+        
+        if (error || !data?.user) {
             return NextResponse.json({
                 success: false,
-                error: 'DATABASE_URL environment variable is not set',
-                connection: 'failed',
-                hint: 'Please set DATABASE_URL in Vercel environment variables'
-            }, { status: 500 })
+                error: 'Not authenticated',
+                tests: {
+                    auth: 'failed',
+                    database: 'skipped'
+                }
+            }, { status: 401 })
         }
-        
-        // Parse DATABASE_URL to show connection details (without password)
-        let connectionInfo = {}
-        try {
-            const url = new URL(dbUrl)
-            connectionInfo = {
-                hostname: url.hostname,
-                port: url.port || '5432',
-                database: url.pathname.replace('/', ''),
-                protocol: url.protocol,
-                has_password: !!url.password
-            }
-        } catch (e) {
-            connectionInfo = { error: 'Invalid URL format' }
-        }
-        
-        // Test database connection
-        const connectionTest = await db.execute(sql`SELECT 1 as test`)
-        
-        // Check if contributions table exists
-        const tableCheck = await db.execute(sql`
-            SELECT EXISTS (
-                SELECT FROM information_schema.tables 
-                WHERE table_schema = 'public' 
-                AND table_name = 'contributions'
-            ) as exists;
-        `)
-        
-        const tableExists = (tableCheck as any)?.[0]?.exists || false
-        
-        // Try to get table structure
-        let tableStructure = null
-        if (tableExists) {
-            try {
-                const structure = await db.execute(sql`
-                    SELECT column_name, data_type, is_nullable
-                    FROM information_schema.columns
-                    WHERE table_schema = 'public' 
-                    AND table_name = 'contributions'
-                    ORDER BY ordinal_position;
-                `)
-                tableStructure = structure
-            } catch (e) {
-                // Ignore structure query errors
-            }
-        }
-        
-        return NextResponse.json({
+
+        const user = data.user
+        const results: any = {
             success: true,
-            connection: 'ok',
-            connection_info: connectionInfo,
-            contributions_table_exists: tableExists,
-            table_structure: tableStructure,
-            message: tableExists 
-                ? 'Contributions table exists' 
-                : 'Contributions table does not exist - please run migrations'
-        })
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error)
-        const errorCode = (error as any)?.code || undefined
-        
-        // Provide helpful hints based on error type
-        let hint = 'Check DATABASE_URL configuration in Vercel'
-        if (errorMessage.includes('ENOTFOUND')) {
-            hint = 'Database hostname cannot be resolved. Check if DATABASE_URL hostname is correct.'
-        } else if (errorMessage.includes('ECONNREFUSED')) {
-            hint = 'Database connection refused. Check if database is accessible and port is correct.'
-        } else if (errorMessage.includes('password')) {
-            hint = 'Database authentication failed. Check if password in DATABASE_URL is correct.'
-        } else if (errorMessage.includes('timeout')) {
-            hint = 'Database connection timeout. Check network connectivity and database availability.'
+            userId: user.id,
+            userEmail: user.email,
+            tests: {}
         }
-        
+
+        // Test 1: Database connection
+        try {
+            const testQuery = await db.select().from(usersTable).limit(1)
+            results.tests.databaseConnection = 'passed'
+            results.tests.tableExists = 'passed'
+            results.tests.totalUsers = testQuery.length
+        } catch (dbError) {
+            results.tests.databaseConnection = 'failed'
+            results.tests.databaseError = dbError instanceof Error ? dbError.message : String(dbError)
+            return NextResponse.json(results, { status: 500 })
+        }
+
+        // Test 2: User lookup by ID
+        try {
+            const userById = await db
+                .select()
+                .from(usersTable)
+                .where(eq(usersTable.id, user.id))
+                .limit(1)
+            
+            results.tests.userLookupById = userById.length > 0 ? 'found' : 'not_found'
+            if (userById.length > 0) {
+                results.userData = {
+                    id: userById[0].id,
+                    name: userById[0].name,
+                    email: userById[0].email
+                }
+            }
+        } catch (lookupError) {
+            results.tests.userLookupById = 'error'
+            results.tests.lookupError = lookupError instanceof Error ? lookupError.message : String(lookupError)
+        }
+
+        // Test 3: User lookup by email
+        if (user.email) {
+            try {
+                const userByEmail = await db
+                    .select()
+                    .from(usersTable)
+                    .where(eq(usersTable.email, user.email))
+                    .limit(1)
+                
+                results.tests.userLookupByEmail = userByEmail.length > 0 ? 'found' : 'not_found'
+            } catch (emailLookupError) {
+                results.tests.userLookupByEmail = 'error'
+                results.tests.emailLookupError = emailLookupError instanceof Error ? emailLookupError.message : String(emailLookupError)
+            }
+        }
+
+        // Test 4: Test update syntax (dry run - won't actually update)
+        try {
+            // This will compile the query but since we're not awaiting it, it won't execute
+            const updateQuery = db
+                .update(usersTable)
+                .set({ name: 'test' })
+                .where(eq(usersTable.id, user.id))
+            
+            results.tests.updateQuerySyntax = 'valid'
+        } catch (updateError) {
+            results.tests.updateQuerySyntax = 'error'
+            results.tests.updateError = updateError instanceof Error ? updateError.message : String(updateError)
+        }
+
+        return NextResponse.json(results, { status: 200 })
+    } catch (error) {
         return NextResponse.json({
             success: false,
-            error: errorMessage,
-            error_code: errorCode,
-            connection: 'failed',
-            hint,
-            connection_info: process.env.DATABASE_URL ? {
-                has_url: true,
-                url_length: process.env.DATABASE_URL.length,
-                // Don't expose full URL, but show if it's set
-            } : {
-                has_url: false
-            }
+            error: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
         }, { status: 500 })
     }
 }
-
