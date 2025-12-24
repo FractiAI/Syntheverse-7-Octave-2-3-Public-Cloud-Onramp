@@ -139,6 +139,8 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 #### `users_table`
 User accounts and Stripe integration.
 
+**IMPORTANT**: This table must be created manually via migration. See `supabase/migrations/create_users_table.sql` or `supabase/migrations/combined_all_migrations.sql`.
+
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | text | Primary key (Supabase auth user ID) |
@@ -146,6 +148,9 @@ User accounts and Stripe integration.
 | `email` | text | User's email (unique) |
 | `plan` | text | Subscription plan |
 | `stripe_id` | text | Stripe customer ID |
+
+**Indexes:**
+- `idx_users_table_email` on `email` column
 
 #### `contributions`
 PoC submission archive with 3D vectorization for redundancy detection.
