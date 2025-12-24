@@ -9,10 +9,14 @@ const DEBUG_ENABLED =
     process.env.NODE_ENV === 'development';
 
 export function debug(component: string, message: string, data?: any) {
-    if (DEBUG_ENABLED) {
-        const timestamp = new Date().toISOString();
-        const logMessage = `[${timestamp}] [${component}] ${message}`;
-        
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] [${component}] ${message}`;
+    
+    // Always log critical evaluation information, even if DEBUG is disabled
+    const alwaysLogComponents = ['EvaluateWithGrok', 'SubmitContribution', 'EvaluateContribution']
+    const shouldLog = DEBUG_ENABLED || alwaysLogComponents.includes(component)
+    
+    if (shouldLog) {
         if (data !== undefined) {
             console.log(logMessage, data);
         } else {

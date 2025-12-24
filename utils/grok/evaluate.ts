@@ -1313,6 +1313,20 @@ Return your complete evaluation as a valid JSON object matching the specified st
         // Final validation: If all scores are 0, this indicates a problem with Grok's response
         const allScoresZero = finalNoveltyScore === 0 && densityFinal === 0 && coherenceScore === 0 && alignmentScore === 0
         if (allScoresZero) {
+            // Always log this critical error, even if debug is disabled
+            console.error('[EvaluateWithGrok] CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', {
+                evaluationFull: JSON.stringify(evaluation, null, 2),
+                rawAnswer: answer.substring(0, 3000),
+                scoring: scoring,
+                novelty: novelty,
+                density: density,
+                coherence: coherence,
+                alignment: alignment,
+                baseNoveltyScore,
+                baseDensityScore,
+                coherenceScore,
+                alignmentScore
+            })
             debugError('EvaluateWithGrok', 'CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', {
                 evaluationFull: JSON.stringify(evaluation, null, 2),
                 rawAnswer: answer.substring(0, 2000),
