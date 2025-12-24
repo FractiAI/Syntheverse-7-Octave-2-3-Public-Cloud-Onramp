@@ -7,6 +7,7 @@ import { debug, debugError } from '@/utils/debug'
 import { evaluateWithGrok } from '@/utils/grok/evaluate'
 import { vectorizeSubmission } from '@/utils/vectors'
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request'
+import { isQualifiedForOpenEpoch } from '@/utils/epochs/qualification'
 import * as crypto from 'crypto'
 
 export async function POST(request: NextRequest) {
@@ -232,7 +233,10 @@ export async function POST(request: NextRequest) {
                 evaluation = await evaluateWithGrok(textContent, title.trim(), category || undefined, submission_hash)
                 
                 // Use qualified status from evaluation
-                const qualified = evaluation.qualified || (evaluation.pod_score >= 8000)
+                // Check qualification based on current open epoch and thresholds
+                const qualified = evaluation.qualified !== undefined
+                    ? evaluation.qualified
+                    : await isQualifiedForOpenEpoch(evaluation.pod_score, evaluation.density)
             
                 // Generate vector embedding and 3D coordinates using evaluation scores
                 let vectorizationResult: { embedding: number[], vector: { x: number, y: number, z: number }, embeddingModel: string } | null = null

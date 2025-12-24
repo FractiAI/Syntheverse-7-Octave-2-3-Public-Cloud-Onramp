@@ -6,6 +6,7 @@ import { debug, debugError } from '@/utils/debug'
 import { evaluateWithGrok } from '@/utils/grok/evaluate'
 import { vectorizeSubmission } from '@/utils/vectors'
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request'
+import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification'
 import crypto from 'crypto'
 
 export async function POST(
@@ -77,11 +78,15 @@ export async function POST(
             throw error
         }
         
-        // Use qualified status from evaluation, or calculate if not provided
-        // Founder qualification requires ≥8,000 score (not 7,000)
+        // Check qualification based on current open epoch and thresholds
+        // Qualification is based on both pod_score and density meeting the threshold for the current open epoch
+        const epochInfo = await getOpenEpochInfo()
+        const qualifiedByEpoch = await isQualifiedForOpenEpoch(evaluation.pod_score, evaluation.density)
+        
+        // Use qualified status from evaluation if provided, otherwise use epoch-based qualification
         const qualified = evaluation.qualified !== undefined 
             ? evaluation.qualified 
-            : (evaluation.pod_score >= 8000)
+            : qualifiedByEpoch
         
         // Generate vector embedding and 3D coordinates using evaluation scores
         let vectorizationResult: { embedding: number[], vector: { x: number, y: number, z: number }, embeddingModel: string } | null = null

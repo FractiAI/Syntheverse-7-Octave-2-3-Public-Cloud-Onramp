@@ -19,6 +19,7 @@ import { contributionsTable, allocationsTable, tokenomicsTable, epochBalancesTab
 import { eq, sql } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { createClient } from '@/utils/supabase/server'
+import { isQualifiedForOpenEpoch } from '@/utils/epochs/qualification'
 import crypto from 'crypto'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'espressolico@gmail.com'
@@ -118,8 +119,11 @@ async function handleApproval(submission_hash: string, approvedBy: string): Prom
             return NextResponse.redirect(new URL(`/dashboard?submission=${submission_hash}&status=already_approved`, process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'))
         }
         
-        // Verify PoC is qualified
-        const qualified = metadata.qualified_founder || (metadata.pod_score >= 8000)
+        // Verify PoC is qualified for current open epoch
+        const podScore = metadata.pod_score || 0
+        const density = metadata.density || 0
+        const qualified = metadata.qualified_founder || await isQualifiedForOpenEpoch(podScore, density)
+        
         if (!qualified) {
             return NextResponse.redirect(new URL(`/dashboard?submission=${submission_hash}&error=not_qualified`, process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'))
         }
