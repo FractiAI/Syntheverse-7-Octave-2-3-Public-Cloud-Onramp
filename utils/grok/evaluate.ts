@@ -691,13 +691,13 @@ Novelty
 
 Originality, frontier contribution, non-derivative insight
 
-Apply 0–100% penalty based on redundancy (percentage of base Novelty score)
+No penalty (individual scores are not penalized)
 
 Density
 
 Information richness, depth, insight compression
 
-Optional small percentage penalty if repetition reduces insight
+No penalty (individual scores are not penalized)
 
 Coherence
 
@@ -713,13 +713,19 @@ No penalty
 
 Total Score Calculation:
 
-Novelty_Score = Base_Novelty × (1 - Redundancy_Penalty_Percent / 100)
+Individual Category Scores (no penalties applied):
+- Novelty_Score = Base_Novelty (0-2,500)
+- Density_Score = Base_Density (0-2,500)
+- Coherence_Score = Coherence (0-2,500)
+- Alignment_Score = Alignment (0-2,500)
 
-Density_Score = Base_Density × (1 - Optional_Density_Penalty_Percent / 100)
+Composite_Score = Novelty_Score + Density_Score + Coherence_Score + Alignment_Score
 
-Total_Score = Novelty_Score + Density_Score + Coherence + Alignment
+Final_Total_Score = Composite_Score × (1 - Redundancy_Penalty_Percent / 100)
 
-Provide numeric score per dimension, total score, and justification including redundancy impact
+The redundancy penalty is applied to the COMPOSITE/TOTAL score, not to individual category scores.
+
+Provide numeric score per dimension, composite score, redundancy penalty percentage, final total score, and justification including redundancy impact
 
 🔹 
 
