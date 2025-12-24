@@ -77,11 +77,9 @@ export async function GET(request: NextRequest) {
         const isUserInDB = checkUserInDB.length > 0
         
         if (!isUserInDB) {
-            const stripeID = await createStripeCustomer(
-                user.id, 
-                user.email!, 
-                user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
-            )
+            // Stripe is only used when registering a PoC (paying the $200 registration fee)
+            // Use a placeholder value - Stripe customer will be created on-demand when user registers a PoC
+            const stripeID = 'pending'
             await db.insert(usersTable).values({ 
                 id: user.id, 
                 name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User', 

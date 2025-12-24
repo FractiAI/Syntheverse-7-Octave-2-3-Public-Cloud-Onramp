@@ -44,37 +44,15 @@ export async function updateUsername(formData: FormData) {
             
             if (usersByEmail.length === 0) {
                 // User doesn't exist at all - create the record automatically
+                // Stripe is only used when registering a PoC (paying the $200 registration fee)
+                // Use a placeholder value that indicates "free user, Stripe customer created on-demand when needed"
+                const stripeID = 'pending' // Placeholder - Stripe customer created when user registers a PoC
+                console.log('Creating user account (Stripe customer will be created when user registers a PoC):', {
+                    userId: user.id,
+                    email: user.email,
+                    name: newName.trim()
+                })
                 try {
-                    let stripeID: string
-                    try {
-                        console.log('Attempting to create Stripe customer for new user:', {
-                            userId: user.id,
-                            email: user.email,
-                            name: newName.trim()
-                        })
-                        stripeID = await createStripeCustomer(
-                            user.id,
-                            user.email!,
-                            newName.trim()
-                        )
-                        console.log('Stripe customer created successfully:', {
-                            stripeId: stripeID?.substring(0, 20) || 'unknown'
-                        })
-                    } catch (stripeError) {
-                        console.error('Error creating Stripe customer:', stripeError)
-                        const stripeErrorMsg = stripeError instanceof Error ? stripeError.message : String(stripeError)
-                        const stripeErrorCode = (stripeError as any)?.code || (stripeError as any)?.type || undefined
-                        console.error('Stripe error details:', {
-                            message: stripeErrorMsg,
-                            code: stripeErrorCode,
-                            userId: user.id,
-                            email: user.email
-                        })
-                        // If Stripe fails, we can still create the user with a placeholder stripe_id
-                        // This allows the user to update their username even if Stripe is down
-                        stripeID = `placeholder_${user.id}`
-                        console.warn('Using placeholder Stripe ID, user can update later')
-                    }
                     
                     try {
                         await db.insert(usersTable).values({
@@ -120,8 +98,7 @@ export async function updateUsername(formData: FormData) {
                         stack: errorStack,
                         userId: user.id,
                         email: user.email,
-                        name: newName.trim(),
-                        stripeId: typeof stripeID === 'string' ? stripeID.substring(0, 20) : 'failed'
+                        name: newName.trim()
                     })
                     
                     // Provide more specific error messages

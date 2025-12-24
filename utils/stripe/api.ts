@@ -112,18 +112,49 @@ export async function createStripeCheckoutSession(email: string): Promise<string
             stripeIdPrefix: user?.[0]?.stripe_id?.substring(0, 8) || 'none'
         })
         
-        // If user doesn't exist or has no stripe_id, throw error
-        if (!user || user.length === 0 || !user[0].stripe_id) {
-            debugError('createStripeCheckoutSession', 'User not found or has no Stripe customer ID', new Error(`User: ${!!user && user.length > 0}, Stripe ID: ${user?.[0]?.stripe_id || 'missing'}`))
-            throw new Error("User not found or has no Stripe customer ID")
+        // If user doesn't exist, throw error
+        if (!user || user.length === 0) {
+            debugError('createStripeCheckoutSession', 'User not found', new Error('User not found'))
+            throw new Error("User not found")
+        }
+
+        let stripeCustomerId = user[0].stripe_id
+
+        // If user has placeholder stripe_id, create Stripe customer on-demand (when registering PoC)
+        if (!stripeCustomerId || stripeCustomerId === 'pending' || stripeCustomerId.startsWith('free_') || stripeCustomerId.startsWith('placeholder_')) {
+            debug('createStripeCheckoutSession', 'Creating Stripe customer on-demand for PoC registration', {
+                userId: user[0].id,
+                email: user[0].email,
+                currentStripeId: stripeCustomerId
+            })
+            
+            try {
+                stripeCustomerId = await createStripeCustomer(
+                    user[0].id,
+                    user[0].email,
+                    user[0].name
+                )
+                
+                // Update user record with real Stripe customer ID
+                await db.update(usersTable)
+                    .set({ stripe_id: stripeCustomerId })
+                    .where(eq(usersTable.id, user[0].id))
+                
+                debug('createStripeCheckoutSession', 'Stripe customer created and saved', {
+                    stripeCustomerId: stripeCustomerId.substring(0, 20)
+                })
+            } catch (createError) {
+                debugError('createStripeCheckoutSession', 'Failed to create Stripe customer', createError)
+                throw new Error("Failed to create Stripe customer for payment")
+            }
         }
 
         debug('createStripeCheckoutSession', 'Creating Stripe customer session', {
-            customerId: user[0].stripe_id
+            customerId: stripeCustomerId.substring(0, 20)
         })
 
         const customerSession = await stripeClient.customerSessions.create({
-            customer: user[0].stripe_id,
+            customer: stripeCustomerId,
             components: {
                 pricing_table: {
                     enabled: true,

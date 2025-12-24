@@ -86,8 +86,9 @@ export async function signup(currentState: { message: string }, formData: FormDa
     }
 
     try {
-        // create Stripe Customer Record using signup response data
-        const stripeID = await createStripeCustomer(signUpData.user.id, signUpData.user.email!, data.name)
+        // Stripe is only used when registering a PoC (paying the $200 registration fee)
+        // Use a placeholder value - Stripe customer will be created on-demand when user registers a PoC
+        const stripeID = 'pending'
         
         // Create record in DB
         await db.insert(usersTable).values({ 
