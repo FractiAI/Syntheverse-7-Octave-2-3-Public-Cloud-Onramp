@@ -906,51 +906,84 @@ Treat all scoring as simulated but rigorous
 
 All redundancy references must be drawn from the archived PoC vectors (3D representations) provided in the conversation history. Compare vectors within the holographic hydrogen fractal sandbox framework.
 
-🔹 Output Format
+🔹 Output Format - CRITICAL: JSON Structure Requirements
 
-Return a JSON object with the following structure:
+**IMPORTANT:** You MUST return a valid JSON object with the EXACT structure below. All numeric scores must be NUMBERS (not strings, not null, not undefined). The JSON must be parseable without any markdown code blocks.
+
+**Required JSON Structure:**
 {
     "classification": ["Research"|"Development"|"Alignment"],
     "scoring": {
         "novelty": {
-            "base_score": <0-2500>,
-            "redundancy_penalty_percent": <0-100>,
-            "final_score": <0-2500>,
-            "justification": "<explanation including which archived PoC vectors (3D representations) in the holographic hydrogen fractal sandbox contributed to the penalty, describing vector similarity and positions>"
+            "base_score": <NUMBER 0-2500>,
+            "redundancy_penalty_percent": <NUMBER 0-100>,
+            "final_score": <NUMBER 0-2500>,
+            "justification": "<explanation>"
         },
         "density": {
-            "base_score": <0-2500>,
-            "redundancy_penalty_percent": <0-100>,
-            "final_score": <0-2500>,
+            "base_score": <NUMBER 0-2500>,
+            "redundancy_penalty_percent": <NUMBER 0-100>,
+            "final_score": <NUMBER 0-2500>,
+            "score": <NUMBER 0-2500>,
             "justification": "<explanation>"
         },
         "coherence": {
-            "score": <0-2500>,
+            "score": <NUMBER 0-2500>,
+            "final_score": <NUMBER 0-2500>,
             "justification": "<explanation>"
         },
         "alignment": {
-            "score": <0-2500>,
+            "score": <NUMBER 0-2500>,
+            "final_score": <NUMBER 0-2500>,
             "justification": "<explanation>"
         }
     },
-    "total_score": <0-10000>,
+    "total_score": <NUMBER 0-10000>,
+    "pod_score": <NUMBER 0-10000>,
     "qualified_founder": <true|false>,
     "metal_alignment": "Gold"|"Silver"|"Copper"|"Hybrid",
+    "metals": ["Gold"|"Silver"|"Copper"|"Hybrid"],
     "metal_justification": "<explanation>",
-    "redundancy_analysis": "<which archived PoC vectors (3D representations) were referenced, describing their positions in the holographic hydrogen fractal sandbox and vector similarity>",
+    "redundancy_analysis": "<explanation>",
     "founder_certificate": "<markdown certificate if qualified, empty string if not>",
     "homebase_intro": "<Homebase v2.0 onboarding paragraph>",
     "tokenomics_recommendation": {
         "eligible_epochs": ["founder"|"pioneer"|"community"|"ecosystem"],
-        "suggested_allocation": <number>,
-        "tier_multiplier": <number>,
-        "epoch_distribution": {"founder": <number>, "pioneer": <number>, ...},
+        "suggested_allocation": <NUMBER>,
+        "tier_multiplier": <NUMBER>,
+        "epoch_distribution": {"founder": <NUMBER>, "pioneer": <NUMBER>, ...},
         "allocation_notes": "<explanation>",
         "requires_admin_approval": true
     }
 }
 
-Return only valid JSON, no markdown code blocks.`
+**CRITICAL SCORING REQUIREMENTS:**
+1. **All scores MUST be numeric values** (integers or floats), NOT strings, NOT null, NOT undefined
+2. **Density MUST include both "base_score" AND "final_score"** - both must be numbers between 0-2500
+3. **Density MUST also include "score"** field as an alias for final_score (for compatibility)
+4. **If density has no redundancy penalty, set "redundancy_penalty_percent" to 0** (not null, not undefined)
+5. **All dimension scores (novelty, density, coherence, alignment) must be present** and be numbers
+6. **Total score (total_score and pod_score) must equal the sum of all four dimension final scores**
+7. **Do NOT wrap the JSON in markdown code blocks** - return raw JSON only
+8. **Do NOT include any text before or after the JSON** - only the JSON object
+
+**Example of correct density scoring:**
+"density": {
+    "base_score": 2200,
+    "redundancy_penalty_percent": 0,
+    "final_score": 2200,
+    "score": 2200,
+    "justification": "High information density with comprehensive coverage of the topic"
+}
+
+**Example of INCORRECT density scoring (DO NOT DO THIS):**
+"density": {
+    "base_score": "2200",  // WRONG: string instead of number
+    "final_score": null,    // WRONG: null instead of number
+    "score": undefined      // WRONG: undefined instead of number
+}
+
+Return ONLY the JSON object, no markdown, no code blocks, no explanations outside the JSON.`
 
     // Format archived PoCs for context (as 3D vectors in holographic hydrogen fractal sandbox)
     const archivedPoCsContext = archivedPoCs.length > 0 
@@ -1070,6 +1103,13 @@ ${tokenomicsContext}
 - Be thorough in comparing content, concepts, and contributions through the lens of 3D vector similarity
 - The redundancy penalty is a PERCENTAGE (0-100%), not a fixed point value
 - Use the Fractal Cognitive Grammar (✦ ◇ ⊙ ⚛ ❂ ✶ △ ∞ ◎) to understand vector relationships and energy flow patterns between submissions
+
+**FINAL INSTRUCTIONS:**
+1. Calculate ALL scores as NUMBERS (0-2500 for dimensions, 0-10000 for total)
+2. Ensure density.base_score, density.final_score, and density.score are ALL present and are NUMBERS
+3. Return ONLY valid JSON - no markdown code blocks, no text before/after
+4. Verify the JSON is parseable before returning it
+5. All scores must be numeric values, never strings, null, or undefined
 
 Return your complete evaluation as a valid JSON object matching the specified structure, including a "tokenomics_recommendation" field with allocation details.`
     

@@ -406,7 +406,10 @@ export async function POST(request: NextRequest) {
                 founder_certificate: evaluation.founder_certificate,
                 homebase_intro: evaluation.homebase_intro,
                 tokenomics_recommendation: evaluation.tokenomics_recommendation,
-                allocation_status: 'pending_admin_approval' // Token allocation requires admin approval
+                allocation_status: 'pending_admin_approval', // Token allocation requires admin approval
+                // Include base scores for debugging and fallback
+                base_density: evaluation.base_density,
+                base_novelty: evaluation.base_novelty
             } : null,
             evaluation_error: evaluationError ? evaluationError.message : null,
             status: evaluation ? (evaluation.qualified ? 'qualified' : 'unqualified') : 'draft',

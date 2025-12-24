@@ -120,13 +120,24 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 // The dialog will display loading state, then update with results when ready
                 if (result.evaluation) {
                     // Evaluation completed synchronously - show results immediately
+                    // Log full evaluation for debugging
+                    console.log('Evaluation completed:', result.evaluation)
+                    console.log('Density value:', result.evaluation.density)
+                    console.log('Base density:', result.evaluation.base_density)
+                    
+                    // Use base_density as fallback if density is 0
+                    const evaluationData = { ...result.evaluation }
+                    if (evaluationData.density === 0 && evaluationData.base_density && evaluationData.base_density > 0) {
+                        console.warn('Density is 0, using base_density as fallback:', evaluationData.base_density)
+                        evaluationData.density = evaluationData.base_density
+                    }
+                    
                     setEvaluationStatus({
                         completed: true,
                         podScore: result.evaluation.pod_score,
                         qualified: result.evaluation.qualified || result.evaluation.qualified_founder,
-                        evaluation: result.evaluation // Store full evaluation for detailed report
+                        evaluation: evaluationData // Store full evaluation for detailed report
                     })
-                    console.log('Evaluation completed:', result.evaluation)
                 } else if (result.evaluation_error) {
                     // Evaluation error occurred - show error in dialog
                     setEvaluationStatus({
