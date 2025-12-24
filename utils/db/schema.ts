@@ -101,6 +101,8 @@ export const pocLogTable = pgTable('poc_log', {
         redundancy_analysis?: string;
         metal_justification?: string;
         error?: string;
+        base_density?: number;
+        base_novelty?: number;
     }>(),
     grok_api_request: jsonb('grok_api_request').$type<any>(), // GROK API request details
     grok_api_response: jsonb('grok_api_response').$type<any>(), // GROK API response details
