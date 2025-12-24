@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
                         message: 'Database insert operation succeeded (test user created and cleaned up)',
                         details: {
                             testName: testName,
-                            stripeId: stripeID?.substring(0, 20),
+                            stripeId: stripeID.substring(0, 20),
                             note: 'Test user was created and then deleted'
                         }
                     })
