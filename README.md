@@ -132,6 +132,150 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 └── public/                 # Static assets
 ```
 
+## 📊 Database Schema
+
+### Tables
+
+#### `users_table`
+User accounts and Stripe integration.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | text | Primary key (Supabase auth user ID) |
+| `name` | text | User's display name |
+| `email` | text | User's email (unique) |
+| `plan` | text | Subscription plan |
+| `stripe_id` | text | Stripe customer ID |
+
+#### `contributions`
+PoC submission archive with 3D vectorization for redundancy detection.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `submission_hash` | text | Primary key (SHA-256 hash of submission) |
+| `title` | text | Contribution title |
+| `contributor` | text | Contributor identifier (email or user ID) |
+| `content_hash` | text | Hash of content for deduplication |
+| `text_content` | text | Full text content (optional) |
+| `pdf_path` | text | Path to PDF file (optional) |
+| `status` | text | Status: `draft`, `submitted`, `evaluating`, `qualified`, `unqualified`, `archived`, `superseded` |
+| `category` | text | Category: `scientific`, `tech`, `alignment` |
+| `metals` | jsonb | Array of metal types: `gold`, `silver`, `copper` |
+| `metadata` | jsonb | Evaluation metadata (coherence, density, redundancy, pod_score) |
+| `embedding` | jsonb | Vector embedding array (for similarity search) |
+| `vector_x` | numeric(20,10) | X coordinate in 3D HHF space (Novelty dimension) |
+| `vector_y` | numeric(20,10) | Y coordinate in 3D HHF space (Density dimension) |
+| `vector_z` | numeric(20,10) | Z coordinate in 3D HHF space (Coherence dimension) |
+| `embedding_model` | text | Embedding model used (e.g., `text-embedding-3-small`) |
+| `vector_generated_at` | timestamp | When vector was generated |
+| `created_at` | timestamp | Submission timestamp |
+| `updated_at` | timestamp | Last update timestamp |
+
+#### `tokenomics`
+SYNTH token supply and epoch state.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | text | Primary key (default: `'main'`) |
+| `total_supply` | numeric(20,0) | Total SYNTH supply (default: 90T = 90,000,000,000,000) |
+| `total_distributed` | numeric(20,0) | Total SYNTH distributed (default: 0) |
+| `current_epoch` | text | Current epoch: `founder`, `pioneer`, `community`, `ecosystem` (default: `founder`) |
+| `founder_halving_count` | integer | Number of founder epoch halvings (default: 0) |
+| `updated_at` | timestamp | Last update timestamp |
+
+#### `epoch_balances`
+Epoch-specific token balances and thresholds.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | text | Primary key |
+| `epoch` | text | Epoch name: `founder`, `pioneer`, `community`, `ecosystem` |
+| `balance` | numeric(20,0) | Current epoch balance |
+| `threshold` | numeric(20,0) | Qualification threshold (pod_score required) |
+| `distribution_amount` | numeric(20,0) | Initial distribution amount for epoch |
+| `distribution_percent` | numeric(5,2) | Distribution percentage of total supply |
+| `updated_at` | timestamp | Last update timestamp |
+
+**Epoch Thresholds:**
+- Founder: 45T SYNTH, threshold 8,000 pod_score
+- Pioneer: 22.5T SYNTH, threshold 7,000 pod_score
+- Community: 11.25T SYNTH, threshold 6,000 pod_score
+- Ecosystem: 11.25T SYNTH, threshold 5,000 pod_score
+
+#### `allocations`
+Individual token allocations per contribution (requires admin approval).
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | text | Primary key (UUID) |
+| `submission_hash` | text | Foreign key to `contributions.submission_hash` |
+| `contributor` | text | Contributor identifier |
+| `metal` | text | Metal type: `gold`, `silver`, `copper` |
+| `epoch` | text | Epoch for allocation |
+| `tier` | text | Optional tier information |
+| `reward` | numeric(20,0) | SYNTH tokens allocated |
+| `tier_multiplier` | numeric(10,4) | Multiplier applied (default: 1.0) |
+| `epoch_balance_before` | numeric(20,0) | Epoch balance before allocation |
+| `epoch_balance_after` | numeric(20,0) | Epoch balance after allocation |
+| `created_at` | timestamp | Allocation timestamp |
+
+#### `poc_log`
+Audit trail for all PoC submissions and evaluations.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | text | Primary key (UUID) |
+| `submission_hash` | text | Foreign key to `contributions.submission_hash` |
+| `contributor` | text | Contributor identifier |
+| `event_type` | text | Event: `submission`, `evaluation_start`, `evaluation_complete`, `evaluation_error`, `status_change`, `allocation` |
+| `event_status` | text | Status: `success`, `error`, `pending` |
+| `title` | text | Contribution title |
+| `category` | text | Contribution category |
+| `request_data` | jsonb | Full request payload |
+| `response_data` | jsonb | Full response payload |
+| `evaluation_result` | jsonb | Evaluation result with fields: `coherence`, `density`, `redundancy`, `pod_score`, `novelty`, `alignment`, `metals`, `qualified`, `classification`, `redundancy_analysis`, `metal_justification` |
+| `grok_api_request` | jsonb | Grok API request details |
+| `grok_api_response` | jsonb | Grok API response details (includes full evaluation JSON) |
+| `error_message` | text | Error message if event failed |
+| `error_stack` | text | Error stack trace if event failed |
+| `processing_time_ms` | integer | Processing time in milliseconds |
+| `metadata` | jsonb | Additional metadata |
+| `created_at` | timestamp | Event timestamp |
+
+### Scoring Methodology
+
+**Individual Category Scores (0-2,500 each, no penalties):**
+- **Novelty**: Originality, frontier contribution, non-derivative insight
+- **Density**: Information richness, depth, insight compression
+- **Coherence**: Internal consistency, clarity, structural integrity
+- **Alignment**: Fit with hydrogen-holographic fractal principles
+
+**Composite Score Calculation:**
+```
+Composite_Score = Novelty + Density + Coherence + Alignment
+Final_Total_Score = Composite_Score × (1 - Redundancy_Penalty% / 100)
+```
+
+**Qualification:**
+- Redundancy penalty (0-100%) is applied to the composite/total score, not individual category scores
+- Founder qualification: Final total score ≥ 8,000
+- Qualification is epoch-based (must meet both density and pod_score thresholds for current open epoch)
+
+### 3D Vectorization (Holographic Hydrogen Fractal Sandbox)
+
+Contributions are mapped to 3D coordinates in the HHF space:
+- **X-axis (vector_x)**: Novelty dimension
+- **Y-axis (vector_y)**: Density dimension
+- **Z-axis (vector_z)**: Coherence dimension
+- **Distance calculation**: Euclidean distance between vectors for redundancy detection
+- **Similarity**: Cosine similarity and distance-based similarity for redundancy percentage
+
+This enables:
+- Visual representation of contributions in 3D space
+- Vector-based redundancy calculation
+- Spatial clustering of related contributions
+- Holographic visualization on the dashboard
+
 ## 🔧 Available Scripts
 
 ```bash
