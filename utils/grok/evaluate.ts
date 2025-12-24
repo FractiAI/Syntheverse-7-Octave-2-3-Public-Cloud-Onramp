@@ -1128,6 +1128,14 @@ Return your complete evaluation as a valid JSON object matching the specified st
         
         const evaluation = JSON.parse(jsonMatch[0])
         
+        // Debug: Log the full evaluation structure to understand Grok's response format
+        debug('EvaluateWithGrok', 'Raw evaluation structure', {
+            hasScoring: !!evaluation.scoring,
+            hasDensity: !!evaluation.density,
+            evaluationKeys: Object.keys(evaluation),
+            evaluationString: JSON.stringify(evaluation, null, 2).substring(0, 1000) // First 1000 chars for debugging
+        })
+        
         // Extract scoring from new format
         const scoring = evaluation.scoring || {}
         const novelty = scoring.novelty || {}
@@ -1150,6 +1158,9 @@ Return your complete evaluation as a valid JSON object matching the specified st
             evaluationKeys: Object.keys(evaluation),
             scoringKeys: evaluation.scoring ? Object.keys(evaluation.scoring) : [],
             densityKeys: density ? Object.keys(density) : [],
+            densityObject: density,
+            evaluationDensity: evaluation.density,
+            scoringDensity: evaluation.scoring?.density,
         })
         
         // Extract redundancy penalty as percentage (0-100%)
@@ -1171,20 +1182,57 @@ Return your complete evaluation as a valid JSON object matching the specified st
         // For density, try multiple fallback paths since Grok may return it in different formats
         // Priority: final_score > score > calculated from base > direct evaluation.density
         let finalDensityScore = density.final_score ?? density.score ?? 0
-        if (finalDensityScore === 0 && baseDensityScore > 0) {
-            finalDensityScore = densityScore
-        }
+        
+        // If still 0, try more locations
         if (finalDensityScore === 0) {
             // Try all possible locations for density score in the evaluation response
             finalDensityScore = evaluation.density ?? 
                                evaluation.scoring?.density?.score ?? 
                                evaluation.scoring?.density?.final_score ?? 
                                evaluation.scoring?.density?.base_score ??
+                               evaluation.scoring?.density?.value ??
+                               evaluation.density_score ??
+                               evaluation.scores?.density ??
                                0
+        }
+        
+        // If still 0, try parsing as number from string
+        if (finalDensityScore === 0 && typeof evaluation.density === 'string') {
+            const parsed = parseFloat(evaluation.density)
+            if (!isNaN(parsed)) {
+                finalDensityScore = parsed
+            }
+        }
+        
+        // If still 0 and we have baseDensityScore, use calculated score
+        if (finalDensityScore === 0 && baseDensityScore > 0) {
+            finalDensityScore = densityScore
+        }
+        
+        // If still 0, try to extract from nested structures
+        if (finalDensityScore === 0) {
+            // Check if density is in a nested evaluation object
+            if (evaluation.evaluation?.density) {
+                finalDensityScore = evaluation.evaluation.density
+            } else if (evaluation.evaluation?.scoring?.density?.score) {
+                finalDensityScore = evaluation.evaluation.scoring.density.score
+            } else if (evaluation.evaluation?.scoring?.density?.final_score) {
+                finalDensityScore = evaluation.evaluation.scoring.density.final_score
+            }
         }
         
         // Use the best available density score (prefer finalDensityScore, fallback to baseDensityScore if final is 0)
         const densityFinal = finalDensityScore > 0 ? finalDensityScore : (baseDensityScore > 0 ? baseDensityScore : 0)
+        
+        // Final debug log to see what we extracted
+        debug('EvaluateWithGrok', 'Density extraction result', {
+            finalDensityScore,
+            baseDensityScore,
+            densityScore,
+            densityFinal,
+            densityObject: JSON.stringify(density),
+            evaluationDensity: evaluation.density,
+        })
         
         // Calculate total score if not provided
         let pod_score = evaluation.total_score ?? evaluation.pod_score ?? evaluation.poc_score ?? 0
