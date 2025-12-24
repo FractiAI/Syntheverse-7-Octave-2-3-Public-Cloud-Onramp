@@ -26,17 +26,29 @@ export async function updateUsername(formData: FormData) {
     }
 
     try {
-        // Update the name in users_table
+        // Update the name in users_table using user ID (primary key, most reliable)
         await db
             .update(usersTable)
             .set({ name: newName.trim() })
-            .where(eq(usersTable.email, user.email!))
+            .where(eq(usersTable.id, user.id))
 
         revalidatePath('/account')
         return { success: true }
     } catch (err) {
         console.error('Error updating username:', err)
-        return { success: false, error: 'Failed to update username' }
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+        console.error('Error details:', {
+            error: err,
+            userId: user.id,
+            email: user.email,
+            newName: newName.trim()
+        })
+        return { 
+            success: false, 
+            error: errorMessage.includes('does not exist') || errorMessage.includes('relation')
+                ? 'Database error. Please contact support.'
+                : `Failed to update username: ${errorMessage}`
+        }
     }
 }
 
