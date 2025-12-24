@@ -3,7 +3,6 @@ import { createClient } from '@/utils/supabase/server'
 import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
-import { updateUsername } from '@/app/account/actions'
 import { createStripeCustomer } from '@/utils/stripe/api'
 import { debug, debugError } from '@/utils/debug'
 
@@ -193,53 +192,127 @@ export async function POST(request: NextRequest) {
             })
         }
 
-        // Step 5: Test actual username update with a test name
+        // Step 5: Test database update operation (simulating username update)
         try {
-            const testName = `Test User ${Date.now()}`
-            const formData = new FormData()
-            formData.append('name', testName)
-            
-            const updateResult = await updateUsername(formData)
-            
-            results.push({
-                step: 'Username Update Test',
-                status: updateResult.success ? 'success' : 'error',
-                message: updateResult.success 
-                    ? 'Username update succeeded' 
-                    : `Username update failed: ${updateResult.error}`,
-                details: {
-                    success: updateResult.success,
-                    error: updateResult.error || null,
-                    testName: testName
-                }
-            })
+            const existingUsers = await db
+                .select()
+                .from(usersTable)
+                .where(eq(usersTable.id, user.id))
+                .limit(1)
 
-            // If successful, restore original name if user existed
-            if (updateResult.success) {
-                const existingUsers = await db
-                    .select()
-                    .from(usersTable)
-                    .where(eq(usersTable.id, user.id))
-                    .limit(1)
+            if (existingUsers.length > 0) {
+                // User exists - test update operation
+                const testName = `Test User ${Date.now()}`
+                const originalName = existingUsers[0].name
                 
-                if (existingUsers.length > 0 && existingUsers[0].name !== testName) {
-                    // Try to restore original name (optional)
+                try {
+                    await db
+                        .update(usersTable)
+                        .set({ name: testName })
+                        .where(eq(usersTable.id, user.id))
+                    
+                    // Restore original name
+                    await db
+                        .update(usersTable)
+                        .set({ name: originalName })
+                        .where(eq(usersTable.id, user.id))
+                    
                     results.push({
-                        step: 'Name Restoration',
+                        step: 'Database Update Test',
+                        status: 'success',
+                        message: 'Database update operation succeeded',
+                        details: {
+                            testName: testName,
+                            originalName: originalName,
+                            note: 'Test name was set and restored to original value'
+                        }
+                    })
+                } catch (updateError: any) {
+                    results.push({
+                        step: 'Database Update Test',
+                        status: 'error',
+                        message: `Database update failed: ${updateError.message}`,
+                        details: {
+                            error: updateError.message,
+                            code: updateError.code,
+                            hint: 'This would cause username update to fail'
+                        }
+                    })
+                }
+            } else {
+                // User doesn't exist - test insert operation
+                const testName = `Test User ${Date.now()}`
+                let stripeID: string
+                
+                try {
+                    if (process.env.STRIPE_SECRET_KEY) {
+                        stripeID = await createStripeCustomer(
+                            user.id,
+                            user.email!,
+                            testName
+                        )
+                    } else {
+                        stripeID = `placeholder_${user.id}`
+                    }
+                } catch (stripeError: any) {
+                    stripeID = `placeholder_${user.id}`
+                    results.push({
+                        step: 'Database Insert Test - Stripe',
                         status: 'warning',
-                        message: 'Test name was set. Original name should be restored manually if needed.',
-                        details: { currentName: existingUsers[0].name }
+                        message: 'Stripe customer creation failed, using placeholder',
+                        details: {
+                            error: stripeError.message,
+                            note: 'User creation would proceed with placeholder Stripe ID'
+                        }
+                    })
+                }
+                
+                try {
+                    await db.insert(usersTable).values({
+                        id: user.id,
+                        name: testName,
+                        email: user.email!,
+                        stripe_id: stripeID,
+                        plan: 'none'
+                    })
+                    
+                    // Clean up test user (delete it)
+                    await db
+                        .delete(usersTable)
+                        .where(eq(usersTable.id, user.id))
+                    
+                    results.push({
+                        step: 'Database Insert Test',
+                        status: 'success',
+                        message: 'Database insert operation succeeded (test user created and cleaned up)',
+                        details: {
+                            testName: testName,
+                            stripeId: stripeID?.substring(0, 20),
+                            note: 'Test user was created and then deleted'
+                        }
+                    })
+                } catch (insertError: any) {
+                    results.push({
+                        step: 'Database Insert Test',
+                        status: 'error',
+                        message: `Database insert failed: ${insertError.message}`,
+                        details: {
+                            error: insertError.message,
+                            code: insertError.code,
+                            constraint: insertError.constraint,
+                            hint: 'This would cause user creation to fail when updating username'
+                        }
                     })
                 }
             }
-        } catch (updateError: any) {
+        } catch (testError: any) {
             results.push({
-                step: 'Username Update Test',
+                step: 'Database Operation Test',
                 status: 'error',
-                message: `Username update threw exception: ${updateError.message}`,
+                message: `Database operation test threw exception: ${testError.message}`,
                 details: {
-                    error: updateError.message,
-                    stack: updateError.stack?.substring(0, 500) // Limit stack trace
+                    error: testError.message,
+                    stack: testError.stack?.substring(0, 500)
                 }
             })
         }
