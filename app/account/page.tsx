@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { User, Mail, Shield, Settings, LogOut } from "lucide-react"
 import { signOut } from '@/app/auth/actions'
+import { db } from '@/utils/db/db'
+import { usersTable } from '@/utils/db/schema'
+import { eq } from 'drizzle-orm'
+import { UpdateUsernameForm } from '@/components/UpdateUsernameForm'
 
 export default async function AccountPage() {
     const supabase = createClient()
@@ -18,6 +22,17 @@ export default async function AccountPage() {
     }
 
     const user = data.user
+
+    // Get user data from database
+    let dbUser = null
+    try {
+        const userResult = await db.select().from(usersTable).where(eq(usersTable.email, user.email!))
+        if (userResult.length > 0) {
+            dbUser = userResult[0]
+        }
+    } catch (dbError) {
+        console.error("Error fetching user data:", dbError)
+    }
 
     return (
         <div className="space-y-8">
@@ -39,6 +54,10 @@ export default async function AccountPage() {
                 <CardContent className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
+                            <Label htmlFor="username">Username</Label>
+                            <UpdateUsernameForm currentName={dbUser?.name || user.email?.split('@')[0] || 'User'} />
+                        </div>
+                        <div className="space-y-2">
                             <Label htmlFor="email">Email Address</Label>
                             <Input
                                 id="email"
@@ -51,15 +70,15 @@ export default async function AccountPage() {
                                 Email cannot be changed. Contact support if needed.
                             </p>
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="userId">User ID</Label>
-                            <Input
-                                id="userId"
-                                value={user.id}
-                                disabled
-                                className="bg-muted font-mono text-xs"
-                            />
-                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="userId">User ID</Label>
+                        <Input
+                            id="userId"
+                            value={user.id}
+                            disabled
+                            className="bg-muted font-mono text-xs"
+                        />
                     </div>
 
                     <div className="space-y-2">
