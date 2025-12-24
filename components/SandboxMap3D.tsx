@@ -94,8 +94,10 @@ export function SandboxMap3D() {
         const ctx = canvas.getContext('2d')
         if (!ctx) return
 
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        // Clear canvas (canvas is guaranteed to be non-null here)
+        const canvasWidth = canvas.width
+        const canvasHeight = canvas.height
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 
         // Get vectorized nodes
         const vectorizedNodes = data.nodes.filter(n => n.vector !== null) as Array<Node & { vector: Vector3D }>
@@ -104,7 +106,7 @@ export function SandboxMap3D() {
             ctx.fillStyle = '#666'
             ctx.font = '16px sans-serif'
             ctx.textAlign = 'center'
-            ctx.fillText('No vectorized submissions yet', canvas.width / 2, canvas.height / 2)
+            ctx.fillText('No vectorized submissions yet', canvasWidth / 2, canvasHeight / 2)
             return
         }
 
@@ -122,7 +124,7 @@ export function SandboxMap3D() {
         const centerY = (bounds.minY + bounds.maxY) / 2
         const centerZ = (bounds.minZ + bounds.maxZ) / 2
 
-        const scale = Math.min(canvas.width, canvas.height) / Math.max(
+        const scale = Math.min(canvasWidth, canvasHeight) / Math.max(
             bounds.maxX - bounds.minX,
             bounds.maxY - bounds.minY,
             bounds.maxZ - bounds.minZ
@@ -147,8 +149,8 @@ export function SandboxMap3D() {
             const z2 = dy * sinX + z1 * cosX
 
             // Project to 2D (isometric)
-            const screenX = canvas.width / 2 + (x1 - y1) * scale
-            const screenY = canvas.height / 2 + (x1 + y1) * 0.5 * scale - z2 * scale * 0.5
+            const screenX = canvasWidth / 2 + (x1 - y1) * scale
+            const screenY = canvasHeight / 2 + (x1 + y1) * 0.5 * scale - z2 * scale * 0.5
 
             return { x: screenX, y: screenY, depth: z2 }
         }
