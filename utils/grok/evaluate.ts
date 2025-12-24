@@ -1106,7 +1106,8 @@ Return your complete evaluation as a valid JSON object matching the specified st
         
         debug('EvaluateWithGrok', 'Grok API response received', { 
             responseLength: answer.length,
-            preview: answer.substring(0, 200)
+            preview: answer.substring(0, 500),
+            fullResponse: answer // Log full response for debugging
         })
         
         // Extract JSON from response (might be wrapped in markdown)
@@ -1116,7 +1117,24 @@ Return your complete evaluation as a valid JSON object matching the specified st
             jsonMatch = [answer]
         }
         
-        const evaluation = JSON.parse(jsonMatch[0])
+        let evaluation: any
+        try {
+            evaluation = JSON.parse(jsonMatch[0])
+            debug('EvaluateWithGrok', 'JSON parsed successfully', {
+                hasScoring: !!evaluation.scoring,
+                hasDensity: !!evaluation.density,
+                hasScoringDensity: !!evaluation.scoring?.density,
+                evaluationKeys: Object.keys(evaluation),
+                evaluationString: JSON.stringify(evaluation, null, 2).substring(0, 2000)
+            })
+        } catch (parseError) {
+            debugError('EvaluateWithGrok', 'Failed to parse JSON from Grok response', parseError)
+            debug('EvaluateWithGrok', 'Raw response that failed to parse', {
+                response: answer,
+                jsonMatch: jsonMatch?.[0]?.substring(0, 1000)
+            })
+            throw new Error(`Failed to parse Grok response as JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`)
+        }
         
         // Debug: Log the full evaluation structure to understand Grok's response format
         debug('EvaluateWithGrok', 'Raw evaluation structure', {
@@ -1126,32 +1144,72 @@ Return your complete evaluation as a valid JSON object matching the specified st
             evaluationString: JSON.stringify(evaluation, null, 2).substring(0, 1000) // First 1000 chars for debugging
         })
         
-        // Extract scoring from new format
+        // Extract scoring from new format - try multiple structures
         const scoring = evaluation.scoring || {}
-        const novelty = scoring.novelty || {}
-        const density = scoring.density || {}
-        const coherence = scoring.coherence || {}
-        const alignment = scoring.alignment || {}
+        const novelty = scoring.novelty || evaluation.novelty || {}
+        const density = scoring.density || evaluation.density || {}
+        const coherence = scoring.coherence || evaluation.coherence || {}
+        const alignment = scoring.alignment || evaluation.alignment || {}
         
-        // Extract base scores with multiple fallback options
-        const baseNoveltyScore = novelty.base_score ?? novelty.final_score ?? evaluation.novelty ?? evaluation.scoring?.novelty?.base_score ?? evaluation.scoring?.novelty?.final_score ?? 0
-        const baseDensityScore = density.base_score ?? density.final_score ?? density.score ?? evaluation.density ?? evaluation.scoring?.density?.base_score ?? evaluation.scoring?.density?.final_score ?? evaluation.scoring?.density?.score ?? 0
-        const coherenceScore = coherence.score ?? coherence.final_score ?? evaluation.coherence ?? evaluation.scoring?.coherence?.score ?? 0
-        const alignmentScore = alignment.score ?? alignment.final_score ?? evaluation.alignment ?? evaluation.scoring?.alignment?.score ?? 0
+        // Extract base scores with extensive fallback options
+        // Try all possible locations for each score
+        const baseNoveltyScore = 
+            (typeof novelty === 'object' && novelty !== null ? (novelty.base_score ?? novelty.final_score ?? novelty.score ?? 0) : 0) ||
+            (typeof evaluation.novelty === 'number' ? evaluation.novelty : 0) ||
+            (typeof evaluation.scoring?.novelty === 'object' ? (evaluation.scoring.novelty.base_score ?? evaluation.scoring.novelty.final_score ?? evaluation.scoring.novelty.score ?? 0) : 0) ||
+            0
         
-        // Debug logging for score extraction
-        debug('EvaluateWithGrok', 'Score extraction', {
+        const baseDensityScore = 
+            (typeof density === 'object' && density !== null ? (density.base_score ?? density.final_score ?? density.score ?? 0) : 0) ||
+            (typeof evaluation.density === 'number' ? evaluation.density : 0) ||
+            (typeof evaluation.scoring?.density === 'object' ? (evaluation.scoring.density.base_score ?? evaluation.scoring.density.final_score ?? evaluation.scoring.density.score ?? 0) : 0) ||
+            0
+        
+        const coherenceScore = 
+            (typeof coherence === 'object' && coherence !== null ? (coherence.score ?? coherence.final_score ?? coherence.base_score ?? 0) : 0) ||
+            (typeof evaluation.coherence === 'number' ? evaluation.coherence : 0) ||
+            (typeof evaluation.scoring?.coherence === 'object' ? (evaluation.scoring.coherence.score ?? evaluation.scoring.coherence.final_score ?? evaluation.scoring.coherence.base_score ?? 0) : 0) ||
+            0
+        
+        const alignmentScore = 
+            (typeof alignment === 'object' && alignment !== null ? (alignment.score ?? alignment.final_score ?? alignment.base_score ?? 0) : 0) ||
+            (typeof evaluation.alignment === 'number' ? evaluation.alignment : 0) ||
+            (typeof evaluation.scoring?.alignment === 'object' ? (evaluation.scoring.alignment.score ?? evaluation.scoring.alignment.final_score ?? evaluation.scoring.alignment.base_score ?? 0) : 0) ||
+            0
+        
+        // Debug logging for score extraction - comprehensive
+        debug('EvaluateWithGrok', 'Score extraction - initial values', {
             baseNoveltyScore,
             baseDensityScore,
             coherenceScore,
             alignmentScore,
             evaluationKeys: Object.keys(evaluation),
             scoringKeys: evaluation.scoring ? Object.keys(evaluation.scoring) : [],
-            densityKeys: density ? Object.keys(density) : [],
-            densityObject: density,
+            noveltyType: typeof novelty,
+            densityType: typeof density,
+            coherenceType: typeof coherence,
+            alignmentType: typeof alignment,
+            noveltyObject: typeof novelty === 'object' ? novelty : null,
+            densityObject: typeof density === 'object' ? density : null,
+            coherenceObject: typeof coherence === 'object' ? coherence : null,
+            alignmentObject: typeof alignment === 'object' ? alignment : null,
             evaluationDensity: evaluation.density,
+            evaluationNovelty: evaluation.novelty,
+            evaluationCoherence: evaluation.coherence,
+            evaluationAlignment: evaluation.alignment,
             scoringDensity: evaluation.scoring?.density,
+            scoringNovelty: evaluation.scoring?.novelty,
+            scoringCoherence: evaluation.scoring?.coherence,
+            scoringAlignment: evaluation.scoring?.alignment,
         })
+        
+        // If all scores are 0, log warning and try alternative extraction
+        if (baseNoveltyScore === 0 && baseDensityScore === 0 && coherenceScore === 0 && alignmentScore === 0) {
+            debugError('EvaluateWithGrok', 'WARNING: All scores extracted as 0', {
+                evaluationStructure: JSON.stringify(evaluation, null, 2).substring(0, 3000),
+                rawAnswer: answer.substring(0, 1000)
+            })
+        }
         
         // Extract redundancy penalty as percentage (0-100%)
         // Prefer calculated vector-based redundancy if available, otherwise use Grok's estimate
