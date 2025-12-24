@@ -1310,6 +1310,21 @@ Return your complete evaluation as a valid JSON object matching the specified st
             ? evaluation.qualified_founder 
             : (pod_score >= 8000)
         
+        // Final validation: If all scores are 0, this indicates a problem with Grok's response
+        const allScoresZero = finalNoveltyScore === 0 && densityFinal === 0 && coherenceScore === 0 && alignmentScore === 0
+        if (allScoresZero) {
+            debugError('EvaluateWithGrok', 'CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', {
+                evaluationFull: JSON.stringify(evaluation, null, 2),
+                rawAnswer: answer.substring(0, 2000),
+                scoring: scoring,
+                novelty: novelty,
+                density: density,
+                coherence: coherence,
+                alignment: alignment
+            })
+            // Don't throw - return zeros but log the issue so we can debug
+        }
+        
         return {
             coherence: Math.max(0, Math.min(2500, coherenceScore)),
             density: Math.max(0, Math.min(2500, densityFinal)),
