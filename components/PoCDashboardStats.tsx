@@ -138,14 +138,6 @@ export function PoCDashboardStats() {
       }))
     : []
 
-  const epochData = epochInfo
-    ? Object.entries(epochInfo.epochs).map(([epoch, data]) => ({
-        epoch: epoch.charAt(0).toUpperCase() + epoch.slice(1),
-        balance: data.balance / 1e12, // Convert to trillions
-        distribution: data.distribution_percent,
-      }))
-    : []
-
   return (
     <div className="space-y-4">
       <Card>
@@ -263,35 +255,6 @@ export function PoCDashboardStats() {
                 </Card>
               )}
             </div>
-          )}
-
-          {/* Epoch Distribution */}
-          {epochData.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Epoch Distribution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {epochData.map((epoch) => (
-                    <div key={epoch.epoch} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">{epoch.epoch}</span>
-                        <span className="text-muted-foreground">
-                          {formatNumber(epoch.balance)}T ({epoch.distribution.toFixed(2)}%)
-                        </span>
-                      </div>
-                      <div className="w-full bg-secondary rounded-full h-2">
-                        <div
-                          className="bg-primary h-2 rounded-full"
-                          style={{ width: `${epoch.distribution}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           )}
 
           {/* Last Updated */}

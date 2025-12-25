@@ -9,7 +9,7 @@ import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm"
 import { PoCDashboardStats } from '@/components/PoCDashboardStats'
-import { SandboxMap3D } from '@/components/SandboxMap3D'
+import { SandboxMap3DUpgraded } from '@/components/SandboxMap3DUpgraded'
 
 export default async function Dashboard() {
     const supabase = createClient()
@@ -35,51 +35,19 @@ export default async function Dashboard() {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold">Contributor Dashboard</h1>
-                <p className="text-muted-foreground mt-2">
-                    Welcome back, {user.email}. Manage your account and view your contributions.
-                </p>
-            </div>
-
-            {/* Account Overview */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Account Status</CardTitle>
-                        <User className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">Email</span>
-                                <span className="text-sm font-medium">{user.email}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">Name</span>
-                                <span className="text-sm font-medium">{dbUser?.name || 'Not set'}</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-2">
-                            <Link href="/account">
-                                <Button variant="outline" size="sm" className="w-full justify-start">
-                                    <User className="h-4 w-4 mr-2" />
-                                    Account Settings
-                                </Button>
-                            </Link>
-                        </div>
-                    </CardContent>
-                </Card>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold">Contributor Dashboard</h1>
+                    <p className="text-muted-foreground mt-2">
+                        Welcome back, {user.email}. Manage your account and view your contributions.
+                    </p>
+                </div>
+                <Link href="/submit">
+                    <Button size="lg">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Submit Contribution
+                    </Button>
+                </Link>
             </div>
 
             {/* PoC Evaluation Statistics - Client Component for API calls */}
@@ -87,56 +55,7 @@ export default async function Dashboard() {
 
             {/* 3D Sandbox Map Visualization */}
             <div className="mt-8">
-                <SandboxMap3D />
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Submit Contribution</CardTitle>
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-muted-foreground mb-4">
-                            Upload your work for PoC evaluation
-                        </p>
-                        <Link href="/submit">
-                            <Button size="sm" className="w-full">Submit Now</Button>
-                        </Link>
-                    </CardContent>
-                </Card>
-
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Account Settings</CardTitle>
-                        <User className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-muted-foreground mb-4">
-                            Update profile and preferences
-                        </p>
-                        <Link href="/account">
-                            <Button variant="outline" size="sm" className="w-full">View Account</Button>
-                        </Link>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Explore System</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-muted-foreground mb-4">
-                            View ecosystem statistics
-                        </p>
-                        <Link href="/subscribe">
-                            <Button variant="outline" size="sm" className="w-full">Explore</Button>
-                        </Link>
-                    </CardContent>
-                </Card>
+                <SandboxMap3DUpgraded />
             </div>
 
             {/* Status Overview */}
