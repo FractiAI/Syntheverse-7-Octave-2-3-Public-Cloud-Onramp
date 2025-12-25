@@ -6,8 +6,22 @@
 --          not have been created if the migration was run before the indexes
 --          section was added.
 --
+-- IMPORTANT: Run add_registration_fields_complete.sql FIRST to create the columns!
+--
 -- Run this in Supabase Dashboard → SQL Editor → New Query
 -- ============================================================================
+
+-- First, verify columns exist (this will error if columns don't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'contributions' 
+        AND column_name = 'registered'
+    ) THEN
+        RAISE EXCEPTION 'Column "registered" does not exist. Please run add_registration_fields_complete.sql first!';
+    END IF;
+END $$;
 
 -- Index for querying registered PoCs
 CREATE INDEX IF NOT EXISTS "contributions_registered_idx" ON "contributions" (registered) 
