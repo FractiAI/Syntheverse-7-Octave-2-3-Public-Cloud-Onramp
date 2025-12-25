@@ -5,14 +5,30 @@ import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
 
-// Sanitize the Stripe key - remove whitespace and invalid characters
-const sanitizedStripeKey = process.env.STRIPE_SECRET_KEY?.trim().replace(/\s+/g, '') || '';
-const stripe = new Stripe(sanitizedStripeKey, {
-    apiVersion: '2024-06-20'
-})
+// Initialize Stripe with sanitized key
+function getStripeClient(): Stripe | null {
+    if (!process.env.STRIPE_SECRET_KEY) {
+        return null;
+    }
+    // Sanitize the Stripe key - remove whitespace and invalid characters
+    const sanitizedKey = process.env.STRIPE_SECRET_KEY.trim().replace(/\s+/g, '');
+    // Validate key format
+    if (!sanitizedKey.match(/^sk_(test|live)_/)) {
+        return null;
+    }
+    return new Stripe(sanitizedKey, {
+        apiVersion: '2024-06-20'
+    });
+}
+
+const stripe = getStripeClient();
 
 export async function POST(req: Request) {
     try {
+        if (!stripe) {
+            return new Response('Stripe not configured', { status: 500 });
+        }
+        
         const body = await req.text()
         const sig = headers().get('stripe-signature')
 
