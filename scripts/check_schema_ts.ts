@@ -34,7 +34,7 @@ async function checkSchema() {
             ORDER BY column_name
         `);
         
-        const columns = (columnsResult as any[]).rows || columnsResult as any[];
+        const columns = (columnsResult as any).rows || (columnsResult as any[]);
         
         if (columns.length === 0) {
             console.log('❌ No registration columns found!\n');
@@ -59,7 +59,7 @@ async function checkSchema() {
             ORDER BY ordinal_position
         `);
         
-        const allColumns = (allColumnsResult as any[]).rows || allColumnsResult as any[];
+        const allColumns = (allColumnsResult as any).rows || (allColumnsResult as any[]);
         console.log(`Total columns: ${allColumns.length}\n`);
         allColumns.forEach((col: any) => {
             const isReg = col.column_name.includes('registration') || col.column_name === 'stripe_payment_id' || col.column_name === 'registered';
@@ -79,7 +79,7 @@ async function checkSchema() {
             ORDER BY indexname
         `);
         
-        const indexes = (indexesResult as any[]).rows || indexesResult as any[];
+        const indexes = (indexesResult as any).rows || (indexesResult as any[]);
         indexes.forEach((idx: any) => {
             console.log(`  • ${idx.indexname}`);
             if (idx.indexdef.includes('registration') || idx.indexdef.includes('stripe_payment')) {

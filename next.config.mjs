@@ -9,6 +9,7 @@ const nextConfig = {
         '**/node_modules/**',
         '**/syntheverse-ui/**',
         '**/.next/**',
+        '**/scripts/**',
       ],
     };
     
@@ -27,6 +28,7 @@ const nextConfig = {
           exclude: [
             /node_modules/,
             /syntheverse-ui/,
+            /scripts/,
           ],
         },
       ],
@@ -42,6 +44,8 @@ const nextConfig = {
       '*': [
         './syntheverse-ui/**/*',
         './**/syntheverse-ui/**/*',
+        './scripts/**/*',
+        './**/scripts/**/*',
       ],
     },
   },
