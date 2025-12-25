@@ -11,6 +11,16 @@ import { Suspense, useState, useEffect, useMemo } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
 import * as THREE from 'three'
+
+// Camera controller component to update camera position
+function CameraController({ position }: { position: [number, number, number] }) {
+    const { camera } = useThree()
+    useEffect(() => {
+        camera.position.set(...position)
+        camera.lookAt(0, 0, 0)
+    }, [camera, position])
+    return null
+}
 import { PoCNode } from './3d/PoCNode'
 import { PoCDetailPanel } from './3d/PoCDetailPanel'
 import { Card, CardContent } from '@/components/ui/card'
@@ -186,6 +196,7 @@ export function SandboxMap3DUpgraded() {
                 camera={{ position: cameraPosition, fov: 75 }}
             >
                 <Suspense fallback={null}>
+                    <CameraController position={cameraPosition} />
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} intensity={1} />
                     <pointLight position={[-10, -10, -10]} intensity={0.5} />
