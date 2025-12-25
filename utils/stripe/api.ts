@@ -9,7 +9,18 @@ import { debug, debugError, debugWarn } from '@/utils/debug';
 function getStripeClient(): Stripe | null {
     try {
         if (process.env.STRIPE_SECRET_KEY) {
-            return new Stripe(process.env.STRIPE_SECRET_KEY)
+            // Sanitize the Stripe key - remove whitespace and invalid characters
+            const sanitizedKey = process.env.STRIPE_SECRET_KEY.trim().replace(/\s+/g, '');
+            
+            // Validate key format (should start with sk_test_ or sk_live_)
+            if (!sanitizedKey.match(/^sk_(test|live)_/)) {
+                debugError('StripeAPI', 'Invalid Stripe key format', new Error('Stripe key must start with sk_test_ or sk_live_'));
+                return null;
+            }
+            
+            return new Stripe(sanitizedKey, {
+                apiVersion: '2024-06-20'
+            });
         } else {
             debugWarn('StripeAPI', 'STRIPE_SECRET_KEY not found in environment');
             return null

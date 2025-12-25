@@ -23,7 +23,10 @@ async function getStripeProducts(): Promise<StripeProduct[]> {
   }
 
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    // Sanitize the Stripe key - remove whitespace and invalid characters
+    const sanitizedKey = process.env.STRIPE_SECRET_KEY.trim().replace(/\s+/g, '');
+    
+    const stripe = new Stripe(sanitizedKey, {
       apiVersion: '2024-06-20'
     });
 

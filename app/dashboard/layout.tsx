@@ -69,9 +69,11 @@ export default async function DashboardLayout({
             debug('DashboardLayout', 'User plan check passed', { plan: checkUserInDB[0].plan });
         } catch (dbError) {
             // If database query fails, log error but don't crash
-            debugError('DashboardLayout', 'Database error in dashboard layout', dbError);
-            // Allow user to continue - they might be able to see the dashboard
-            // or the error will be caught elsewhere
+            // This might be a connection issue, so we'll allow the user to continue
+            // The dashboard page will handle its own database queries gracefully
+            debugError('DashboardLayout', 'Database error in dashboard layout (non-fatal)', dbError);
+            // Don't redirect - let the user see the dashboard even if this check fails
+            // Individual components will handle their own error states
         }
         
         debug('DashboardLayout', 'Layout render successful, rendering children');

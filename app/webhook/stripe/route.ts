@@ -5,7 +5,9 @@ import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Sanitize the Stripe key - remove whitespace and invalid characters
+const sanitizedStripeKey = process.env.STRIPE_SECRET_KEY?.trim().replace(/\s+/g, '') || '';
+const stripe = new Stripe(sanitizedStripeKey, {
     apiVersion: '2024-06-20'
 })
 
