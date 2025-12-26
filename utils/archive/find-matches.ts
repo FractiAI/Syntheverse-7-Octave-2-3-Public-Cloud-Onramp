@@ -59,11 +59,9 @@ export async function findTop9Matches(
                 and(
                     eq(pocLogTable.event_type, 'evaluation_complete'),
                     eq(pocLogTable.event_status, 'success'),
-                    excludeHash 
-                        ? ne(pocLogTable.submission_hash, excludeHash)
-                        : undefined,
-                    sql`${pocLogTable.metadata}->'archive_data' IS NOT NULL`
-                )
+                    sql`${pocLogTable.metadata}->'archive_data' IS NOT NULL`,
+                    ...(excludeHash ? [ne(pocLogTable.submission_hash, excludeHash)] : [])
+                )!
             )
             .orderBy(desc(pocLogTable.created_at))
         
