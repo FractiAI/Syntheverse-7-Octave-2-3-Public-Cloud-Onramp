@@ -7,7 +7,7 @@
 
 'use client'
 
-import { Suspense, useState, useEffect, useMemo } from 'react'
+import { Suspense, useState, useEffect, useMemo, ErrorBoundary } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
 import * as THREE from 'three'
@@ -67,8 +67,11 @@ export function SandboxMap3DUpgraded() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [selectedNode, setSelectedNode] = useState<string | null>(null)
+    const [mounted, setMounted] = useState(false)
     
+    // Ensure we're in the browser before rendering Three.js
     useEffect(() => {
+        setMounted(true)
         fetchMapData()
     }, [])
     
@@ -126,8 +129,16 @@ export function SandboxMap3DUpgraded() {
         }
     }, [data])
     
-    // Create axes helper once (must be before early returns)
-    const axesHelper = useMemo(() => new THREE.AxesHelper(50), [])
+    // Don't render Three.js content until mounted
+    if (!mounted) {
+        return (
+            <Card>
+                <CardContent className="flex items-center justify-center h-[800px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </CardContent>
+            </Card>
+        )
+    }
     
     if (loading) {
         return (
@@ -170,19 +181,42 @@ export function SandboxMap3DUpgraded() {
     
     const vectorizedNodes = data.nodes.filter(n => n.vector !== null)
     
+    // Final safety check - don't render Canvas if not in browser
+    if (typeof window === 'undefined') {
+        return (
+            <Card>
+                <CardContent className="flex items-center justify-center h-[800px]">
+                    <div className="text-muted-foreground">Loading 3D map...</div>
+                </CardContent>
+            </Card>
+        )
+    }
+    
     return (
         <div className="relative w-full h-[800px]">
-            <Canvas>
-                <Suspense fallback={null}>
+            <ErrorBoundary
+                fallback={
+                    <Card>
+                        <CardContent className="flex items-center justify-center h-[800px]">
+                            <div className="text-destructive">
+                                <p className="font-semibold">Error loading 3D map</p>
+                                <p className="text-sm mt-2">Please refresh the page</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                }
+            >
+                <Canvas
+                    gl={{ antialias: true, alpha: true }}
+                    dpr={[1, 2]}
+                >
+                    <Suspense fallback={null}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} intensity={1} />
                     <pointLight position={[-10, -10, -10]} intensity={0.5} />
                     
                     {/* Grid helper */}
                     <Grid args={[100, 100]} cellColor="#6b7280" sectionColor="#9ca3af" />
-                    
-                    {/* Axes helper */}
-                    <primitive object={axesHelper} />
                     
                     {/* Render PoC nodes */}
                     {vectorizedNodes.map((node) => {
@@ -213,8 +247,9 @@ export function SandboxMap3DUpgraded() {
                         maxDistance={(bounds.range || 100) * 5}
                         target={[bounds.center[0], bounds.center[1], bounds.center[2]]}
                     />
-                </Suspense>
-            </Canvas>
+                    </Suspense>
+                </Canvas>
+            </ErrorBoundary>
             
             {/* Controls */}
             <div className="absolute top-4 left-4 flex gap-2">
