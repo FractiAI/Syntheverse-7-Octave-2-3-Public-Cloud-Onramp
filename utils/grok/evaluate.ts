@@ -852,7 +852,7 @@ Founder Certificate Format (Markdown, ERC-20 Style)
 
 | Novelty | ____ | Originality & frontier contribution (NO redundancy penalty applied to individual scores) |
 
-| Density | ____ | Depth, informational richness; Optional Redundancy Penalty: ____ points |
+| Density | ____ | Depth, informational richness (NO redundancy penalty applied to individual scores) |
 
 | Coherence | ____ | Internal consistency, structural integrity |
 
