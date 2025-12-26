@@ -102,8 +102,8 @@ export async function evaluateWithGrok(
         // Continue without vectorization - will use text-based redundancy
     }
     
-    // Find top 9 matching archived PoCs using abstract, formulas, constants, and vectors
-    let top9Matches: Array<{
+    // Find top 3 matching archived PoCs using abstract, formulas, constants, and vectors
+    let top3Matches: Array<{
         submission_hash: string
         title: string
         abstract: string | null
@@ -135,9 +135,9 @@ export async function evaluateWithGrok(
             z: currentVectorization.vector.z
         } : null
         
-        // Find top 9 matches using archive data
-        const { findTop9Matches } = await import('@/utils/archive/find-matches')
-        top9Matches = await findTop9Matches(
+        // Find top 3 matches using archive data (reduced from 9 to reduce token usage)
+        const { findTop3Matches } = await import('@/utils/archive/find-matches')
+        top3Matches = await findTop3Matches(
             currentArchiveData.abstract,
             currentArchiveData.formulas,
             currentArchiveData.constants,
@@ -145,9 +145,9 @@ export async function evaluateWithGrok(
             excludeHash
         )
         
-        debug('EvaluateWithGrok', 'Found top 9 matches', {
-            matchCount: top9Matches.length,
-            topScore: top9Matches[0]?.similarity_score || 0
+        debug('EvaluateWithGrok', 'Found top 3 matches', {
+            matchCount: top3Matches.length,
+            topScore: top3Matches[0]?.similarity_score || 0
         })
         
         // Also fetch all contributions for redundancy calculation (legacy support)
@@ -1091,12 +1091,12 @@ All redundancy references must be drawn from the archived PoC vectors (3D repres
 
 Return ONLY the JSON object, no markdown, no code blocks, no explanations outside the JSON.`
 
-    // Format top 9 matching archived PoCs for context (using abstract, formulas, constants)
+    // Format top 3 matching archived PoCs for context (using abstract, formulas, constants)
     // These are the most relevant matches based on similarity
-    const archivedPoCsContext = top9Matches.length > 0 
-        ? `**Top ${top9Matches.length} Matching Archived PoCs (for redundancy check and context):**
+    const archivedPoCsContext = top3Matches.length > 0 
+        ? `**Top ${top3Matches.length} Matching Archived PoCs (for redundancy check and context):**
 
-${top9Matches.map((match, idx) => {
+${top3Matches.map((match, idx) => {
             const vectorCoords = match.vector_x != null && match.vector_y != null && match.vector_z != null
                 ? `(${Number(match.vector_x).toFixed(2)}, ${Number(match.vector_y).toFixed(2)}, ${Number(match.vector_z).toFixed(2)})`
                 : 'Not vectorized'

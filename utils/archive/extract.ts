@@ -2,7 +2,7 @@
  * Extract Abstract, Formulas, and Constants from PoC Submissions
  * 
  * These extracted elements are permanently stored in the archive
- * and used for finding top 9 matches when evaluating new submissions
+ * and used for finding top 3 matches when evaluating new submissions
  */
 
 import { debug, debugError } from '@/utils/debug'

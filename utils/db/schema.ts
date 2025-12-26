@@ -113,7 +113,7 @@ export const pocLogTable = pgTable('poc_log', {
     error_stack: text('error_stack'),
     processing_time_ms: integer('processing_time_ms'), // Time taken for evaluation
     metadata: jsonb('metadata').$type<{
-        // Archive data (permanently stored for top 9 matching)
+        // Archive data (permanently stored for top 3 matching)
         archive_data?: {
             abstract?: string
             formulas?: string[]

@@ -1,8 +1,9 @@
 /**
- * Find Top 9 Matching Archived PoCs
+ * Find Top 3 Matching Archived PoCs
  * 
  * Uses vector similarity and text matching to find the most relevant
  * archived PoCs for inclusion in Grok evaluation system prompt
+ * Limited to 3 matches to reduce token usage in API calls
  */
 
 import { debug, debugError } from '@/utils/debug'
@@ -24,19 +25,19 @@ export interface ArchivedPoCMatch {
 }
 
 /**
- * Find top 9 matching archived PoCs based on:
+ * Find top 3 matching archived PoCs based on:
  * 1. Vector similarity (if vectors exist)
  * 2. Text similarity (abstract, formulas, constants)
  * 3. Recency (newer submissions prioritized if scores are equal)
  */
-export async function findTop9Matches(
+export async function findTop3Matches(
     currentAbstract: string,
     currentFormulas: string[],
     currentConstants: string[],
     currentVector?: { x: number; y: number; z: number } | null,
     excludeHash?: string
 ): Promise<ArchivedPoCMatch[]> {
-    debug('FindTop9Matches', 'Finding top 9 matches', {
+    debug('FindTop3Matches', 'Finding top 3 matches', {
         abstractLength: currentAbstract.length,
         formulasCount: currentFormulas.length,
         constantsCount: currentConstants.length,
@@ -118,11 +119,11 @@ export async function findTop9Matches(
             .filter((poc): poc is NonNullable<typeof poc> => poc !== null)
         
         if (archivedPoCs.length === 0) {
-            debug('FindTop9Matches', 'No archived PoCs found')
+            debug('FindTop3Matches', 'No archived PoCs found')
             return []
         }
         
-        debug('FindTop9Matches', 'Fetched archived PoCs', { count: archivedPoCs.length })
+        debug('FindTop3Matches', 'Fetched archived PoCs', { count: archivedPoCs.length })
         
         // Calculate similarity scores for each archived PoC
         const matches: ArchivedPoCMatch[] = archivedPoCs.map(poc => {
@@ -141,7 +142,7 @@ export async function findTop9Matches(
                     const vectorSimilarity = similarityFromDistance(vectorDistance)
                     similarityScore += vectorSimilarity * 0.5
                 } catch (error) {
-                    debugError('FindTop9Matches', 'Error calculating vector similarity', error)
+                    debugError('FindTop3Matches', 'Error calculating vector similarity', error)
                 }
             }
             
@@ -176,19 +177,19 @@ export async function findTop9Matches(
             }
         })
         
-        // Sort by similarity score (descending) and take top 9
-        const top9 = matches
+        // Sort by similarity score (descending) and take top 3
+        const top3 = matches
             .sort((a, b) => b.similarity_score - a.similarity_score)
-            .slice(0, 9)
+            .slice(0, 3)
         
-        debug('FindTop9Matches', 'Top 9 matches found', {
-            topScore: top9[0]?.similarity_score || 0,
-            minScore: top9[top9.length - 1]?.similarity_score || 0
+        debug('FindTop3Matches', 'Top 3 matches found', {
+            topScore: top3[0]?.similarity_score || 0,
+            minScore: top3[top3.length - 1]?.similarity_score || 0
         })
         
-        return top9
+        return top3
     } catch (error) {
-        debugError('FindTop9Matches', 'Error finding top 9 matches', error)
+        debugError('FindTop3Matches', 'Error finding top 3 matches', error)
         return []
     }
 }
