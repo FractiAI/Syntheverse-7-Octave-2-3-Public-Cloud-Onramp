@@ -79,6 +79,10 @@ export async function evaluateWithGrok(
         excludeHash
     })
     
+    // Extract archive data from current submission for matching
+    const { extractArchiveData } = await import('@/utils/archive/extract')
+    const currentArchiveData = extractArchiveData(textContent, title)
+    
     // Generate vector embedding and 3D coordinates for current submission
     let currentVectorization: { embedding: number[], vector: Vector3D } | null = null
     try {
@@ -98,6 +102,19 @@ export async function evaluateWithGrok(
         // Continue without vectorization - will use text-based redundancy
     }
     
+    // Find top 9 matching archived PoCs using abstract, formulas, constants, and vectors
+    let top9Matches: Array<{
+        submission_hash: string
+        title: string
+        abstract: string | null
+        formulas: string[] | null
+        constants: string[] | null
+        similarity_score: number
+        vector_x?: number | null
+        vector_y?: number | null
+        vector_z?: number | null
+    }> = []
+    
     // Fetch archived PoCs with vector data for redundancy checking and context
     let archivedPoCs: ArchivedPoC[] = []
     let archivedVectors: Array<{
@@ -111,6 +128,29 @@ export async function evaluateWithGrok(
     }> = []
     
     try {
+        // First, generate vector for current submission if not already done
+        const currentVector = currentVectorization ? {
+            x: currentVectorization.vector.x,
+            y: currentVectorization.vector.y,
+            z: currentVectorization.vector.z
+        } : null
+        
+        // Find top 9 matches using archive data
+        const { findTop9Matches } = await import('@/utils/archive/find-matches')
+        top9Matches = await findTop9Matches(
+            currentArchiveData.abstract,
+            currentArchiveData.formulas,
+            currentArchiveData.constants,
+            currentVector,
+            excludeHash
+        )
+        
+        debug('EvaluateWithGrok', 'Found top 9 matches', {
+            matchCount: top9Matches.length,
+            topScore: top9Matches[0]?.similarity_score || 0
+        })
+        
+        // Also fetch all contributions for redundancy calculation (legacy support)
         const allContributions = await db
             .select({
                 submission_hash: contributionsTable.submission_hash,
@@ -1051,26 +1091,29 @@ All redundancy references must be drawn from the archived PoC vectors (3D repres
 
 Return ONLY the JSON object, no markdown, no code blocks, no explanations outside the JSON.`
 
-    // Format archived PoCs for context (as 3D vectors in holographic hydrogen fractal sandbox)
-    // Limit to top 5 most similar PoCs to reduce token usage
-    const maxArchivedPoCs = 5
-    const archivedPoCsToInclude = archivedPoCs.slice(0, maxArchivedPoCs)
-    
-    const archivedPoCsContext = archivedPoCsToInclude.length > 0 
-        ? `**Top ${archivedPoCsToInclude.length} Archived PoC Vectors (for redundancy check):**
+    // Format top 9 matching archived PoCs for context (using abstract, formulas, constants)
+    // These are the most relevant matches based on similarity
+    const archivedPoCsContext = top9Matches.length > 0 
+        ? `**Top ${top9Matches.length} Matching Archived PoCs (for redundancy check and context):**
 
-${archivedPoCsToInclude.map((poc, idx) => {
-            const vectorData = archivedVectors.find(v => v.submission_hash === poc.submission_hash)
-            const hasVector = vectorData && vectorData.vector_x !== null && vectorData.vector_y !== null && vectorData.vector_z !== null
-            const vectorCoords = hasVector 
-                ? `(${vectorData!.vector_x!.toFixed(2)}, ${vectorData!.vector_y!.toFixed(2)}, ${vectorData!.vector_z!.toFixed(2)})`
+${top9Matches.map((match, idx) => {
+            const vectorCoords = match.vector_x !== null && match.vector_y !== null && match.vector_z !== null
+                ? `(${match.vector_x.toFixed(2)}, ${match.vector_y.toFixed(2)}, ${match.vector_z.toFixed(2)})`
                 : 'Not vectorized'
             
-            return `${idx + 1}. ${poc.title} (Hash: ${poc.submission_hash.substring(0, 8)}...)
-   Coords: ${vectorCoords} | Scores: N=${poc.novelty || 0} D=${poc.density || 0} C=${poc.coherence || 0} A=${poc.alignment || 0}
-   Preview: ${(poc.text_content || poc.title).substring(0, 200)}${(poc.text_content || poc.title).length > 200 ? '...' : ''}`
-        }).join('\n')}`
-        : '**No prior archived PoC vectors found.**'
+            const formulasText = match.formulas && match.formulas.length > 0
+                ? `\n   Formulas: ${match.formulas.slice(0, 3).join('; ')}${match.formulas.length > 3 ? '...' : ''}`
+                : ''
+            
+            const constantsText = match.constants && match.constants.length > 0
+                ? `\n   Constants: ${match.constants.slice(0, 3).join('; ')}${match.constants.length > 3 ? '...' : ''}`
+                : ''
+            
+            return `${idx + 1}. ${match.title} (Hash: ${match.submission_hash.substring(0, 8)}...)
+   Similarity: ${(match.similarity_score * 100).toFixed(1)}% | Coords: ${vectorCoords}
+   Abstract: ${match.abstract || 'N/A'}${formulasText}${constantsText}`
+        }).join('\n\n')}`
+        : '**No prior archived PoCs found.**'
     
     // Add calculated redundancy information if available
     const calculatedRedundancyContext = calculatedRedundancy

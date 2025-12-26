@@ -297,7 +297,11 @@ export async function POST(request: NextRequest) {
                     // Don't fail the submission if update fails
                 }
             
-                // Log evaluation completion
+                // Extract archive data (abstract, formulas, constants) for permanent storage in log
+                const { extractArchiveData } = await import('@/utils/archive/extract')
+                const archiveData = extractArchiveData(text_content || '', title.trim())
+                
+                // Log evaluation completion with archive data in metadata
                 try {
                     const evalLogId = crypto.randomUUID()
                     await db.insert(pocLogTable).values({
@@ -336,6 +340,13 @@ export async function POST(request: NextRequest) {
                             success: true,
                             qualified,
                             evaluation
+                        },
+                        metadata: {
+                            archive_data: {
+                                abstract: archiveData.abstract,
+                                formulas: archiveData.formulas,
+                                constants: archiveData.constants
+                            }
                         },
                         processing_time_ms: Date.now() - startTime,
                         created_at: new Date()
