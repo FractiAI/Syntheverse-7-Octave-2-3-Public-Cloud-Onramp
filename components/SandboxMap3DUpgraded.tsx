@@ -126,6 +126,9 @@ export function SandboxMap3DUpgraded() {
         }
     }, [data])
     
+    // Create axes helper once (must be before early returns)
+    const axesHelper = useMemo(() => new THREE.AxesHelper(50), [])
+    
     if (loading) {
         return (
             <Card>
@@ -166,9 +169,6 @@ export function SandboxMap3DUpgraded() {
     }
     
     const vectorizedNodes = data.nodes.filter(n => n.vector !== null)
-    
-    // Create axes helper once
-    const axesHelper = useMemo(() => new THREE.AxesHelper(50), [])
     
     return (
         <div className="relative w-full h-[800px]">
