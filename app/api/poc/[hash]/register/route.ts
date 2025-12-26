@@ -100,7 +100,7 @@ export async function POST(
                         currency: 'usd',
                         product_data: {
                             name: `PoC Registration: ${contrib.title}`,
-                            description: `Register PoC submission ${submissionHash.substring(0, 8)}... on the blockchain`,
+                            description: `Register PoC submission ${submissionHash.substring(0, 8)}... on Hard Hat L1 blockchain`,
                         },
                         unit_amount: REGISTRATION_FEE,
                     },

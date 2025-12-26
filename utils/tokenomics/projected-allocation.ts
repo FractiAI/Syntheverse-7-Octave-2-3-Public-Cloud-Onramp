@@ -103,7 +103,7 @@ export async function calculateProjectedAllocation(
                 eligible: true,
                 epoch: existingAllocations[0].epoch,
                 breakdown: {
-                    base_score: podScore / 1000,
+                    base_score: (podScore / 10000) * 100, // Percentage
                     pod_score: podScore,
                     metal_multiplier: 1.0,
                     metal_combination: 'already_allocated',
@@ -133,19 +133,22 @@ export async function calculateProjectedAllocation(
         const amplification = calculateMetalAmplification(metals)
         const metalMultiplier = amplification.multiplier
         
-        // Base allocation: pod_score / 1000 (simplified formula)
-        // This can be adjusted based on actual tokenomics formula
-        const baseScore = podScore / 1000
+        // Tokenomics formula: (score/10000) * Available tokens
+        // Convert pod_score (0-10000) to percentage (0-1)
+        const scorePercentage = podScore / 10000.0
+        
+        // Base allocation as percentage of available epoch balance
+        const baseAllocation = scorePercentage * epochBalance
         
         // Apply metal amplification
-        const amplifiedScore = baseScore * metalMultiplier
+        const amplifiedAllocation = baseAllocation * metalMultiplier
         
         // Get tier multiplier (default to 1.0, can be enhanced)
         const tierMultiplier = metadata.tokenomics_recommendation?.tier_multiplier || 1.0
         
-        // Calculate final allocation
+        // Calculate final allocation with tier multiplier
         // Cap at epoch availability
-        let finalAmount = Math.floor(amplifiedScore * tierMultiplier)
+        let finalAmount = Math.floor(amplifiedAllocation * tierMultiplier)
         finalAmount = Math.min(finalAmount, epochBalance)
         finalAmount = Math.max(0, finalAmount) // Ensure non-negative
         
