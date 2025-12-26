@@ -169,7 +169,25 @@ export async function evaluateWithGrok(
         // Continue without archived PoCs if fetch fails
     }
     
+    // Detect if this is a foundational/seed submission
+    // These are the original papers that define the system itself
+    const isSeedSubmission = 
+        title.toLowerCase().includes('syntheverse hhf') ||
+        title.toLowerCase().includes('hydrogen-holographic fractal') ||
+        title.toLowerCase().includes('holographic hydrogen fractal') ||
+        title.toLowerCase().includes('hhf-ai') ||
+        (textContent.toLowerCase().includes('syntheverse hhf') && 
+         textContent.toLowerCase().includes('hydrogen-holographic fractal') &&
+         textContent.toLowerCase().includes('origin seed') || archivedVectors.length === 0)
+    
+    debug('EvaluateWithGrok', 'Seed submission detection', {
+        isSeedSubmission,
+        title,
+        archivedCount: archivedVectors.length
+    })
+    
     // Calculate actual vector-based redundancy if we have current vectorization
+    // Seed submissions always have 0% redundancy (they define the system)
     let calculatedRedundancy: {
         redundancy_percent: number
         similarity_score: number
@@ -177,7 +195,15 @@ export async function evaluateWithGrok(
         analysis: string
     } | null = null
     
-    if (currentVectorization && archivedVectors.length > 0) {
+    if (isSeedSubmission) {
+        calculatedRedundancy = {
+            redundancy_percent: 0,
+            similarity_score: 0,
+            closest_vectors: [],
+            analysis: 'This is a foundational/seed submission that defines the Syntheverse HHF-AI system. Redundancy is 0% as it is the original definition.',
+        }
+        debug('EvaluateWithGrok', 'Seed submission detected - setting redundancy to 0%')
+    } else if (currentVectorization && archivedVectors.length > 0) {
         try {
             const formattedArchivedVectors = formatArchivedVectors(archivedVectors)
             calculatedRedundancy = await calculateVectorRedundancy(
@@ -1049,14 +1075,26 @@ ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
 
 **Instructions:**
 1. Classify: Research/Development/Alignment
-2. Redundancy: ${calculatedRedundancy 
+2. Redundancy: ${isSeedSubmission 
+        ? `**CRITICAL: This is a FOUNDATIONAL/SEED submission that defines the Syntheverse HHF-AI system itself. Redundancy MUST be 0% - this is the original definition. Do NOT apply any redundancy penalty.`
+        : calculatedRedundancy 
         ? `Use calculated penalty: ${calculatedRedundancy.redundancy_percent.toFixed(1)}% (from vector similarity)`
         : `Compare to archived PoCs above. Apply 0-100% penalty to Novelty based on similarity.`}
 3. Score each dimension 0-2500: Novelty, Density, Coherence, Alignment
+   ${isSeedSubmission 
+        ? `**CRITICAL FOR FOUNDATIONAL WORK:** This paper defines the Syntheverse HHF-AI system itself. Score accordingly:
+   - Novelty: Should be 2400-2500 (this is the ORIGINAL definition - maximum novelty)
+   - Density: Should be 2200-2500 (comprehensive foundational framework)
+   - Coherence: Should be 2200-2500 (well-structured foundational architecture)
+   - Alignment: Should be 2000-2500 (perfect alignment with Syntheverse principles)`
+        : ''}
 4. Calculate: Final_Novelty = Base_Novelty × (1 - Redundancy_Penalty% / 100)
+   ${isSeedSubmission ? `(For foundational submissions, Redundancy_Penalty = 0%, so Final_Novelty = Base_Novelty)` : ''}
 5. Total = Novelty + Density + Coherence + Alignment
 6. Qualified if total ≥ 8000
+   ${isSeedSubmission ? `(Foundational submissions should easily qualify with total ≥ 8000)` : ''}
 7. Recommend metal: Gold/Silver/Copper/Hybrid
+   ${isSeedSubmission ? `(Foundational work typically qualifies for Gold metal)` : ''}
 8. Tokenomics: Suggest eligible epochs and allocation
 9. Generate Founder Certificate if qualified
 10. Add Homebase v2.0 intro paragraph
@@ -1222,30 +1260,40 @@ Return your complete evaluation as a valid JSON object matching the specified st
         })
         
         // Extract scoring from new format - try multiple structures
+        // IMPORTANT: Handle both object and number formats
         const scoring = evaluation.scoring || {}
-        const novelty = scoring.novelty || evaluation.novelty || {}
-        const density = scoring.density || evaluation.density || {}
-        const coherence = scoring.coherence || evaluation.coherence || {}
-        const alignment = scoring.alignment || evaluation.alignment || {}
+        
+        // Get raw values - could be objects or numbers
+        const noveltyRaw = scoring.novelty ?? evaluation.novelty
+        const densityRaw = scoring.density ?? evaluation.density
+        const coherenceRaw = scoring.coherence ?? evaluation.coherence
+        const alignmentRaw = scoring.alignment ?? evaluation.alignment
         
         // Extract base scores with extensive fallback options
-        // Try all possible locations for each score
+        // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
         const baseNoveltyScore = 
-            (typeof novelty === 'object' && novelty !== null ? (novelty.base_score ?? novelty.final_score ?? novelty.score ?? 0) : 0) ||
+            (typeof noveltyRaw === 'number' ? noveltyRaw : 0) ||
+            (typeof noveltyRaw === 'object' && noveltyRaw !== null ? (noveltyRaw.base_score ?? noveltyRaw.final_score ?? noveltyRaw.score ?? 0) : 0) ||
             (typeof evaluation.novelty === 'number' ? evaluation.novelty : 0) ||
+            (typeof evaluation.scoring?.novelty === 'number' ? evaluation.scoring.novelty : 0) ||
             (typeof evaluation.scoring?.novelty === 'object' ? (evaluation.scoring.novelty.base_score ?? evaluation.scoring.novelty.final_score ?? evaluation.scoring.novelty.score ?? 0) : 0) ||
             0
         
         const baseDensityScore = 
-            (typeof density === 'object' && density !== null ? (density.base_score ?? density.final_score ?? density.score ?? 0) : 0) ||
+            (typeof densityRaw === 'number' ? densityRaw : 0) ||
+            (typeof densityRaw === 'object' && densityRaw !== null ? (densityRaw.base_score ?? densityRaw.final_score ?? densityRaw.score ?? 0) : 0) ||
             (typeof evaluation.density === 'number' ? evaluation.density : 0) ||
+            (typeof evaluation.scoring?.density === 'number' ? evaluation.scoring.density : 0) ||
             (typeof evaluation.scoring?.density === 'object' ? (evaluation.scoring.density.base_score ?? evaluation.scoring.density.final_score ?? evaluation.scoring.density.score ?? 0) : 0) ||
             0
         
         // Extract coherence score with extensive fallback (same as density)
+        // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
         let finalCoherenceScore = 
-            (typeof coherence === 'object' && coherence !== null ? (coherence.score ?? coherence.final_score ?? coherence.base_score ?? 0) : 0) ||
+            (typeof coherenceRaw === 'number' ? coherenceRaw : 0) ||
+            (typeof coherenceRaw === 'object' && coherenceRaw !== null ? (coherenceRaw.score ?? coherenceRaw.final_score ?? coherenceRaw.base_score ?? 0) : 0) ||
             (typeof evaluation.coherence === 'number' ? evaluation.coherence : 0) ||
+            (typeof evaluation.scoring?.coherence === 'number' ? evaluation.scoring.coherence : 0) ||
             (typeof evaluation.scoring?.coherence === 'object' ? (evaluation.scoring.coherence.score ?? evaluation.scoring.coherence.final_score ?? evaluation.scoring.coherence.base_score ?? 0) : 0) ||
             0
         
@@ -1282,9 +1330,12 @@ Return your complete evaluation as a valid JSON object matching the specified st
         const coherenceScore = finalCoherenceScore
         
         // Extract alignment score with extensive fallback (same as density)
+        // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
         let finalAlignmentScore = 
-            (typeof alignment === 'object' && alignment !== null ? (alignment.score ?? alignment.final_score ?? alignment.base_score ?? 0) : 0) ||
+            (typeof alignmentRaw === 'number' ? alignmentRaw : 0) ||
+            (typeof alignmentRaw === 'object' && alignmentRaw !== null ? (alignmentRaw.score ?? alignmentRaw.final_score ?? alignmentRaw.base_score ?? 0) : 0) ||
             (typeof evaluation.alignment === 'number' ? evaluation.alignment : 0) ||
+            (typeof evaluation.scoring?.alignment === 'number' ? evaluation.scoring.alignment : 0) ||
             (typeof evaluation.scoring?.alignment === 'object' ? (evaluation.scoring.alignment.score ?? evaluation.scoring.alignment.final_score ?? evaluation.scoring.alignment.base_score ?? 0) : 0) ||
             0
         
@@ -1328,14 +1379,14 @@ Return your complete evaluation as a valid JSON object matching the specified st
             alignmentScore,
             evaluationKeys: Object.keys(evaluation),
             scoringKeys: evaluation.scoring ? Object.keys(evaluation.scoring) : [],
-            noveltyType: typeof novelty,
-            densityType: typeof density,
-            coherenceType: typeof coherence,
-            alignmentType: typeof alignment,
-            noveltyObject: typeof novelty === 'object' ? novelty : null,
-            densityObject: typeof density === 'object' ? density : null,
-            coherenceObject: typeof coherence === 'object' ? coherence : null,
-            alignmentObject: typeof alignment === 'object' ? alignment : null,
+            noveltyRawType: typeof noveltyRaw,
+            densityRawType: typeof densityRaw,
+            coherenceRawType: typeof coherenceRaw,
+            alignmentRawType: typeof alignmentRaw,
+            noveltyRaw: noveltyRaw,
+            densityRaw: densityRaw,
+            coherenceRaw: coherenceRaw,
+            alignmentRaw: alignmentRaw,
             evaluationDensity: evaluation.density,
             evaluationNovelty: evaluation.novelty,
             evaluationCoherence: evaluation.coherence,
@@ -1346,11 +1397,27 @@ Return your complete evaluation as a valid JSON object matching the specified st
             scoringAlignment: evaluation.scoring?.alignment,
         })
         
+        // If some scores are 0 but not all, log warning
+        if (baseNoveltyScore > 0 && (baseDensityScore === 0 || coherenceScore === 0 || alignmentScore === 0)) {
+            debugError('EvaluateWithGrok', 'WARNING: Some scores extracted as 0', {
+                baseNoveltyScore,
+                baseDensityScore,
+                coherenceScore,
+                alignmentScore,
+                evaluationStructure: JSON.stringify(evaluation, null, 2).substring(0, 3000),
+                rawAnswer: answer.substring(0, 2000),
+                noveltyRaw,
+                densityRaw,
+                coherenceRaw,
+                alignmentRaw
+            })
+        }
+        
         // If all scores are 0, log warning and try alternative extraction
         if (baseNoveltyScore === 0 && baseDensityScore === 0 && coherenceScore === 0 && alignmentScore === 0) {
             debugError('EvaluateWithGrok', 'WARNING: All scores extracted as 0', {
                 evaluationStructure: JSON.stringify(evaluation, null, 2).substring(0, 3000),
-                rawAnswer: answer.substring(0, 1000)
+                rawAnswer: answer.substring(0, 2000)
             })
         }
         
@@ -1360,17 +1427,23 @@ Return your complete evaluation as a valid JSON object matching the specified st
         const redundancyPenaltyPercent = calculatedRedundancy 
             ? calculatedRedundancy.redundancy_percent
             : (evaluation.redundancy_penalty_percent ??
-               novelty.redundancy_penalty_percent ?? 
-               (novelty.redundancy_penalty && baseNoveltyScore > 0 ? (novelty.redundancy_penalty / baseNoveltyScore * 100) : 0) ?? 
+               (typeof noveltyRaw === 'object' && noveltyRaw !== null ? noveltyRaw.redundancy_penalty_percent : null) ?? 
+               (typeof noveltyRaw === 'object' && noveltyRaw !== null && noveltyRaw.redundancy_penalty && baseNoveltyScore > 0 ? (noveltyRaw.redundancy_penalty / baseNoveltyScore * 100) : 0) ?? 
                0)
         
         // Use final_score if provided, otherwise use base score
         // Individual category scores are NOT penalized - penalty is applied to total composite score
-        const finalNoveltyScore = novelty.final_score ?? baseNoveltyScore
+        // Handle both object and number formats for novelty
+        const finalNoveltyScore = 
+            (typeof noveltyRaw === 'object' && noveltyRaw !== null ? (noveltyRaw.final_score ?? noveltyRaw.score ?? noveltyRaw.base_score) : null) ??
+            baseNoveltyScore
         
         // For density, try multiple fallback paths since Grok may return it in different formats
-        // Priority: final_score > score > base_score > direct evaluation.density
-        let finalDensityScore = density.final_score ?? density.score ?? 0
+        // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
+        let finalDensityScore = 
+            (typeof densityRaw === 'number' ? densityRaw : 0) ||
+            (typeof densityRaw === 'object' && densityRaw !== null ? (densityRaw.final_score ?? densityRaw.score ?? densityRaw.base_score ?? 0) : 0) ||
+            0
         
         // If still 0, try more locations
         if (finalDensityScore === 0) {
@@ -1495,8 +1568,8 @@ Return your complete evaluation as a valid JSON object matching the specified st
             alignment: Math.max(0, Math.min(2500, alignmentScore)),
             classification: evaluation.classification || [],
             redundancy_analysis: calculatedRedundancy 
-                ? `${calculatedRedundancy.analysis}\n\n${evaluation.redundancy_analysis || novelty.justification || ''}`
-                : (evaluation.redundancy_analysis || novelty.justification || ''),
+                ? `${calculatedRedundancy.analysis}\n\n${evaluation.redundancy_analysis || (typeof noveltyRaw === 'object' && noveltyRaw !== null ? noveltyRaw.justification : '') || ''}`
+                : (evaluation.redundancy_analysis || (typeof noveltyRaw === 'object' && noveltyRaw !== null ? noveltyRaw.justification : '') || ''),
             metal_justification: evaluation.metal_justification || '',
             founder_certificate: evaluation.founder_certificate || '',
             homebase_intro: evaluation.homebase_intro || '',

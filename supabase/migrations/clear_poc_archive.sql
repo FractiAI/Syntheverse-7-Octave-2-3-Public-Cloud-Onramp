@@ -14,9 +14,13 @@ DELETE FROM poc_log;
 -- 3. Delete contributions
 DELETE FROM contributions;
 
--- Verify deletion
+-- Verify deletion (including vector data)
 SELECT 
     (SELECT COUNT(*) FROM contributions) as remaining_contributions,
     (SELECT COUNT(*) FROM allocations) as remaining_allocations,
-    (SELECT COUNT(*) FROM poc_log) as remaining_logs;
+    (SELECT COUNT(*) FROM poc_log) as remaining_logs,
+    (SELECT COUNT(*) FROM contributions WHERE embedding IS NOT NULL) as remaining_embeddings,
+    (SELECT COUNT(*) FROM contributions WHERE vector_x IS NOT NULL) as remaining_vector_x,
+    (SELECT COUNT(*) FROM contributions WHERE vector_y IS NOT NULL) as remaining_vector_y,
+    (SELECT COUNT(*) FROM contributions WHERE vector_z IS NOT NULL) as remaining_vector_z;
 
