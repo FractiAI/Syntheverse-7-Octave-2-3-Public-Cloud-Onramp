@@ -480,29 +480,6 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                             </div>
                                                         )}
 
-                                                        {/* Tokenomics Recommendation */}
-                                                        {evaluationStatus.evaluation.tokenomics_recommendation && (
-                                                            <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                                                                <div className="text-sm font-semibold text-purple-800 mb-2">Tokenomics Recommendation</div>
-                                                                <div className="text-sm text-purple-700 space-y-1">
-                                                                    {evaluationStatus.evaluation.tokenomics_recommendation.eligible_epochs && evaluationStatus.evaluation.tokenomics_recommendation.eligible_epochs.length > 0 && (
-                                                                        <div>
-                                                                            <strong>Eligible Epochs:</strong> {evaluationStatus.evaluation.tokenomics_recommendation.eligible_epochs.join(', ')}
-                                                                        </div>
-                                                                    )}
-                                                                    {evaluationStatus.evaluation.tokenomics_recommendation.suggested_allocation && (
-                                                                        <div>
-                                                                            <strong>Suggested Allocation:</strong> {evaluationStatus.evaluation.tokenomics_recommendation.suggested_allocation.toLocaleString()} SYNTH
-                                                                        </div>
-                                                                    )}
-                                                                    {evaluationStatus.evaluation.tokenomics_recommendation.allocation_notes && (
-                                                                        <div className="mt-2 text-xs italic">
-                                                                            {evaluationStatus.evaluation.tokenomics_recommendation.allocation_notes}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        )}
                                                     </div>
                                                 )}
                                             </div>

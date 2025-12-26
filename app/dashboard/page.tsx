@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { FileText, User, TrendingUp, Award, Coins, Clock, CheckCircle2 } from "lucide-react"
+import { FileText } from "lucide-react"
 import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm"
 import { PoCDashboardStats } from '@/components/PoCDashboardStats'
+import { PoCArchive } from '@/components/PoCArchive'
 
 export default async function Dashboard() {
     const supabase = createClient()
@@ -52,61 +53,8 @@ export default async function Dashboard() {
             {/* PoC Evaluation Statistics - Client Component for API calls */}
             <PoCDashboardStats />
 
-            {/* Status Overview */}
-            <div className="grid gap-4 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Award className="h-5 w-5" />
-                            Your Status
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Contributor ID</span>
-                            <span className="text-sm text-muted-foreground">{user.email?.split('@')[0] || 'N/A'}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Stripe Customer ID</span>
-                            <span className="text-sm text-muted-foreground font-mono text-xs">
-                                {dbUser?.stripe_id ? `${dbUser.stripe_id.slice(0, 8)}...` : 'Not set'}
-                            </span>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Coins className="h-5 w-5" />
-                            System Status
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Authentication</span>
-                            <div className="flex items-center gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                <span className="text-sm text-muted-foreground">Verified</span>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Database</span>
-                            <div className="flex items-center gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                <span className="text-sm text-muted-foreground">Connected</span>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">PoC System</span>
-                            <div className="flex items-center gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                <span className="text-sm text-muted-foreground">Integrated</span>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+            {/* PoC Submissions Archive */}
+            <PoCArchive userEmail={user.email!} />
 
         </div>
     )
