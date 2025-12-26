@@ -24,11 +24,19 @@ export async function POST(
     request: NextRequest,
     { params }: { params: { hash: string } }
 ) {
+    // Extract hash from params outside try block for error handling
+    if (!params) {
+        debugError('RegisterPoC', 'Params object is missing', {})
+        return NextResponse.json(
+            { error: 'Invalid request: missing parameters' },
+            { status: 400 }
+        )
+    }
+    
+    const submissionHash = params?.hash || 'unknown'
+    
     try {
-        // Safely extract hash from params
-        const submissionHash = params?.hash
-        
-        if (!submissionHash) {
+        if (!submissionHash || submissionHash === 'unknown') {
             debugError('RegisterPoC', 'Missing submission hash in params', { params })
             return NextResponse.json(
                 { error: 'Missing submission hash' },
@@ -37,8 +45,22 @@ export async function POST(
         }
         
         debug('RegisterPoC', 'Initiating PoC registration', { submissionHash })
+        
         // Verify user is authenticated
-        const supabase = createClient()
+        let supabase
+        try {
+            supabase = createClient()
+        } catch (supabaseError) {
+            debugError('RegisterPoC', 'Failed to create Supabase client', supabaseError)
+            return NextResponse.json(
+                { 
+                    error: 'Authentication service error',
+                    message: supabaseError instanceof Error ? supabaseError.message : 'Failed to initialize authentication'
+                },
+                { status: 500 }
+            )
+        }
+        
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         
         if (authError || !user) {
@@ -195,28 +217,30 @@ export async function POST(
             session_id: session.id
         })
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        const errorName = error instanceof Error ? error.name : 'Error'
+        
         debugError('RegisterPoC', 'Unexpected error in registration endpoint', {
             error,
-            message: error instanceof Error ? error.message : 'Unknown error',
+            errorName,
+            message: errorMessage,
             stack: error instanceof Error ? error.stack : undefined,
             submissionHash
         })
         
-        // Return detailed error for debugging
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-        const errorDetails = error instanceof Error && error.stack 
-            ? { stack: error.stack.substring(0, 500) } 
-            : {}
+        // Return detailed error for debugging (always include message, stack only in dev)
+        const errorResponse: any = {
+            error: 'Registration failed',
+            message: errorMessage,
+            error_type: errorName,
+            submission_hash: submissionHash
+        }
         
-        return NextResponse.json(
-            { 
-                error: 'Registration failed',
-                message: errorMessage,
-                submission_hash: submissionHash,
-                ...(process.env.NODE_ENV === 'development' ? errorDetails : {})
-            },
-            { status: 500 }
-        )
+        if (process.env.NODE_ENV === 'development' && error instanceof Error && error.stack) {
+            errorResponse.stack = error.stack.substring(0, 1000)
+        }
+        
+        return NextResponse.json(errorResponse, { status: 500 })
     }
 }
 

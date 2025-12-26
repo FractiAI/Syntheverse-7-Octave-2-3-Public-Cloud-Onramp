@@ -118,13 +118,18 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
             })
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-                throw new Error(errorData.error || errorData.message || `Failed to initiate registration (${response.status})`)
+                const errorMessage = errorData.message || errorData.error || `Failed to initiate registration (${response.status})`
+                const errorType = errorData.error_type ? ` (${errorData.error_type})` : ''
+                throw new Error(`${errorMessage}${errorType}`)
             }
             const data = await response.json()
             if (data.checkout_url) {
                 window.location.href = data.checkout_url
+            } else {
+                throw new Error('No checkout URL received from server')
             }
         } catch (err) {
+            console.error('Registration error:', err)
             alert(err instanceof Error ? err.message : 'Failed to register PoC')
         } finally {
             setRegistering(null)
