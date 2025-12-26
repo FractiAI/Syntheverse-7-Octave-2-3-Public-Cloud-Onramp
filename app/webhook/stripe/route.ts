@@ -5,6 +5,10 @@ import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
 
+// Force dynamic rendering - webhooks must be server-side only
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 // Initialize Stripe with sanitized key
 function getStripeClient(): Stripe | null {
     if (!process.env.STRIPE_SECRET_KEY) {

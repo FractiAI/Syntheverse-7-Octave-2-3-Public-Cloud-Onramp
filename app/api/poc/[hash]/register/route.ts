@@ -14,6 +14,10 @@ import { eq } from 'drizzle-orm'
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
 
+// Force dynamic rendering - this route must be server-side only
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 const REGISTRATION_FEE = 20000 // $200.00 in cents
 
 export async function POST(

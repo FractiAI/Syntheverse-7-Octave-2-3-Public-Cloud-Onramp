@@ -66,7 +66,7 @@ export async function findTop9Matches(
             .orderBy(desc(pocLogTable.created_at))
         
         // Get unique submission hashes and fetch vector data from contributions
-        const uniqueHashes = [...new Set(archivedPoCsWithLogs.map(p => p.submission_hash))]
+        const uniqueHashes = Array.from(new Set(archivedPoCsWithLogs.map(p => p.submission_hash)))
         let contributions: Array<{
             submission_hash: string
             vector_x: number | null

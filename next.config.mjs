@@ -13,7 +13,7 @@ const nextConfig = {
       ],
     };
     
-    // Ignore syntheverse-ui in resolve
+    // Ignore syntheverse-ui in resolve to prevent module resolution issues
     config.resolve.alias = {
       ...config.resolve.alias,
     };
@@ -33,6 +33,16 @@ const nextConfig = {
         },
       ],
     };
+    
+    // Ignore syntheverse-ui during build analysis
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({
+        'hardhat': 'commonjs hardhat',
+        '@nomicfoundation/hardhat-toolbox': 'commonjs @nomicfoundation/hardhat-toolbox',
+        '@nomicfoundation/hardhat-ethers': 'commonjs @nomicfoundation/hardhat-ethers',
+      });
+    }
     
     return config;
   },
