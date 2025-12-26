@@ -18,10 +18,9 @@ const REGISTRATION_FEE = 20000 // $200.00 in cents
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: Promise<{ hash: string }> | { hash: string } }
+    { params }: { params: { hash: string } }
 ) {
-    const resolvedParams = await Promise.resolve(params)
-    const submissionHash = resolvedParams.hash
+    const submissionHash = params.hash
     debug('RegisterPoC', 'Initiating PoC registration', { submissionHash })
     
     try {
