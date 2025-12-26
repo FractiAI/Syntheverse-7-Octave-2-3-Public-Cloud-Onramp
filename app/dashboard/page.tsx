@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { FileText, User, TrendingUp, Award, Coins, Clock, CheckCircle2, Loader2 } from "lucide-react"
+import { FileText, User, TrendingUp, Award, Coins, Clock, CheckCircle2 } from "lucide-react"
 import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm"
