@@ -178,7 +178,9 @@ export async function evaluateWithGrok(
         title.toLowerCase().includes('hhf-ai') ||
         (textContent.toLowerCase().includes('syntheverse hhf') && 
          textContent.toLowerCase().includes('hydrogen-holographic fractal') &&
-         textContent.toLowerCase().includes('origin seed') || archivedVectors.length === 0)
+         textContent.toLowerCase().includes('origin seed')) ||
+        (archivedVectors.length === 0 && 
+         (textContent.toLowerCase().includes('syntheverse') || title.toLowerCase().includes('syntheverse')))
     
     debug('EvaluateWithGrok', 'Seed submission detection', {
         isSeedSubmission,
