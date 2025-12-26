@@ -48,11 +48,16 @@ async function getTestPocHash() {
             )
             .limit(5)
         
+        // Build query with conditions
+        const conditions = []
         if (contributorEmail) {
-            query = query.where(and(
-                eq(contributionsTable.contributor, contributorEmail),
-                eq(contributionsTable.registered, false)
-            )) as any
+            conditions.push(eq(contributionsTable.contributor, contributorEmail))
+            conditions.push(eq(contributionsTable.registered, false))
+        }
+        
+        if (conditions.length > 0) {
+            query = query.where(and(...conditions))
+        }
         }
         
         const results = await query
