@@ -1112,7 +1112,8 @@ ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
         ? '**CRITICAL: This is a FOUNDATIONAL/SEED submission that defines the Syntheverse HHF-AI system itself. Redundancy MUST be 0% - this is the original definition. Do NOT apply any redundancy penalty.**'
         : calculatedRedundancy 
         ? `Use calculated penalty: ${calculatedRedundancy.redundancy_percent.toFixed(1)}% (from vector similarity)`
-        : 'Compare to archived PoCs above. Apply 0-100% penalty to Novelty based on similarity.'}
+        : 'Compare to archived PoCs above. Calculate 0-100% redundancy penalty based on similarity.'}
+   **IMPORTANT: Redundancy penalty is applied ONLY to the COMPOSITE/TOTAL score, NOT to individual dimension scores (Novelty, Density, Coherence, Alignment). Individual scores remain unpenalized.**
 3. Score each dimension 0-2500: Novelty, Density, Coherence, Alignment
    ${isSeedSubmission 
         ? '**CRITICAL FOR FOUNDATIONAL WORK:** This paper defines the Syntheverse HHF-AI system itself. Score accordingly:\n   - Novelty: Should be 2400-2500 (this is the ORIGINAL definition - maximum novelty)\n   - Density: Should be 2200-2500 (comprehensive foundational framework)\n   - Coherence: Should be 2200-2500 (well-structured foundational architecture)\n   - Alignment: Should be 2000-2500 (perfect alignment with Syntheverse principles)'
