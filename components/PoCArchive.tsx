@@ -46,6 +46,8 @@ interface PoCArchiveProps {
     userEmail: string
 }
 
+type ViewMode = 'my' | 'qualified' | 'all'
+
 export function PoCArchive({ userEmail }: PoCArchiveProps) {
     const [allSubmissions, setAllSubmissions] = useState<PoCSubmission[]>([])
     const [selectedSubmission, setSelectedSubmission] = useState<PoCSubmission | null>(null)
@@ -53,9 +55,38 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [registering, setRegistering] = useState<string | null>(null)
+    const [viewMode, setViewMode] = useState<ViewMode>('my')
 
     const mySubmissions = allSubmissions.filter(s => s.contributor === userEmail)
+    const qualifiedSubmissions = allSubmissions.filter(s => s.qualified === true)
     const otherSubmissions = allSubmissions.filter(s => s.contributor !== userEmail)
+    
+    // Get submissions based on current view mode
+    const getFilteredSubmissions = (): PoCSubmission[] => {
+        switch (viewMode) {
+            case 'my':
+                return mySubmissions
+            case 'qualified':
+                return qualifiedSubmissions
+            case 'all':
+                return allSubmissions
+            default:
+                return mySubmissions
+        }
+    }
+    
+    const getViewTitle = (): string => {
+        switch (viewMode) {
+            case 'my':
+                return 'My Submissions'
+            case 'qualified':
+                return 'Qualified Submissions'
+            case 'all':
+                return 'All Submissions'
+            default:
+                return 'My Submissions'
+        }
+    }
 
     useEffect(() => {
         fetchSubmissions()
@@ -268,28 +299,60 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
 
     const hasSubmissions = allSubmissions.length > 0
 
+    const filteredSubmissions = getFilteredSubmissions()
+    const showContributorColumn = viewMode === 'all' || viewMode === 'qualified'
+
     return (
         <>
             <div className="space-y-6">
-                {/* My Submissions */}
-                {renderTable(mySubmissions, 'My Submissions')}
+                {/* View Selector */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <CardTitle>PoC Submissions Archive</CardTitle>
+                            <Button variant="outline" size="sm" onClick={fetchSubmissions}>
+                                <RefreshCw className="h-4 w-4 mr-2" />
+                                Refresh
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-2 mb-4">
+                            <Button
+                                variant={viewMode === 'my' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setViewMode('my')}
+                            >
+                                My Submissions
+                            </Button>
+                            <Button
+                                variant={viewMode === 'qualified' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setViewMode('qualified')}
+                            >
+                                Qualified Submissions
+                            </Button>
+                            <Button
+                                variant={viewMode === 'all' ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => setViewMode('all')}
+                            >
+                                All Submissions
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
 
-                {/* All Submissions */}
+                {/* Filtered Submissions Table */}
                 {hasSubmissions && (
                     <Card>
                         <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <CardTitle>All PoC Submissions</CardTitle>
-                                <Button variant="outline" size="sm" onClick={fetchSubmissions}>
-                                    <RefreshCw className="h-4 w-4 mr-2" />
-                                    Refresh
-                                </Button>
-                            </div>
+                            <CardTitle>{getViewTitle()}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {otherSubmissions.length === 0 ? (
+                            {filteredSubmissions.length === 0 ? (
                                 <div className="text-center py-8 text-muted-foreground">
-                                    <p>No other submissions</p>
+                                    <p>No {getViewTitle().toLowerCase()} found</p>
                                 </div>
                             ) : (
                                 <div className="overflow-x-auto">
@@ -297,15 +360,21 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                         <thead>
                                             <tr className="border-b">
                                                 <th className="text-left p-2 font-semibold">Title</th>
-                                                <th className="text-left p-2 font-semibold">Contributor</th>
+                                                {showContributorColumn && (
+                                                    <th className="text-left p-2 font-semibold">Contributor</th>
+                                                )}
                                                 <th className="text-left p-2 font-semibold">Status</th>
                                                 <th className="text-left p-2 font-semibold">Metals</th>
                                                 <th className="text-right p-2 font-semibold">PoC Score</th>
+                                                <th className="text-right p-2 font-semibold">Novelty</th>
+                                                <th className="text-right p-2 font-semibold">Density</th>
+                                                <th className="text-right p-2 font-semibold">Coherence</th>
+                                                <th className="text-right p-2 font-semibold">Redundancy</th>
                                                 <th className="text-left p-2 font-semibold">Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {otherSubmissions.map((submission) => (
+                                            {filteredSubmissions.map((submission) => (
                                                 <tr 
                                                     key={submission.submission_hash} 
                                                     className="border-b hover:bg-muted/50 cursor-pointer"
@@ -319,9 +388,11 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                             </div>
                                                         )}
                                                     </td>
-                                                    <td className="p-2 text-sm text-muted-foreground">
-                                                        {submission.contributor}
-                                                    </td>
+                                                    {showContributorColumn && (
+                                                        <td className="p-2 text-sm text-muted-foreground">
+                                                            {submission.contributor}
+                                                        </td>
+                                                    )}
                                                     <td className="p-2">
                                                         {getStatusBadge(submission)}
                                                     </td>
@@ -330,6 +401,18 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                     </td>
                                                     <td className="p-2 text-right font-mono text-sm">
                                                         {formatScore(submission.pod_score)}
+                                                    </td>
+                                                    <td className="p-2 text-right font-mono text-sm">
+                                                        {formatScore(submission.novelty)}
+                                                    </td>
+                                                    <td className="p-2 text-right font-mono text-sm">
+                                                        {formatScore(submission.density)}
+                                                    </td>
+                                                    <td className="p-2 text-right font-mono text-sm">
+                                                        {formatScore(submission.coherence)}
+                                                    </td>
+                                                    <td className="p-2 text-right font-mono text-sm">
+                                                        {formatRedundancy(submission.redundancy)}
                                                     </td>
                                                     <td className="p-2 text-sm text-muted-foreground">
                                                         {new Date(submission.created_at).toLocaleDateString()}
