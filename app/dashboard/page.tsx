@@ -4,12 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { FileText, User, TrendingUp, Award, Coins, Clock, CheckCircle2 } from "lucide-react"
+import { FileText, User, TrendingUp, Award, Coins, Clock, CheckCircle2, Loader2 } from "lucide-react"
 import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm"
 import { PoCDashboardStats } from '@/components/PoCDashboardStats'
-import { SandboxMap3DUpgraded } from '@/components/SandboxMap3DUpgraded'
+import dynamic from 'next/dynamic'
+
+// Dynamically import 3D map component to avoid SSR issues with Three.js
+const SandboxMap3DUpgraded = dynamic(
+    () => import('@/components/SandboxMap3DUpgraded').then(mod => ({ default: mod.SandboxMap3DUpgraded })),
+    { 
+        ssr: false,
+        loading: () => (
+            <Card>
+                <CardContent className="flex items-center justify-center h-[800px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </CardContent>
+            </Card>
+        )
+    }
+)
 
 export default async function Dashboard() {
     const supabase = createClient()
