@@ -30,7 +30,17 @@ async function getTestPocHash() {
         
         console.log('\n🔍 Searching for test PoC...\n')
         
-        let query = db
+        // Build query conditions
+        const conditions = [
+            eq(contributionsTable.registered, false),
+            sql`(${contributionsTable.metadata}->>'qualified_founder')::boolean = true`
+        ]
+        
+        if (contributorEmail) {
+            conditions.push(eq(contributionsTable.contributor, contributorEmail))
+        }
+        
+        const results = await db
             .select({
                 submission_hash: contributionsTable.submission_hash,
                 title: contributionsTable.title,
@@ -40,27 +50,8 @@ async function getTestPocHash() {
                 qualified: sql<string>`${contributionsTable.metadata}->>'qualified_founder'`,
             })
             .from(contributionsTable)
-            .where(
-                and(
-                    eq(contributionsTable.registered, false),
-                    sql`(${contributionsTable.metadata}->>'qualified_founder')::boolean = true`
-                )
-            )
+            .where(and(...conditions))
             .limit(5)
-        
-        // Build query with conditions
-        const conditions = []
-        if (contributorEmail) {
-            conditions.push(eq(contributionsTable.contributor, contributorEmail))
-            conditions.push(eq(contributionsTable.registered, false))
-        }
-        
-        if (conditions.length > 0) {
-            query = query.where(and(...conditions))
-        }
-        }
-        
-        const results = await query
         
         if (results.length === 0) {
             console.log('❌ No qualified, unregistered PoCs found')
