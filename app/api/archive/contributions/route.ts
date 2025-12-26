@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable, pocLogTable } from '@/utils/db/schema'
+import { contributionsTable, pocLogTable, allocationsTable } from '@/utils/db/schema'
 import { eq, and, or, like, ilike } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { createClient } from '@/utils/supabase/server'
@@ -39,20 +39,40 @@ export async function GET(request: NextRequest) {
             })
         }
         
+        // Get all allocations to check which contributions are allocated
+        const allocations = await db
+            .select()
+            .from(allocationsTable)
+        
+        const allocatedHashes = new Set(allocations.map(a => a.submission_hash))
+        
         // Format contributions to match expected API response
-        const formattedContributions = contributions.map(contrib => ({
-            submission_hash: contrib.submission_hash,
-            title: contrib.title,
-            contributor: contrib.contributor,
-            content_hash: contrib.content_hash,
-            text_content: contrib.text_content,
-            status: contrib.status,
-            category: contrib.category,
-            metals: contrib.metals as string[] || [],
-            metadata: contrib.metadata || {},
-            created_at: contrib.created_at?.toISOString() || '',
-            updated_at: contrib.updated_at?.toISOString() || ''
-        }))
+        const formattedContributions = contributions.map(contrib => {
+            const metadata = contrib.metadata as any || {}
+            return {
+                submission_hash: contrib.submission_hash,
+                title: contrib.title,
+                contributor: contrib.contributor,
+                content_hash: contrib.content_hash,
+                text_content: contrib.text_content,
+                status: contrib.status,
+                category: contrib.category,
+                metals: contrib.metals as string[] || [],
+                // Extract scores from metadata
+                pod_score: metadata.pod_score ?? null,
+                novelty: metadata.novelty ?? null,
+                density: metadata.density ?? null,
+                coherence: metadata.coherence ?? null,
+                alignment: metadata.alignment ?? null,
+                qualified: metadata.qualified_founder ?? null,
+                // Direct fields
+                registered: contrib.registered ?? false,
+                allocated: allocatedHashes.has(contrib.submission_hash),
+                metadata: metadata,
+                created_at: contrib.created_at?.toISOString() || '',
+                updated_at: contrib.updated_at?.toISOString() || ''
+            }
+        })
         
         debug('ArchiveContributions', 'Contributions fetched', { count: formattedContributions.length })
         
