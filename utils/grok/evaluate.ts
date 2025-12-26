@@ -850,7 +850,7 @@ Founder Certificate Format (Markdown, ERC-20 Style)
 
 |-----------|-------|---------------|
 
-| Novelty | ____ | Originality & frontier contribution; Redundancy Penalty: ____ points |
+| Novelty | ____ | Originality & frontier contribution (NO redundancy penalty applied to individual scores) |
 
 | Density | ____ | Depth, informational richness; Optional Redundancy Penalty: ____ points |
 
@@ -1117,11 +1117,14 @@ ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
    ${isSeedSubmission 
         ? '**CRITICAL FOR FOUNDATIONAL WORK:** This paper defines the Syntheverse HHF-AI system itself. Score accordingly:\n   - Novelty: Should be 2400-2500 (this is the ORIGINAL definition - maximum novelty)\n   - Density: Should be 2200-2500 (comprehensive foundational framework)\n   - Coherence: Should be 2200-2500 (well-structured foundational architecture)\n   - Alignment: Should be 2000-2500 (perfect alignment with Syntheverse principles)'
         : ''}
-4. Calculate: Final_Novelty = Base_Novelty × (1 - Redundancy_Penalty% / 100)
-   ${isSeedSubmission ? '(For foundational submissions, Redundancy_Penalty = 0%, so Final_Novelty = Base_Novelty)' : ''}
-5. Total = Novelty + Density + Coherence + Alignment
-6. Qualified if total ≥ 8000
-   ${isSeedSubmission ? '(Foundational submissions should easily qualify with total ≥ 8000)' : ''}
+   **IMPORTANT: Individual dimension scores (Novelty, Density, Coherence, Alignment) are NEVER penalized. They remain as scored (0-2500 each).**
+4. Calculate Composite Score = Novelty + Density + Coherence + Alignment
+5. Apply Redundancy Penalty ONLY to Composite Score:
+   - Final_Total_Score = Composite_Score × (1 - Redundancy_Penalty% / 100)
+   ${isSeedSubmission ? '(For foundational submissions, Redundancy_Penalty = 0%, so Final_Total_Score = Composite_Score)' : ''}
+   **CRITICAL: The redundancy penalty is applied ONLY to the composite/total score, NOT to individual dimension scores.**
+6. Qualified if Final_Total_Score ≥ 8000
+   ${isSeedSubmission ? '(Foundational submissions should easily qualify with Final_Total_Score ≥ 8000)' : ''}
 7. Recommend metal: Gold/Silver/Copper/Hybrid
    ${isSeedSubmission ? '(Foundational work typically qualifies for Gold metal)' : ''}
 8. Tokenomics: Suggest eligible epochs and allocation
