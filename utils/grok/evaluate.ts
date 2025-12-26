@@ -2,6 +2,7 @@ import { debug, debugError } from '@/utils/debug'
 import { db } from '@/utils/db/db'
 import { contributionsTable, tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
 import { ne, sql } from 'drizzle-orm'
+import { qualifyEpoch } from '@/utils/epochs/qualification'
 import { 
     vectorizeSubmission, 
     formatArchivedVectors, 
@@ -49,6 +50,7 @@ export async function evaluateWithGrok(
     alignment: number
     metals: string[]
     qualified: boolean
+    qualified_epoch?: string
     classification?: string[]
     redundancy_analysis?: string
     metal_justification?: string
@@ -1604,6 +1606,17 @@ Return your complete evaluation as a valid JSON object matching the specified st
         // because Grok's qualified_founder is based on pre-discount score
         const qualified = pod_score >= 8000
         
+        // Determine which epoch this PoC qualifies for based on density score
+        // Note: We use density for epoch qualification, not pod_score
+        const qualifiedEpoch = qualifyEpoch(densityFinal)
+        
+        debug('EvaluateWithGrok', 'Epoch qualification determined', {
+            pod_score,
+            density: densityFinal,
+            qualified_epoch: qualifiedEpoch,
+            qualified
+        })
+        
         // Final validation: If all scores are 0, this indicates a problem with Grok's response
         const allScoresZero = finalNoveltyScore === 0 && densityFinal === 0 && coherenceScore === 0 && alignmentScore === 0
         if (allScoresZero) {
@@ -1640,6 +1653,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
             pod_score: Math.max(0, Math.min(10000, pod_score)),
             metals,
             qualified,
+            qualified_epoch: qualifiedEpoch, // Epoch this PoC qualifies for based on density
             // Additional fields from new evaluation format
             novelty: Math.max(0, Math.min(2500, finalNoveltyScore)),
             alignment: Math.max(0, Math.min(2500, alignmentScore)),
@@ -1651,7 +1665,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
             founder_certificate: evaluation.founder_certificate || '',
             homebase_intro: evaluation.homebase_intro || '',
             tokenomics_recommendation: evaluation.tokenomics_recommendation || {
-                eligible_epochs: [],
+                eligible_epochs: [qualifiedEpoch], // Include qualified epoch in eligible epochs
                 suggested_allocation: 0,
                 tier_multiplier: 1,
                 epoch_distribution: {},

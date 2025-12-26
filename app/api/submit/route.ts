@@ -279,6 +279,7 @@ export async function POST(request: NextRequest) {
                                 homebase_intro: evaluation.homebase_intro,
                                 tokenomics_recommendation: evaluation.tokenomics_recommendation,
                                 qualified_founder: qualified,
+                                qualified_epoch: evaluation.qualified_epoch || null,
                                 allocation_status: 'pending_admin_approval' // Token allocation requires admin approval
                             },
                             // Store vector embedding and 3D coordinates if available
@@ -420,6 +421,7 @@ export async function POST(request: NextRequest) {
                 pod_score: evaluation.pod_score,
                 qualified: evaluation.qualified,
                 qualified_founder: evaluation.qualified,
+                qualified_epoch: evaluation.qualified_epoch || null,
                 classification: evaluation.classification || [],
                 redundancy_analysis: evaluation.redundancy_analysis,
                 metal_justification: evaluation.metal_justification,

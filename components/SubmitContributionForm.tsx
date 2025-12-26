@@ -368,10 +368,14 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                     <div className="p-4 bg-green-100 border border-green-500 rounded-lg">
                                                         <div className="font-semibold text-green-800 flex items-center gap-2">
                                                             <Award className="h-5 w-5" />
-                                                            ✅ Qualified as Open Epoch Founder!
+                                                            ✅ Qualified for {evaluationStatus.evaluation?.qualified_epoch ? evaluationStatus.evaluation.qualified_epoch.charAt(0).toUpperCase() + evaluationStatus.evaluation.qualified_epoch.slice(1) : 'Open'} Epoch!
                                                         </div>
                                                         <div className="text-sm text-green-700 mt-2">
-                                                            Your contribution has met the Founder qualification threshold (≥8,000 points)
+                                                            {evaluationStatus.evaluation?.qualified_epoch ? (
+                                                                <>Your contribution qualifies for the <strong>{evaluationStatus.evaluation.qualified_epoch.charAt(0).toUpperCase() + evaluationStatus.evaluation.qualified_epoch.slice(1)}</strong> epoch (PoC Score: {evaluationStatus.podScore.toLocaleString()})</>
+                                                            ) : (
+                                                                <>Your contribution has met the qualification threshold (≥8,000 points)</>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 )}
@@ -442,6 +446,21 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                                         {evaluationStatus.evaluation.metal_justification}
                                                                     </div>
                                                                 )}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Qualified Epoch */}
+                                                        {evaluationStatus.evaluation.qualified_epoch && (
+                                                            <div className="p-4 bg-muted rounded-lg">
+                                                                <div className="text-sm font-semibold mb-2">Qualified Epoch</div>
+                                                                <div className="flex items-center gap-2 mb-2">
+                                                                    <span className="px-3 py-1 bg-purple-500/20 text-purple-700 rounded-full text-sm font-semibold capitalize">
+                                                                        {evaluationStatus.evaluation.qualified_epoch}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="text-sm text-muted-foreground mt-2">
+                                                                    Based on density score: {evaluationStatus.evaluation.density?.toLocaleString() || 'N/A'} / 2,500
+                                                                </div>
                                                             </div>
                                                         )}
 
