@@ -208,9 +208,39 @@ After script tests pass:
    - Product name should show PoC title
    - Description should mention "Hard Hat L1 blockchain"
 
-5. **Complete or Cancel**
+5. **Test Stripe Payment (Test Mode)**
+   - Use Stripe test card numbers (see below)
+   - Test successful payment flow
+   - Test cancel flow (should return to dashboard)
+
+### Stripe Test Card Numbers
+
+For testing in Stripe test mode, use these test card numbers:
+
+**Successful Payment:**
+- Card Number: `4242 4242 4242 4242`
+- Expiry: Any future date (e.g., `12/34`)
+- CVC: Any 3 digits (e.g., `123`)
+- ZIP: Any 5 digits (e.g., `12345`)
+
+**Declined Payment (for testing error handling):**
+- Card Number: `4000 0000 0000 0002`
+- Expiry: Any future date
+- CVC: Any 3 digits
+- ZIP: Any 5 digits
+
+**Requires Authentication (3D Secure):**
+- Card Number: `4000 0025 0000 3155`
+- Expiry: Any future date
+- CVC: Any 3 digits
+- ZIP: Any 5 digits
+
+**Note:** These cards only work in Stripe test mode. If you're using live mode, you'll need real payment methods (not recommended for testing).
+
+6. **Complete or Cancel**
    - Test cancel flow (should return to dashboard)
    - Test success flow (after payment, should update registration status)
+   - Verify registration status updates in database
 
 ## Monitoring
 

@@ -159,13 +159,26 @@ async function testRegistrationEndpoint() {
             const Stripe = (await import('stripe')).default
             const sanitizedKey = process.env.STRIPE_SECRET_KEY!.trim().replace(/\s+/g, '')
             
-            if (!sanitizedKey.match(/^sk_(test|live)_/)) {
-                logResult(
-                    'Stripe Key Format',
-                    'FAIL',
-                    'Invalid Stripe key format',
-                    { prefix: sanitizedKey.substring(0, 7) }
-                )
+            // Check if key format is valid (sk_test_ or sk_live_)
+            const isValidFormat = sanitizedKey.match(/^sk_(test|live)_/)
+            
+            if (!isValidFormat) {
+                // Check if it might be a publishable key (pk_) or something else
+                if (sanitizedKey.startsWith('pk_')) {
+                    logResult(
+                        'Stripe Key Format',
+                        'FAIL',
+                        'This appears to be a publishable key, not a secret key',
+                        { prefix: sanitizedKey.substring(0, 7) }
+                    )
+                } else {
+                    logResult(
+                        'Stripe Key Format',
+                        'FAIL',
+                        'Invalid Stripe key format (should start with sk_test_ or sk_live_)',
+                        { prefix: sanitizedKey.substring(0, 10), length: sanitizedKey.length }
+                    )
+                }
             } else {
                 const stripe = new Stripe(sanitizedKey, {
                     apiVersion: '2024-06-20'
@@ -211,21 +224,30 @@ async function testRegistrationEndpoint() {
     
     // Test 5: Test registration endpoint (mock test)
     console.log('\n🔗 Test 5: Registration Endpoint Structure')
-    try {
-        const registerRoute = await import('@/app/api/poc/[hash]/register/route')
-        
+    if (hasDatabaseUrl) {
+        try {
+            const registerRoute = await import('@/app/api/poc/[hash]/register/route')
+            
+            logResult(
+                'Registration Route',
+                'PASS',
+                'Registration route module loaded successfully',
+                { hasPostMethod: typeof registerRoute.POST === 'function' }
+            )
+        } catch (error) {
+            logResult(
+                'Registration Route',
+                'FAIL',
+                'Failed to load registration route',
+                { error: error instanceof Error ? error.message : 'Unknown error' }
+            )
+        }
+    } else {
         logResult(
             'Registration Route',
-            'PASS',
-            'Registration route module loaded successfully',
-            { hasPostMethod: typeof registerRoute.POST === 'function' }
-        )
-    } catch (error) {
-        logResult(
-            'Registration Route',
-            'FAIL',
-            'Failed to load registration route',
-            { error: error instanceof Error ? error.message : 'Unknown error' }
+            'SKIP',
+            'DATABASE_URL not configured (route requires database)',
+            { note: 'Route will be tested on Vercel deployment instead' }
         )
     }
     

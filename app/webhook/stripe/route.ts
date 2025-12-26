@@ -86,19 +86,76 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         }
         
         try {
-            // Update contribution with registration info
+            // Get contribution data for blockchain registration
+            const contributions = await db
+                .select()
+                .from(contributionsTable)
+                .where(eq(contributionsTable.submission_hash, submissionHash))
+                .limit(1)
+            
+            if (!contributions || contributions.length === 0) {
+                debugError('StripeWebhook', 'Contribution not found for blockchain registration', { submissionHash })
+                return
+            }
+            
+            const contrib = contributions[0]
+            const metadata = contrib.metadata as any || {}
+            const metals = (contrib.metals as string[]) || []
+            
+            // Register PoC on Hard Hat L1 blockchain
+            let blockchainTxHash: string | null = null
+            try {
+                const { registerPoCOnBlockchain } = await import('@/utils/blockchain/register-poc')
+                const blockchainResult = await registerPoCOnBlockchain(
+                    submissionHash,
+                    contrib.contributor,
+                    {
+                        novelty: metadata.novelty,
+                        density: metadata.density,
+                        coherence: metadata.coherence,
+                        alignment: metadata.alignment,
+                        pod_score: metadata.pod_score
+                    },
+                    metals
+                )
+                
+                if (blockchainResult.success && blockchainResult.transaction_hash) {
+                    blockchainTxHash = blockchainResult.transaction_hash
+                    debug('StripeWebhook', 'PoC registered on Hard Hat L1 blockchain', {
+                        submissionHash,
+                        txHash: blockchainTxHash,
+                        blockNumber: blockchainResult.block_number
+                    })
+                } else {
+                    debugError('StripeWebhook', 'Blockchain registration failed', {
+                        submissionHash,
+                        error: blockchainResult.error
+                    })
+                    // Continue with registration even if blockchain fails (payment is complete)
+                }
+            } catch (blockchainError) {
+                debugError('StripeWebhook', 'Blockchain registration error (non-fatal)', blockchainError)
+                // Continue with registration even if blockchain fails
+            }
+            
+            // Update contribution with registration info (Stripe payment + blockchain transaction)
             await db
                 .update(contributionsTable)
                 .set({
                     registered: true,
                     registration_date: new Date(),
                     stripe_payment_id: session.payment_intent as string,
-                    // registration_tx_hash will be set when blockchain transaction is confirmed
+                    registration_tx_hash: blockchainTxHash, // Hard Hat L1 transaction hash
                     updated_at: new Date()
                 })
                 .where(eq(contributionsTable.submission_hash, submissionHash))
             
-            debug('StripeWebhook', 'PoC registration updated', { submissionHash, sessionId: session.id })
+            debug('StripeWebhook', 'PoC registration completed', { 
+                submissionHash, 
+                sessionId: session.id,
+                stripePaymentId: session.payment_intent,
+                blockchainTxHash: blockchainTxHash || 'pending'
+            })
         } catch (error) {
             debugError('StripeWebhook', 'Error updating PoC registration', error)
             throw error
