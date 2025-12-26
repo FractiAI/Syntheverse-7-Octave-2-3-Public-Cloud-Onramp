@@ -158,7 +158,7 @@ export async function calculateProjectedAllocation(
             eligible: true,
             epoch,
             breakdown: {
-                base_score: baseScore,
+                base_score: scorePercentage * 100, // Percentage (0-100)
                 pod_score: podScore,
                 metal_multiplier: metalMultiplier,
                 metal_combination: amplification.combination,
