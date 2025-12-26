@@ -288,6 +288,24 @@ async function handleApproval(submission_hash: string, approvedBy: string): Prom
             return NextResponse.redirect(new URL(`/dashboard?submission=${submission_hash}&error=no_allocations_created`, process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'))
         }
         
+        // Check if current epoch is fully allocated and transition if needed
+        // This happens after allocations are created and balances updated
+        try {
+            const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
+            const updatedEpochInfo = await getOpenEpochInfo()
+            
+            if (updatedEpochInfo.current_epoch !== currentEpoch) {
+                debug('ApproveAllocation', 'Epoch transitioned after allocation', {
+                    old_epoch: currentEpoch,
+                    new_epoch: updatedEpochInfo.current_epoch,
+                    founder_balance: epochBalancesMap.get('founder') || 0
+                })
+            }
+        } catch (transitionError) {
+            // Non-fatal - log but don't fail the allocation
+            debug('ApproveAllocation', 'Error checking epoch transition', transitionError)
+        }
+        
         // Update contribution allocation_status
         await db
             .update(contributionsTable)

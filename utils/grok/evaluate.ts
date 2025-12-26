@@ -1129,7 +1129,7 @@ ${calculatedRedundancy.analysis}
 
     // Format tokenomics context (condensed)
     const tokenomicsContext = tokenomicsInfo 
-        ? `**Tokenomics:** Epoch=${tokenomicsInfo.current_epoch}, Founder=${tokenomicsInfo.epoch_balances.founder?.toLocaleString() || 0} SYNTH. Thresholds: Founder≥8000, Pioneer≥6000, Community≥4000.`
+        ? `**Tokenomics:** Epoch=${tokenomicsInfo.current_epoch}, Founder=${tokenomicsInfo.epoch_balances.founder?.toLocaleString() || 0} SYNTH. Thresholds: Founder≥8000, Pioneer≥4000, Community≥3000, Ecosystem≥2000.`
         : ''
 
     // Evaluation query with contribution details, archived PoCs, and tokenomics
