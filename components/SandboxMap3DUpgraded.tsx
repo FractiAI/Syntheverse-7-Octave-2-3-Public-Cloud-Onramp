@@ -7,7 +7,7 @@
 
 'use client'
 
-import { Suspense, useState, useEffect, useMemo, ErrorBoundary } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
 import * as THREE from 'three'
@@ -194,23 +194,11 @@ export function SandboxMap3DUpgraded() {
     
     return (
         <div className="relative w-full h-[800px]">
-            <ErrorBoundary
-                fallback={
-                    <Card>
-                        <CardContent className="flex items-center justify-center h-[800px]">
-                            <div className="text-destructive">
-                                <p className="font-semibold">Error loading 3D map</p>
-                                <p className="text-sm mt-2">Please refresh the page</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                }
+            <Canvas
+                gl={{ antialias: true, alpha: true }}
+                dpr={[1, 2]}
             >
-                <Canvas
-                    gl={{ antialias: true, alpha: true }}
-                    dpr={[1, 2]}
-                >
-                    <Suspense fallback={null}>
+                <Suspense fallback={null}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} intensity={1} />
                     <pointLight position={[-10, -10, -10]} intensity={0.5} />
@@ -247,9 +235,8 @@ export function SandboxMap3DUpgraded() {
                         maxDistance={(bounds.range || 100) * 5}
                         target={[bounds.center[0], bounds.center[1], bounds.center[2]]}
                     />
-                    </Suspense>
-                </Canvas>
-            </ErrorBoundary>
+                </Suspense>
+            </Canvas>
             
             {/* Controls */}
             <div className="absolute top-4 left-4 flex gap-2">
