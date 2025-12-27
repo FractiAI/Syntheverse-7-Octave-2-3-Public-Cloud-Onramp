@@ -1,9 +1,12 @@
 import { headers } from 'next/headers'
 import { db } from '@/utils/db/db'
-import { usersTable, contributionsTable } from '@/utils/db/schema'
+import { usersTable, contributionsTable, allocationsTable, epochBalancesTable, tokenomicsTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
+import { calculateProjectedAllocation } from '@/utils/tokenomics/projected-allocation'
+import { calculateMetalAmplification } from '@/utils/tokenomics/metal-amplification'
+import crypto from 'crypto'
 
 // Force dynamic rendering - webhooks must be server-side only
 export const dynamic = 'force-dynamic'
@@ -153,6 +156,153 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                     updated_at: new Date()
                 })
                 .where(eq(contributionsTable.submission_hash, submissionHash))
+            
+            // Automatically allocate tokens for registered PoC based on PoC submission, open epoch, and available SYNTH tokens
+            // Check if allocation already exists
+            const existingAllocations = await db
+                .select()
+                .from(allocationsTable)
+                .where(eq(allocationsTable.submission_hash, submissionHash))
+            
+            if (existingAllocations.length === 0 && metadata.qualified_founder) {
+                try {
+                    const podScore = metadata.pod_score || 0
+                    const qualifiedEpoch = metadata.qualified_epoch || 'founder' // Use the epoch that was open when PoC qualified
+                    
+                    debug('StripeWebhook', 'Processing automatic token allocation for registered PoC', {
+                        submissionHash,
+                        podScore,
+                        qualifiedEpoch,
+                        metals
+                    })
+                    
+                    // Get epoch balance for the qualified epoch
+                    const epochBalances = await db
+                        .select()
+                        .from(epochBalancesTable)
+                        .where(eq(epochBalancesTable.epoch, qualifiedEpoch))
+                        .limit(1)
+                    
+                    if (epochBalances.length > 0) {
+                        const epochBalance = epochBalances[0]
+                        const currentBalance = Number(epochBalance.balance)
+                        
+                        // Calculate allocation: (pod_score / 10000) * available_epoch_balance
+                        // For 10,000 score = 100% of available tokens
+                        const scorePercentage = podScore / 10000.0
+                        const baseAllocation = scorePercentage * currentBalance
+                        
+                        // Calculate metal amplification
+                        const amplification = calculateMetalAmplification(metals)
+                        const metalMultiplier = amplification.multiplier
+                        
+                        // Apply metal amplification
+                        const amplifiedAllocation = baseAllocation * metalMultiplier
+                        
+                        // Final allocation (ensure we don't exceed available balance)
+                        const finalAllocation = Math.min(Math.floor(amplifiedAllocation), currentBalance)
+                        
+                        debug('StripeWebhook', 'Allocation calculation', {
+                            submissionHash,
+                            podScore,
+                            scorePercentage: scorePercentage * 100,
+                            currentBalance,
+                            baseAllocation,
+                            metalMultiplier,
+                            amplifiedAllocation,
+                            finalAllocation,
+                            epoch: qualifiedEpoch
+                        })
+                        
+                        if (finalAllocation > 0) {
+                            // Create allocation record
+                            const allocationId = crypto.randomUUID()
+                            const newBalance = currentBalance - finalAllocation
+                            
+                            // Use first metal or default
+                            const primaryMetal = metals[0] || 'copper'
+                            
+                            await db.insert(allocationsTable).values({
+                                id: allocationId,
+                                submission_hash: submissionHash,
+                                contributor: contrib.contributor,
+                                metal: primaryMetal.toLowerCase(),
+                                epoch: qualifiedEpoch,
+                                tier: primaryMetal.toLowerCase(),
+                                reward: finalAllocation.toString(),
+                                tier_multiplier: metalMultiplier.toString(),
+                                epoch_balance_before: currentBalance.toString(),
+                                epoch_balance_after: newBalance.toString(),
+                            })
+                            
+                            // Update epoch balance
+                            await db
+                                .update(epochBalancesTable)
+                                .set({
+                                    balance: newBalance.toString(),
+                                    updated_at: new Date()
+                                })
+                                .where(eq(epochBalancesTable.epoch, qualifiedEpoch))
+                            
+                            // Update tokenomics total_distributed
+                            const tokenomicsState = await db
+                                .select()
+                                .from(tokenomicsTable)
+                                .where(eq(tokenomicsTable.id, 'main'))
+                                .limit(1)
+                            
+                            if (tokenomicsState.length > 0) {
+                                const newTotalDistributed = Number(tokenomicsState[0].total_distributed) + finalAllocation
+                                await db
+                                    .update(tokenomicsTable)
+                                    .set({
+                                        total_distributed: newTotalDistributed.toString(),
+                                        updated_at: new Date()
+                                    })
+                                    .where(eq(tokenomicsTable.id, 'main'))
+                            }
+                            
+                            // Check and transition epoch if balance is exhausted (fully allocated)
+                            if (newBalance <= 1000) { // Threshold for "fully allocated"
+                                const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
+                                // This will check and transition epoch automatically
+                                await getOpenEpochInfo()
+                                
+                                debug('StripeWebhook', 'Epoch balance exhausted, triggering epoch transition', {
+                                    epoch: qualifiedEpoch,
+                                    balanceBefore: currentBalance,
+                                    balanceAfter: newBalance,
+                                    allocated: finalAllocation
+                                })
+                            }
+                            
+                            debug('StripeWebhook', 'Tokens auto-allocated successfully', {
+                                submissionHash,
+                                allocationAmount: finalAllocation,
+                                epoch: qualifiedEpoch,
+                                newBalance,
+                                podScore,
+                                metalMultiplier
+                            })
+                        } else {
+                            debug('StripeWebhook', 'No tokens to allocate (zero allocation or insufficient balance)', {
+                                submissionHash,
+                                podScore,
+                                currentBalance,
+                                finalAllocation
+                            })
+                        }
+                    } else {
+                        debugError('StripeWebhook', 'Epoch balance not found for allocation', {
+                            submissionHash,
+                            epoch: qualifiedEpoch
+                        })
+                    }
+                } catch (allocationError) {
+                    // Log but don't fail the registration if allocation fails
+                    debugError('StripeWebhook', 'Auto-allocation failed (non-fatal)', allocationError)
+                }
+            }
             
             debug('StripeWebhook', 'PoC registration completed', { 
                 submissionHash, 
