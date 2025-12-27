@@ -27,6 +27,10 @@ export const contributionsTable = pgTable('contributions', {
         density?: number;
         redundancy?: number;
         pod_score?: number;
+        novelty?: number;
+        alignment?: number;
+        qualified_founder?: boolean;
+        qualified_epoch?: string | null; // Epoch that was open when submission qualified (founder, pioneer, community, ecosystem)
         [key: string]: any;
     }>(),
     // Vector embedding and 3D coordinates for holographic hydrogen fractal sandbox

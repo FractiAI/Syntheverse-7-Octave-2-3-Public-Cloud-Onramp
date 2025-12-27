@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
                 // Extract scores from metadata
                 pod_score: metadata.pod_score ?? null,
                 novelty: metadata.novelty ?? null,
-                density: density,
+                density: metadata.density ?? null,
                 coherence: metadata.coherence ?? null,
                 alignment: metadata.alignment ?? null,
                 redundancy: metadata.redundancy ?? null, // Redundancy percentage (0-100)
