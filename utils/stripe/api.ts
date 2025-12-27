@@ -12,9 +12,9 @@ function getStripeClient(): Stripe | null {
             // Sanitize the Stripe key - remove whitespace and invalid characters
             const sanitizedKey = process.env.STRIPE_SECRET_KEY.trim().replace(/\s+/g, '');
             
-            // Validate key format (should start with sk_test_ or sk_live_)
-            if (!sanitizedKey.match(/^sk_(test|live)_/)) {
-                debugError('StripeAPI', 'Invalid Stripe key format', new Error('Stripe key must start with sk_test_ or sk_live_'));
+            // Validate key format (supports standard sk_ keys and restricted ssk_/rk_ keys)
+            if (!sanitizedKey.match(/^(sk|ssk|rk)_(test|live)_/)) {
+                debugError('StripeAPI', 'Invalid Stripe key format', new Error('Stripe key must start with sk_test_, sk_live_, ssk_test_, ssk_live_, rk_test_, or rk_live_'));
                 return null;
             }
             

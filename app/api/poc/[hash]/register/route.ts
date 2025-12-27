@@ -126,8 +126,12 @@ export async function POST(
         
         // Get Stripe instance
         if (!process.env.STRIPE_SECRET_KEY) {
+            debugError('RegisterPoC', 'STRIPE_SECRET_KEY environment variable is missing', {})
             return NextResponse.json(
-                { error: 'Stripe not configured' },
+                { 
+                    error: 'Stripe not configured',
+                    message: 'STRIPE_SECRET_KEY environment variable is not set'
+                },
                 { status: 500 }
             )
         }
@@ -135,10 +139,17 @@ export async function POST(
         // Sanitize the Stripe key - remove whitespace and invalid characters
         const sanitizedKey = process.env.STRIPE_SECRET_KEY.trim().replace(/\s+/g, '');
         
-        // Validate key format
-        if (!sanitizedKey.match(/^sk_(test|live)_/)) {
+        // Validate key format (supports standard sk_ keys and restricted ssk_ keys)
+        if (!sanitizedKey.match(/^(sk|ssk|rk)_(test|live)_/)) {
+            debugError('RegisterPoC', 'Invalid Stripe key format', {
+                keyPrefix: sanitizedKey.substring(0, 10) + '...',
+                keyLength: sanitizedKey.length
+            })
             return NextResponse.json(
-                { error: 'Invalid Stripe key format' },
+                { 
+                    error: 'Invalid Stripe key format',
+                    message: 'Stripe key must start with sk_test_, sk_live_, ssk_test_, ssk_live_, rk_test_, or rk_live_'
+                },
                 { status: 500 }
             )
         }
@@ -195,16 +206,26 @@ export async function POST(
                 type: stripeError?.type,
                 code: stripeError?.code,
                 message: stripeError?.message,
-                param: stripeError?.param
+                param: stripeError?.param,
+                statusCode: stripeError?.statusCode
             })
-            return NextResponse.json(
-                { 
-                    error: 'Stripe checkout error',
-                    message: stripeError?.message || 'Failed to create checkout session',
-                    details: stripeError?.type || 'unknown_error'
-                },
-                { status: 500 }
-            )
+            
+            // Return detailed error for debugging
+            const errorResponse: any = {
+                error: 'Stripe checkout error',
+                message: stripeError?.message || 'Failed to create checkout session',
+                details: stripeError?.type || 'unknown_error'
+            }
+            
+            // Include additional details if available
+            if (stripeError?.code) {
+                errorResponse.code = stripeError.code
+            }
+            if (stripeError?.param) {
+                errorResponse.param = stripeError.param
+            }
+            
+            return NextResponse.json(errorResponse, { status: 500 })
         }
         
         debug('RegisterPoC', 'Stripe checkout session created', { 

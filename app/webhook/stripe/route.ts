@@ -16,8 +16,8 @@ function getStripeClient(): Stripe | null {
     }
     // Sanitize the Stripe key - remove whitespace and invalid characters
     const sanitizedKey = process.env.STRIPE_SECRET_KEY.trim().replace(/\s+/g, '');
-    // Validate key format
-    if (!sanitizedKey.match(/^sk_(test|live)_/)) {
+    // Validate key format (supports standard sk_ keys and restricted ssk_/rk_ keys)
+    if (!sanitizedKey.match(/^(sk|ssk|rk)_(test|live)_/)) {
         return null;
     }
     return new Stripe(sanitizedKey, {
