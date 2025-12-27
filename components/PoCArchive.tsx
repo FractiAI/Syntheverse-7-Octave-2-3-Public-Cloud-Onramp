@@ -116,21 +116,50 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
             const response = await fetch(`/api/poc/${hash}/register`, {
                 method: 'POST'
             })
+            
+            // Try to parse response as JSON
+            let data: any
+            try {
+                const text = await response.text()
+                if (!text) {
+                    throw new Error(`Empty response from server (status: ${response.status})`)
+                }
+                data = JSON.parse(text)
+            } catch (parseError) {
+                console.error('Failed to parse response:', parseError)
+                throw new Error(`Invalid response from server (status: ${response.status}). Please check server logs.`)
+            }
+            
+            // Check if response indicates an error
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-                const errorMessage = errorData.message || errorData.error || `Failed to initiate registration (${response.status})`
-                const errorType = errorData.error_type ? ` (${errorData.error_type})` : ''
-                throw new Error(`${errorMessage}${errorType}`)
+                const errorMessage = data.message || data.error || `Failed to initiate registration (${response.status})`
+                const errorType = data.error_type ? ` (${data.error_type})` : ''
+                const errorDetails = data.details ? ` - ${data.details}` : ''
+                throw new Error(`${errorMessage}${errorType}${errorDetails}`)
             }
-            const data = await response.json()
-            if (data.checkout_url && typeof data.checkout_url === 'string' && data.checkout_url.startsWith('http')) {
-                window.location.href = data.checkout_url
-            } else {
-                throw new Error(data.message || data.error || 'No valid checkout URL received from server')
+            
+            // Validate checkout_url is present and valid
+            if (!data.checkout_url) {
+                console.error('Response data:', data)
+                throw new Error(data.message || data.error || 'No checkout URL received from server. Please check server configuration.')
             }
+            
+            if (typeof data.checkout_url !== 'string') {
+                console.error('Invalid checkout_url type:', typeof data.checkout_url, data)
+                throw new Error('Invalid checkout URL format received from server')
+            }
+            
+            if (!data.checkout_url.startsWith('http://') && !data.checkout_url.startsWith('https://')) {
+                console.error('Invalid checkout_url format:', data.checkout_url)
+                throw new Error(`Invalid checkout URL format: ${data.checkout_url.substring(0, 50)}...`)
+            }
+            
+            // Redirect to Stripe checkout
+            window.location.href = data.checkout_url
         } catch (err) {
             console.error('Registration error:', err)
-            alert(err instanceof Error ? err.message : 'Failed to register PoC')
+            const errorMessage = err instanceof Error ? err.message : 'Failed to register PoC'
+            alert(`Registration Error: ${errorMessage}`)
         } finally {
             setRegistering(null)
         }
