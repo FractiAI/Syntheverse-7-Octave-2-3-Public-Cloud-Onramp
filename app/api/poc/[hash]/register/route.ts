@@ -159,7 +159,39 @@ export async function POST(
         })
         
         // Create Stripe checkout session
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL || 'http://localhost:3000'
+        // Get base URL - must be a valid absolute URL for Stripe
+        let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL
+        
+        // If no env var, try to get from request headers (for production)
+        if (!baseUrl) {
+            const host = request.headers.get('host')
+            const protocol = request.headers.get('x-forwarded-proto') || 'https'
+            if (host) {
+                baseUrl = `${protocol}://${host}`
+            }
+        }
+        
+        // Fallback to localhost only in development
+        if (!baseUrl) {
+            baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null
+        }
+        
+        // Validate baseUrl is a valid absolute URL
+        if (!baseUrl || !baseUrl.match(/^https?:\/\//)) {
+            debugError('RegisterPoC', 'Invalid baseUrl for Stripe checkout', {
+                baseUrl,
+                NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+                NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL,
+                NODE_ENV: process.env.NODE_ENV
+            })
+            return NextResponse.json(
+                { 
+                    error: 'Configuration error',
+                    message: 'Site URL not configured. NEXT_PUBLIC_SITE_URL or NEXT_PUBLIC_WEBSITE_URL must be set to a valid absolute URL (e.g., https://your-app.vercel.app)'
+                },
+                { status: 500 }
+            )
+        }
         
         // Sanitize title for Stripe (max 500 chars, no special characters that might cause issues)
         const sanitizedTitle = (contrib.title || 'PoC Registration').substring(0, 500).replace(/[^\w\s-]/g, '')
@@ -230,8 +262,24 @@ export async function POST(
         
         debug('RegisterPoC', 'Stripe checkout session created', { 
             sessionId: session.id,
-            submissionHash 
+            submissionHash,
+            checkoutUrl: session.url ? 'present' : 'missing'
         })
+        
+        // Validate session URL is present
+        if (!session.url) {
+            debugError('RegisterPoC', 'Stripe session created but URL is missing', {
+                sessionId: session.id,
+                session: JSON.stringify(session).substring(0, 200)
+            })
+            return NextResponse.json(
+                { 
+                    error: 'Stripe checkout error',
+                    message: 'Failed to get checkout URL from Stripe session'
+                },
+                { status: 500 }
+            )
+        }
         
         return NextResponse.json({
             checkout_url: session.url,
