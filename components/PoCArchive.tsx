@@ -205,6 +205,26 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         )
     }
 
+    const getEpochBadge = (epoch: string | null) => {
+        if (!epoch) return <span className="text-muted-foreground text-sm">—</span>
+        
+        const epochColors: Record<string, string> = {
+            founder: 'bg-yellow-500',
+            pioneer: 'bg-gray-400',
+            community: 'bg-blue-500',
+            ecosystem: 'bg-green-500'
+        }
+        
+        const epochLower = epoch.toLowerCase()
+        const colorClass = epochColors[epochLower] || 'bg-gray-500'
+        
+        return (
+            <Badge variant="default" className={`${colorClass} text-white capitalize`}>
+                {epoch}
+            </Badge>
+        )
+    }
+
     const renderTable = (submissions: PoCSubmission[], title: string) => {
         if (submissions.length === 0) return null
 
@@ -249,13 +269,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                             {getStatusBadge(submission)}
                                         </td>
                                         <td className="p-2">
-                                            {submission.qualified_epoch ? (
-                                                <Badge variant="default" className="bg-purple-500 capitalize">
-                                                    {submission.qualified_epoch}
-                                                </Badge>
-                                            ) : (
-                                                <span className="text-muted-foreground text-sm">—</span>
-                                            )}
+                                            {getEpochBadge(submission.qualified_epoch)}
                                         </td>
                                         <td className="p-2">
                                             {getMetalBadges(submission.metals)}
@@ -487,9 +501,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                 {selectedSubmission.qualified_epoch && (
                                     <div>
                                         <div className="text-sm font-semibold mb-2">Qualified Epoch</div>
-                                        <Badge variant="default" className="bg-purple-500 capitalize">
-                                            {selectedSubmission.qualified_epoch}
-                                        </Badge>
+                                        {getEpochBadge(selectedSubmission.qualified_epoch)}
                                     </div>
                                 )}
                             </div>
