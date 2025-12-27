@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/dialog'
 import { Loader2, RefreshCw, FileText, CheckCircle2, XCircle, Clock, CreditCard, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 
 interface PoCSubmission {
     submission_hash: string
