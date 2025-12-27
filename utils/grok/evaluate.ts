@@ -1405,7 +1405,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
             }
         }
         
-        const coherenceScore = finalCoherenceScore
+        let coherenceScore = finalCoherenceScore
         
         // Extract alignment score with extensive fallback (same as density)
         // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
@@ -1447,7 +1447,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
             }
         }
         
-        const alignmentScore = finalAlignmentScore
+        let alignmentScore = finalAlignmentScore
         
         // Debug logging for score extraction - comprehensive
         debug('EvaluateWithGrok', 'Score extraction - initial values', {
@@ -1512,7 +1512,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
         // Use final_score if provided, otherwise use base score
         // Individual category scores are NOT penalized - penalty is applied to total composite score
         // Handle both object and number formats for novelty
-        const finalNoveltyScore = 
+        let finalNoveltyScore = 
             (typeof noveltyRaw === 'object' && noveltyRaw !== null ? (noveltyRaw.final_score ?? noveltyRaw.score ?? noveltyRaw.base_score) : null) ??
             baseNoveltyScore
         
@@ -1562,7 +1562,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
         }
         
         // Use the best available density score (prefer finalDensityScore, fallback to baseDensityScore if final is 0)
-        const densityFinal = finalDensityScore > 0 ? finalDensityScore : baseDensityScore
+        let densityFinal = finalDensityScore > 0 ? finalDensityScore : baseDensityScore
         
         // Final debug log to see what we extracted
         debug('EvaluateWithGrok', 'Density extraction result', {
@@ -1584,8 +1584,39 @@ Return your complete evaluation as a valid JSON object matching the specified st
         }
         
         // Apply redundancy penalty to the COMPOSITE/TOTAL score, not individual category scores
-        const redundancy = Math.max(0, Math.min(100, redundancyPenaltyPercent))
-        const pod_score = Math.max(0, Math.min(10000, pod_scoreBeforePenalty * (1 - redundancy / 100)))
+        let redundancy = Math.max(0, Math.min(100, redundancyPenaltyPercent))
+        let pod_score = Math.max(0, Math.min(10000, pod_scoreBeforePenalty * (1 - redundancy / 100)))
+        
+        // CRITICAL: For foundational/seed submissions that define Syntheverse itself, 
+        // auto-assign maximum scores to ensure consistency
+        if (isSeedSubmission) {
+            debug('EvaluateWithGrok', 'Foundational submission detected - enforcing maximum scores', {
+                title,
+                scoresBefore: {
+                    novelty: finalNoveltyScore,
+                    density: densityFinal,
+                    coherence: coherenceScore,
+                    alignment: alignmentScore,
+                    pod_score: pod_score
+                }
+            })
+            
+            // Override scores to maximum for foundational work
+            finalNoveltyScore = 2500  // Maximum novelty - this is the original definition
+            densityFinal = 2500       // Maximum density - comprehensive foundational framework
+            coherenceScore = 2500     // Maximum coherence - well-structured foundational architecture
+            alignmentScore = 2500     // Maximum alignment - perfect alignment with Syntheverse principles
+            pod_score = 10000         // Perfect score - foundational submission deserves maximum
+            redundancy = 0            // Ensure no redundancy penalty
+            
+            debug('EvaluateWithGrok', 'Foundational submission - scores set to maximum', {
+                novelty: finalNoveltyScore,
+                density: densityFinal,
+                coherence: coherenceScore,
+                alignment: alignmentScore,
+                pod_score: pod_score
+            })
+        }
         
         // Extract metal alignment
         let metals: string[] = []
@@ -1604,17 +1635,20 @@ Return your complete evaluation as a valid JSON object matching the specified st
         // Determine qualification (≥8,000 for Founder)
         // IMPORTANT: Always use the discounted pod_score, not evaluation.qualified_founder
         // because Grok's qualified_founder is based on pre-discount score
+        // For foundational submissions, this should always be true (10,000 >= 8000)
         const qualified = pod_score >= 8000
         
         // Determine which epoch this PoC qualifies for based on density score
         // Note: We use density for epoch qualification, not pod_score
+        // For foundational submissions, density will be 2500, which qualifies for Founder epoch
         const qualifiedEpoch = qualifyEpoch(densityFinal)
         
         debug('EvaluateWithGrok', 'Epoch qualification determined', {
             pod_score,
             density: densityFinal,
             qualified_epoch: qualifiedEpoch,
-            qualified
+            qualified,
+            isSeedSubmission: isSeedSubmission
         })
         
         // Final validation: If all scores are 0, this indicates a problem with Grok's response
@@ -1646,17 +1680,25 @@ Return your complete evaluation as a valid JSON object matching the specified st
             // Don't throw - return zeros but log the issue so we can debug
         }
         
+        // Use final scores (may have been overridden for foundational submissions)
+        const finalNovelty = Math.max(0, Math.min(2500, finalNoveltyScore))
+        const finalDensity = Math.max(0, Math.min(2500, densityFinal))
+        const finalCoherence = Math.max(0, Math.min(2500, coherenceScore))
+        const finalAlignment = Math.max(0, Math.min(2500, alignmentScore))
+        const finalPodScore = Math.max(0, Math.min(10000, pod_score))
+        const finalRedundancy = isSeedSubmission ? 0 : Math.max(0, Math.min(100, redundancy)) // Always 0 for foundational submissions
+        
         return {
-            coherence: Math.max(0, Math.min(2500, coherenceScore)),
-            density: Math.max(0, Math.min(2500, densityFinal)),
-            redundancy: Math.max(0, Math.min(100, redundancy)), // Redundancy penalty as percentage (0-100%)
-            pod_score: Math.max(0, Math.min(10000, pod_score)),
+            coherence: finalCoherence,
+            density: finalDensity,
+            redundancy: finalRedundancy, // Redundancy penalty as percentage (0-100%)
+            pod_score: finalPodScore,
             metals,
             qualified,
             qualified_epoch: qualifiedEpoch, // Epoch this PoC qualifies for based on density
             // Additional fields from new evaluation format
-            novelty: Math.max(0, Math.min(2500, finalNoveltyScore)),
-            alignment: Math.max(0, Math.min(2500, alignmentScore)),
+            novelty: finalNovelty,
+            alignment: finalAlignment,
             classification: evaluation.classification || [],
             redundancy_analysis: calculatedRedundancy 
                 ? `${calculatedRedundancy.analysis}\n\n${evaluation.redundancy_analysis || (typeof noveltyRaw === 'object' && noveltyRaw !== null ? noveltyRaw.justification : '') || ''}`
