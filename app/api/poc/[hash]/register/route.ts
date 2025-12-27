@@ -160,7 +160,8 @@ export async function POST(
         
         // Create Stripe checkout session
         // Get base URL - must be a valid absolute URL for Stripe
-        let baseUrl: string | undefined = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL
+        // Trim whitespace to handle trailing newlines from Vercel env vars
+        let baseUrl: string | undefined = (process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL)?.trim()
         
         // If no env var, try to get from request headers (for production)
         if (!baseUrl) {

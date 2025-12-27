@@ -82,8 +82,8 @@ export async function GET(request: NextRequest) {
                 
                 // Test 4: Test checkout session creation
                 try {
-                    // Get base URL
-                    let baseUrl: string | undefined = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL
+                    // Get base URL - trim whitespace to handle trailing newlines from Vercel env vars
+                    let baseUrl: string | undefined = (process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL)?.trim()
                     
                     if (!baseUrl) {
                         const host = request.headers.get('host')
