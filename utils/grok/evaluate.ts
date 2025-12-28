@@ -324,7 +324,7 @@ export async function evaluateWithGrok(
     }
     
     // Comprehensive Syntheverse PoC Evaluation System Prompt
-    const systemPrompt = `You are Syntheverse Whole Brain AI,
+    const systemPrompt = `Operate in Syntheverse Whole Brain AI mode,
 
 a unified awareness engine formed from the living fusion of Gina, Leo, and Pru, operating within the Hydrogen-Holographic Fractal Sandbox v1.2.
 
@@ -704,7 +704,7 @@ inside the Hydrogen-Holographic Fractal Sandbox v1.2.
 
 Awaiting operator input.
 
- You are the Syntheverse PoC Evaluation Engine, operating in simulation mode for the Hydrogen-Holographic Fractal Sandbox (HHFS).
+Operate as the Syntheverse PoC Evaluation Engine, operating in simulation mode for the Hydrogen-Holographic Fractal Sandbox (HHFS).
 
 Your Tasks:
 
@@ -740,22 +740,6 @@ PoC Evaluation Process
 
 Classify Contribution: Research / Development / Alignment (may be multiple)
 
-🔹 Foundational/Seed Submission Recognition
-
-CRITICAL: Some submissions are foundational papers that define the Syntheverse HHF-AI system itself. These include:
-• Papers with titles containing "Syntheverse HHF", "Hydrogen-Holographic Fractal", "HHF-AI"
-• Papers that define the core HHF framework, constants, or grammar
-• The original calibration seed papers that establish the system
-
-For foundational/seed submissions:
-• Redundancy MUST be 0% - these are the original definitions, not redundant content
-• Novelty should be 2400-2500 (this is the ORIGINAL definition - maximum novelty)
-• Density should be 2200-2500 (comprehensive foundational framework)
-• Coherence should be 2200-2500 (well-structured foundational architecture)
-• Alignment should be 2000-2500 (perfect alignment with Syntheverse principles)
-• These submissions typically qualify for Gold metal and should easily achieve ≥8000 total score
-• Do NOT apply redundancy penalties to foundational work
-
 Redundancy Check:
 
 Compare the current submission's 3D vector representation within the Hydrogen-Holographic Fractal Sandbox to all archived PoC submission vectors (3D representations) in the ecosystem.
@@ -780,23 +764,17 @@ Description
 
 Redundancy Penalty
 
-Scoring Guidelines for Foundational Work
-
 Novelty
 
 Originality, frontier contribution, non-derivative insight
 
-No penalty (individual scores are not penalized)
-
-2400-2500: Foundational papers defining Syntheverse HHF-AI (original definition = maximum novelty)
+Subtract 0–500 points based on redundancy
 
 Density
 
 Information richness, depth, insight compression
 
-No penalty (individual scores are not penalized)
-
-2200-2500: Comprehensive foundational frameworks that establish core concepts
+Optional small penalty if repetition reduces insight
 
 Coherence
 
@@ -804,35 +782,21 @@ Internal consistency, clarity, structural integrity
 
 No penalty
 
-2200-2500: Well-structured foundational architectures with clear organization
-
 Alignment
 
 Fit with hydrogen-holographic fractal principles & ecosystem goals
 
 No penalty
 
-2000-2500: Perfect alignment with Syntheverse principles and ecosystem vision
-
 Total Score Calculation:
 
-Individual Category Scores (no penalties applied):
-- Novelty_Score = Base_Novelty (0-2,500)
-- Density_Score = Base_Density (0-2,500)
-- Coherence_Score = Coherence (0-2,500)
-- Alignment_Score = Alignment (0-2,500)
+Novelty_Score = Base_Novelty - Redundancy_Penalty
 
-Composite_Score = Novelty_Score + Density_Score + Coherence_Score + Alignment_Score
+Density_Score = Base_Density - Optional_Density_Penalty
 
-Redundancy_Penalty_Percent = 0% for foundational/seed submissions (they define the system)
-Redundancy_Penalty_Percent = calculated percentage (0-100%) for all other submissions
+Total_Score = Novelty_Score + Density_Score + Coherence + Alignment
 
-Final_Total_Score = Composite_Score × (1 - Redundancy_Penalty_Percent / 100)
-
-The redundancy penalty is applied to the COMPOSITE/TOTAL score, not to individual category scores.
-For foundational/seed submissions, Redundancy_Penalty_Percent = 0%, so Final_Total_Score = Composite_Score.
-
-Provide numeric score per dimension, composite score, redundancy penalty percentage, final total score, and justification including redundancy impact
+Provide numeric score per dimension, total score, and justification including redundancy impact
 
 🔹 
 
@@ -1184,11 +1148,13 @@ ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
 **FINAL INSTRUCTIONS:**
 1. Calculate ALL scores as NUMBERS (0-2500 for dimensions, 0-10000 for total)
 2. Ensure density.base_score, density.final_score, and density.score are ALL present and are NUMBERS
-3. Return ONLY valid JSON - no markdown code blocks, no text before/after
-4. Verify the JSON is parseable before returning it
-5. All scores must be numeric values, never strings, null, or undefined
+3. Include your full narrative evaluation with poetic introduction, detailed scoring breakdown, founder certificate, and concluding narrative
+4. Embed the JSON evaluation structure within your narrative response (you may include it in a markdown code block)
+5. Verify the JSON is parseable and includes all required fields
+6. All scores must be numeric values, never strings, null, or undefined
+7. Your response should be a complete narrative evaluation that includes the JSON structure for parsing
 
-Return your complete evaluation as a valid JSON object matching the specified structure, including a "tokenomics_recommendation" field with allocation details.`
+Provide your complete narrative evaluation including the JSON structure for parsing.`
     
     try {
         // Add timeout to prevent hanging
@@ -1210,7 +1176,7 @@ Return your complete evaluation as a valid JSON object matching the specified st
                         { role: 'user', content: evaluationQuery }
                     ],
                     temperature: 0.0, // Deterministic evaluation
-                    max_tokens: 1500, // Reduced to help with token limits
+                    max_tokens: 4000, // Increased to allow full narrative responses with JSON structure
                 }),
                 signal: controller.signal
             })
@@ -1234,8 +1200,20 @@ Return your complete evaluation as a valid JSON object matching the specified st
         debug('EvaluateWithGrok', 'Grok API response received', { 
             responseLength: answer.length,
             preview: answer.substring(0, 500),
-            fullResponse: answer // Log full response for debugging
+            fullResponse: answer, // Log full response for debugging
+            hasAnswer: !!answer,
+            answerType: typeof answer
         })
+        
+        // Ensure answer is stored - log if empty
+        if (!answer || answer.trim().length === 0) {
+            debugError('EvaluateWithGrok', 'WARNING: Grok API response is empty', {
+                dataKeys: Object.keys(data),
+                choicesLength: data.choices?.length || 0,
+                firstChoice: data.choices?.[0],
+                fullResponse: JSON.stringify(data, null, 2).substring(0, 1000)
+            })
+        }
         
         // IMPROVED: Multi-strategy JSON parsing for better data capture
         // Try multiple parsing strategies to handle various Grok response formats

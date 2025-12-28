@@ -728,7 +728,8 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                         )}
                                         
                                         {/* Full Grok API Response - Markdown/Text */}
-                                        {selectedSubmission.metadata.grok_evaluation_details?.raw_grok_response && (
+                                        {selectedSubmission.metadata.grok_evaluation_details?.raw_grok_response && 
+                                         selectedSubmission.metadata.grok_evaluation_details.raw_grok_response.trim().length > 0 && (
                                             <details className="mt-3">
                                                 <summary className="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground">
                                                     View Full Grok API Response
