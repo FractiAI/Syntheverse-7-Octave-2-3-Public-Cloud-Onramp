@@ -29,7 +29,17 @@ export async function GET(request: NextRequest) {
             .where(eq(tokenomicsTable.id, 'main'))
             .limit(1)
         
-        const currentEpoch = tokenomics[0]?.current_epoch || 'founder'
+        let currentEpoch = tokenomics[0]?.current_epoch || 'founder'
+        
+        // Ensure currentEpoch is normalized to lowercase
+        currentEpoch = String(currentEpoch).toLowerCase().trim()
+        
+        // Debug log to see what we're getting from the database
+        debug('EpochInfo', 'Current epoch from database', {
+            raw: tokenomics[0]?.current_epoch,
+            normalized: currentEpoch,
+            tokenomicsRecord: tokenomics[0]
+        })
         
         // Get all epoch balances
         const epochBalances = await db
