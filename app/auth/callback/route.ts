@@ -79,6 +79,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/login?error=no_session', origin))
     }
 
+    // Verify session is valid by getting user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     
     if (userError || !user) {
@@ -86,7 +87,18 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/login?error=no_user', origin))
     }
 
-    console.log('OAuth callback success:', { userId: user.id, email: user.email })
+    // Double-check: verify session exists in the response cookies
+    const sessionCookie = redirectResponse.cookies.get('sb-access-token') || redirectResponse.cookies.get('sb-refresh-token')
+    if (!sessionCookie) {
+        console.warn('OAuth callback: Session cookies may not be set properly')
+    }
+
+    console.log('OAuth callback success:', { 
+        userId: user.id, 
+        email: user.email,
+        hasSession: !!sessionData.session,
+        hasCookies: !!sessionCookie
+    })
 
     // Handle database operations
     try {
