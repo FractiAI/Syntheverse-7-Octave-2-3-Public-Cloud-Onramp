@@ -1641,17 +1641,17 @@ Return your complete evaluation as a valid JSON object matching the specified st
         // For foundational submissions, this should always be true (10,000 >= 8000)
         const qualified = pod_score >= 8000
         
-        // Determine which epoch this PoC qualifies for based on density score
-        // Note: We use density for epoch qualification, not pod_score
-        // For foundational submissions, density will be 2500, which qualifies for Founder epoch
-        const qualifiedEpoch = qualifyEpoch(densityFinal)
+        // Determine which epoch this PoC qualifies for based on composite/pod_score
+        // For foundational submissions, pod_score will be 10000, which qualifies for Founder epoch
+        const qualifiedEpoch = qualifyEpoch(pod_score)
         
         debug('EvaluateWithGrok', 'Epoch qualification determined', {
             pod_score,
             density: densityFinal,
             qualified_epoch: qualifiedEpoch,
             qualified,
-            isSeedSubmission: isSeedSubmission
+            isSeedSubmission: isSeedSubmission,
+            qualification_based_on: 'pod_score (composite score)'
         })
         
         // Final validation: If all scores are 0, this indicates a problem with Grok's response

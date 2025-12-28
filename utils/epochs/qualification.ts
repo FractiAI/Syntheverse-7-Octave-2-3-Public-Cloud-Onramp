@@ -9,12 +9,12 @@ import { tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug } from '@/utils/debug'
 
-// Epoch qualification thresholds based on density score
+// Epoch qualification thresholds based on composite/pod_score
 export const EPOCH_THRESHOLDS = {
-    founder: 8000,    // Density >= 8000
-    pioneer: 4000,    // Density >= 4000
-    community: 3000,  // Density >= 3000
-    ecosystem: 2000,  // Density >= 2000
+    founder: 8000,    // Pod Score >= 8000
+    pioneer: 4000,    // Pod Score >= 4000
+    community: 3000,  // Pod Score >= 3000
+    ecosystem: 2000,  // Pod Score >= 2000
 } as const
 
 // Epoch unlock thresholds (coherence density required to unlock)
@@ -176,16 +176,16 @@ export async function getOpenEpochInfo(): Promise<OpenEpochInfo> {
 }
 
 /**
- * Determine which epoch a PoC qualifies for based on density score
+ * Determine which epoch a PoC qualifies for based on composite/pod_score
  */
-export function qualifyEpoch(density: number): EpochType {
-    if (density >= EPOCH_THRESHOLDS.founder) {
+export function qualifyEpoch(pod_score: number): EpochType {
+    if (pod_score >= EPOCH_THRESHOLDS.founder) {
         return 'founder'
-    } else if (density >= EPOCH_THRESHOLDS.pioneer) {
+    } else if (pod_score >= EPOCH_THRESHOLDS.pioneer) {
         return 'pioneer'
-    } else if (density >= EPOCH_THRESHOLDS.community) {
+    } else if (pod_score >= EPOCH_THRESHOLDS.community) {
         return 'community'
-    } else if (density >= EPOCH_THRESHOLDS.ecosystem) {
+    } else if (pod_score >= EPOCH_THRESHOLDS.ecosystem) {
         return 'ecosystem'
     } else {
         // Below ecosystem threshold - return ecosystem as fallback
@@ -202,33 +202,28 @@ export function qualifyEpoch(density: number): EpochType {
  * - Community: pod_score >= 3000
  * - Ecosystem: pod_score >= 2000
  * 
- * @param pod_score - Total PoC score (0-10000)
- * @param density - Density score (0-2500, but used for epoch qualification)
+ * @param pod_score - Total PoC score (0-10000) - used for epoch qualification
+ * @param density - Density score (0-2500) - not used for qualification, kept for backward compatibility
  * @returns true if PoC qualifies for current open epoch
  */
 export async function isQualifiedForOpenEpoch(pod_score: number, density: number): Promise<boolean> {
     const epochInfo = await getOpenEpochInfo()
     
-    // Get threshold for current epoch
+    // Get threshold for current epoch (based on pod_score)
     const epochThreshold = EPOCH_THRESHOLDS[epochInfo.current_epoch]
     
     // Check if pod_score meets the current epoch's qualification threshold
-    const meetsPodScoreThreshold = pod_score >= epochInfo.qualification_threshold
+    const meetsPodScoreThreshold = pod_score >= epochThreshold
     
-    // Check if density meets the current epoch's threshold
-    const meetsDensityThreshold = density >= epochThreshold
-    
-    // PoC qualifies if both density and pod_score meet current epoch requirements
-    const qualified = meetsDensityThreshold && meetsPodScoreThreshold
+    // PoC qualifies if pod_score meets current epoch requirements
+    const qualified = meetsPodScoreThreshold
     
     debug('IsQualifiedForOpenEpoch', `Qualification check for ${epochInfo.current_epoch} epoch`, {
         pod_score,
         density,
         current_epoch: epochInfo.current_epoch,
         open_epochs: epochInfo.open_epochs,
-        qualification_threshold: epochInfo.qualification_threshold,
-        density_threshold: epochThreshold,
-        meets_density_threshold: meetsDensityThreshold,
+        qualification_threshold: epochThreshold,
         meets_pod_score_threshold: meetsPodScoreThreshold,
         qualified
     })

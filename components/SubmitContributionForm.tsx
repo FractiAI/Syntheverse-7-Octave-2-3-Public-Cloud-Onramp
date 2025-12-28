@@ -508,7 +508,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                                     </span>
                                                                 </div>
                                                                 <div className="text-sm text-muted-foreground mt-2">
-                                                                    Based on density score: {evaluationStatus.evaluation.density?.toLocaleString() || 'N/A'} / 2,500
+                                                                    Based on composite score (PoD Score): {evaluationStatus.podScore?.toLocaleString() || 'N/A'} / 10,000
                                                                 </div>
                                                             </div>
                                                         )}

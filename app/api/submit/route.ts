@@ -491,7 +491,15 @@ export async function POST(request: NextRequest) {
                 allocation_status: 'pending_admin_approval', // Token allocation requires admin approval
                 // Include base scores for debugging and fallback
                 base_density: evaluation.base_density,
-                base_novelty: evaluation.base_novelty
+                base_novelty: evaluation.base_novelty,
+                // Include detailed Grok evaluation details for detailed review
+                grok_evaluation_details: {
+                    base_novelty: evaluation.base_novelty,
+                    base_density: evaluation.base_density,
+                    redundancy_penalty_percent: evaluation.redundancy_penalty_percent,
+                    density_penalty_percent: evaluation.density_penalty_percent,
+                    full_evaluation: evaluation // Include full evaluation object from Grok API
+                }
             } : null,
             evaluation_error: evaluationError ? evaluationError.message : null,
             status: evaluation ? (evaluation.qualified ? 'qualified' : 'unqualified') : 'unqualified', // No drafts - default to unqualified if evaluation skipped
