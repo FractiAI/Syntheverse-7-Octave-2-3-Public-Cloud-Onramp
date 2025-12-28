@@ -33,15 +33,25 @@ When clicking "Continue with GitHub", users are redirected to a GitHub 404 page 
    - ✅ Client Secret is filled in
    - ✅ Click "Save" if you made changes
 
-### 2. Check GitHub OAuth App Settings
+### 2. Check GitHub OAuth App Settings ⚠️ CRITICAL
+
+**IMPORTANT**: When using Supabase for OAuth, GitHub must redirect to **Supabase's callback URL**, NOT your app's URL!
 
 1. Go to: https://github.com/settings/developers
 2. Click on your OAuth App (or create one if it doesn't exist)
-3. Verify "Authorization callback URL" includes:
-   - `https://syntheverse-poc.vercel.app/auth/callback`
-   - `http://localhost:3000/auth/callback` (for local testing)
+3. **Set "Authorization callback URL" to:**
+   ```
+   https://jfbgdxeumzqzigptbmvp.supabase.co/auth/v1/callback
+   ```
+   (Replace `jfbgdxeumzqzigptbmvp` with your actual Supabase project ID)
 
-**Important**: The callback URL must match EXACTLY what Supabase sends. Supabase uses the redirect URL you configure, which should be your Vercel domain.
+**Why?** The OAuth flow works like this:
+1. User clicks "Continue with GitHub" → App redirects to Supabase
+2. Supabase redirects to GitHub login
+3. User authorizes → **GitHub redirects to Supabase** (not your app)
+4. Supabase processes OAuth → Supabase redirects to your app's callback
+
+**DO NOT** use your app's URL (`https://syntheverse-poc.vercel.app/auth/callback`) in the GitHub OAuth app - that's why you're getting 404!
 
 ### 3. Check Vercel Environment Variables
 
