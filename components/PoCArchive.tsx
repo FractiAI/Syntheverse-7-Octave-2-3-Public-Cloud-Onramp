@@ -40,6 +40,7 @@ interface PoCSubmission {
     registration_tx_hash: string | null
     stripe_payment_id: string | null
     allocated: boolean | null
+    allocation_amount: number | null // Total SYNTH tokens allocated
     created_at: string
     updated_at: string
     text_content?: string
@@ -224,12 +225,37 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         return `${redundancy.toFixed(1)}%`
     }
 
+    const formatAllocation = (amount: number | null) => {
+        if (amount === null || amount === undefined) return '—'
+        if (amount >= 1_000_000_000_000) {
+            return `${(amount / 1_000_000_000_000).toFixed(2)}T SYNTH`
+        }
+        if (amount >= 1_000_000_000) {
+            return `${(amount / 1_000_000_000).toFixed(2)}B SYNTH`
+        }
+        if (amount >= 1_000_000) {
+            return `${(amount / 1_000_000).toFixed(2)}M SYNTH`
+        }
+        return `${amount.toLocaleString()} SYNTH`
+    }
+
     const getStatusBadge = (submission: PoCSubmission) => {
         if (submission.allocated) {
             return <Badge variant="default" className="bg-green-500">Allocated</Badge>
         }
         if (submission.registered) {
-            return <Badge variant="default" className="bg-blue-500">Registered</Badge>
+            // Use metal color for registered status
+            const primaryMetal = submission.metals && submission.metals.length > 0 
+                ? submission.metals[0].toLowerCase() 
+                : 'copper'
+            const metalColors: Record<string, string> = {
+                gold: 'bg-yellow-500',
+                silver: 'bg-gray-400',
+                copper: 'bg-orange-600',
+                hybrid: 'bg-blue-500'
+            }
+            const colorClass = metalColors[primaryMetal] || 'bg-blue-500'
+            return <Badge variant="default" className={`${colorClass} text-white`}>Registered</Badge>
         }
         if (submission.qualified) {
             return <Badge variant="default" className="bg-purple-500">Qualified</Badge>
@@ -354,6 +380,9 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                 {formatRedundancy(submission.redundancy)}
                                             </span>
                                         </td>
+                                        <td className="p-2 text-right font-mono text-sm">
+                                            {formatAllocation(submission.allocation_amount)}
+                                        </td>
                                         <td className="p-2 text-sm text-muted-foreground">
                                             {new Date(submission.created_at).toLocaleDateString()}
                                         </td>
@@ -464,6 +493,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                 <th className="text-right p-2 font-semibold">Density</th>
                                                 <th className="text-right p-2 font-semibold">Coherence</th>
                                                 <th className="text-right p-2 font-semibold">Redundancy</th>
+                                                <th className="text-right p-2 font-semibold">SYNTH Allocation</th>
                                                 <th className="text-left p-2 font-semibold">Date</th>
                                             </tr>
                                         </thead>
@@ -510,6 +540,9 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                     </td>
                                                     <td className="p-2 text-right font-mono text-sm">
                                                         {formatRedundancy(submission.redundancy)}
+                                                    </td>
+                                                    <td className="p-2 text-right font-mono text-sm">
+                                                        {formatAllocation(submission.allocation_amount)}
                                                     </td>
                                                     <td className="p-2 text-sm text-muted-foreground">
                                                         {new Date(submission.created_at).toLocaleDateString()}

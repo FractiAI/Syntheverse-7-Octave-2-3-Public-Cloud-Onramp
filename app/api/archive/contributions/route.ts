@@ -39,12 +39,18 @@ export async function GET(request: NextRequest) {
             })
         }
         
-        // Get all allocations to check which contributions are allocated
+        // Get all allocations to check which contributions are allocated and get allocation amounts
         const allocations = await db
             .select()
             .from(allocationsTable)
         
         const allocatedHashes = new Set(allocations.map(a => a.submission_hash))
+        // Create a map of submission_hash -> total allocation amount
+        const allocationAmounts = new Map<string, number>()
+        allocations.forEach(a => {
+            const existing = allocationAmounts.get(a.submission_hash) || 0
+            allocationAmounts.set(a.submission_hash, existing + Number(a.reward))
+        })
         
         // Format contributions to match expected API response
         const formattedContributions = contributions.map(contrib => {
@@ -81,6 +87,7 @@ export async function GET(request: NextRequest) {
                 registration_tx_hash: contrib.registration_tx_hash || null,
                 stripe_payment_id: contrib.stripe_payment_id || null,
                 allocated: allocatedHashes.has(contrib.submission_hash),
+                allocation_amount: allocationAmounts.get(contrib.submission_hash) || null, // Total SYNTH tokens allocated
                 metadata: metadata,
                 created_at: contrib.created_at?.toISOString() || '',
                 updated_at: contrib.updated_at?.toISOString() || ''
