@@ -108,30 +108,20 @@ export async function POST(request: NextRequest) {
             pdf_path = file.name
             debug('SubmitContribution', 'File received', { fileName: file.name, size: file.size, type: file.type })
             
-            try {
-                // Read PDF file as buffer
-                const fileBuffer = await file.arrayBuffer()
-                const buffer = Buffer.from(fileBuffer)
-                
-                // Extract text from PDF using pdf-parse
-                const pdfParse = (await import('pdf-parse')).default
-                const pdfData = await pdfParse(buffer)
-                extractedPdfText = pdfData.text || ''
-                
-                debug('SubmitContribution', 'PDF text extracted', { 
-                    textLength: extractedPdfText.length,
-                    pages: pdfData.numpages 
-                })
-            } catch (pdfError) {
-                debugError('SubmitContribution', 'Failed to extract text from PDF', pdfError)
-                // Continue with empty text - will fall back to title
-                extractedPdfText = ''
-            }
+            // Note: PDF text extraction is not currently implemented due to serverless environment limitations
+            // PDF files are stored but text content should be provided separately or extracted via external service
+            // For now, we'll use text_content from form or title for evaluation
+            debug('SubmitContribution', 'PDF file received (text extraction not available in serverless)', {
+                fileName: file.name,
+                size: file.size
+            })
+            extractedPdfText = ''
         }
         
-        // Use extracted PDF text if available, otherwise use text_content from form, otherwise use title
-        const textContentForEvaluation = extractedPdfText.trim() || text_content?.trim() || title.trim()
-        const textContentForStorage = extractedPdfText.trim() || text_content?.trim() || null
+        // Use text_content from form if available, otherwise use title for evaluation
+        // Note: PDF text extraction is not available in serverless - text_content should be provided
+        const textContentForEvaluation = text_content?.trim() || title.trim()
+        const textContentForStorage = text_content?.trim() || null
         
         // Calculate content hash from the full content
         const contentToHash = textContentForEvaluation
