@@ -5,8 +5,18 @@ import { eq, and, or, like, ilike } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { createClient } from '@/utils/supabase/server'
 
+// Force dynamic rendering - always fetch fresh data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
     debug('ArchiveContributions', 'Fetching contributions')
+    
+    // Prevent caching - always return fresh data
+    const headers = new Headers()
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    headers.set('Pragma', 'no-cache')
+    headers.set('Expires', '0')
     
     try {
         const { searchParams } = new URL(request.url)
@@ -99,7 +109,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({
             contributions: formattedContributions,
             count: formattedContributions.length
-        })
+        }, { headers })
     } catch (error) {
         debugError('ArchiveContributions', 'Error fetching contributions', error)
         return NextResponse.json(
@@ -192,5 +202,4 @@ export async function POST(request: NextRequest) {
         )
     }
 }
-
 

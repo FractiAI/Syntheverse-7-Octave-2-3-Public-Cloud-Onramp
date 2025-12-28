@@ -4,8 +4,18 @@ import { tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 
+// Force dynamic rendering - always fetch fresh data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET(request: NextRequest) {
     debug('EpochInfo', 'Fetching epoch information')
+    
+    // Prevent caching - always return fresh data
+    const headers = new Headers()
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    headers.set('Pragma', 'no-cache')
+    headers.set('Expires', '0')
     
     try {
         // Check if DATABASE_URL is configured
@@ -19,7 +29,7 @@ export async function GET(request: NextRequest) {
                     community: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] },
                     ecosystem: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] }
                 }
-            })
+            }, { headers })
         }
 
         // Get current epoch from tokenomics
@@ -90,7 +100,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({
                     current_epoch: currentEpoch,
                     epochs
-                })
+                }, { headers })
             } catch (insertError) {
                 // Table might not exist, return default values
                 debug('EpochInfo', 'Could not insert default epochs, returning defaults', insertError)
@@ -102,7 +112,7 @@ export async function GET(request: NextRequest) {
                         community: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] },
                         ecosystem: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] }
                     }
-                })
+                }, { headers })
             }
         }
         
@@ -166,10 +176,15 @@ export async function GET(request: NextRequest) {
         
         debug('EpochInfo', 'Epoch information fetched successfully', epochInfo)
         
-        return NextResponse.json(epochInfo)
+        return NextResponse.json(epochInfo, { headers })
     } catch (error) {
         debugError('EpochInfo', 'Error fetching epoch information', error)
         // Return default epoch info instead of 500 error to prevent UI crashes
+        const headers = new Headers()
+        headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+        headers.set('Pragma', 'no-cache')
+        headers.set('Expires', '0')
+        
         return NextResponse.json({
             current_epoch: 'founder',
             epochs: {
@@ -178,7 +193,6 @@ export async function GET(request: NextRequest) {
                 community: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] },
                 ecosystem: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] }
             }
-        })
+        }, { headers })
     }
 }
-

@@ -32,7 +32,8 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
         title: '',
         category: 'scientific',
         file: null as File | null,
-        extractedText: '' as string // Extracted PDF text content
+        extractedText: '' as string, // Extracted PDF text content
+        pdfExtractionError: '' as string // PDF extraction error message
     })
     const [extractingText, setExtractingText] = useState(false)
 
@@ -75,8 +76,9 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             submitFormData.append('file', formData.file!)
 
             // Create an AbortController for timeout handling
+            // Increased timeout to 120 seconds to allow for Grok API evaluation which can take time
             const controller = new AbortController()
-            const timeoutId = setTimeout(() => controller.abort(), 60000) // 60 second timeout
+            const timeoutId = setTimeout(() => controller.abort(), 120000) // 120 second timeout (2 minutes)
 
             let response: Response
             try {
@@ -88,7 +90,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             } catch (fetchError) {
                 clearTimeout(timeoutId)
                 if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-                    throw new Error('Request timed out. Please try again. The submission may have been processed - check your dashboard.')
+                    throw new Error('Request timed out after 2 minutes. The submission may have been processed - please check your dashboard. If not, try submitting again with a smaller PDF or contact support.')
                 } else if (fetchError instanceof Error && fetchError.message.includes('Failed to fetch')) {
                     throw new Error('Network error: Unable to connect to server. Please check your internet connection and try again.')
                 }
@@ -184,36 +186,77 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 setExtractingText(true)
                 try {
                     // Dynamically import pdfjs-dist for client-side PDF text extraction
-                    const pdfjsLib = await import('pdfjs-dist')
+                    // Handle both default and named exports
+                    const pdfjsModule = await import('pdfjs-dist')
+                    const pdfjsLib = pdfjsModule.default || pdfjsModule
+                    
+                    // Verify pdfjsLib has required methods
+                    if (!pdfjsLib || typeof pdfjsLib.getDocument !== 'function') {
+                        throw new Error('PDF.js library not loaded correctly')
+                    }
                     
                     // Set worker source for pdfjs (use CDN worker that matches the installed version)
-                    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+                    if (pdfjsLib.GlobalWorkerOptions) {
+                        const version = pdfjsLib.version || '4.0.379'
+                        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.js`
+                    }
                     
                     // Read file as array buffer
                     const arrayBuffer = await file.arrayBuffer()
                     
-                    // Load PDF document
-                    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+                    // Load PDF document with error handling
+                    const loadingTask = pdfjsLib.getDocument({ 
+                        data: arrayBuffer,
+                        verbosity: 0 // Suppress console warnings
+                    })
+                    
                     const pdf = await loadingTask.promise
                     
-                    // Extract text from all pages
+                    // Extract text from all pages (limit to first 50 pages to prevent hanging)
                     let fullText = ''
-                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                        const page = await pdf.getPage(pageNum)
-                        const textContent = await page.getTextContent()
-                        const pageText = textContent.items
-                            .map((item: any) => item.str)
-                            .join(' ')
-                        fullText += pageText + '\n\n'
+                    const maxPages = Math.min(pdf.numPages, 50)
+                    
+                    for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+                        try {
+                            const page = await pdf.getPage(pageNum)
+                            const textContent = await page.getTextContent()
+                            
+                            if (textContent && textContent.items && Array.isArray(textContent.items)) {
+                                const pageText = textContent.items
+                                    .map((item: any) => item.str || '')
+                                    .filter((str: string) => str.trim().length > 0)
+                                    .join(' ')
+                                fullText += pageText + '\n\n'
+                            }
+                        } catch (pageError) {
+                            console.warn(`Error extracting text from page ${pageNum}:`, pageError)
+                            // Continue with other pages
+                        }
+                    }
+                    
+                    if (pdf.numPages > 50) {
+                        fullText += '\n\n[Content truncated - PDF has more than 50 pages]'
                     }
                     
                     // Update form data with extracted text
-                    setFormData(prev => ({ ...prev, extractedText: fullText.trim() }))
-                    console.log(`Extracted ${fullText.length} characters from PDF (${pdf.numPages} pages)`)
+                    const extractedText = fullText.trim()
+                    setFormData(prev => ({ ...prev, extractedText }))
+                    
+                    if (extractedText.length > 0) {
+                        console.log(`Extracted ${extractedText.length} characters from PDF (${maxPages} of ${pdf.numPages} pages)`)
+                    } else {
+                        console.warn('No text extracted from PDF - PDF may be image-based or encrypted')
+                    }
                 } catch (error) {
                     console.error('Error extracting PDF text:', error)
                     // Continue without extracted text - will fall back to title
-                    setFormData(prev => ({ ...prev, extractedText: '' }))
+                    // Show user-friendly message
+                    setFormData(prev => ({ 
+                        ...prev, 
+                        extractedText: '',
+                        // Store error message for user feedback
+                        pdfExtractionError: error instanceof Error ? error.message : 'PDF extraction failed'
+                    }))
                 } finally {
                     setExtractingText(false)
                 }
@@ -373,6 +416,21 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                 <span className="text-sm">
                                     The Grok evaluation dialog will show the evaluation progress and results.
                                 </span>
+                                <br />
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSuccess(false)
+                                        setSubmissionHash(null)
+                                        setError(null)
+                                        setFormData({ title: '', category: 'scientific', file: null, extractedText: '', pdfExtractionError: '' })
+                                    }}
+                                    className="mt-2"
+                                >
+                                    Submit Another Contribution
+                                </Button>
                             </AlertDescription>
                         </Alert>
                     )}
@@ -752,6 +810,9 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                 <Button 
                                                     onClick={() => {
                                                         setEvaluationStatus(null)
+                                                        setSuccess(false)
+                                                        setSubmissionHash(null)
+                                                        setFormData({ title: '', category: 'scientific', file: null, extractedText: '', pdfExtractionError: '' })
                                                         router.push('/dashboard')
                                                     }}
                                                     variant="outline"
@@ -761,6 +822,9 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                 <Button 
                                                     onClick={() => {
                                                         setEvaluationStatus(null)
+                                                        setSuccess(false)
+                                                        setSubmissionHash(null)
+                                                        setFormData({ title: '', category: 'scientific', file: null, extractedText: '', pdfExtractionError: '' })
                                                         router.push('/dashboard')
                                                     }}
                                                 >
@@ -770,7 +834,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                         ) : (
                                             <div className="text-xs text-muted-foreground flex items-center gap-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
-                                                Evaluation in progress...
+                                                Evaluation in progress... (this may take up to 2 minutes)
                                             </div>
                                         )}
                                     </div>
@@ -860,12 +924,22 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                                     ✓ Extracted {formData.extractedText.length.toLocaleString()} characters for evaluation
                                                 </p>
                                             )}
+                                            {formData.pdfExtractionError && (
+                                                <p className="text-xs text-yellow-600 mt-1">
+                                                    ⚠ PDF text extraction failed: {formData.pdfExtractionError}. Submission will use title for evaluation.
+                                                </p>
+                                            )}
+                                            {!formData.extractedText && !formData.pdfExtractionError && (
+                                                <p className="text-xs text-muted-foreground mt-1">
+                                                    ℹ No text extracted. Submission will use title for evaluation.
+                                                </p>
+                                            )}
                                         </div>
                                         <Button
                                             type="button"
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => setFormData({ ...formData, file: null, extractedText: '' })}
+                                            onClick={() => setFormData({ ...formData, file: null, extractedText: '', pdfExtractionError: '' })}
                                             disabled={loading}
                                             className="text-xs"
                                         >

@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable } from '@/utils/db/schema'
+import { contributionsTable, allocationsTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 
@@ -16,6 +16,12 @@ export async function GET(
 ) {
     const submissionHash = params.hash
     debug('RegistrationStatus', 'Fetching registration status', { submissionHash })
+    
+    // Prevent caching - always return fresh data
+    const headers = new Headers()
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    headers.set('Pragma', 'no-cache')
+    headers.set('Expires', '0')
     
     try {
         const contributions = await db
@@ -31,19 +37,30 @@ export async function GET(
                     registered: false,
                     error: 'Contribution not found'
                 },
-                { status: 404 }
+                { status: 404, headers }
             )
         }
         
         const contrib = contributions[0]
+        
+        // Also check for allocations
+        const allocations = await db
+            .select()
+            .from(allocationsTable)
+            .where(eq(allocationsTable.submission_hash, submissionHash))
+        
+        const totalAllocated = allocations.reduce((sum, a) => sum + Number(a.reward), 0)
         
         return NextResponse.json({
             submission_hash: submissionHash,
             registered: contrib.registered || false,
             registration_date: contrib.registration_date?.toISOString() || null,
             transaction_hash: contrib.registration_tx_hash || null,
-            stripe_payment_id: contrib.stripe_payment_id || null
-        })
+            stripe_payment_id: contrib.stripe_payment_id || null,
+            status: contrib.status || null, // Include status field
+            allocation_count: allocations.length,
+            total_allocated: totalAllocated
+        }, { headers })
     } catch (error) {
         debugError('RegistrationStatus', 'Error fetching registration status', error)
         return NextResponse.json(
@@ -52,7 +69,7 @@ export async function GET(
                 registered: false,
                 error: error instanceof Error ? error.message : 'Unknown error'
             },
-            { status: 500 }
+            { status: 500, headers }
         )
     }
 }

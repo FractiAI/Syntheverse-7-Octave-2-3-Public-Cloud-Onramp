@@ -112,8 +112,9 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         if (registrationStatus === 'success' && registrationHash) {
             // Poll for registration status update (webhook may take a few seconds)
             let pollCount = 0
-            const maxPolls = 15 // Poll for up to 15 seconds (1 second intervals)
+            const maxPolls = 20 // Poll for up to 20 seconds (1 second intervals) - webhooks can take time
             let pollInterval: NodeJS.Timeout | null = null
+            let hasAllocation = false
             
             const pollForRegistration = async () => {
                 pollCount++
@@ -124,26 +125,46 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                     if (statusResponse.ok) {
                         const statusData = await statusResponse.json()
                         console.log(`[Poll ${pollCount}/${maxPolls}] Registration status:`, statusData)
+                        
+                        // Check if registered AND has allocation
                         if (statusData.registered) {
-                            // Registration confirmed, stop polling and refresh
-                            if (pollInterval) {
-                                clearInterval(pollInterval)
-                                pollInterval = null
+                            // Also check for allocation
+                            try {
+                                const allocResponse = await fetch(`/api/allocations/${registrationHash}?t=${Date.now()}`)
+                                if (allocResponse.ok) {
+                                    const allocData = await allocResponse.json()
+                                    hasAllocation = allocData.count > 0 && allocData.total_reward > 0
+                                    console.log(`[Poll ${pollCount}] Allocation check:`, {
+                                        hasAllocation,
+                                        count: allocData.count,
+                                        total: allocData.total_reward
+                                    })
+                                }
+                            } catch (allocErr) {
+                                console.warn(`[Poll ${pollCount}] Error checking allocation:`, allocErr)
                             }
-                            // Fetch fresh submission data with cache bust
-                            await fetch(`/api/archive/contributions?t=${Date.now()}`).then(r => r.json()).then(data => {
-                                setAllSubmissions(data.contributions || [])
-                            })
-                            // Clean up URL params
-                            window.history.replaceState({}, '', window.location.pathname)
-                            return true // Signal that registration was confirmed
+                            
+                            // If registered and we've checked a few times, refresh and stop
+                            // (allocation might still be processing, but registration is confirmed)
+                            if (pollCount >= 3) {
+                                if (pollInterval) {
+                                    clearInterval(pollInterval)
+                                    pollInterval = null
+                                }
+                                // Fetch fresh submission data with cache bust
+                                await fetchSubmissions()
+                                // Clean up URL params
+                                window.history.replaceState({}, '', window.location.pathname)
+                                console.log(`[Poll] Registration confirmed after ${pollCount} attempts, refreshing dashboard`)
+                                return true // Signal that registration was confirmed
+                            }
                         }
                     } else {
                         console.error(`[Poll ${pollCount}] Status check failed:`, statusResponse.status, statusResponse.statusText)
                     }
                     
-                    // Only fetch all submissions every 3 polls to reduce load (still check status every time)
-                    if (pollCount % 3 === 0) {
+                    // Fetch all submissions every 2 polls to ensure we get allocation updates
+                    if (pollCount % 2 === 0) {
                         await fetchSubmissions()
                     }
                 } catch (err) {
@@ -158,9 +179,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                     }
                     console.warn(`[Poll] Stopped polling after ${maxPolls} attempts. Registration may still be processing.`)
                     // Final refresh attempt with cache bust
-                    await fetch(`/api/archive/contributions?t=${Date.now()}`).then(r => r.json()).then(data => {
-                        setAllSubmissions(data.contributions || [])
-                    })
+                    await fetchSubmissions()
                     // Clean up URL params even if registration not confirmed yet
                     window.history.replaceState({}, '', window.location.pathname)
                     return true // Signal that polling should stop

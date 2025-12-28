@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Coins, TrendingUp, Loader2 } from 'lucide-react'
 
 interface EpochInfo {
@@ -36,7 +37,7 @@ export function EpochTokenDisplay() {
         if (registrationStatus === 'success') {
             // Poll for updated epoch balances (webhook may take a few seconds)
             let pollCount = 0
-            const maxPolls = 15 // Poll for up to 15 seconds
+            const maxPolls = 20 // Poll for up to 20 seconds - webhooks can take time
             
             const pollInterval = setInterval(() => {
                 pollCount++
@@ -48,6 +49,8 @@ export function EpochTokenDisplay() {
                 if (pollCount >= maxPolls) {
                     console.log('[EpochInfo Poll] Stopped polling after max attempts')
                     clearInterval(pollInterval)
+                    // Final refresh without silent flag to ensure UI updates
+                    fetchEpochInfo(false)
                 }
             }, 1000)
             
@@ -64,16 +67,39 @@ export function EpochTokenDisplay() {
         }
         setError(null)
         try {
-            // Add cache bust parameter to ensure fresh data
-            const response = await fetch(`/api/tokenomics/epoch-info?t=${Date.now()}`)
-            if (!response.ok) {
-                throw new Error(`Failed to fetch: ${response.statusText}`)
+            // Add timeout to prevent hanging (10 seconds)
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 10000)
+            
+            try {
+                // Add cache bust parameter to ensure fresh data
+                const response = await fetch(`/api/tokenomics/epoch-info?t=${Date.now()}`, {
+                    signal: controller.signal
+                })
+                clearTimeout(timeoutId)
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch: ${response.statusText}`)
+                }
+                const data = await response.json()
+                setEpochInfo(data)
+            } catch (fetchErr) {
+                clearTimeout(timeoutId)
+                if (fetchErr instanceof Error && fetchErr.name === 'AbortError') {
+                    throw new Error('Request timed out after 10 seconds')
+                }
+                throw fetchErr
             }
-            const data = await response.json()
-            setEpochInfo(data)
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load epoch information')
+            const errorMessage = err instanceof Error ? err.message : 'Failed to load epoch information'
+            setError(errorMessage)
             console.error('Error fetching epoch info:', err)
+            
+            // If not silent, show error state after a delay
+            if (!silent) {
+                // Set loading to false immediately on error
+                setLoading(false)
+            }
         } finally {
             if (!silent) {
                 setLoading(false)
@@ -150,8 +176,32 @@ export function EpochTokenDisplay() {
         )
     }
 
-    if (error || !epochInfo) {
-        return null // Fail silently to not break dashboard
+    if (error) {
+        return (
+            <Card>
+                <CardContent className="pt-6">
+                    <div className="flex flex-col items-center justify-center gap-2 text-center">
+                        <span className="text-sm text-destructive">Failed to load epoch information</span>
+                        <span className="text-xs text-muted-foreground">{error}</span>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => {
+                                setError(null)
+                                fetchEpochInfo()
+                            }}
+                            className="mt-2"
+                        >
+                            Retry
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
+    
+    if (!epochInfo) {
+        return null // Fail silently if no data and no error
     }
 
     const openEpochs = getOpenEpochs()

@@ -36,15 +36,51 @@ export async function POST(req: Request) {
             return new Response('Stripe not configured', { status: 500 });
         }
         
+        // Get raw body as text (required for signature verification)
         const body = await req.text()
         const sig = headers().get('stripe-signature')
+
+        if (!sig) {
+            debugError('StripeWebhook', 'Missing stripe-signature header', {})
+            return new Response('Missing stripe-signature header', { status: 400 })
+        }
+
+        // Sanitize webhook secret (remove whitespace, newlines, etc.)
+        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+        if (!webhookSecret) {
+            debugError('StripeWebhook', 'STRIPE_WEBHOOK_SECRET not configured', {})
+            return new Response('Webhook secret not configured', { status: 500 })
+        }
+
+        // Sanitize the webhook secret - remove all whitespace including newlines
+        const sanitizedSecret = webhookSecret.trim().replace(/\s+/g, '')
+        
+        if (sanitizedSecret.length === 0) {
+            debugError('StripeWebhook', 'STRIPE_WEBHOOK_SECRET is empty after sanitization', {})
+            return new Response('Invalid webhook secret', { status: 500 })
+        }
+
+        // Log secret format (first/last 4 chars only for security)
+        debug('StripeWebhook', 'Verifying webhook signature', {
+            secretLength: sanitizedSecret.length,
+            secretPrefix: sanitizedSecret.substring(0, 4),
+            secretSuffix: sanitizedSecret.substring(sanitizedSecret.length - 4),
+            bodyLength: body.length,
+            hasSignature: !!sig
+        })
 
         let event: Stripe.Event
 
         try {
-            event = stripe.webhooks.constructEvent(body, sig!, process.env.STRIPE_WEBHOOK_SECRET!)
+            event = stripe.webhooks.constructEvent(body, sig, sanitizedSecret)
         } catch (err: any) {
-            debugError('StripeWebhook', 'Signature verification failed', err)
+            debugError('StripeWebhook', 'Signature verification failed', {
+                error: err.message,
+                secretLength: sanitizedSecret.length,
+                secretPrefix: sanitizedSecret.substring(0, 4),
+                bodyLength: body.length,
+                signatureHeader: sig?.substring(0, 20) + '...'
+            })
             return new Response(`Webhook Error: ${err.message}`, { status: 400 })
         }
 
@@ -165,7 +201,20 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                 .from(allocationsTable)
                 .where(eq(allocationsTable.submission_hash, submissionHash))
             
-            if (existingAllocations.length === 0 && metadata.qualified_founder) {
+            // Check if PoC is qualified (either qualified_founder or qualified flag in metadata)
+            const isQualified = metadata.qualified_founder === true || metadata.qualified === true || contrib.status === 'qualified'
+            
+            debug('StripeWebhook', 'Allocation check', {
+                submissionHash,
+                existingAllocationsCount: existingAllocations.length,
+                qualified_founder: metadata.qualified_founder,
+                qualified: metadata.qualified,
+                status: contrib.status,
+                isQualified,
+                pod_score: metadata.pod_score
+            })
+            
+            if (existingAllocations.length === 0 && isQualified) {
                 try {
                     const podScore = metadata.pod_score || 0
                     const qualifiedEpoch = metadata.qualified_epoch || 'founder' // Use the epoch that was open when PoC qualified
@@ -312,16 +361,49 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                         })
                     }
                 } catch (allocationError) {
-                    // Log but don't fail the registration if allocation fails
+                    // Log allocation error but don't fail the registration (payment is complete)
                     debugError('StripeWebhook', 'Auto-allocation failed (non-fatal)', allocationError)
+                    console.error('StripeWebhook: Allocation error details:', {
+                        submissionHash,
+                        error: allocationError instanceof Error ? allocationError.message : String(allocationError),
+                        stack: allocationError instanceof Error ? allocationError.stack : undefined
+                    })
                 }
+            } else if (existingAllocations.length > 0) {
+                debug('StripeWebhook', 'Allocation already exists, skipping', {
+                    submissionHash,
+                    existingAllocationCount: existingAllocations.length
+                })
+            } else if (!isQualified) {
+                debug('StripeWebhook', 'PoC not qualified, skipping allocation', {
+                    submissionHash,
+                    qualified_founder: metadata.qualified_founder,
+                    qualified: metadata.qualified,
+                    status: contrib.status
+                })
             }
+            
+            // Verify the updates were successful by fetching the updated contribution
+            const updatedContrib = await db
+                .select()
+                .from(contributionsTable)
+                .where(eq(contributionsTable.submission_hash, submissionHash))
+                .limit(1)
+            
+            const finalAllocations = await db
+                .select()
+                .from(allocationsTable)
+                .where(eq(allocationsTable.submission_hash, submissionHash))
             
             debug('StripeWebhook', 'PoC registration completed', { 
                 submissionHash, 
                 sessionId: session.id,
                 stripePaymentId: session.payment_intent,
-                blockchainTxHash: blockchainTxHash || 'pending'
+                blockchainTxHash: blockchainTxHash || 'pending',
+                registered: updatedContrib[0]?.registered || false,
+                status: updatedContrib[0]?.status || 'unknown',
+                allocationCount: finalAllocations.length,
+                totalAllocated: finalAllocations.reduce((sum, a) => sum + Number(a.reward), 0)
             })
         } catch (error) {
             debugError('StripeWebhook', 'Error updating PoC registration', error)

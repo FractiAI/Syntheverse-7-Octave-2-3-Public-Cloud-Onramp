@@ -31,13 +31,16 @@ export default async function Dashboard() {
         console.error("Error fetching user data:", dbError)
     }
 
+    // Get display name: prefer database name, fallback to email username, then full email
+    const displayName = dbUser?.name || user.email?.split('@')[0] || user.email || 'User'
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold">Contributor Dashboard</h1>
                     <p className="text-muted-foreground mt-2">
-                        Welcome back, {user.email}. Manage your account and view your contributions.
+                        Welcome back, {displayName}. Manage your account and view your contributions.
                     </p>
                 </div>
                 <Link href="/submit">
