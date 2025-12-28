@@ -82,13 +82,12 @@ export function EpochTokenDisplay() {
     const getOpenEpochs = (): string[] => {
         if (!epochInfo) return []
         
-        // Only show the current epoch as open
-        // When current_epoch is 'founder', only founder should be open
+        // Only show the current epoch - when current_epoch is 'founder', only founder should be open
         // Epochs open progressively as we transition: founder -> pioneer -> community -> ecosystem
-        const currentEpoch = epochInfo.current_epoch.toLowerCase()
+        const currentEpoch = (epochInfo.current_epoch || 'founder').toLowerCase().trim()
         
-        // For founder epoch, only show founder
-        if (currentEpoch === 'founder') {
+        // For founder epoch (or if current epoch is not set), only show founder
+        if (currentEpoch === 'founder' || !currentEpoch) {
             return ['founder']
         }
         
@@ -96,8 +95,9 @@ export function EpochTokenDisplay() {
         const epochOrder = ['founder', 'pioneer', 'community', 'ecosystem']
         const currentIndex = epochOrder.indexOf(currentEpoch)
         
-        if (currentIndex === -1) {
-            // Fallback: if current_epoch is unknown, default to founder only
+        if (currentIndex === -1 || currentIndex < 0) {
+            // Fallback: if current_epoch is unknown or invalid, default to founder only
+            console.warn('EpochTokenDisplay: Unknown current_epoch value:', epochInfo.current_epoch, '- defaulting to founder only')
             return ['founder']
         }
         
