@@ -184,16 +184,20 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 setExtractingText(true)
                 try {
                     // Dynamically import pdfjs-dist for client-side PDF text extraction
+                    // Use default import for pdfjs-dist v5+
                     const pdfjsLib = await import('pdfjs-dist')
+                    const { getDocument, GlobalWorkerOptions } = pdfjsLib as any
                     
                     // Set worker source for pdfjs (use CDN worker that matches the installed version)
-                    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+                    if (GlobalWorkerOptions) {
+                        GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '4.0.379'}/pdf.worker.min.js`
+                    }
                     
                     // Read file as array buffer
                     const arrayBuffer = await file.arrayBuffer()
                     
                     // Load PDF document
-                    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+                    const loadingTask = getDocument({ data: arrayBuffer })
                     const pdf = await loadingTask.promise
                     
                     // Extract text from all pages
