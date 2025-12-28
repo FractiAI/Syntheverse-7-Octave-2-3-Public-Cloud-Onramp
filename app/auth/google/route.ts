@@ -8,7 +8,8 @@ export async function GET(request: Request) {
     const callbackUrl = `${origin}/auth/callback`
     
     // Fallback to environment variable if needed (for edge cases)
-    const fallbackUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL
+    // Sanitize environment variables - remove whitespace and newlines
+    const fallbackUrl = (process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL)?.trim()
     const redirectTo = fallbackUrl ? `${fallbackUrl}/auth/callback` : callbackUrl
     
     console.log('Google OAuth redirect:', { origin, callbackUrl, redirectTo, fallbackUrl })

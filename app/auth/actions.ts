@@ -9,7 +9,8 @@ import { eq } from 'drizzle-orm'
 import { sendWelcomeEmail } from '@/utils/email/send-welcome-email'
 
 
-const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000"
+// Sanitize environment variable - remove whitespace and newlines
+const PUBLIC_URL = (process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").trim()
 
 export async function resetPassword(currentState: { message: string }, formData: FormData) {
     const supabase = createClient()

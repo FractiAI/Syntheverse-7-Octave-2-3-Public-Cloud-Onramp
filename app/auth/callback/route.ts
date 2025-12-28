@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
 
     // Determine redirect URL - use same logic as Google OAuth route
     const forwardedHost = request.headers.get('x-forwarded-host')
-    const fallbackUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL
+    // Sanitize environment variables - remove whitespace and newlines
+    const fallbackUrl = (process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL)?.trim()
     const isLocalEnv = process.env.NODE_ENV === 'development'
     
     let redirectUrl: string
