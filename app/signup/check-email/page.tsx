@@ -17,13 +17,13 @@ export default function CheckEmail() {
                     </div>
                     <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
                     <CardDescription>
-                        We've sent you a confirmation email. Please click the link in the email to verify your account.
+                        We&apos;ve sent you a confirmation email. Please click the link in the email to verify your account.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="text-sm text-muted-foreground text-center">
-                        <p>After confirming your email, you'll be able to sign in and access your dashboard.</p>
-                        <p className="mt-2">Didn't receive the email? Check your spam folder or try signing up again.</p>
+                        <p>After confirming your email, you&apos;ll be able to sign in and access your dashboard.</p>
+                        <p className="mt-2">Didn&apos;t receive the email? Check your spam folder or try signing up again.</p>
                     </div>
                     <div className="flex flex-col gap-2">
                         <Link href="/login">
