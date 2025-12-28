@@ -100,35 +100,40 @@ export async function POST(request: NextRequest) {
             )
         }
         
-        // Extract text content from uploaded file
-        let fileTextContent = ''
+        // Handle PDF file upload - extract text content from PDF
         let pdf_path: string | null = null
+        let extractedPdfText: string = ''
         
         if (file) {
             pdf_path = file.name
             debug('SubmitContribution', 'File received', { fileName: file.name, size: file.size, type: file.type })
             
             try {
-                // Read file content as text
+                // Read PDF file as buffer
                 const fileBuffer = await file.arrayBuffer()
-                const fileText = Buffer.from(fileBuffer).toString('utf-8')
-                fileTextContent = fileText
-                debug('SubmitContribution', 'File content extracted', { contentLength: fileTextContent.length })
-            } catch (fileError) {
-                debugError('SubmitContribution', 'Failed to read file content', fileError)
-                return NextResponse.json(
-                    { error: 'Failed to read file content. Please ensure the file is a valid text-based format.' },
-                    { status: 400 }
-                )
+                const buffer = Buffer.from(fileBuffer)
+                
+                // Extract text from PDF using pdf-parse
+                const pdfParse = (await import('pdf-parse')).default
+                const pdfData = await pdfParse(buffer)
+                extractedPdfText = pdfData.text || ''
+                
+                debug('SubmitContribution', 'PDF text extracted', { 
+                    textLength: extractedPdfText.length,
+                    pages: pdfData.numpages 
+                })
+            } catch (pdfError) {
+                debugError('SubmitContribution', 'Failed to extract text from PDF', pdfError)
+                // Continue with empty text - will fall back to title
+                extractedPdfText = ''
             }
         }
         
-        // Use file content if available, otherwise fallback to title
-        // (Note: file is required, so fileTextContent should always be present)
-        const textContentForEvaluation = fileTextContent.trim() || title.trim()
-        const textContentForStorage = fileTextContent.trim() || null
+        // Use extracted PDF text if available, otherwise use text_content from form, otherwise use title
+        const textContentForEvaluation = extractedPdfText.trim() || text_content?.trim() || title.trim()
+        const textContentForStorage = extractedPdfText.trim() || text_content?.trim() || null
         
-        // Calculate content hash
+        // Calculate content hash from the full content
         const contentToHash = textContentForEvaluation
         const content_hash = crypto
             .createHash('sha256')
@@ -256,12 +261,12 @@ export async function POST(request: NextRequest) {
             evaluationError = new Error('GROK_API_KEY not configured. Evaluation skipped.')
         } else {
             try {
-                // Use extracted file content for evaluation
+                // Use extracted PDF text, text_content from form, or title for evaluation
                 const textContent = textContentForEvaluation
                 debug('SubmitContribution', 'Starting Grok API evaluation', {
                     textLength: textContent.length,
                     title: title.trim(),
-                    source: 'file_upload'
+                    source: extractedPdfText ? 'pdf_extraction' : (text_content ? 'form_text' : 'title_only')
                 })
                 evaluation = await evaluateWithGrok(textContent, title.trim(), category || undefined, submission_hash)
                 
@@ -290,7 +295,7 @@ export async function POST(request: NextRequest) {
                 // Generate vector embedding and 3D coordinates using evaluation scores
                 let vectorizationResult: { embedding: number[], vector: { x: number, y: number, z: number }, embeddingModel: string } | null = null
                 try {
-                    const textContent = text_content?.trim() || title.trim()
+                    const textContent = textContentForEvaluation
                     vectorizationResult = await vectorizeSubmission(textContent, {
                         novelty: evaluation.novelty,
                         density: evaluation.density,

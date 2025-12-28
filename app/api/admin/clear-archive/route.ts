@@ -79,7 +79,7 @@ export async function DELETE(request: NextRequest) {
             contributionsDeleted = contributions.length
             debug('ClearArchive', 'Deleted contributions', { count: contributionsDeleted })
             
-            // 4. Reset tokenomics total_distributed to 0
+            // 4. Reset tokenomics to initial state
             const tokenomicsState = await db
                 .select()
                 .from(tokenomicsTable)
@@ -91,29 +91,85 @@ export async function DELETE(request: NextRequest) {
                     .update(tokenomicsTable)
                     .set({
                         total_distributed: '0',
+                        current_epoch: 'founder',
+                        founder_halving_count: 0,
                         updated_at: new Date()
                     })
                     .where(eq(tokenomicsTable.id, 'main'))
-                debug('ClearArchive', 'Reset tokenomics total_distributed to 0')
+                debug('ClearArchive', 'Reset tokenomics to initial state (founder epoch, 0 distributed)')
+            } else {
+                // Insert tokenomics record if it doesn't exist
+                await db
+                    .insert(tokenomicsTable)
+                    .values({
+                        id: 'main',
+                        total_supply: '90000000000000',
+                        total_distributed: '0',
+                        current_epoch: 'founder',
+                        founder_halving_count: 0,
+                    })
+                debug('ClearArchive', 'Created tokenomics record with initial state')
             }
             
             // 5. Reset epoch balances to original distribution amounts
-            // This preserves the epoch structure but resets distributed amounts
+            // Original distribution amounts:
+            // - Founder: 45T (45,000,000,000,000)
+            // - Pioneer: 22.5T (22,500,000,000,000)
+            // - Community: 11.25T (11,250,000,000,000)
+            // - Ecosystem: 11.25T (11,250,000,000,000)
+            const originalBalances: Record<string, string> = {
+                'founder': '45000000000000',
+                'pioneer': '22500000000000',
+                'community': '11250000000000',
+                'ecosystem': '11250000000000'
+            }
+            
             const epochBalances = await db
                 .select()
                 .from(epochBalancesTable)
             
             for (const epochBalance of epochBalances) {
-                // Reset balance to distribution_amount (original allocation)
+                const originalBalance = originalBalances[epochBalance.epoch] || epochBalance.distribution_amount.toString()
                 await db
                     .update(epochBalancesTable)
                     .set({
-                        balance: epochBalance.distribution_amount.toString(),
+                        balance: originalBalance,
+                        distribution_amount: '0',
                         updated_at: new Date()
                     })
                     .where(eq(epochBalancesTable.id, epochBalance.id))
             }
-            debug('ClearArchive', 'Reset epoch balances', { count: epochBalances.length })
+            
+            // Ensure all epochs exist with correct balances (insert if missing)
+            for (const [epoch, balance] of Object.entries(originalBalances)) {
+                const distributionPercent: Record<string, number> = {
+                    'founder': 50.0,
+                    'pioneer': 25.0,
+                    'community': 12.5,
+                    'ecosystem': 12.5
+                }
+                
+                await db
+                    .insert(epochBalancesTable)
+                    .values({
+                        id: `epoch_${epoch}`,
+                        epoch: epoch,
+                        balance: balance,
+                        threshold: '0',
+                        distribution_amount: '0',
+                        distribution_percent: distributionPercent[epoch].toString(),
+                    })
+                    .onConflictDoUpdate({
+                        target: epochBalancesTable.id,
+                        set: {
+                            balance: balance,
+                            distribution_amount: '0',
+                            updated_at: new Date()
+                        }
+                    })
+            }
+            
+            debug('ClearArchive', 'Reset epoch balances to original distribution amounts', { count: epochBalances.length })
             
             debug('ClearArchive', 'Archive cleanup completed successfully', {
                 contributionsDeleted,
