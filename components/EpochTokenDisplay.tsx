@@ -40,8 +40,9 @@ export function EpochTokenDisplay() {
             
             const pollInterval = setInterval(() => {
                 pollCount++
-                console.log(`[EpochInfo Poll ${pollCount}/${maxPolls}] Refreshing epoch info`)
-                fetchEpochInfo()
+                console.log(`[EpochInfo Poll ${pollCount}/${maxPolls}] Refreshing epoch info (silent)`)
+                // Use silent=true to avoid showing loading state during polling
+                fetchEpochInfo(true)
                 
                 // Stop polling after max attempts
                 if (pollCount >= maxPolls) {
@@ -57,8 +58,10 @@ export function EpochTokenDisplay() {
         }
     }, [])
 
-    async function fetchEpochInfo() {
-        setLoading(true)
+    async function fetchEpochInfo(silent = false) {
+        if (!silent) {
+            setLoading(true)
+        }
         setError(null)
         try {
             // Add cache bust parameter to ensure fresh data
@@ -72,7 +75,9 @@ export function EpochTokenDisplay() {
             setError(err instanceof Error ? err.message : 'Failed to load epoch information')
             console.error('Error fetching epoch info:', err)
         } finally {
-            setLoading(false)
+            if (!silent) {
+                setLoading(false)
+            }
         }
     }
 
