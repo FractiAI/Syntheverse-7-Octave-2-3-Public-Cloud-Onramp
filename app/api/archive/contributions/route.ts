@@ -73,13 +73,29 @@ export async function GET(request: NextRequest) {
             // so we'll return null rather than calculating based on density (which doesn't reflect historical epoch state)
             const qualified_epoch = metadata.qualified_epoch ?? null
             
+            // Determine status: use qualified_founder from metadata as source of truth
+            // If metadata says qualified but status field says unqualified, trust metadata
+            // This handles cases where evaluation determined qualification but status wasn't updated
+            let displayStatus = contrib.status
+            if (qualified && contrib.status === 'unqualified') {
+                displayStatus = 'qualified'
+                debug('ArchiveContributions', 'Status mismatch detected - using qualified_founder from metadata', {
+                    submission_hash: contrib.submission_hash,
+                    status_field: contrib.status,
+                    qualified_founder: qualified,
+                    pod_score: metadata.pod_score
+                })
+            } else if (!qualified && contrib.status === 'qualified') {
+                displayStatus = 'unqualified'
+            }
+            
             return {
                 submission_hash: contrib.submission_hash,
                 title: contrib.title,
                 contributor: contrib.contributor,
                 content_hash: contrib.content_hash,
                 text_content: contrib.text_content,
-                status: contrib.status,
+                status: displayStatus, // Use corrected status
                 category: contrib.category,
                 metals: contrib.metals as string[] || [],
                 // Extract scores from metadata
@@ -89,7 +105,7 @@ export async function GET(request: NextRequest) {
                 coherence: metadata.coherence ?? null,
                 alignment: metadata.alignment ?? null,
                 redundancy: metadata.redundancy ?? null, // Redundancy percentage (0-100)
-                qualified: qualified,
+                qualified: qualified, // Use qualified_founder from metadata as source of truth
                 qualified_epoch: qualified_epoch,
                 // Direct fields
                 registered: contrib.registered ?? false,
