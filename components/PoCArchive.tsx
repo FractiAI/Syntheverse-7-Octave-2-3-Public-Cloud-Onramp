@@ -112,9 +112,10 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         if (registrationStatus === 'success' && registrationHash) {
             // Poll for registration status update (webhook may take a few seconds)
             let pollCount = 0
-            const maxPolls = 10 // Poll for up to 10 seconds (1 second intervals)
+            const maxPolls = 15 // Poll for up to 15 seconds (1 second intervals)
+            let pollInterval: NodeJS.Timeout | null = null
             
-            const pollForRegistration = setInterval(async () => {
+            const pollForRegistration = async () => {
                 pollCount++
                 
                 try {
@@ -127,11 +128,14 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                         const statusData = await statusResponse.json()
                         if (statusData.registered) {
                             // Registration confirmed, stop polling and refresh
-                            clearInterval(pollForRegistration)
+                            if (pollInterval) {
+                                clearInterval(pollInterval)
+                                pollInterval = null
+                            }
                             await fetchSubmissions()
                             // Clean up URL params
                             window.history.replaceState({}, '', window.location.pathname)
-                            return
+                            return true // Signal that registration was confirmed
                         }
                     }
                 } catch (err) {
@@ -140,18 +144,36 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                 
                 // Stop polling after max attempts
                 if (pollCount >= maxPolls) {
-                    clearInterval(pollForRegistration)
+                    if (pollInterval) {
+                        clearInterval(pollInterval)
+                        pollInterval = null
+                    }
                     // Final refresh attempt
                     fetchSubmissions()
                     // Clean up URL params even if registration not confirmed yet
                     window.history.replaceState({}, '', window.location.pathname)
+                    return true // Signal that polling should stop
                 }
-            }, 1000) // Poll every 1 second
+                
+                return false // Continue polling
+            }
             
-            // Also do an immediate refresh after 2 seconds
-            setTimeout(() => {
-                fetchSubmissions()
-            }, 2000)
+            // Start polling immediately and continue every second
+            pollForRegistration() // Immediate check
+            pollInterval = setInterval(async () => {
+                const shouldStop = await pollForRegistration()
+                if (shouldStop && pollInterval) {
+                    clearInterval(pollInterval)
+                    pollInterval = null
+                }
+            }, 1000)
+            
+            // Cleanup function to clear interval if component unmounts
+            return () => {
+                if (pollInterval) {
+                    clearInterval(pollInterval)
+                }
+            }
         }
     }, [])
 
