@@ -9,6 +9,8 @@ import { eq } from "drizzle-orm"
 import { PoCArchive } from '@/components/PoCArchive'
 import { EpochTokenDisplay } from '@/components/EpochTokenDisplay'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Dashboard() {
     const supabase = createClient()
 

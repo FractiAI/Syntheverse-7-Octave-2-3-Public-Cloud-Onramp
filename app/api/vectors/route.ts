@@ -10,6 +10,8 @@ import { db } from '@/utils/db/db'
 import { contributionsTable } from '@/utils/db/schema'
 import { debug, debugError } from '@/utils/debug'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams

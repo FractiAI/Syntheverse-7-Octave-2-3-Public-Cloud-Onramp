@@ -10,6 +10,8 @@ import { debug, debugError, debugWarn } from '@/utils/debug';
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
     title: "Syntheverse PoC Dashboard",
     description: "Syntheverse Proof of Contribution Dashboard",
