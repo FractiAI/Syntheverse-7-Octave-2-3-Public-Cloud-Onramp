@@ -42,12 +42,6 @@ const nextConfig = {
         '@nomicfoundation/hardhat-toolbox': 'commonjs @nomicfoundation/hardhat-toolbox',
         '@nomicfoundation/hardhat-ethers': 'commonjs @nomicfoundation/hardhat-ethers',
       });
-      // Exclude pdfjs-dist from server bundle (only used client-side)
-      if (Array.isArray(config.externals)) {
-        config.externals.push('pdfjs-dist');
-      } else {
-        config.externals = [...config.externals, 'pdfjs-dist'];
-      }
     }
     
     return config;
