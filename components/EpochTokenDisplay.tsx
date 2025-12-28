@@ -28,6 +28,22 @@ export function EpochTokenDisplay() {
 
     useEffect(() => {
         fetchEpochInfo()
+        
+        // Refresh epoch info when returning from Stripe checkout
+        const params = new URLSearchParams(window.location.search)
+        const registrationStatus = params.get('registration')
+        
+        if (registrationStatus === 'success') {
+            // Poll for updated epoch balances (webhook may take a few seconds)
+            const pollInterval = setInterval(() => {
+                fetchEpochInfo()
+            }, 1000)
+            
+            // Stop polling after 10 seconds
+            setTimeout(() => {
+                clearInterval(pollInterval)
+            }, 10000)
+        }
     }, [])
 
     async function fetchEpochInfo() {

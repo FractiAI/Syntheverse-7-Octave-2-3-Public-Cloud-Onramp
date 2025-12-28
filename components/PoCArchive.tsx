@@ -110,12 +110,48 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         const registrationHash = params.get('hash')
         
         if (registrationStatus === 'success' && registrationHash) {
-            // Webhook may take a few seconds to process, so wait and then refresh
+            // Poll for registration status update (webhook may take a few seconds)
+            let pollCount = 0
+            const maxPolls = 10 // Poll for up to 10 seconds (1 second intervals)
+            
+            const pollForRegistration = setInterval(async () => {
+                pollCount++
+                
+                try {
+                    // Fetch fresh submission data
+                    await fetchSubmissions()
+                    
+                    // Also check registration status endpoint
+                    const statusResponse = await fetch(`/api/poc/${registrationHash}/registration-status`)
+                    if (statusResponse.ok) {
+                        const statusData = await statusResponse.json()
+                        if (statusData.registered) {
+                            // Registration confirmed, stop polling and refresh
+                            clearInterval(pollForRegistration)
+                            await fetchSubmissions()
+                            // Clean up URL params
+                            window.history.replaceState({}, '', window.location.pathname)
+                            return
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error polling for registration status:', err)
+                }
+                
+                // Stop polling after max attempts
+                if (pollCount >= maxPolls) {
+                    clearInterval(pollForRegistration)
+                    // Final refresh attempt
+                    fetchSubmissions()
+                    // Clean up URL params even if registration not confirmed yet
+                    window.history.replaceState({}, '', window.location.pathname)
+                }
+            }, 1000) // Poll every 1 second
+            
+            // Also do an immediate refresh after 2 seconds
             setTimeout(() => {
                 fetchSubmissions()
-                // Clean up URL params
-                window.history.replaceState({}, '', window.location.pathname)
-            }, 3000) // Wait 3 seconds for webhook to process
+            }, 2000)
         }
     }, [])
 
