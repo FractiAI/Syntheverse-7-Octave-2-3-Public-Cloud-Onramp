@@ -34,8 +34,12 @@ export async function GET(request: NextRequest) {
         // Ensure currentEpoch is normalized to lowercase
         currentEpoch = String(currentEpoch).toLowerCase().trim()
         
+        // IMPORTANT: Do NOT call checkAndTransitionEpoch() here - this API should only READ the current epoch
+        // Automatic transitions should only happen during allocation, not when reading epoch info
+        // This prevents the epoch from changing just by viewing the dashboard
+        
         // Debug log to see what we're getting from the database
-        debug('EpochInfo', 'Current epoch from database', {
+        debug('EpochInfo', 'Current epoch from database (read-only, no transitions)', {
             raw: tokenomics[0]?.current_epoch,
             normalized: currentEpoch,
             tokenomicsRecord: tokenomics[0]
