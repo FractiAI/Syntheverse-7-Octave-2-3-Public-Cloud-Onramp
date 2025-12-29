@@ -165,14 +165,28 @@ export function FinancialAlignmentButton() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
                     align="end" 
-                    className="bg-[var(--cockpit-obsidian)] border-[var(--keyline-primary)] min-w-[320px] max-h-[85vh] !overflow-visible p-0 flex flex-col"
+                    className="bg-[var(--cockpit-obsidian)] border-[var(--keyline-primary)] min-w-[320px] max-h-[600px] p-0 [&>div]:overflow-y-auto [&>div]:overflow-x-hidden"
                     sideOffset={8}
+                    style={{ 
+                        maxHeight: '85vh',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}
                 >
                     <div className="p-3 border-b border-[var(--keyline-primary)] bg-[var(--cockpit-obsidian)] flex-shrink-0">
                         <div className="cockpit-label text-xs mb-1">Select Contribution Level</div>
                         <div className="cockpit-text text-xs">Choose your level and register on blockchain</div>
                     </div>
-                    <div className="overflow-y-auto overflow-x-hidden flex-1 max-h-[calc(85vh-100px)] overscroll-contain">
+                    <div 
+                        className="overflow-y-auto overflow-x-hidden flex-1 min-h-0"
+                        style={{ 
+                            maxHeight: 'calc(85vh - 120px)',
+                            WebkitOverflowScrolling: 'touch',
+                            scrollbarWidth: 'thin',
+                            scrollbarColor: 'var(--hydrogen-amber) var(--cockpit-carbon)'
+                        }}
+                    >
                         {products.map((product) => (
                             <div key={product.id} className="border-b border-[var(--keyline-primary)] last:border-b-0">
                                 <div className="p-3 hover:bg-[var(--cockpit-carbon)]">
@@ -212,12 +226,6 @@ export function FinancialAlignmentButton() {
                             </div>
                         ))}
                     </div>
-                    {/* Scroll indicator */}
-                    {products.length > 3 && (
-                        <div className="p-2 border-t border-[var(--keyline-primary)] bg-[var(--cockpit-obsidian)] flex-shrink-0 text-center">
-                            <div className="cockpit-text text-xs opacity-60">↓ Scroll for more options</div>
-                        </div>
-                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
 
