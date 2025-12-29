@@ -8,7 +8,6 @@
 
 import { useState, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
-import '../app/dashboard-cockpit.css'
 
 interface EpochInfo {
     current_epoch: string

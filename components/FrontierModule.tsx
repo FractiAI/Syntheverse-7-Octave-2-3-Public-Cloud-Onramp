@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/dialog'
 import { Loader2, RefreshCw, CreditCard, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import '../app/dashboard-cockpit.css'
 
 interface PoCSubmission {
     submission_hash: string
