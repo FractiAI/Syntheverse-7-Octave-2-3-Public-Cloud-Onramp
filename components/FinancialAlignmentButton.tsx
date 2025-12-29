@@ -165,13 +165,14 @@ export function FinancialAlignmentButton() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
                     align="end" 
-                    className="bg-[var(--cockpit-obsidian)] border-[var(--keyline-primary)] min-w-[320px] max-h-[80vh] overflow-y-auto p-0"
+                    className="bg-[var(--cockpit-obsidian)] border-[var(--keyline-primary)] min-w-[320px] max-h-[85vh] !overflow-visible p-0 flex flex-col"
+                    sideOffset={8}
                 >
-                    <div className="p-3 border-b border-[var(--keyline-primary)] sticky top-0 bg-[var(--cockpit-obsidian)] z-10">
+                    <div className="p-3 border-b border-[var(--keyline-primary)] bg-[var(--cockpit-obsidian)] flex-shrink-0">
                         <div className="cockpit-label text-xs mb-1">Select Contribution Level</div>
                         <div className="cockpit-text text-xs">Choose your level and register on blockchain</div>
                     </div>
-                    <div className="max-h-[calc(80vh-80px)] overflow-y-auto">
+                    <div className="overflow-y-auto overflow-x-hidden flex-1 max-h-[calc(85vh-100px)] overscroll-contain">
                         {products.map((product) => (
                             <div key={product.id} className="border-b border-[var(--keyline-primary)] last:border-b-0">
                                 <div className="p-3 hover:bg-[var(--cockpit-carbon)]">
@@ -211,6 +212,12 @@ export function FinancialAlignmentButton() {
                             </div>
                         ))}
                     </div>
+                    {/* Scroll indicator */}
+                    {products.length > 3 && (
+                        <div className="p-2 border-t border-[var(--keyline-primary)] bg-[var(--cockpit-obsidian)] flex-shrink-0 text-center">
+                            <div className="cockpit-text text-xs opacity-60">↓ Scroll for more options</div>
+                        </div>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
 

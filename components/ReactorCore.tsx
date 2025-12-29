@@ -34,16 +34,23 @@ export function ReactorCore() {
         
         // Poll for updates after successful registration or financial alignment payment
         if (registrationStatus === 'success' || financialAlignmentStatus === 'success') {
+            // Show success message
+            if (financialAlignmentStatus === 'success') {
+                console.log('✅ Financial Alignment payment successful - polling for balance update...')
+            }
+            
             let pollCount = 0
-            const maxPolls = 20
+            const maxPolls = 30 // Increase polling time to 30 seconds (webhooks can take time)
             
             const pollInterval = setInterval(() => {
                 pollCount++
+                console.log(`Polling for epoch balance update (${pollCount}/${maxPolls})...`)
                 fetchEpochInfo(true)
                 
                 if (pollCount >= maxPolls) {
                     clearInterval(pollInterval)
                     fetchEpochInfo(false)
+                    console.log('✅ Polling complete - balance should be updated')
                     // Clean up URL parameters after polling completes
                     const newUrl = new URL(window.location.href)
                     newUrl.searchParams.delete('registration')
