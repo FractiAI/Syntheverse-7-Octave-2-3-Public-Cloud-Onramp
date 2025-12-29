@@ -551,6 +551,35 @@ export function OnboardingNavigator() {
                         <ChevronRight className="h-4 w-4" />
                     </button>
                 </div>
+
+                {/* Commercial Contact Information */}
+                <div className="cockpit-module cockpit-panel p-6 mt-8">
+                    <div className="cockpit-label mb-4">COMMERCIAL INFORMATION</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div className="cockpit-text text-sm mb-2">
+                                <strong>Contact:</strong> <a href="mailto:info@fractiai.com" className="text-[var(--hydrogen-amber)] hover:underline">info@fractiai.com</a>
+                            </div>
+                            <div className="cockpit-text text-sm mb-2">
+                                <strong>Website:</strong> <a href="http://fractiai.com" target="_blank" rel="noopener noreferrer" className="text-[var(--hydrogen-amber)] hover:underline">http://fractiai.com</a>
+                            </div>
+                            <div className="cockpit-text text-sm">
+                                <strong>Presentations and Videos:</strong> <a href="https://www.youtube.com/@FractiAI" target="_blank" rel="noopener noreferrer" className="text-[var(--hydrogen-amber)] hover:underline">https://www.youtube.com/@FractiAI</a>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="cockpit-text text-sm mb-2">
+                                <strong>Whitepapers:</strong> <a href="https://zenodo.org/records/17873279" target="_blank" rel="noopener noreferrer" className="text-[var(--hydrogen-amber)] hover:underline">https://zenodo.org/records/17873279</a>
+                            </div>
+                            <div className="cockpit-text text-sm mb-2">
+                                <strong>GitHub:</strong> <a href="https://github.com/FractiAI" target="_blank" rel="noopener noreferrer" className="text-[var(--hydrogen-amber)] hover:underline">https://github.com/FractiAI</a>
+                            </div>
+                            <div className="cockpit-text text-sm">
+                                <strong>X:</strong> <a href="https://x.com/FractiAi" target="_blank" rel="noopener noreferrer" className="text-[var(--hydrogen-amber)] hover:underline">https://x.com/FractiAi</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
