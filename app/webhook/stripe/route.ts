@@ -511,67 +511,62 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
         })
         
         // Allocate tokens for Financial Alignment from Founders' 5% (4.5T SYNTH)
-        // Tier allocations (percentage of Founders' 5%):
-        // Copper ($10K-$25K): 0.05-0.25%
-        // Silver ($50K-$100K): 0.25-1%
-        // Gold ($250K-$500K): 1-3%
-        const FOUNDERS_ALLOCATION_PERCENTAGE = 0.05 // 5%
-        const TOTAL_SUPPLY = 90_000_000_000_000 // 90T
-        const FOUNDERS_TOTAL = TOTAL_SUPPLY * FOUNDERS_ALLOCATION_PERCENTAGE // 4.5T
+        // Fixed token allocations per contribution level:
+        // $10,000: 18M SYNTH
+        // $25,000: 90M SYNTH
+        // $50,000: 450M SYNTH
+        // $100,000: 1.2B SYNTH
+        // $250,000: 4.5B SYNTH
         
-        // Determine tier and allocation percentage
+        const FINANCIAL_ALIGNMENT_ALLOCATIONS: Record<number, { tokens: number, tier: string }> = {
+            10000: { tokens: 18_000_000, tier: 'copper' },           // 18M SYNTH
+            25000: { tokens: 90_000_000, tier: 'copper' },           // 90M SYNTH
+            50000: { tokens: 450_000_000, tier: 'silver' },          // 450M SYNTH
+            100000: { tokens: 1_200_000_000, tier: 'silver' },       // 1.2B SYNTH
+            250000: { tokens: 4_500_000_000, tier: 'gold' },         // 4.5B SYNTH
+        }
+        
+        // Find matching allocation based on amount (exact match)
+        let synthAllocation = 0
         let tier = 'copper'
-        let minAllocationPct = 0.0005 // 0.05%
-        let maxAllocationPct = 0.0025 // 0.25%
         
-        if (amount >= 250000) {
-            tier = 'gold'
-            minAllocationPct = 0.01 // 1%
-            maxAllocationPct = 0.03 // 3%
-        } else if (amount >= 50000) {
-            tier = 'silver'
-            minAllocationPct = 0.0025 // 0.25%
-            maxAllocationPct = 0.01 // 1%
-        }
-        
-        // Calculate allocation percentage within tier range (linear interpolation)
-        let allocationPct = minAllocationPct
-        if (tier === 'copper') {
-            // $10K-$25K range
-            const minAmount = 10000
-            const maxAmount = 25000
-            if (amount > minAmount && maxAmount > minAmount) {
-                const pctWithinRange = (amount - minAmount) / (maxAmount - minAmount)
-                allocationPct = minAllocationPct + (maxAllocationPct - minAllocationPct) * pctWithinRange
-            }
-        } else if (tier === 'silver') {
-            // $50K-$100K range
-            const minAmount = 50000
-            const maxAmount = 100000
-            if (amount > minAmount && maxAmount > minAmount) {
-                const pctWithinRange = (amount - minAmount) / (maxAmount - minAmount)
-                allocationPct = minAllocationPct + (maxAllocationPct - minAllocationPct) * pctWithinRange
-            }
-        } else if (tier === 'gold') {
-            // $250K-$500K range (using $250K as max for now since that's our highest tier)
-            const minAmount = 250000
-            const maxAmount = 500000
-            if (amount > minAmount && maxAmount > minAmount) {
-                const pctWithinRange = Math.min((amount - minAmount) / (maxAmount - minAmount), 1.0)
-                allocationPct = minAllocationPct + (maxAllocationPct - minAllocationPct) * pctWithinRange
+        if (FINANCIAL_ALIGNMENT_ALLOCATIONS[amount]) {
+            synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[amount].tokens
+            tier = FINANCIAL_ALIGNMENT_ALLOCATIONS[amount].tier
+        } else {
+            // If amount doesn't match exactly, use closest tier
+            // This shouldn't happen with our product structure, but handle gracefully
+            if (amount >= 250000) {
+                tier = 'gold'
+                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[250000].tokens
+            } else if (amount >= 100000) {
+                tier = 'silver'
+                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[100000].tokens
+            } else if (amount >= 50000) {
+                tier = 'silver'
+                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[50000].tokens
+            } else if (amount >= 25000) {
+                tier = 'copper'
+                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[25000].tokens
+            } else if (amount >= 10000) {
+                tier = 'copper'
+                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[10000].tokens
+            } else {
+                debugError('StripeWebhook', 'Financial Alignment amount below minimum tier', {
+                    submissionHash,
+                    amount,
+                    minimumAmount: 10000
+                })
+                return
             }
         }
-        
-        // Calculate actual SYNTH allocation
-        const synthAllocation = Math.floor(FOUNDERS_TOTAL * allocationPct)
         
         debug('StripeWebhook', 'Financial Alignment token allocation calculation', {
             submissionHash,
             amount,
             tier,
-            allocationPct: allocationPct * 100,
             synthAllocation,
-            foundersTotal: FOUNDERS_TOTAL
+            allocationType: 'fixed_amount'
         })
         
         // Allocate tokens from Founder epoch
