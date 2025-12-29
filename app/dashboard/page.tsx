@@ -6,7 +6,6 @@ import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm"
 import { FrontierModule } from '@/components/FrontierModule'
 import { ReactorCore } from '@/components/ReactorCore'
-import './dashboard-cockpit.css'
 
 export const dynamic = 'force-dynamic'
 

@@ -7,6 +7,7 @@ import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm";
 import { debug, debugError } from '@/utils/debug';
+import './dashboard-cockpit.css';
 
 const inter = Inter({ subsets: ["latin"] });
 
