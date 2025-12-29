@@ -243,12 +243,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                         const epochBalance = epochBalances[0]
                         const currentBalance = Number(epochBalance.balance)
                         
-                        // Calculate allocation: (pod_score / 10000) * (available_epoch_balance / 2)
-                        // For 10,000 score = 50% of available tokens (half reserved for future founder-level contributions)
-                        // This ensures room for further research, development, and alignment work throughout each epoch
+                        // Calculate allocation: (redundancy_discounted_composite_score / 10000) * available_SYNTH_tokens
+                        // pod_score is already the redundancy-discounted composite score (composite * (1 - redundancy/100))
+                        // For 10,000 score = 100% of available tokens in the epoch
                         const scorePercentage = podScore / 10000.0
-                        const allocatableBalance = currentBalance / 2.0  // Only allocate from 50% of available tokens
-                        const baseAllocation = scorePercentage * allocatableBalance
+                        const baseAllocation = scorePercentage * currentBalance
                         
                         // Calculate metal amplification
                         const amplification = calculateMetalAmplification(metals)
@@ -257,23 +256,21 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                         // Apply metal amplification
                         const amplifiedAllocation = baseAllocation * metalMultiplier
                         
-                        // Final allocation (ensure we don't exceed the allocatable 50% of balance)
-                        // The other 50% remains reserved for future founder-level contributions
-                        const finalAllocation = Math.min(Math.floor(amplifiedAllocation), allocatableBalance)
+                        // Final allocation (ensure we don't exceed available balance)
+                        const finalAllocation = Math.min(Math.floor(amplifiedAllocation), currentBalance)
                         
                         debug('StripeWebhook', 'Allocation calculation', {
                             submissionHash,
                             podScore,
+                            redundancyDiscountedCompositeScore: podScore,
                             scorePercentage: scorePercentage * 100,
                             currentBalance,
-                            allocatableBalance: allocatableBalance,
-                            reservedBalance: currentBalance - allocatableBalance,
-                            note: '50% of epoch balance reserved for future founder-level contributions',
                             baseAllocation,
                             metalMultiplier,
                             amplifiedAllocation,
                             finalAllocation,
-                            epoch: qualifiedEpoch
+                            epoch: qualifiedEpoch,
+                            note: 'Using full available balance with redundancy-discounted composite score'
                         })
                         
                         if (finalAllocation > 0) {
@@ -324,23 +321,21 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                                     .where(eq(tokenomicsTable.id, 'main'))
                             }
                             
-                            // Check and transition epoch if allocatable portion (50%) is exhausted
-                            // Note: Only 50% of epoch balance is allocatable, so transition happens
-                            // when the allocatable portion is exhausted (leaving the reserved 50% untouched)
-                            const reservedBalance = currentBalance - allocatableBalance  // The 50% reserved portion
-                            if (newBalance <= (reservedBalance + 1000)) { // Threshold: when allocatable portion is exhausted
+                            // Check and transition epoch if balance is exhausted
+                            // Transition happens when epoch balance reaches threshold (automatically opens next epoch)
+                            const FULLY_ALLOCATED_THRESHOLD = 1000 // Consider fully allocated if balance < 1000 tokens
+                            if (newBalance <= FULLY_ALLOCATED_THRESHOLD) {
                                 const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
-                                // This will check and transition epoch automatically
+                                // This will check and transition epoch automatically (e.g., founder -> pioneer)
                                 await getOpenEpochInfo()
                                 
-                                debug('StripeWebhook', 'Allocatable portion (50%) of epoch balance exhausted, triggering epoch transition', {
+                                debug('StripeWebhook', 'Epoch balance exhausted, triggering automatic epoch transition', {
                                     epoch: qualifiedEpoch,
                                     balanceBefore: currentBalance,
-                                    allocatablePortion: allocatableBalance,
-                                    reservedPortion: reservedBalance,
                                     balanceAfter: newBalance,
                                     allocated: finalAllocation,
-                                    note: 'Reserved 50% remains untouched for future founder-level contributions'
+                                    threshold: FULLY_ALLOCATED_THRESHOLD,
+                                    note: 'Automatically transitioning to next epoch when balance is exhausted'
                                 })
                             }
                             
@@ -672,6 +667,24 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 verifiedBalance: verifiedBalance,
                 allocationRecordId: allocationId
             })
+            
+            // Check and transition epoch if balance is exhausted
+            // Transition happens when epoch balance reaches threshold (automatically opens next epoch)
+            const FULLY_ALLOCATED_THRESHOLD = 1000 // Consider fully allocated if balance < 1000 tokens
+            if (newBalance <= FULLY_ALLOCATED_THRESHOLD) {
+                const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
+                // This will check and transition epoch automatically (e.g., founder -> pioneer)
+                await getOpenEpochInfo()
+                
+                debug('StripeWebhook', 'Founder epoch balance exhausted via Financial Alignment, triggering automatic epoch transition', {
+                    epoch: founderEpoch,
+                    balanceBefore: currentBalance,
+                    balanceAfter: newBalance,
+                    allocated: synthAllocation,
+                    threshold: FULLY_ALLOCATED_THRESHOLD,
+                    note: 'Automatically transitioning to next epoch when balance is exhausted'
+                })
+            }
             
             // Log allocation summary for debugging
             console.log('✅ Financial Alignment Allocation Complete:', {
