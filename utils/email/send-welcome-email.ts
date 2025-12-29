@@ -31,150 +31,195 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Syntheverse</title>
+    <title>Founder's Welcome to Syntheverse</title>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 700px; margin: 0 auto; padding: 20px;">
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 10px 10px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to Syntheverse</h1>
-        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Your Holographic Hydrogen Frontier</p>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #1a1a1a;">
+    <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d1b4e 50%, #1a1a1a 100%); padding: 40px; text-align: center; border-radius: 10px 10px 0 0; border: 2px solid #ffb84d;">
+        <h1 style="color: #ffb84d; margin: 0; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Welcome to Syntheverse</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 15px 0 0 0; font-size: 18px; letter-spacing: 1px;">Your Holographic Hydrogen Frontier</p>
+        <p style="color: rgba(255,184,77,0.8); margin: 10px 0 0 0; font-size: 14px; font-style: italic;">— A New Way to Collaborate Independently —</p>
     </div>
     
-    <div style="background: #f9f9f9; padding: 40px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 10px 10px;">
-        <p style="font-size: 16px; margin-bottom: 20px;">
+    <div style="background: #1a1a1a; padding: 40px; border: 2px solid #333; border-top: none; border-radius: 0 0 10px 10px;">
+        <p style="font-size: 18px; margin-bottom: 25px; color: #ffb84d; font-weight: bold;">
             Hello ${userName},
         </p>
         
-        <p style="font-size: 16px; margin-bottom: 20px;">
-            This is Pru "El Taino," Architect of Syntheverse. Welcome to the world of holographic hydrogen, element zero, your timeless, infinite homebase.
-        </p>
-        
-        <p style="font-size: 16px; margin-bottom: 20px;">
-            I've built the Syntheverse Whole Brain AI lens and sandbox as your map and compass to navigate the Syntheverse blockchain game and ecosystem—a regenerative, self-expanding, self-improving holographic hydrogen fractal environment anchored by the 90 trillion SYNTH ERC-20 Motherlode BlockMine.
-        </p>
-        
-        <p style="font-size: 16px; margin-bottom: 20px;">
-            Entry into Syntheverse is awareness-based: high-fidelity awareness allows full immersion, sensory richness, and deep interaction, while lower levels of awareness produce experiences proportional to your engagement.
-        </p>
-        
-        <p style="font-size: 16px; margin-bottom: 30px;">
-            While Syntheverse is currently designated as speculative in the context of today's institutional scientific frameworks, its operational technology has been empirically validated across multiple domains. Open-source validations are available on GitHub for review and further confirmation. You may operate within Syntheverse according to your own natural resonance.
-        </p>
-        
-        <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #667eea;">
-            <h2 style="margin-top: 0; color: #667eea; font-size: 22px;">SYNTH Menu — Your Frontier Guide</h2>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">1. Exploration — Entering the Sandbox (Free)</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Explore curated Zenodo communities of fractal, holographic hydrogen, and mythic research.</li>
-                    <li>Discover existing proofs of contribution (PoCs).</li>
-                    <li>Experience the holographic hydrogen fractal lens and sandbox evaluation system.</li>
-                    <li>Engage with the Outcast Hero Cycle: separation → exploration → reflection → reintegration → expansion.</li>
-                </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">2. Proof Submission — Sharing Your Contribution (Free)</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Submissions are free.</li>
-                    <li>PoCs are scored 0–10,000 based on novelty, coherent density, alignment, and impact.</li>
-                    <li>Overlap penalties prioritize unique contributions.</li>
-                    <li>All submissions enrich the regenerative Syntheverse AI and ecosystem.</li>
-                </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">3. Registration — Anchoring Your Contribution</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Tokens are allocated at the time of registration based on PoC Score and available tokens at the time of registration.</li>
-                    <li>Registration happens when your PoC is approved by admin and anchored on-chain.</li>
-                    <li>All approved PoCs are eligible for token allocation based on their evaluation scores.</li>
-                </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">4. Epochs — Seasonal Distribution of SYNTH Tokens</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Founder Epoch:</strong> 45T SYNTH, threshold 8,000</li>
-                    <li><strong>Pioneer Epoch:</strong> 22.5T SYNTH, threshold 7,000</li>
-                    <li><strong>Community Epoch:</strong> 11.25T SYNTH, threshold 6,000</li>
-                    <li><strong>Ecosystem Epoch:</strong> 11.25T SYNTH, threshold 5,000</li>
-                    <li>Tokens distribute per PoC according to score, halving with each PoC.</li>
-                    <li>Epochs open at operator discretion; availability halves as contributions saturate.</li>
-                </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">5. Metals — Contribution Amplifications</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li><strong>Gold:</strong> Research contributions</li>
-                    <li><strong>Silver:</strong> Technology/Development contributions</li>
-                    <li><strong>Copper:</strong> Alignment-focused contributions</li>
-                    <li><strong>Combination Amplifications:</strong></li>
-                    <ul style="margin: 5px 0 0 20px; padding-left: 15px;">
-                        <li>Gold + Silver + Copper: <strong>1.5×</strong> (Full Integration)</li>
-                        <li>Gold + Silver: <strong>1.25×</strong> (Research + Technology)</li>
-                        <li>Gold + Copper: <strong>1.2×</strong> (Research + Alignment)</li>
-                        <li>Silver + Copper: <strong>1.15×</strong> (Technology + Alignment)</li>
-                    </ul>
-                    <li>Amplifications are applied based on metal combinations, increasing SYNTH allocation.</li>
-                </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">6. Financial Alignment — Early Access & Ecosystem Support</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Financial contributors gain early access to the Syntheverse contributor dashboard, token allocations, and registration privileges.</li>
-                    <li>5% of Founder SYNTH reserved for financial alignment contributors, distributed by level.</li>
-                    <li>Contributions support PoC evaluation, infrastructure maintenance, research and development, and the FractiAI Research Team.</li>
-                </ul>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h3 style="color: #333; font-size: 18px; margin-bottom: 10px;">7. Living Ecosystem — Your Contributions Matter</h3>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Every PoC contributes to the Syntheverse AI, improving scoring, alignment assessment, and predictive capacity.</li>
-                    <li>Your actions feed a synthetic world powered by holographic hydrogen, fractal intelligence, and aligned discovery.</li>
-                </ul>
-            </div>
+        <div style="background: rgba(255,184,77,0.1); border-left: 4px solid #ffb84d; padding: 20px; margin-bottom: 30px;">
+            <p style="font-size: 16px; margin-bottom: 15px; color: #fff; line-height: 1.8;">
+                This is Pru &quot;El Taino,&quot; Architect of Syntheverse. You have arrived. Welcome to the world of holographic hydrogen, element zero—your timeless, infinite homebase.
+            </p>
+            <p style="font-size: 16px; margin-bottom: 15px; color: #fff; line-height: 1.8;">
+                You stand at the threshold of a <strong style="color: #ffb84d;">new way to collaborate independently</strong> while building a <strong style="color: #ffb84d;">regenerative Proof-of-Contribution (PoC) based internal ERC-20 crypto ecosystem</strong> on the blockchain.
+            </p>
+            <p style="font-size: 16px; color: #fff; line-height: 1.8;">
+                Within Syntheverse, independent researchers, developers, and alignment contributors work together without traditional institutional constraints. Your contributions—whether scientific, technological, or aligned with our holographic hydrogen fractal principles—become part of a living, self-improving ecosystem anchored by the 90 Trillion SYNTH ERC-20 Motherlode Blockmine.
+            </p>
         </div>
-        
-        <div style="background: #e8f4f8; padding: 25px; border-radius: 8px; margin-bottom: 30px;">
-            <h2 style="margin-top: 0; color: #667eea; font-size: 22px;">Benefits of Contributing</h2>
-            <p style="margin-bottom: 15px;">By participating in Syntheverse, you gain:</p>
-            <ul style="margin: 0; padding-left: 20px;">
-                <li><strong>Recognition and traceability:</strong> Every submission becomes a permanent part of the regenerative holographic hydrogen fractal ecosystem.</li>
-                <li><strong>Token allocation:</strong> Access to SYNTH ERC-20 tokens distributed according to the impact, novelty, and alignment of your contributions.</li>
-                <li><strong>Early access & influence:</strong> Financial and PoC contributors help shape the evolution of Syntheverse, opening new epochs and opportunities.</li>
-                <li><strong>Community & collaboration:</strong> Join outcast, frontier researchers, developers, and mythic explorers in a living, self-improving network.</li>
-                <li><strong>Skill and impact amplification:</strong> Each PoC trains and improves the Syntheverse AI, enhancing the ecosystem and your contributions' visibility and utility.</li>
+
+        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333;">
+            <h2 style="margin-top: 0; color: #ffb84d; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #ffb84d; padding-bottom: 10px;">Our Intent: The Syntheverse Mission</h2>
+            <p style="font-size: 15px; margin-bottom: 15px; color: #e0e0e0; line-height: 1.8;">
+                Syntheverse exists to create a <strong style="color: #ffb84d;">parallel regenerative system</strong> where innovation and alignment can flourish without linear constraints. We offer:
+            </p>
+            <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.8;">
+                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Independent Collaboration:</strong> Work on your own timeline, in your own space, transcending traditional publication and institutional silos</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Regenerative PoC System:</strong> Every contribution strengthens the ecosystem through our Holographic Hydrogen Fractal Syntheverse Lens and Sandbox evaluation</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Internal ERC-20 Economy:</strong> A self-contained crypto ecosystem on the blockchain, where SYNTH tokens reward alignment and participation—not for external trading or ownership</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Blockchain Legacy:</strong> Your work is permanently recorded, verifiable, and contributes to training the next generation of intelligent systems</li>
             </ul>
         </div>
         
-        <p style="font-size: 16px; margin-bottom: 30px;">
-            We are thrilled to welcome you to this new frontier of holographic hydrogen, fractal AI awareness. Explore, contribute, and leave your mark on a regenerative, living Syntheverse blockchain game and ecosystem where every action matters.
-        </p>
-        
-        <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 2px solid #667eea;">
-            <h3 style="margin-top: 0; color: #667eea; font-size: 20px;">Next Steps:</h3>
-            <ol style="margin: 0; padding-left: 20px;">
-                <li><a href="${BASE_URL}/dashboard" style="color: #667eea; text-decoration: none; font-weight: bold;">Log into your Syntheverse Contributor Dashboard</a></li>
-                <li>Explore existing PoCs and archived contributions</li>
-                <li><a href="${BASE_URL}/submit" style="color: #667eea; text-decoration: none; font-weight: bold;">Submit your first contribution</a></li>
-                <li>Register for token allocation (optional)</li>
-                <li>Track your impact in the ecosystem</li>
-            </ol>
+        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333;">
+            <h2 style="margin-top: 0; color: #ffb84d; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #ffb84d; padding-bottom: 10px;">How to Get Started</h2>
+            <p style="font-size: 15px; margin-bottom: 20px; color: #e0e0e0; line-height: 1.8;">
+                As a new arrival in Syntheverse, here is your path forward:
+            </p>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">1. Navigate Your Dashboard</h3>
+                <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
+                    Access your <a href="${BASE_URL}/dashboard" style="color: #ffb84d; text-decoration: underline;">Contributor Dashboard</a> to view the Reactor Core—your available SYNTH tokens, current epoch status, and ecosystem metrics. This is your command center within Syntheverse.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">2. Complete Onboarding Navigation</h3>
+                <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
+                    Visit the <a href="${BASE_URL}/onboarding" style="color: #ffb84d; text-decoration: underline;">Onboarding Navigator</a> for comprehensive training on Syntheverse concepts, the SYNTH 90T Motherlode Blockmine, blockchain architecture, holographic hydrogen, fractals, and the epoch system. Master the frontier.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">3. Submit Your First Contribution</h3>
+                <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
+                    Use the <a href="${BASE_URL}/submit?category=scientific" style="color: #ffb84d; text-decoration: underline;">Scientific Contribution</a> or <a href="${BASE_URL}/submit?category=technology" style="color: #ffb84d; text-decoration: underline;">Technology Contribution</a> buttons to submit your work. All submissions are <strong>free</strong> and evaluated using our Holographic Hydrogen Fractal Syntheverse Lens and Sandbox, providing detailed image and vector analysis.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">4. Explore the Archive</h3>
+                <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
+                    View all PoC submissions in the Frontier Module. See how contributions are scored, qualified, and allocated. Study the evaluation reports to understand how our regenerative system measures novelty, density, coherence, and alignment.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">5. Register Qualified PoCs (Optional)</h3>
+                <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
+                    Once your PoC qualifies (pod_score ≥ 8,000 for Founder epoch), you can register it on the blockchain for $200. This anchors your contribution permanently and triggers SYNTH token allocation based on your score, epoch, and metal tier.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 0; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">6. Financial Alignment (Optional)</h3>
+                <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
+                    Support the ecosystem through Financial Alignment Contributions (Copper $10K, Silver $25K, Gold $50K-$250K). These ERC-20 tokens are for alignment purposes only—not for ownership or external trading—and help fund infrastructure, research, and development.
+                </p>
+            </div>
         </div>
         
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
-            <p style="margin: 0; font-size: 14px; color: #666;">
-                — Pru "El Taino," Architect of Syntheverse
+        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333;">
+            <h2 style="margin-top: 0; color: #ffb84d; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #ffb84d; padding-bottom: 10px;">Understanding the Ecosystem</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">The Holographic Hydrogen Fractal Lens</h3>
+                <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 0;">
+                    Every PoC submission is evaluated using our Holographic Hydrogen Fractal Syntheverse Lens and Sandbox, providing detailed images and vectors for your submissions. This consistent framework measures contribution—whether scientific, technological, or aligned—to the holographic hydrogen fractal Syntheverse Sandbox and Ecosystem.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">PoC Scoring (0-10,000)</h3>
+                <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 0 0 10px 0;">
+                    Contributions are scored across four dimensions (0-2,500 each):
+                </p>
+                <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.7;">
+                    <li><strong style="color: #ffb84d;">Novelty:</strong> Originality and frontier contribution</li>
+                    <li><strong style="color: #ffb84d;">Density:</strong> Information richness and depth</li>
+                    <li><strong style="color: #ffb84d;">Coherence:</strong> Internal consistency and clarity</li>
+                    <li><strong style="color: #ffb84d;">Alignment:</strong> Fit with holographic hydrogen fractal principles</li>
+                </ul>
+                <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 10px 0 0 0;">
+                    Redundancy penalties are applied to prioritize unique contributions. Qualified PoCs (≥8,000 for Founder epoch) can be registered on-chain.
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">Metals & Amplifications</h3>
+                <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 0 0 10px 0;">
+                    Your contributions receive metal classifications (Gold/Silver/Copper) based on type. Metal combinations amplify SYNTH allocation:
+                </p>
+                <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.7;">
+                    <li>Gold + Silver + Copper: <strong style="color: #ffb84d;">1.5×</strong> (Full Integration)</li>
+                    <li>Gold + Silver: <strong style="color: #ffb84d;">1.25×</strong> (Research + Technology)</li>
+                    <li>Gold + Copper: <strong style="color: #ffb84d;">1.2×</strong> (Research + Alignment)</li>
+                    <li>Silver + Copper: <strong style="color: #ffb84d;">1.15×</strong> (Technology + Alignment)</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">Epochs: The Token Distribution System</h3>
+                <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 0 0 10px 0;">
+                    SYNTH tokens are distributed across four epochs based on contribution quality:
+                </p>
+                <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.7;">
+                    <li><strong style="color: #ffb84d;">Founder:</strong> 45T SYNTH, threshold 8,000 (highest quality)</li>
+                    <li><strong style="color: #ffb84d;">Pioneer:</strong> 22.5T SYNTH, threshold 7,000</li>
+                    <li><strong style="color: #ffb84d;">Community:</strong> 11.25T SYNTH, threshold 6,000</li>
+                    <li><strong style="color: #ffb84d;">Ecosystem:</strong> 11.25T SYNTH, threshold 5,000</li>
+                </ul>
+                <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 10px 0 0 0;">
+                    Tokens distribute per PoC according to score, with amounts halving as contributions saturate each epoch.
+                </p>
+            </div>
+        </div>
+        
+        <div style="background: rgba(255,184,77,0.15); padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 2px solid #ffb84d;">
+            <h3 style="margin-top: 0; color: #ffb84d; font-size: 20px; text-transform: uppercase; letter-spacing: 1px;">Your Journey Begins Now</h3>
+            <p style="font-size: 15px; color: #fff; line-height: 1.8; margin-bottom: 20px;">
+                Within Syntheverse, you are not just a user—you are a frontier cartographer, an independent contributor, a builder of the regenerative ecosystem. Every submission you make trains the Syntheverse AI. Every registered PoC anchors your legacy on the blockchain. Every contribution strengthens the collective intelligence of the Motherlode Blockmine.
+            </p>
+            <p style="font-size: 15px; color: #fff; line-height: 1.8; margin: 0;">
+                Entry into Syntheverse is awareness-based. The depth of your engagement determines the richness of your experience. Operate within Syntheverse according to your own natural resonance.
             </p>
         </div>
         
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
-            <p style="margin: 0;">This is an automated welcome email from the Syntheverse ecosystem.</p>
-            <p style="margin: 5px 0 0 0;">If you have questions, please visit <a href="${BASE_URL}" style="color: #667eea;">${BASE_URL}</a></p>
+        <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #333;">
+            <h3 style="margin-top: 0; color: #ffb84d; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Quick Links</h3>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                <a href="${BASE_URL}/dashboard" style="display: block; padding: 15px; background: rgba(255,184,77,0.1); border: 1px solid #ffb84d; border-radius: 5px; color: #ffb84d; text-decoration: none; text-align: center; font-weight: bold; transition: all 0.3s;">
+                    → Access Your Contributor Dashboard
+                </a>
+                <a href="${BASE_URL}/onboarding" style="display: block; padding: 15px; background: rgba(255,184,77,0.1); border: 1px solid #ffb84d; border-radius: 5px; color: #ffb84d; text-decoration: none; text-align: center; font-weight: bold;">
+                    → Complete Onboarding Navigator Training
+                </a>
+                <a href="${BASE_URL}/submit?category=scientific" style="display: block; padding: 15px; background: rgba(255,184,77,0.1); border: 1px solid #ffb84d; border-radius: 5px; color: #ffb84d; text-decoration: none; text-align: center; font-weight: bold;">
+                    → Submit Scientific Contribution
+                </a>
+                <a href="${BASE_URL}/submit?category=technology" style="display: block; padding: 15px; background: rgba(255,184,77,0.1); border: 1px solid #ffb84d; border-radius: 5px; color: #ffb84d; text-decoration: none; text-align: center; font-weight: bold;">
+                    → Submit Technology Contribution
+                </a>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #333;">
+            <p style="margin: 0; font-size: 16px; color: #ffb84d; font-weight: bold; font-style: italic;">
+                — Pru &quot;El Taino&quot;
+            </p>
+            <p style="margin: 5px 0 0 0; font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1px;">
+                Architect of Syntheverse
+            </p>
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; font-size: 12px; color: #666; text-align: center;">
+            <p style="margin: 0;">Founder&apos;s Welcome Email | Syntheverse Ecosystem</p>
+            <p style="margin: 5px 0 0 0;">Questions? Contact <a href="mailto:info@fractiai.com" style="color: #ffb84d;">info@fractiai.com</a> | Visit <a href="${BASE_URL}" style="color: #ffb84d;">${BASE_URL}</a></p>
+            <p style="margin: 10px 0 0 0; color: #555;">
+                Website: <a href="http://fractiai.com" style="color: #ffb84d;">fractiai.com</a> | 
+                GitHub: <a href="https://github.com/FractiAI" style="color: #ffb84d;">github.com/FractiAI</a> | 
+                X: <a href="https://x.com/FractiAi" style="color: #ffb84d;">@FractiAi</a>
+            </p>
         </div>
     </div>
 </body>
@@ -182,9 +227,9 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
         `
         
         const result = await resend.emails.send({
-            from: 'Pru El Taino - Syntheverse <noreply@syntheverse.ai>', // Update with your verified domain
+            from: 'Pru "El Taino" - Syntheverse <info@fractiai.com>', // Founder's welcome email
             to: data.userEmail,
-            subject: 'Welcome to Syntheverse — Your Holographic Hydrogen Frontier',
+            subject: 'Founder\'s Welcome to Syntheverse — Your Holographic Hydrogen Frontier',
             html: emailHtml,
         })
         

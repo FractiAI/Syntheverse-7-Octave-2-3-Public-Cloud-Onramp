@@ -3,7 +3,9 @@ import { createServerClient } from '@supabase/ssr'
 import { createStripeCustomer } from '@/utils/stripe/api'
 import { db } from '@/utils/db/db'
 import { usersTable } from '@/utils/db/schema'
-import { eq } from "drizzle-orm";
+import { eq } from "drizzle-orm"
+import { sendWelcomeEmail } from '@/utils/email/send-welcome-email'
+import { debug, debugError } from '@/utils/debug'
 
 export async function GET(request: NextRequest) {
     const { searchParams, origin } = new URL(request.url)
@@ -139,6 +141,18 @@ export async function GET(request: NextRequest) {
                 plan: 'none' 
             })
             console.log('OAuth callback: Created new user in database', { userId: user.id, email: user.email })
+            
+            // Send welcome email to new contributor (don't fail if email fails)
+            try {
+                await sendWelcomeEmail({
+                    userEmail: user.email!,
+                    userName: userName
+                })
+                debug('OAuthCallback', 'Welcome email sent to new contributor', { email: user.email })
+            } catch (emailError) {
+                debugError('OAuthCallback', 'Failed to send welcome email', emailError)
+                // Continue - authentication should succeed even if email fails
+            }
         } else {
             console.log('OAuth callback: User already exists in database', { userId: user.id, email: user.email })
         }
