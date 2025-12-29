@@ -447,8 +447,6 @@ export function OnboardingNavigator() {
                             <div className="cockpit-text mt-3" style={{ opacity: 0.8 }}>
                                 Master the Motherlode Blockmine, Holographic Hydrogen, and the Fractal Frontier
                             </div>
-                                Master the Motherlode Blockmine, Holographic Hydrogen, and the Fractal Frontier
-                            </div>
                         </div>
                         <div className="cockpit-symbol text-4xl">🌀</div>
                     </div>
