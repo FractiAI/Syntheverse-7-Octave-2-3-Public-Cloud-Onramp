@@ -510,9 +510,163 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
             stripePaymentId: session.payment_intent
         })
         
-        // TODO: Allocate tokens for financial alignment if needed
-        // Financial alignment contributors get tokens based on their contribution level
-        // This should be handled separately from PoC allocations
+        // Allocate tokens for Financial Alignment from Founders' 5% (4.5T SYNTH)
+        // Tier allocations (percentage of Founders' 5%):
+        // Copper ($10K-$25K): 0.05-0.25%
+        // Silver ($50K-$100K): 0.25-1%
+        // Gold ($250K-$500K): 1-3%
+        const FOUNDERS_ALLOCATION_PERCENTAGE = 0.05 // 5%
+        const TOTAL_SUPPLY = 90_000_000_000_000 // 90T
+        const FOUNDERS_TOTAL = TOTAL_SUPPLY * FOUNDERS_ALLOCATION_PERCENTAGE // 4.5T
+        
+        // Determine tier and allocation percentage
+        let tier = 'copper'
+        let minAllocationPct = 0.0005 // 0.05%
+        let maxAllocationPct = 0.0025 // 0.25%
+        
+        if (amount >= 250000) {
+            tier = 'gold'
+            minAllocationPct = 0.01 // 1%
+            maxAllocationPct = 0.03 // 3%
+        } else if (amount >= 50000) {
+            tier = 'silver'
+            minAllocationPct = 0.0025 // 0.25%
+            maxAllocationPct = 0.01 // 1%
+        }
+        
+        // Calculate allocation percentage within tier range (linear interpolation)
+        let allocationPct = minAllocationPct
+        if (tier === 'copper') {
+            // $10K-$25K range
+            const minAmount = 10000
+            const maxAmount = 25000
+            if (amount > minAmount && maxAmount > minAmount) {
+                const pctWithinRange = (amount - minAmount) / (maxAmount - minAmount)
+                allocationPct = minAllocationPct + (maxAllocationPct - minAllocationPct) * pctWithinRange
+            }
+        } else if (tier === 'silver') {
+            // $50K-$100K range
+            const minAmount = 50000
+            const maxAmount = 100000
+            if (amount > minAmount && maxAmount > minAmount) {
+                const pctWithinRange = (amount - minAmount) / (maxAmount - minAmount)
+                allocationPct = minAllocationPct + (maxAllocationPct - minAllocationPct) * pctWithinRange
+            }
+        } else if (tier === 'gold') {
+            // $250K-$500K range (using $250K as max for now since that's our highest tier)
+            const minAmount = 250000
+            const maxAmount = 500000
+            if (amount > minAmount && maxAmount > minAmount) {
+                const pctWithinRange = Math.min((amount - minAmount) / (maxAmount - minAmount), 1.0)
+                allocationPct = minAllocationPct + (maxAllocationPct - minAllocationPct) * pctWithinRange
+            }
+        }
+        
+        // Calculate actual SYNTH allocation
+        const synthAllocation = Math.floor(FOUNDERS_TOTAL * allocationPct)
+        
+        debug('StripeWebhook', 'Financial Alignment token allocation calculation', {
+            submissionHash,
+            amount,
+            tier,
+            allocationPct: allocationPct * 100,
+            synthAllocation,
+            foundersTotal: FOUNDERS_TOTAL
+        })
+        
+        // Allocate tokens from Founder epoch
+        try {
+            const founderEpoch = 'founder'
+            const epochBalances = await db
+                .select()
+                .from(epochBalancesTable)
+                .where(eq(epochBalancesTable.epoch, founderEpoch))
+                .limit(1)
+            
+            if (epochBalances.length === 0) {
+                debugError('StripeWebhook', 'Founder epoch balance not found for Financial Alignment allocation', {
+                    submissionHash,
+                    tier,
+                    synthAllocation
+                })
+                return
+            }
+            
+            const founderBalance = epochBalances[0]
+            const currentBalance = Number(founderBalance.balance)
+            
+            if (currentBalance < synthAllocation) {
+                debugError('StripeWebhook', 'Insufficient Founder epoch balance for Financial Alignment allocation', {
+                    submissionHash,
+                    tier,
+                    requested: synthAllocation,
+                    available: currentBalance
+                })
+                return
+            }
+            
+            const newBalance = currentBalance - synthAllocation
+            
+            // Create allocation record
+            const allocationId = crypto.randomUUID()
+            await db.insert(allocationsTable).values({
+                id: allocationId,
+                submission_hash: submissionHash,
+                contributor: contributorEmail,
+                metal: tier.toLowerCase(),
+                epoch: founderEpoch,
+                tier: tier.toLowerCase(),
+                reward: synthAllocation.toString(),
+                tier_multiplier: '1.0', // No multiplier for Financial Alignment
+                epoch_balance_before: currentBalance.toString(),
+                epoch_balance_after: newBalance.toString(),
+            })
+            
+            // Update Founder epoch balance
+            await db
+                .update(epochBalancesTable)
+                .set({
+                    balance: newBalance.toString(),
+                    updated_at: new Date()
+                })
+                .where(eq(epochBalancesTable.epoch, founderEpoch))
+            
+            // Update tokenomics total_distributed
+            const tokenomicsState = await db
+                .select()
+                .from(tokenomicsTable)
+                .where(eq(tokenomicsTable.id, 'main'))
+                .limit(1)
+            
+            if (tokenomicsState.length > 0) {
+                const newTotalDistributed = Number(tokenomicsState[0].total_distributed) + synthAllocation
+                await db
+                    .update(tokenomicsTable)
+                    .set({
+                        total_distributed: newTotalDistributed.toString(),
+                        updated_at: new Date()
+                    })
+                    .where(eq(tokenomicsTable.id, 'main'))
+            }
+            
+            debug('StripeWebhook', 'Financial Alignment tokens allocated successfully', {
+                submissionHash,
+                tier,
+                synthAllocation,
+                epoch: founderEpoch,
+                balanceBefore: currentBalance,
+                balanceAfter: newBalance
+            })
+        } catch (allocationError) {
+            // Log allocation error but don't fail the webhook (payment is complete)
+            debugError('StripeWebhook', 'Financial Alignment allocation failed (non-fatal)', allocationError)
+            console.error('StripeWebhook: Financial Alignment allocation error:', {
+                submissionHash,
+                tier,
+                synthAllocation,
+                error: allocationError instanceof Error ? allocationError.message : String(allocationError)
+            })
+        }
         
     } catch (error) {
         debugError('StripeWebhook', 'Error processing Financial Alignment payment', error)
