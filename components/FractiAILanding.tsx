@@ -294,6 +294,23 @@ export default function FractiAILanding({ variant = 'home', cta }: FractiAILandi
           </div>
         </ExpandablePanel>
 
+        {/* About */}
+        <ExpandablePanel label="ABOUT" title="FractiAI: the HHF Whole Brain Blueprint" defaultOpen={false}>
+          <div className="cockpit-text space-y-3">
+            <p>
+              FractiAI is building a Hydrogen‑Holographic Fractal “Whole Brain” blueprint: a structural grammar for
+              intelligence spanning perception, memory, reasoning, agency, and alignment.
+            </p>
+            <p>
+              Syntheverse is the operational embodiment of that blueprint—turning the grammar into a live frontier: a
+              Base‑chain game, lens, and sandbox where contributions expand the map and shape the economy.
+            </p>
+          </div>
+          <div className="mt-5 relative aspect-[16/9]">
+            <Image src="/fractiai/about-blueprint.svg" alt="About FractiAI blueprint panel" fill className="object-contain" />
+          </div>
+        </ExpandablePanel>
+
         {/* Resources */}
         <ExpandablePanel label="RESOURCES" title="Links, Code, and Contact" defaultOpen={variant === 'home'}>
           <div className="cockpit-text">
