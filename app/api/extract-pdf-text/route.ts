@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
             if (!(globalThis as any).pdfjs.GlobalWorkerOptions) {
                 (globalThis as any).pdfjs.GlobalWorkerOptions = {}
             }
-            (globalThis as any).pdfjs.GlobalWorkerOptions.workerSrc = null
+            (globalThis as any).pdfjs.GlobalWorkerOptions.workerSrc = ''
 
             console.log('[PDF Extract] Globally disabled pdfjs-dist workers')
         }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         try {
             const pdfjs = await import('pdfjs-dist')
             if (pdfjs.GlobalWorkerOptions) {
-                pdfjs.GlobalWorkerOptions.workerSrc = null
+                pdfjs.GlobalWorkerOptions.workerSrc = ''
                 console.log('[PDF Extract] pdfjs-dist workers disabled before pdf-parse import')
             }
         } catch (pdfjsError) {
