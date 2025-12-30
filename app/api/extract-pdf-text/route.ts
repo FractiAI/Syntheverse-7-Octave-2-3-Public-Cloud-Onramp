@@ -132,11 +132,13 @@ export async function POST(request: NextRequest) {
                             addEventListener: () => {},
                             removeEventListener: () => {},
                             terminate: () => {},
+                            dispatchEvent: () => {},
                             onmessage: null,
-                            onerror: null
+                            onerror: null,
+                            onmessageerror: null
                         }
 
-                        GlobalWorkerOptions.workerPort = mockWorkerPort
+                        GlobalWorkerOptions.workerPort = mockWorkerPort as any
 
                         // Monkey patch PDFWorker.fromPort to return a mock worker
                         const originalFromPort = PDFWorker.fromPort
