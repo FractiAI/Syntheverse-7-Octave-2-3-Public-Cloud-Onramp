@@ -65,12 +65,12 @@ export async function POST(request: NextRequest) {
         let pagesExtracted = 1
 
         try {
-            const result = await extractTextWithTextract(buffer)
+            const result = await extractTextWithPdf2Text(buffer)
             extractedText = result.text
             pagesExtracted = result.pages
-            console.log(`[PDF Extract] Textract extraction successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
-        } catch (textractError) {
-            console.error('[PDF Extract] Textract extraction failed:', textractError)
+            console.log(`[PDF Extract] PDF2Text extraction successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
+        } catch (pdf2textError) {
+            console.error('[PDF Extract] PDF2Text extraction failed:', pdf2textError)
 
             // Return error instead of fallback - user should know extraction failed
             return NextResponse.json({
@@ -129,44 +129,37 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Extract text from PDF using textract library
- * Textract is designed for serverless environments and handles PDFs well
+ * Extract text from PDF using pdf2text library
+ * Simple and reliable PDF text extraction for serverless environments
  */
-async function extractTextWithTextract(buffer: Buffer): Promise<{ text: string; pages: number }> {
-    // Import textract dynamically
-    const textract = (await import('textract')).default
+async function extractTextWithPdf2Text(buffer: Buffer): Promise<{ text: string; pages: number }> {
+    // Import pdf2text dynamically
+    const pdf2text = (await import('pdf2text')).default
 
     return new Promise((resolve, reject) => {
-        // Configure textract for PDF processing
-        const config = {
-            preserveLineBreaks: true,
-            // Disable features that might cause issues in serverless
-            pdftotextOptions: {
-                layout: 'raw',
-                nopgbrk: true
-            }
-        }
-
-        textract.fromBufferWithMime('application/pdf', buffer, config, (error: any, text: string) => {
+        // Use pdf2text to extract text from buffer
+        pdf2text(buffer, (error: any, pages: string[]) => {
             if (error) {
-                reject(new Error(`Textract PDF extraction error: ${error.message}`))
+                reject(new Error(`PDF2Text extraction error: ${error.message}`))
                 return
             }
 
+            if (!pages || pages.length === 0) {
+                reject(new Error('No text content found in PDF'))
+                return
+            }
+
+            // Combine all pages into single text
+            let extractedText = pages.join('\n\n')
+
             // Clean and process the extracted text
-            let cleanText = text || ''
-
-            // Remove excessive whitespace and normalize
-            cleanText = cleanText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
-            cleanText = cleanText.replace(/\n\s*\n\s*\n+/g, '\n\n')  // Multiple newlines to double
-            cleanText = cleanText.trim()
-
-            // Estimate pages (rough calculation: ~2000 chars per page)
-            const estimatedPages = Math.max(1, Math.ceil(cleanText.length / 2000))
+            extractedText = extractedText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
+            extractedText = extractedText.replace(/\n\s*\n\s*\n+/g, '\n\n')  // Multiple newlines to double
+            extractedText = extractedText.trim()
 
             resolve({
-                text: cleanText,
-                pages: estimatedPages
+                text: extractedText,
+                pages: pages.length
             })
         })
     })
