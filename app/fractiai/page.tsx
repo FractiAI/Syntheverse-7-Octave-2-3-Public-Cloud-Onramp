@@ -13,9 +13,7 @@ export default async function FractiAIPage() {
     <FractiAILanding
       variant="fractiai"
       cta={
-        user
-          ? { primaryHref: '/dashboard', primaryLabel: 'Go to Dashboard' }
-          : { primaryHref: '/signup', primaryLabel: 'Join the Frontier', secondaryHref: '/login', secondaryLabel: 'Log in' }
+        user ? { primaryHref: '/dashboard', primaryLabel: 'Go to Dashboard' } : undefined
       }
     />
   )
