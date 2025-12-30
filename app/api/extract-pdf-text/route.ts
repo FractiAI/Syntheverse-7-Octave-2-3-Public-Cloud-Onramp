@@ -43,16 +43,47 @@ export async function POST(request: NextRequest) {
 
         // Use pdf-parse (similar to Python's pypdf.PdfReader)
         // Much simpler and more reliable than pdfjs-dist for server-side
-        // pdf-parse is CommonJS, use require for better compatibility
-        const pdfParse = require('pdf-parse')
-        
         let pdfData: any
+        
         try {
+            // Dynamic import for pdf-parse
+            const pdfParseModule = await import('pdf-parse')
+            
+            // pdf-parse exports differently - try to get the function
+            let pdfParseFn: any = null
+            
+            // Try different export patterns
+            if (typeof pdfParseModule === 'function') {
+                pdfParseFn = pdfParseModule
+            } else if (typeof pdfParseModule.default === 'function') {
+                pdfParseFn = pdfParseModule.default
+            } else if ((pdfParseModule as any).default) {
+                // Sometimes default is an object with the function
+                const defaultExport = (pdfParseModule as any).default
+                pdfParseFn = typeof defaultExport === 'function' ? defaultExport : defaultExport.default
+            }
+            
+            if (!pdfParseFn || typeof pdfParseFn !== 'function') {
+                console.error('pdf-parse module structure:', {
+                    type: typeof pdfParseModule,
+                    hasDefault: 'default' in pdfParseModule,
+                    defaultType: typeof (pdfParseModule as any).default,
+                    keys: Object.keys(pdfParseModule)
+                })
+                throw new Error('pdf-parse function not found in module')
+            }
+            
             // pdf-parse is a function that takes a buffer and returns a promise
-            pdfData = await pdfParse(buffer)
+            pdfData = await pdfParseFn(buffer)
         } catch (parseError) {
             console.error('Error parsing PDF:', parseError)
-            throw new Error(`Failed to parse PDF: ${parseError instanceof Error ? parseError.message : String(parseError)}`)
+            const errorMessage = parseError instanceof Error ? parseError.message : String(parseError)
+            console.error('Full error details:', {
+                message: errorMessage,
+                stack: parseError instanceof Error ? parseError.stack : undefined,
+                name: parseError instanceof Error ? parseError.name : undefined
+            })
+            throw new Error(`Failed to parse PDF: ${errorMessage}`)
         }
 
         // Extract text - pdf-parse gives us all text at once
@@ -91,10 +122,22 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('PDF extraction error:', error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        const errorStack = error instanceof Error ? error.stack : undefined
+        
+        // Log full error details for debugging
+        console.error('Full error details:', {
+            message: errorMessage,
+            stack: errorStack,
+            name: error instanceof Error ? error.name : undefined
+        })
+        
         return NextResponse.json(
             { 
                 error: 'Failed to extract PDF text',
-                message: error instanceof Error ? error.message : String(error)
+                message: errorMessage,
+                // Include stack in development for debugging
+                ...(process.env.NODE_ENV === 'development' ? { stack: errorStack } : {})
             },
             { status: 500 }
         )
