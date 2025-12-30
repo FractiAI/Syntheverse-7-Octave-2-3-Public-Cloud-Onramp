@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
+import pdfParse from 'pdf-parse'
 
 /**
- * FREE & OPEN SOURCE: PDF text extraction using pdfreader
+ * PDF text extraction using pdf-parse with robust error handling
  *
- * Why this approach:
+ * Why pdf-parse:
  * - 100% free and open source (no API costs)
- * - Pure JavaScript implementation (no native dependencies)
+ * - Pure JavaScript implementation
  * - Works in serverless environments
- * - No worker/polyfill issues
- * - Highly rated on GitHub (4.5k+ stars)
- * - Zero configuration required
+ * - Well-maintained (200k+ downloads/week)
+ * - No native dependencies
  *
- * Implementation uses pdfreader for reliable PDF text extraction.
- * Falls back to simple title-based extraction if parsing fails.
+ * Includes DOMMatrix polyfill for Node.js compatibility.
  */
 export async function POST(request: NextRequest) {
     const startTime = Date.now()
@@ -59,18 +58,26 @@ export async function POST(request: NextRequest) {
         // Convert file to buffer for textract
         const buffer = Buffer.from(await file.arrayBuffer())
 
-        // Extract text using textract (works in serverless)
+        // Extract text using pdf-parse with DOMMatrix polyfill
         let extractedText = ''
-        let extractionMethod = 'textract'
+        let extractionMethod = 'pdf-parse'
         let pagesExtracted = 1
 
         try {
-            const result = await extractTextWithPoppler(buffer)
+            // Polyfill DOMMatrix for Node.js (pdf-parse requires this)
+            if (typeof (globalThis as any).DOMMatrix === 'undefined') {
+                // Import dommatrix polyfill
+                const { DOMMatrix } = await import('dommatrix')
+                ;(globalThis as any).DOMMatrix = DOMMatrix
+                console.log('[PDF Extract] DOMMatrix polyfill loaded')
+            }
+
+            const result = await extractTextWithPdfParse(buffer)
             extractedText = result.text
             pagesExtracted = result.pages
-            console.log(`[PDF Extract] Poppler extraction successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
+            console.log(`[PDF Extract] pdf-parse extraction successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
         } catch (extractError) {
-            console.error('[PDF Extract] Poppler extraction failed:', extractError)
+            console.error('[PDF Extract] pdf-parse extraction failed:', extractError)
 
             // Return error instead of fallback - user should know extraction failed
             return NextResponse.json({
@@ -129,67 +136,35 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Extract text from PDF using node-poppler library
- * Uses poppler PDF library directly - no pdfjs-dist dependencies
+ * Extract text from PDF using pdf-parse library
+ * Pure JavaScript implementation with DOMMatrix polyfill
  */
-async function extractTextWithPoppler(buffer: Buffer): Promise<{ text: string; pages: number }> {
-    // Import node-poppler dynamically
-    const { Poppler } = await import('node-poppler')
-
-    // Create a temporary file path for the PDF
-    const tempDir = '/tmp'
-    const tempFileName = `pdf-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.pdf`
-    const tempFilePath = `${tempDir}/${tempFileName}`
-
+async function extractTextWithPdfParse(buffer: Buffer): Promise<{ text: string; pages: number }> {
     try {
-        // Write buffer to temporary file
-        const fs = await import('fs/promises')
-        await fs.writeFile(tempFilePath, buffer)
+        // Parse PDF with pdf-parse
+        const data = await pdfParse(buffer)
 
-        // Initialize poppler
-        const poppler = new Poppler()
+        // Validate extracted data
+        if (!data || typeof data !== 'object') {
+            throw new Error('pdf-parse returned invalid data structure')
+        }
 
-        // Extract text from PDF
-        const outputFilePath = tempFilePath.replace('.pdf', '.txt')
-        const popplerResult = await poppler.text(tempFilePath, outputFilePath)
+        if (!data.text || typeof data.text !== 'string') {
+            throw new Error('pdf-parse extracted no text content')
+        }
 
-        // Check if output file exists and has content
+        // Get the extracted text
+        let extractedText = data.text.trim()
+
+        if (extractedText.length === 0) {
+            throw new Error('pdf-parse produced empty text content (file may be image-only or encrypted)')
+        }
+
+        // Process the extracted text with defensive programming
+        let cleanText = extractedText
+
         try {
-            const stats = await fs.stat(outputFilePath)
-            if (stats.size === 0) {
-                throw new Error('Poppler created empty output file')
-            }
-        } catch (statError) {
-            if (statError.code === 'ENOENT') {
-                throw new Error('Poppler failed to create output file')
-            }
-            throw new Error(`File stat error: ${statError instanceof Error ? statError.message : String(statError)}`)
-        }
-
-        // Read the extracted text
-        const extractedText = await fs.readFile(outputFilePath, 'utf8')
-
-        // GUARD: Check if Poppler actually returned valid text
-        if (!extractedText || typeof extractedText !== 'string' || extractedText.trim().length === 0) {
-            throw new Error('Poppler produced no textual output (file may be image-only or encrypted)')
-        }
-
-        // Clean up temporary files
-        await Promise.all([
-            fs.unlink(tempFilePath),
-            fs.unlink(outputFilePath)
-        ])
-
-        // Process the extracted text
-        let cleanText = extractedText.trim()
-
-        // Additional guard after trim (in case trim returns something unexpected)
-        if (!cleanText || typeof cleanText !== 'string') {
-            throw new Error('Text processing failed - extracted content is invalid')
-        }
-
-        // Remove excessive whitespace - with defensive programming
-        try {
+            // Remove excessive whitespace
             cleanText = cleanText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
             if (typeof cleanText !== 'string') {
                 throw new Error('First regex replacement failed')
@@ -202,23 +177,16 @@ async function extractTextWithPoppler(buffer: Buffer): Promise<{ text: string; p
             throw new Error(`Text processing regex error: ${regexError instanceof Error ? regexError.message : String(regexError)}`)
         }
 
-        // Estimate pages (rough calculation based on content length)
-        const estimatedPages = Math.max(1, Math.ceil(cleanText.length / 2500))
+        // Get page count from pdf-parse result
+        const pages = data.numpages || 1
 
         return {
             text: cleanText,
-            pages: estimatedPages
+            pages: pages
         }
 
     } catch (error) {
-        // Clean up temporary files on error
-        try {
-            const fs = await import('fs/promises')
-            await fs.unlink(tempFilePath).catch(() => {})
-            await fs.unlink(tempFilePath.replace('.pdf', '.txt')).catch(() => {})
-        } catch {}
-
-        throw new Error(`Poppler extraction error: ${error instanceof Error ? error.message : String(error)}`)
+        throw new Error(`pdf-parse extraction error: ${error instanceof Error ? error.message : String(error)}`)
     }
 }
 
