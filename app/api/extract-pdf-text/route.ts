@@ -151,7 +151,20 @@ async function extractTextWithPoppler(buffer: Buffer): Promise<{ text: string; p
 
         // Extract text from PDF
         const outputFilePath = tempFilePath.replace('.pdf', '.txt')
-        await poppler.text(tempFilePath, outputFilePath)
+        const popplerResult = await poppler.text(tempFilePath, outputFilePath)
+
+        // Check if output file exists and has content
+        try {
+            const stats = await fs.stat(outputFilePath)
+            if (stats.size === 0) {
+                throw new Error('Poppler created empty output file')
+            }
+        } catch (statError) {
+            if (statError.code === 'ENOENT') {
+                throw new Error('Poppler failed to create output file')
+            }
+            throw new Error(`File stat error: ${statError instanceof Error ? statError.message : String(statError)}`)
+        }
 
         // Read the extracted text
         const extractedText = await fs.readFile(outputFilePath, 'utf8')
@@ -175,9 +188,19 @@ async function extractTextWithPoppler(buffer: Buffer): Promise<{ text: string; p
             throw new Error('Text processing failed - extracted content is invalid')
         }
 
-        // Remove excessive whitespace
-        cleanText = cleanText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
-        cleanText = cleanText.replace(/\n\s*\n\s*\n+/g, '\n\n')  // Multiple newlines to double
+        // Remove excessive whitespace - with defensive programming
+        try {
+            cleanText = cleanText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
+            if (typeof cleanText !== 'string') {
+                throw new Error('First regex replacement failed')
+            }
+            cleanText = cleanText.replace(/\n\s*\n\s*\n+/g, '\n\n')  // Multiple newlines to double
+            if (typeof cleanText !== 'string') {
+                throw new Error('Second regex replacement failed')
+            }
+        } catch (regexError) {
+            throw new Error(`Text processing regex error: ${regexError instanceof Error ? regexError.message : String(regexError)}`)
+        }
 
         // Estimate pages (rough calculation based on content length)
         const estimatedPages = Math.max(1, Math.ceil(cleanText.length / 2500))
