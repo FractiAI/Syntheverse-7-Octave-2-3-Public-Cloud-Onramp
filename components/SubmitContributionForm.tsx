@@ -192,44 +192,25 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                     let getDocumentFn: any = null
                     let GlobalWorkerOptions: any = null
                     
-                    // Try importing from build/pdf first (most reliable for Next.js)
+                    // Import pdfjs-dist - use root import (TypeScript-compatible)
                     try {
-                        const buildModule = await import('pdfjs-dist/build/pdf')
-                        // In build/pdf, getDocument is typically on default export
-                        if (buildModule.default && typeof buildModule.default.getDocument === 'function') {
-                            pdfjsLib = buildModule.default
-                            getDocumentFn = buildModule.default.getDocument
-                            GlobalWorkerOptions = buildModule.default.GlobalWorkerOptions
-                        } else if (typeof buildModule.getDocument === 'function') {
-                            pdfjsLib = buildModule
-                            getDocumentFn = buildModule.getDocument
-                            GlobalWorkerOptions = buildModule.GlobalWorkerOptions
+                        const rootModule = await import('pdfjs-dist')
+                        // Try various access patterns to find getDocument
+                        if (rootModule.default && typeof rootModule.default.getDocument === 'function') {
+                            pdfjsLib = rootModule.default
+                            getDocumentFn = rootModule.default.getDocument
+                            GlobalWorkerOptions = rootModule.default.GlobalWorkerOptions
+                        } else if (typeof rootModule.getDocument === 'function') {
+                            pdfjsLib = rootModule
+                            getDocumentFn = rootModule.getDocument
+                            GlobalWorkerOptions = rootModule.GlobalWorkerOptions
+                        } else if ((rootModule as any).getDocument && typeof (rootModule as any).getDocument === 'function') {
+                            pdfjsLib = rootModule
+                            getDocumentFn = (rootModule as any).getDocument
+                            GlobalWorkerOptions = (rootModule as any).GlobalWorkerOptions
                         }
-                    } catch (buildError) {
-                        console.warn('build/pdf import failed, trying root import:', buildError)
-                    }
-                    
-                    // Fallback: Try root import
-                    if (!getDocumentFn) {
-                        try {
-                            const rootModule = await import('pdfjs-dist')
-                            // Try various access patterns
-                            if (rootModule.default && typeof rootModule.default.getDocument === 'function') {
-                                pdfjsLib = rootModule.default
-                                getDocumentFn = rootModule.default.getDocument
-                                GlobalWorkerOptions = rootModule.default.GlobalWorkerOptions
-                            } else if (typeof rootModule.getDocument === 'function') {
-                                pdfjsLib = rootModule
-                                getDocumentFn = rootModule.getDocument
-                                GlobalWorkerOptions = rootModule.GlobalWorkerOptions
-                            } else if ((rootModule as any).getDocument && typeof (rootModule as any).getDocument === 'function') {
-                                pdfjsLib = rootModule
-                                getDocumentFn = (rootModule as any).getDocument
-                                GlobalWorkerOptions = (rootModule as any).GlobalWorkerOptions
-                            }
-                        } catch (rootError) {
-                            console.error('Root import also failed:', rootError)
-                        }
+                    } catch (rootError) {
+                        console.error('PDF.js root import failed:', rootError)
                     }
                     
                     // Verify getDocument is available
