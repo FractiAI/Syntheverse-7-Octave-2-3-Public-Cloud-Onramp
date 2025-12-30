@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 /**
  * Server-side PDF text extraction API
  * Similar to the Python scraper's extract_text_from_pdf function
- * Uses pdfjs-dist on the server where it's more reliable
+ * Uses pdf-parse (similar to Python's pypdf) - simpler and more reliable
  */
 export async function POST(request: NextRequest) {
     try {
@@ -37,79 +37,54 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Read file as buffer
+        // Read file as buffer (pdf-parse needs Buffer)
         const arrayBuffer = await file.arrayBuffer()
         const buffer = Buffer.from(arrayBuffer)
 
-        // Import pdfjs-dist on the server (more reliable than client-side)
-        // Similar to Python scraper's PdfReader approach
-        const pdfjsModule = await import('pdfjs-dist')
+        // Use pdf-parse (similar to Python's pypdf.PdfReader)
+        // Much simpler and more reliable than pdfjs-dist for server-side
+        const pdfParse = await import('pdf-parse')
         
-        // Get getDocument function - try multiple access patterns
-        const getDocument = (pdfjsModule as any).getDocument || 
-                          pdfjsModule.default?.getDocument ||
-                          (pdfjsModule as any).default?.getDocument
-
-        if (!getDocument || typeof getDocument !== 'function') {
-            throw new Error('PDF.js getDocument function not found')
+        let pdfData: any
+        try {
+            pdfData = await pdfParse.default(buffer)
+        } catch (parseError) {
+            console.error('Error parsing PDF:', parseError)
+            throw new Error(`Failed to parse PDF: ${parseError instanceof Error ? parseError.message : String(parseError)}`)
         }
 
-        // Set worker (server-side doesn't need worker, but set it to avoid errors)
-        const GlobalWorkerOptions = (pdfjsModule as any).GlobalWorkerOptions || 
-                                   pdfjsModule.default?.GlobalWorkerOptions
-        if (GlobalWorkerOptions) {
-            GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.449/pdf.worker.min.mjs`
+        // Extract text - pdf-parse gives us all text at once
+        // Similar to Python: "\n\n".join([page.extract_text() for page in reader.pages])
+        let extractedText = pdfData.text || ''
+        
+        // Clean up the text (similar to Python scraper's text cleaning)
+        // Remove excessive whitespace
+        extractedText = extractedText.replace(/\s+/g, ' ').trim()
+        // Normalize line breaks
+        extractedText = extractedText.replace(/\n\s*\n\s*\n+/g, '\n\n')
+        
+        const totalPages = pdfData.numpages || 0
+
+        // Limit to reasonable length (equivalent to 50 pages)
+        const maxLength = 500000 // ~50 pages of text
+        if (extractedText.length > maxLength) {
+            extractedText = extractedText.substring(0, maxLength) + '\n\n[Content truncated - PDF text exceeds maximum length]'
         }
 
-        // Extract text from PDF - similar to Python's PdfReader approach
-        const loadingTask = getDocument({ 
-            data: buffer,
-            verbosity: 0
-        })
-
-        const pdf = await loadingTask.promise
-        const textParts: string[] = []
-
-        // Extract text from each page (limit to 50 pages)
-        const maxPages = Math.min(pdf.numPages, 50)
-        for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
-            try {
-                const page = await pdf.getPage(pageNum)
-                const textContent = await page.getTextContent()
-                
-                if (textContent && textContent.items && Array.isArray(textContent.items)) {
-                    const pageText = textContent.items
-                        .map((item: any) => item.str || '')
-                        .filter((str: string) => str.trim().length > 0)
-                        .join(' ')
-                    
-                    if (pageText.trim()) {
-                        textParts.push(pageText)
-                    }
-                }
-            } catch (pageError) {
-                console.warn(`Error extracting text from page ${pageNum}:`, pageError)
-                // Continue with other pages
-            }
-        }
-
-        // Combine all pages with double newlines (similar to Python: "\n\n".join(text_parts))
-        const extractedText = textParts.join('\n\n')
-
-        if (pdf.numPages > 50) {
+        if (totalPages > 50) {
             return NextResponse.json({
                 success: true,
                 text: extractedText + '\n\n[Content truncated - PDF has more than 50 pages]',
-                pagesExtracted: maxPages,
-                totalPages: pdf.numPages
+                pagesExtracted: Math.min(totalPages, 50),
+                totalPages: totalPages
             })
         }
 
         return NextResponse.json({
             success: true,
             text: extractedText,
-            pagesExtracted: maxPages,
-            totalPages: pdf.numPages
+            pagesExtracted: totalPages,
+            totalPages: totalPages
         })
 
     } catch (error) {
