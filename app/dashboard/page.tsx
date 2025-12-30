@@ -48,6 +48,10 @@ export default async function Dashboard() {
                             <div className="cockpit-text mt-2">Recording truth into the chain</div>
                         </div>
                         <div className="flex gap-3 flex-wrap">
+                            <Link href="/fractiai" className="cockpit-lever inline-block">
+                                <span className="mr-2">◎</span>
+                                FractiAI
+                            </Link>
                             <Link href="/onboarding" className="cockpit-lever inline-block">
                                 <BookOpen className="inline h-4 w-4 mr-2" />
                                 Onboarding Navigator

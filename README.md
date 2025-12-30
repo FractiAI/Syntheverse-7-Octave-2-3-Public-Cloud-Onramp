@@ -2,6 +2,17 @@
 
 A production-ready web application for the Syntheverse Proof of Contribution system, featuring a dark, minimal, futuristic UI. Built for deployment on Vercel (frontend + API routes) and Supabase (auth + database) using free tiers.
 
+## 🌐 Live Deployment (Vercel)
+
+This app is **already deployed on Vercel**:
+
+- **Production URL**: `https://syntheverse-poc.vercel.app`
+
+If you deploy to a different Vercel project/domain, make sure you update:
+- `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WEBSITE_URL` in Vercel
+- Supabase Auth **Site URL / Redirect URLs**
+- Stripe webhook endpoint URL (see below)
+
 ## ✨ Features
 
 - **Hydrogen-Holographic Evaluation**: AI-powered contribution scoring across novelty, density, coherence, and alignment dimensions
@@ -168,7 +179,7 @@ PoC submission archive with 3D vectorization for redundancy detection.
 | `contributor` | text | Contributor identifier (email or user ID) |
 | `content_hash` | text | Hash of content for deduplication |
 | `text_content` | text | Full text content (optional) |
-| `pdf_path` | text | Path to PDF file (optional) |
+| `pdf_path` | text | Legacy field (unused for text-only submissions) |
 | `status` | text | Status: `draft`, `submitted`, `evaluating`, `qualified`, `unqualified`, `archived`, `superseded` |
 | `category` | text | Category: `scientific`, `tech`, `alignment` |
 | `metals` | jsonb | Array of metal types: `gold`, `silver`, `copper` |
@@ -333,11 +344,19 @@ npm run test             # Run tests (if configured)
 
 ### Vercel (Recommended)
 
+**Status**: This project is deployed on Vercel (see “Live Deployment” above).
+
 1. **Connect Repository**: Import this GitHub repository to Vercel
 2. **Environment Variables**: Add all required variables in Vercel dashboard
 3. **Deploy**: Vercel will automatically deploy on push to main branch
 
 See [docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md](docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md) for detailed instructions.
+
+### Post-Deploy Setup Checklist (Required for full functionality)
+
+- **Supabase Auth URLs**: Set Supabase Auth “Site URL” + “Redirect URLs” to match your deployed domain (OAuth callbacks rely on this).
+- **Stripe webhooks**: Create a Stripe webhook pointing to `https://<your-domain>/webhook/stripe` and set `STRIPE_WEBHOOK_SECRET` in Vercel. See `docs/stripe/STRIPE_WEBHOOK_SETUP.md`.
+- **PoC submissions are text-only**: No file uploads / no Supabase Storage bucket is required for submissions.
 
 ### Manual Deployment
 

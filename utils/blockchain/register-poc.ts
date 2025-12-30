@@ -23,14 +23,14 @@ export interface BlockchainRegistrationResult {
  * - Contributor address
  * - PoC scores (novelty, density, coherence, alignment)
  * - Metal type
- * - PDF file content/hash (original submitted PDF) - THE ACTUAL PDF FILE
+ * - Submission text hash (SHA-256) for anchoring the submitted artifact
  * - Registration timestamp
  * 
  * @param submissionHash - PoC submission hash
  * @param contributor - Contributor email/address
  * @param metadata - PoC metadata including scores
  * @param metals - Metal types (gold, silver, copper)
- * @param pdfPath - Storage path to the original PDF file (if provided)
+ * @param submissionText - Submitted text content (optional but recommended)
  * @returns Blockchain transaction result
  */
 export async function registerPoCOnBlockchain(
@@ -44,52 +44,25 @@ export async function registerPoCOnBlockchain(
         pod_score?: number
     },
     metals: string[],
-    pdfPath?: string | null
+    submissionText?: string | null
 ): Promise<BlockchainRegistrationResult> {
     debug('RegisterPoCBlockchain', 'Initiating blockchain registration', {
         submissionHash,
         contributor,
         metals,
-        pdfPath: pdfPath || 'none'
+        hasSubmissionText: !!submissionText && submissionText.trim().length > 0
     })
     
-    // Retrieve actual PDF file from Supabase Storage if path is provided
-    let pdfFileContent: Buffer | null = null
-    let pdfFileHash: string | null = null
-    
-    if (pdfPath) {
-        try {
-            const { createClient } = await import('@/utils/supabase/server')
-            const supabase = createClient()
-            
-            // Download PDF file from Supabase Storage
-            const { data: pdfData, error: downloadError } = await supabase.storage
-                .from('poc-files')
-                .download(pdfPath)
-            
-            if (!downloadError && pdfData) {
-                // Convert Blob to Buffer for blockchain inclusion
-                const arrayBuffer = await pdfData.arrayBuffer()
-                pdfFileContent = Buffer.from(arrayBuffer)
-                
-                // Calculate SHA-256 hash of PDF file for blockchain record
-                const crypto = await import('crypto')
-                pdfFileHash = crypto.createHash('sha256').update(pdfFileContent).digest('hex')
-                
-                debug('RegisterPoCBlockchain', 'PDF file retrieved and hashed for blockchain', {
-                    submissionHash,
-                    pdfPath,
-                    pdfSize: pdfFileContent.length,
-                    pdfHash: pdfFileHash,
-                    note: 'PDF file content and hash will be included in blockchain transaction'
-                })
-            } else {
-                debugError('RegisterPoCBlockchain', 'Failed to retrieve PDF from storage', downloadError)
-            }
-        } catch (pdfError) {
-            debugError('RegisterPoCBlockchain', 'Error retrieving PDF file', pdfError)
-            // Continue without PDF - blockchain registration will proceed with metadata only
+    // Compute a stable content hash for anchoring (text-only submissions)
+    let submissionTextHash: string | null = null
+    try {
+        const normalized = (submissionText || '').trim()
+        if (normalized.length > 0) {
+            const crypto = await import('crypto')
+            submissionTextHash = crypto.createHash('sha256').update(normalized, 'utf8').digest('hex')
         }
+    } catch (hashError) {
+        debugError('RegisterPoCBlockchain', 'Failed to hash submission text (non-fatal)', hashError)
     }
     
     try {
@@ -121,28 +94,16 @@ export async function registerPoCOnBlockchain(
         //    - contributor address
         //    - PoC scores (novelty, density, coherence, alignment, pod_score)
         //    - metals array
-        //    - pdf_file_content (ACTUAL PDF FILE BYTES) or pdf_file_hash (SHA-256 hash)
-        //    - pdf_storage_path (path to Supabase Storage for retrieval)
-        //    - pdf_file_size (size in bytes)
-        // 4. Store PDF file content/hash on-chain or in IPFS/Arweave and store hash on-chain
+        //    - submission_text_hash (SHA-256) OR an IPFS/Arweave hash if you later store large artifacts off-chain
+        // 4. Store hashes on-chain (recommended) instead of raw content
         // 5. Wait for transaction confirmation
         // 6. Return transaction hash and block number
-        // 
-        // CRITICAL: The ACTUAL PDF FILE (content or hash) must be included in the blockchain 
-        // transaction to ensure the original document is permanently recorded on-chain.
-        // Options:
-        //   a) Store PDF hash on-chain (recommended for large files)
-        //   b) Store PDF content directly on-chain (if size limits allow)
-        //   c) Store PDF on IPFS/Arweave and store content hash on-chain
         
         debug('RegisterPoCBlockchain', 'Blockchain registration would be implemented here', {
             hardhatRpcUrl: hardhatRpcUrl.substring(0, 20) + '...',
             submissionHash,
-            pdfPath: pdfPath || 'none',
-            hasPdfContent: !!pdfFileContent,
-            pdfSize: pdfFileContent?.length || 0,
-            pdfHash: pdfFileHash || 'none',
-            note: 'ACTUAL PDF FILE content/hash will be included in blockchain transaction for permanent record'
+            submissionTextHash: submissionTextHash || 'none',
+            note: 'Text-only submissions: anchor via SHA-256 hash (or store off-chain and anchor content hash)'
         })
         
         // For now, return mock transaction

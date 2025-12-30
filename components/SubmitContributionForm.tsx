@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FileText, Brain, Award, Coins, AlertTriangle, Loader2, CheckCircle2 } from "lucide-react"
+import { Brain, Award, Coins, AlertTriangle, Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 
 interface SubmitContributionFormProps {
@@ -32,11 +31,8 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
     const [formData, setFormData] = useState({
         title: '',
         category: defaultCategory,
-        file: null as File | null,
-        extractedText: '' as string, // Extracted PDF text content
-        pdfExtractionError: '' as string // PDF extraction error message
+        text_content: '' as string,
     })
-    const [extractingText, setExtractingText] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -52,22 +48,8 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
             return
         }
 
-        if (!formData.file) {
-            setError('Please select a PDF file to upload')
-            setLoading(false)
-            return
-        }
-        
-        // Validate that the file is a PDF
-        if (!formData.file.name.toLowerCase().endsWith('.pdf') && formData.file.type !== 'application/pdf') {
-            setError('Only PDF files are accepted. Please select a PDF file.')
-            setLoading(false)
-            return
-        }
-
-        // Check for PDF extraction errors
-        if (formData.pdfExtractionError) {
-            setError(`Cannot submit: ${formData.pdfExtractionError}`)
+        if (!formData.text_content.trim()) {
+            setError('Submission text is required')
             setLoading(false)
             return
         }
@@ -75,13 +57,10 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
         try {
             const submitFormData = new FormData()
             submitFormData.append('title', formData.title)
-            // Include extracted PDF text content for evaluation
-            submitFormData.append('text_content', formData.extractedText || '')
+            // Text-only submission (copy/paste)
+            submitFormData.append('text_content', formData.text_content)
             submitFormData.append('category', formData.category)
             submitFormData.append('contributor', userEmail)
-            
-            // File is required - validation already checked above
-            submitFormData.append('file', formData.file!)
 
             // Create an AbortController for timeout handling
             // Increased timeout to 120 seconds to allow for Grok API evaluation which can take time
@@ -184,75 +163,6 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
         }
     }
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0]
-            setFormData({ ...formData, file, extractedText: '' })
-            
-            // Extract text from PDF using server-side API (more reliable)
-            // Similar to Python scraper's extract_text_from_pdf approach
-            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                setExtractingText(true)
-                try {
-                    // Use server-side PDF extraction API (similar to Python's PdfReader)
-                    const formData = new FormData()
-                    formData.append('file', file)
-
-                    const response = await fetch('/api/extract-pdf-text', {
-                        method: 'POST',
-                        body: formData
-                    })
-
-                    if (!response.ok) {
-                        let errorData: any
-                        try {
-                            const text = await response.text()
-                            errorData = text ? JSON.parse(text) : { error: 'Unknown error' }
-                        } catch {
-                            errorData = { error: `Server error: ${response.status} ${response.statusText}` }
-                        }
-                        
-                        // Include detailed error message if available
-                        const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`
-                        console.error('PDF extraction API error:', {
-                            status: response.status,
-                            statusText: response.statusText,
-                            error: errorData,
-                            message: errorMessage
-                        })
-                        throw new Error(errorMessage)
-                    }
-
-                    const result = await response.json()
-                    
-                    if (result.success && result.text) {
-                        const extractedText = result.text.trim()
-                        setFormData(prev => ({ ...prev, extractedText }))
-                        
-                        if (extractedText.length > 0) {
-                            console.log(`Extracted ${extractedText.length} characters from PDF (${result.pagesExtracted || 0} of ${result.totalPages || 0} pages)`)
-                        } else {
-                            console.warn('No text extracted from PDF - PDF may be image-based or encrypted')
-                        }
-                    } else {
-                        throw new Error('PDF extraction returned no text')
-                    }
-                } catch (error) {
-                    console.error('Error extracting PDF text:', error)
-                    // Continue without extracted text - will fall back to title
-                    setFormData(prev => ({ 
-                        ...prev, 
-                        extractedText: '',
-                        // Store error message for user feedback
-                        pdfExtractionError: error instanceof Error ? error.message : 'PDF extraction failed'
-                    }))
-                } finally {
-                    setExtractingText(false)
-                }
-            }
-        }
-    }
-
     return (
         <div className="space-y-6">
             {/* Contribution Process Overview */}
@@ -266,9 +176,9 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                             or any intellectual contribution that advances human knowledge.
                         </p>
                         <ul className="text-sm space-y-1 ml-4">
-                            <li>• PDF format preferred</li>
-                            <li>• Include metadata and context</li>
-                            <li>• Ensure original work</li>
+                            <li>• Text-only submission (copy/paste)</li>
+                            <li>• Include context, citations, and key details</li>
+                            <li>• Ensure this is original work (or clearly attributed)</li>
                         </ul>
                     </div>
                 </div>
@@ -401,7 +311,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                         setSuccess(false)
                                         setSubmissionHash(null)
                                         setError(null)
-                                        setFormData({ title: '', category: 'scientific', file: null, extractedText: '', pdfExtractionError: '' })
+                                            setFormData({ title: '', category: defaultCategory, text_content: '' })
                                     }}
                                     className="mt-2"
                                 >
@@ -788,7 +698,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                         setEvaluationStatus(null)
                                                         setSuccess(false)
                                                         setSubmissionHash(null)
-                                                        setFormData({ title: '', category: 'scientific', file: null, extractedText: '', pdfExtractionError: '' })
+                                                        setFormData({ title: '', category: defaultCategory, text_content: '' })
                                                         router.push('/dashboard')
                                                     }}
                                                     variant="outline"
@@ -800,7 +710,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                         setEvaluationStatus(null)
                                                         setSuccess(false)
                                                         setSubmissionHash(null)
-                                                        setFormData({ title: '', category: 'scientific', file: null, extractedText: '', pdfExtractionError: '' })
+                                                        setFormData({ title: '', category: defaultCategory, text_content: '' })
                                                         router.push('/dashboard')
                                                     }}
                                                 >
@@ -851,90 +761,21 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="file" className="cockpit-label">
-                                <FileText className="inline-block h-4 w-4 mr-2" />
-                                Select PDF File to Upload *
-                            </Label>
-                            <div className={`cockpit-file-label ${formData.file ? 'has-file' : ''}`}>
-                                <input
-                                    id="file"
-                                    type="file"
-                                    accept=".pdf,application/pdf"
-                                    onChange={handleFileChange}
-                                    disabled={loading}
-                                    required
-                                />
-                                {!formData.file && (
-                                    <div className="text-center">
-                                        <FileText className="h-12 w-12 mx-auto mb-3" style={{ color: '#ffb84d' }} />
-                                        <p className="cockpit-text font-medium mb-1">
-                                            Click to select a PDF file or drag and drop
-                                        </p>
-                                        <p className="cockpit-text text-xs">
-                                            PDF format required (.pdf)
-                                        </p>
-                                    </div>
-                                )}
-                                {formData.file && (
-                                    <div className="w-full">
-                                        <FileText className="h-8 w-8 mx-auto mb-2" style={{ color: '#ffb84d' }} />
-                                        <p className="cockpit-text font-medium">{formData.file.name}</p>
-                                    </div>
-                                )}
+                            <Label htmlFor="text_content" className="cockpit-label">Submission Text *</Label>
+                            <textarea
+                                id="text_content"
+                                className="cockpit-input"
+                                value={formData.text_content}
+                                onChange={(e) => setFormData({ ...formData, text_content: e.target.value })}
+                                placeholder="Paste your contribution here (paper text, technical write-up, results, notes, links, citations, etc.)"
+                                required
+                                disabled={loading}
+                                rows={10}
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                                <span>Tip: include enough detail for evaluation (methods, results, claims, novelty).</span>
+                                <span>{formData.text_content.length.toLocaleString()} chars</span>
                             </div>
-                            {extractingText && (
-                                <div className="mt-2 text-sm text-primary flex items-center gap-2">
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                    Extracting text from PDF...
-                                </div>
-                            )}
-                            {formData.file && !extractingText && (
-                                <div className="mt-2 p-3 bg-primary/10 border border-primary/20 rounded-md">
-                                    <div className="flex items-center gap-2">
-                                        <FileText className="h-5 w-5 text-primary" />
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium text-foreground">
-                                                {formData.file.name}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {(formData.file.size / 1024).toFixed(2)} KB
-                                                {!formData.file.name.toLowerCase().endsWith('.pdf') && (
-                                                    <span className="text-destructive ml-2">⚠ Must be a PDF file</span>
-                                                )}
-                                            </p>
-                                            {formData.extractedText && (
-                                                <p className="text-xs text-green-600 mt-1">
-                                                    ✓ Extracted {formData.extractedText.length.toLocaleString()} characters for evaluation
-                                                </p>
-                                            )}
-                                            {formData.pdfExtractionError && (
-                                                <p className="text-xs text-red-600 mt-1">
-                                                    ❌ PDF text extraction failed: {formData.pdfExtractionError}. Please try a different PDF file.
-                                                </p>
-                                            )}
-                                            {!formData.extractedText && !formData.pdfExtractionError && (
-                                                <p className="text-xs text-muted-foreground mt-1">
-                                                    ℹ No text extracted. Submission will use title for evaluation.
-                                                </p>
-                                            )}
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setFormData({ ...formData, file: null, extractedText: '', pdfExtractionError: '' })}
-                                            disabled={loading}
-                                            className="text-xs"
-                                        >
-                                            Remove
-                                        </Button>
-                                    </div>
-                                </div>
-                            )}
-                            <p className="text-xs text-muted-foreground">
-                                Upload your contribution as a PDF document. 
-                                The PDF content will be extracted and evaluated for PoC scoring.
-                            </p>
                         </div>
 
                         <div className="flex gap-4 pt-4 border-t border-[var(--keyline-primary)]">
@@ -943,7 +784,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                     Cancel
                                 </button>
                             </Link>
-                            <button type="submit" className="cockpit-transmission flex-1" disabled={loading || !formData.file || !!formData.pdfExtractionError}>
+                            <button type="submit" className="cockpit-transmission flex-1" disabled={loading || !formData.title.trim() || !formData.text_content.trim()}>
                                 {loading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

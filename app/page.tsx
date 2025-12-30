@@ -1,7 +1,18 @@
-import { OnboardingNavigator } from "@/components/OnboardingNavigator"
+import FractiAILanding from '@/components/FractiAILanding'
 import './dashboard-cockpit.css'
 
-export default async function LandingPage() {
+export const dynamic = 'force-dynamic'
 
-  return <OnboardingNavigator />
+export default async function LandingPage() {
+  return (
+    <FractiAILanding
+      variant="home"
+      cta={{
+        primaryHref: '/signup',
+        primaryLabel: 'Join the Frontier',
+        secondaryHref: '/login',
+        secondaryLabel: 'Log in',
+      }}
+    />
+  )
 }

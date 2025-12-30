@@ -54,6 +54,13 @@ export const tokenomicsTable = pgTable('tokenomics', {
     id: text('id').primaryKey().default('main'),
     total_supply: numeric('total_supply', { precision: 20, scale: 0 }).notNull().default('90000000000000'), // 90T
     total_distributed: numeric('total_distributed', { precision: 20, scale: 0 }).notNull().default('0'),
+    // New: per-metal supplies (Genesis: 45T Gold, 22.5T Silver, 22.5T Copper)
+    total_supply_gold: numeric('total_supply_gold', { precision: 20, scale: 0 }).notNull().default('45000000000000'),
+    total_supply_silver: numeric('total_supply_silver', { precision: 20, scale: 0 }).notNull().default('22500000000000'),
+    total_supply_copper: numeric('total_supply_copper', { precision: 20, scale: 0 }).notNull().default('22500000000000'),
+    total_distributed_gold: numeric('total_distributed_gold', { precision: 20, scale: 0 }).notNull().default('0'),
+    total_distributed_silver: numeric('total_distributed_silver', { precision: 20, scale: 0 }).notNull().default('0'),
+    total_distributed_copper: numeric('total_distributed_copper', { precision: 20, scale: 0 }).notNull().default('0'),
     current_epoch: text('current_epoch').notNull().default('founder'),
     founder_halving_count: integer('founder_halving_count').notNull().default(0),
     updated_at: timestamp('updated_at').defaultNow().notNull(),
@@ -63,6 +70,18 @@ export const tokenomicsTable = pgTable('tokenomics', {
 export const epochBalancesTable = pgTable('epoch_balances', {
     id: text('id').primaryKey(),
     epoch: text('epoch').notNull(), // founder, pioneer, community, ecosystem
+    balance: numeric('balance', { precision: 20, scale: 0 }).notNull(),
+    threshold: numeric('threshold', { precision: 20, scale: 0 }).notNull(),
+    distribution_amount: numeric('distribution_amount', { precision: 20, scale: 0 }).notNull(),
+    distribution_percent: numeric('distribution_percent', { precision: 5, scale: 2 }).notNull(),
+    updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// New: Epoch Balances per Metal Token (Gold/Silver/Copper)
+export const epochMetalBalancesTable = pgTable('epoch_metal_balances', {
+    id: text('id').primaryKey(),
+    epoch: text('epoch').notNull(), // founder, pioneer, community, ecosystem
+    metal: text('metal').notNull(), // gold, silver, copper
     balance: numeric('balance', { precision: 20, scale: 0 }).notNull(),
     threshold: numeric('threshold', { precision: 20, scale: 0 }).notNull(),
     distribution_amount: numeric('distribution_amount', { precision: 20, scale: 0 }).notNull(),

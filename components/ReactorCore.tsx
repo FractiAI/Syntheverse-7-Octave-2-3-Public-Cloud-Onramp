@@ -18,6 +18,12 @@ interface EpochInfo {
         distribution_percent: number
         available_tiers: string[]
     }>
+    epoch_metals?: Record<string, Record<string, {
+        balance: number
+        threshold: number
+        distribution_amount: number
+        distribution_percent: number
+    }>>
 }
 
 export function ReactorCore() {
@@ -186,7 +192,10 @@ export function ReactorCore() {
         return sum + (epochInfo.epochs[epoch]?.balance || 0)
     }, 0)
     
-    const totalSupply = 90_000_000_000_000 // 90T SYNTH
+    const totalSupplyGold = 45_000_000_000_000
+    const totalSupplySilver = 22_500_000_000_000
+    const totalSupplyCopper = 22_500_000_000_000
+    const totalSupply = totalSupplyGold + totalSupplySilver + totalSupplyCopper
 
     return (
         <div className="reactor-core cockpit-panel holographic-depth">
@@ -200,6 +209,11 @@ export function ReactorCore() {
                     <div className="text-right">
                         <div className="cockpit-label">Total Supply</div>
                         <div className="cockpit-number cockpit-number-medium mt-1">90T SYNTH</div>
+                        <div className="cockpit-text text-xs mt-1">
+                            <span style={{ color: '#ffb84d' }}>Gold 45T</span> ·{' '}
+                            <span style={{ color: '#94a3b8' }}>Silver 22.5T</span> ·{' '}
+                            <span style={{ color: '#d97706' }}>Copper 22.5T</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -222,6 +236,7 @@ export function ReactorCore() {
                     if (!epochData) return null
                     
                     const isCurrent = epoch === epochInfo.current_epoch
+                    const metalData = epochInfo.epoch_metals?.[epoch] || {}
                     
                     return (
                         <div 
@@ -231,6 +246,26 @@ export function ReactorCore() {
                             <div className="cockpit-label mb-2 uppercase">{epoch}</div>
                             <div className="cockpit-number cockpit-number-medium mb-1">
                                 {formatTokens(epochData.balance)}
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
+                                <div className="p-2 border border-[var(--keyline-accent)]">
+                                    <div className="cockpit-label">Gold</div>
+                                    <div className="cockpit-text" style={{ color: '#ffb84d' }}>
+                                        {formatTokens(Number(metalData.gold?.balance || 0))}
+                                    </div>
+                                </div>
+                                <div className="p-2 border border-[var(--keyline-accent)]">
+                                    <div className="cockpit-label">Silver</div>
+                                    <div className="cockpit-text" style={{ color: '#94a3b8' }}>
+                                        {formatTokens(Number(metalData.silver?.balance || 0))}
+                                    </div>
+                                </div>
+                                <div className="p-2 border border-[var(--keyline-accent)]">
+                                    <div className="cockpit-label">Copper</div>
+                                    <div className="cockpit-text" style={{ color: '#d97706' }}>
+                                        {formatTokens(Number(metalData.copper?.balance || 0))}
+                                    </div>
+                                </div>
                             </div>
                             <div className="cockpit-text text-xs">
                                 {epochData.distribution_percent.toFixed(1)}% allocated

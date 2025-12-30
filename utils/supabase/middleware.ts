@@ -45,10 +45,11 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser()
     const url = request.nextUrl.clone()
 
-    // Allow webhook, API routes, and auth routes without authentication
+    // Allow webhook, API routes, auth routes, and public landing pages without authentication
     if (request.nextUrl.pathname.startsWith('/webhook') || 
         request.nextUrl.pathname.startsWith('/api') ||
-        request.nextUrl.pathname.startsWith('/auth')) {
+        request.nextUrl.pathname.startsWith('/auth') ||
+        request.nextUrl.pathname.startsWith('/fractiai')) {
         return supabaseResponse
     }
 

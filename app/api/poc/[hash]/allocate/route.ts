@@ -9,10 +9,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable, allocationsTable, epochBalancesTable } from '@/utils/db/schema'
+import { contributionsTable, allocationsTable, epochMetalBalancesTable, tokenomicsTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { calculateProjectedAllocation } from '@/utils/tokenomics/projected-allocation'
-import { calculateMetalAmplification } from '@/utils/tokenomics/metal-amplification'
 import { isQualifiedForOpenEpoch } from '@/utils/epochs/qualification'
 import { debug, debugError } from '@/utils/debug'
 import crypto from 'crypto'
@@ -87,70 +86,83 @@ export async function POST(
         const metadata = contrib.metadata as any || {}
         const metals = (contrib.metals as string[]) || []
         
-        // Get epoch balance
-        const epochBalances = await db
-            .select()
-            .from(epochBalancesTable)
-            .where(eq(epochBalancesTable.epoch, projectedAlloc.epoch))
-            .limit(1)
-        
-        if (!epochBalances || epochBalances.length === 0) {
+        const metalAllocations = projectedAlloc.breakdown.metal_allocations || {}
+        const metalKeys = Object.keys(metalAllocations).filter((m) => Number(metalAllocations[m]) > 0)
+
+        if (metalKeys.length === 0 || projectedAlloc.projected_allocation === 0) {
             return NextResponse.json(
-                { error: `Epoch ${projectedAlloc.epoch} not found` },
-                { status: 404 }
-            )
-        }
-        
-        const epochBalance = epochBalances[0]
-        const currentBalance = Number(epochBalance.balance)
-        
-        // Verify enough balance
-        if (currentBalance < projectedAlloc.projected_allocation) {
-            return NextResponse.json(
-                { error: 'Insufficient epoch balance for allocation' },
+                { error: 'No metal allocations available for this PoC' },
                 { status: 400 }
             )
         }
-        
-        // Create allocation record for each metal
-        const allocationId = crypto.randomUUID()
-        const newBalance = currentBalance - projectedAlloc.projected_allocation
-        
-        // Use first metal or default
-        const primaryMetal = metals[0] || 'copper'
-        
-        await db.insert(allocationsTable).values({
-            id: allocationId,
-            submission_hash: submissionHash,
-            contributor: contrib.contributor,
-            metal: primaryMetal,
-            epoch: projectedAlloc.epoch,
-            tier: null, // Can be enhanced later
-            reward: projectedAlloc.projected_allocation.toString(),
-            tier_multiplier: projectedAlloc.breakdown.tier_multiplier.toString(),
-            epoch_balance_before: currentBalance.toString(),
-            epoch_balance_after: newBalance.toString(),
-        })
-        
-        // Update epoch balance
-        await db
-            .update(epochBalancesTable)
-            .set({
-                balance: newBalance.toString(),
-                updated_at: new Date()
+
+        // For each metal, decrement that metal's epoch pool and write an allocation record.
+        for (const metal of metalKeys) {
+            const amount = Math.floor(Number(metalAllocations[metal]))
+            if (amount <= 0) continue
+
+            const rows = await db
+                .select()
+                .from(epochMetalBalancesTable)
+                .where(eq(epochMetalBalancesTable.epoch, projectedAlloc.epoch))
+
+            const row = rows.find(r => String(r.metal).toLowerCase().trim() === metal)
+            if (!row) {
+                return NextResponse.json({ error: `Epoch ${projectedAlloc.epoch} metal pool not found: ${metal}` }, { status: 404 })
+            }
+
+            const balanceBefore = Number(row.balance)
+            const balanceAfter = balanceBefore - amount
+            if (balanceAfter < 0) {
+                return NextResponse.json({ error: `Insufficient ${metal} balance for allocation` }, { status: 400 })
+            }
+
+            const allocationId = crypto.randomUUID()
+            await db.insert(allocationsTable).values({
+                id: allocationId,
+                submission_hash: submissionHash,
+                contributor: contrib.contributor,
+                metal: metal,
+                epoch: projectedAlloc.epoch,
+                tier: metal,
+                reward: amount.toString(),
+                tier_multiplier: '1.0',
+                epoch_balance_before: balanceBefore.toString(),
+                epoch_balance_after: balanceAfter.toString(),
             })
-            .where(eq(epochBalancesTable.epoch, projectedAlloc.epoch))
+
+            await db
+                .update(epochMetalBalancesTable)
+                .set({
+                    balance: balanceAfter.toString(),
+                    updated_at: new Date()
+                })
+                .where(eq(epochMetalBalancesTable.id, row.id))
+
+            // Update tokenomics totals (best-effort; keep legacy total_distributed in sync too)
+            const tokenomicsState = await db.select().from(tokenomicsTable).where(eq(tokenomicsTable.id, 'main')).limit(1)
+            if (tokenomicsState.length > 0) {
+                const state = tokenomicsState[0] as any
+                const metalKey = metal === 'gold' ? 'total_distributed_gold' : metal === 'silver' ? 'total_distributed_silver' : 'total_distributed_copper'
+                const currentMetalDistributed = Number(state[metalKey] || 0)
+                const newMetalDistributed = currentMetalDistributed + amount
+                const newTotalDistributed = Number(state.total_distributed || 0) + amount
+                await db.update(tokenomicsTable).set({
+                    total_distributed: newTotalDistributed.toString(),
+                    [metalKey]: newMetalDistributed.toString(),
+                    updated_at: new Date()
+                } as any).where(eq(tokenomicsTable.id, 'main'))
+            }
+        }
         
         debug('AllocateTokens', 'Tokens allocated successfully', {
             submissionHash,
-            allocationId,
             amount: projectedAlloc.projected_allocation,
             epoch: projectedAlloc.epoch
         })
         
         return NextResponse.json({
             success: true,
-            allocation_id: allocationId,
             amount: projectedAlloc.projected_allocation,
             epoch: projectedAlloc.epoch,
             breakdown: projectedAlloc.breakdown

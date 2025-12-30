@@ -30,8 +30,7 @@ export async function POST(request: NextRequest) {
         const title = formData.get('title') as string | null
         const contributor = formData.get('contributor') as string | null || user.email
         const category = formData.get('category') as string | null || 'scientific'
-        const text_content = formData.get('text_content') as string | null || ''
-        const file = formData.get('file') as File | null
+        const text_content = (formData.get('text_content') as string | null) || ''
         
         if (!title || !title.trim()) {
             return NextResponse.json(
@@ -39,21 +38,18 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             )
         }
-        
-        // PDF file upload is required
-        if (!file) {
+
+        // Text-only submission is required
+        if (!text_content || !text_content.trim()) {
             return NextResponse.json(
-                { error: 'PDF file upload is required. Please select a PDF file to upload.' },
+                { error: 'Submission text is required. Please paste your contribution into the submission window.' },
                 { status: 400 }
             )
         }
-        
-        // Validate that the file is a PDF
-        const fileName = file.name.toLowerCase()
-        const fileType = file.type.toLowerCase()
-        if (!fileName.endsWith('.pdf') && fileType !== 'application/pdf') {
+        // Basic anti-empty / anti-noise guard
+        if (text_content.trim().length < 40) {
             return NextResponse.json(
-                { error: 'Only PDF files are accepted. Please upload a PDF file.' },
+                { error: 'Submission text is too short. Please include more detail (at least 40 characters).' },
                 { status: 400 }
             )
         }
@@ -100,74 +96,17 @@ export async function POST(request: NextRequest) {
             )
         }
         
-        // Handle PDF file upload - upload to Supabase Storage and extract text content from PDF
-        let pdf_path: string | null = null
-        let pdf_storage_url: string | null = null
-        let extractedPdfText: string = ''
-        
-        if (file) {
-            debug('SubmitContribution', 'File received', { fileName: file.name, size: file.size, type: file.type })
-            
-            try {
-                // Upload PDF to Supabase Storage for permanent storage
-                const fileBytes = await file.arrayBuffer()
-                const fileBuffer = Buffer.from(fileBytes)
-                
-                // Generate a unique storage path: poc-submissions/{submission_hash}/{sanitized_filename}
-                // Use submission_hash once it's generated to ensure uniqueness
-                const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-                const storagePath = `poc-submissions/${submission_hash}/${sanitizedFileName}`
-                
-                // Upload to Supabase Storage bucket 'poc-files' (or create if doesn't exist)
-                const storageSupabase = createClient()
-                const { data: uploadData, error: uploadError } = await storageSupabase.storage
-                    .from('poc-files')
-                    .upload(storagePath, fileBuffer, {
-                        contentType: 'application/pdf',
-                        upsert: false, // Don't overwrite existing files
-                        cacheControl: '3600',
-                    })
-                
-                if (uploadError) {
-                    debugError('SubmitContribution', 'PDF upload to Supabase Storage failed', uploadError)
-                    // Continue without storage URL - will use filename as fallback
-                    pdf_path = file.name
-                } else {
-                    // Get public URL for the uploaded file
-                    const { data: urlData } = storageSupabase.storage
-                        .from('poc-files')
-                        .getPublicUrl(storagePath)
-                    
-                    pdf_storage_url = urlData.publicUrl
-                    pdf_path = storagePath // Store storage path in database
-                    
-                    debug('SubmitContribution', 'PDF uploaded to Supabase Storage successfully', {
-                        storagePath,
-                        publicUrl: pdf_storage_url,
-                        fileSize: file.size
-                    })
-                }
-            } catch (storageError) {
-                debugError('SubmitContribution', 'Error uploading PDF to storage', storageError)
-                // Continue with filename as fallback
-                pdf_path = file.name
-            }
-            
-            // Note: PDF text extraction is done on client side
-            // The text_content from form should contain extracted PDF text
-            extractedPdfText = ''
-        }
-        
-        // Use text_content from form (extracted from PDF on client side or server fallback) if available, otherwise use title for evaluation
-        const textContentForEvaluation = text_content?.trim() || title.trim()
-        const textContentForStorage = text_content?.trim() || null
+        // Text-only submissions: no file upload, no storage
+        const pdf_path: string | null = null
+        const textContentForEvaluation = text_content.trim()
+        const textContentForStorage = text_content.trim()
         
         debug('SubmitContribution', 'Text content prepared for evaluation', {
             hasTextContent: !!text_content,
             textContentLength: text_content?.length || 0,
             titleLength: title.trim().length,
             willUseForEvaluation: textContentForEvaluation.length,
-            source: text_content ? 'extracted_pdf_text' : 'title_only'
+            source: 'user_pasted_text'
         })
         
         // Calculate content hash from the full content
@@ -303,7 +242,7 @@ export async function POST(request: NextRequest) {
                 debug('SubmitContribution', 'Starting Grok API evaluation', {
                     textLength: textContent.length,
                     title: title.trim(),
-                    source: extractedPdfText ? 'pdf_extraction' : (text_content ? 'form_text' : 'title_only')
+                    source: 'user_pasted_text'
                 })
                 evaluation = await evaluateWithGrok(textContent, title.trim(), category || undefined, submission_hash)
                 

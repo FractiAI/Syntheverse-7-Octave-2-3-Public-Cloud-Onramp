@@ -13,9 +13,11 @@ const navItems = [
 export function Navigation() {
   const pathname = usePathname()
   const isDashboard = pathname?.startsWith('/dashboard')
+  const isLanding = pathname === '/' || pathname?.startsWith('/fractiai')
 
   // Don't render on dashboard - dashboard has its own header
-  if (isDashboard) {
+  // Don't render on landing pages - they use cockpit/noir layout
+  if (isDashboard || isLanding) {
     return null
   }
 

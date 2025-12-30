@@ -13,7 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable, allocationsTable, pocLogTable, tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
+import { contributionsTable, allocationsTable, pocLogTable, tokenomicsTable, epochBalancesTable, epochMetalBalancesTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { createClient } from '@/utils/supabase/server'
@@ -91,6 +91,9 @@ export async function DELETE(request: NextRequest) {
                     .update(tokenomicsTable)
                     .set({
                         total_distributed: '0',
+                        total_distributed_gold: '0',
+                        total_distributed_silver: '0',
+                        total_distributed_copper: '0',
                         current_epoch: 'founder',
                         founder_halving_count: 0,
                         updated_at: new Date()
@@ -105,12 +108,43 @@ export async function DELETE(request: NextRequest) {
                         id: 'main',
                         total_supply: '90000000000000',
                         total_distributed: '0',
+                        total_supply_gold: '45000000000000',
+                        total_supply_silver: '22500000000000',
+                        total_supply_copper: '22500000000000',
+                        total_distributed_gold: '0',
+                        total_distributed_silver: '0',
+                        total_distributed_copper: '0',
                         current_epoch: 'founder',
                         founder_halving_count: 0,
                     })
                 debug('ClearArchive', 'Created tokenomics record with initial state')
             }
             
+            // 5a. Reset epoch metal balances to original per-metal distribution amounts (new model)
+            const originalMetalBalances: Record<string, Record<string, string>> = {
+                founder: { gold: '22500000000000', silver: '11250000000000', copper: '11250000000000' },
+                pioneer: { gold: '11250000000000', silver: '5625000000000', copper: '5625000000000' },
+                community: { gold: '5625000000000', silver: '2812500000000', copper: '2812500000000' },
+                ecosystem: { gold: '5625000000000', silver: '2812500000000', copper: '2812500000000' },
+            }
+
+            try {
+                const metalRows = await db.select().from(epochMetalBalancesTable)
+                for (const row of metalRows) {
+                    const epoch = String(row.epoch).toLowerCase().trim()
+                    const metal = String(row.metal).toLowerCase().trim()
+                    const original = originalMetalBalances[epoch]?.[metal]
+                    if (!original) continue
+                    await db.update(epochMetalBalancesTable).set({
+                        balance: original,
+                        distribution_amount: original,
+                        updated_at: new Date()
+                    }).where(eq(epochMetalBalancesTable.id, row.id))
+                }
+            } catch (metalResetErr) {
+                debug('ClearArchive', 'epoch_metal_balances reset skipped (table may not exist)', metalResetErr)
+            }
+
             // 5. Reset epoch balances to original distribution amounts
             // Original distribution amounts:
             // - Founder: 45T (45,000,000,000,000)

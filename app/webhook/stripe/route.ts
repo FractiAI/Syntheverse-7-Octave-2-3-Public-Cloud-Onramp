@@ -1,11 +1,10 @@
 import { headers } from 'next/headers'
 import { db } from '@/utils/db/db'
-import { usersTable, contributionsTable, allocationsTable, epochBalancesTable, tokenomicsTable } from '@/utils/db/schema'
+import { usersTable, contributionsTable, allocationsTable, epochMetalBalancesTable, tokenomicsTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
 import { calculateProjectedAllocation } from '@/utils/tokenomics/projected-allocation'
-import { calculateMetalAmplification } from '@/utils/tokenomics/metal-amplification'
 import crypto from 'crypto'
 
 // Force dynamic rendering - webhooks must be server-side only
@@ -152,7 +151,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
             const metals = (contrib.metals as string[]) || []
             
             // Register PoC on Hard Hat L1 blockchain
-            // Include original PDF file (actual file content) to ensure it's part of the permanent blockchain record
+            // Text-only submissions: anchor using a stable SHA-256 hash of the submitted text (no file storage).
             let blockchainTxHash: string | null = null
             try {
                 const { registerPoCOnBlockchain } = await import('@/utils/blockchain/register-poc')
@@ -167,13 +166,13 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                         pod_score: metadata.pod_score
                     },
                     metals,
-                    contrib.pdf_path || null // Storage path - function will retrieve ACTUAL PDF FILE from Supabase Storage
+                    contrib.text_content || null
                 )
                 
-                debug('StripeWebhook', 'Blockchain registration includes ACTUAL PDF FILE', {
+                debug('StripeWebhook', 'Blockchain registration includes submission text hash', {
                     submissionHash,
-                    pdfPath: contrib.pdf_path || 'none',
-                    note: 'Original PDF file content/hash is retrieved from storage and included in permanent blockchain record'
+                    hasText: !!contrib.text_content && String(contrib.text_content).trim().length > 0,
+                    note: 'Text-only: submission text is hashed and anchored (no Supabase Storage dependency)'
                 })
                 
                 if (blockchainResult.success && blockchainResult.transaction_hash) {
@@ -208,7 +207,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                 })
                 .where(eq(contributionsTable.submission_hash, submissionHash))
             
-            // Automatically allocate tokens for registered PoC based on PoC submission, open epoch, and available SYNTH tokens
+            // Automatically allocate tokens for registered PoC based on PoC submission, open epoch, and available tokens per metal
             // Check if allocation already exists
             const existingAllocations = await db
                 .select()
@@ -240,108 +239,94 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                         metals
                     })
                     
-                    // Get epoch balance for the qualified epoch
-                    const epochBalances = await db
-                        .select()
-                        .from(epochBalancesTable)
-                        .where(eq(epochBalancesTable.epoch, qualifiedEpoch))
-                        .limit(1)
-                    
-                    if (epochBalances.length > 0) {
-                        const epochBalance = epochBalances[0]
-                        const currentBalance = Number(epochBalance.balance)
-                        
-                        // Calculate allocation: (redundancy_discounted_composite_score / 10000) * available_SYNTH_tokens
-                        // pod_score is already the redundancy-discounted composite score (composite * (1 - redundancy/100))
-                        // For 10,000 score = 100% of available tokens in the epoch
-                        const scorePercentage = podScore / 10000.0
-                        const baseAllocation = scorePercentage * currentBalance
-                        
-                        // Calculate metal amplification
-                        const amplification = calculateMetalAmplification(metals)
-                        const metalMultiplier = amplification.multiplier
-                        
-                        // Apply metal amplification
-                        const amplifiedAllocation = baseAllocation * metalMultiplier
-                        
-                        // Final allocation (ensure we don't exceed available balance)
-                        const finalAllocation = Math.min(Math.floor(amplifiedAllocation), currentBalance)
-                        
-                        debug('StripeWebhook', 'Allocation calculation', {
+                    // Use projected allocation logic (now per-metal) for consistency
+                    const projected = await calculateProjectedAllocation(submissionHash)
+                    const metalAllocations = projected.breakdown.metal_allocations || {}
+                    const metalKeys = Object.keys(metalAllocations).filter((m) => Number(metalAllocations[m]) > 0)
+
+                    if (projected.eligible && projected.epoch === qualifiedEpoch && metalKeys.length > 0) {
+                        debug('StripeWebhook', 'Allocation calculation (per metal)', {
                             submissionHash,
-                            podScore,
-                            redundancyDiscountedCompositeScore: podScore,
-                            scorePercentage: scorePercentage * 100,
-                            currentBalance,
-                            baseAllocation,
-                            metalMultiplier,
-                            amplifiedAllocation,
-                            finalAllocation,
                             epoch: qualifiedEpoch,
-                            note: 'Using full available balance with redundancy-discounted composite score'
+                            podScore,
+                            metalAllocations,
+                            total: projected.projected_allocation,
                         })
-                        
-                        if (finalAllocation > 0) {
-                            // Create allocation record
+
+                        for (const metal of metalKeys) {
+                            const amount = Math.floor(Number(metalAllocations[metal]))
+                            if (amount <= 0) continue
+
+                            const pools = await db
+                                .select()
+                                .from(epochMetalBalancesTable)
+                                .where(eq(epochMetalBalancesTable.epoch, qualifiedEpoch))
+
+                            const pool = pools.find(p => String(p.metal).toLowerCase().trim() === metal)
+                            if (!pool) {
+                                debugError('StripeWebhook', 'Epoch metal pool not found', { epoch: qualifiedEpoch, metal })
+                                continue
+                            }
+
+                            const balanceBefore = Number(pool.balance)
+                            const balanceAfter = balanceBefore - amount
+                            if (balanceAfter < 0) {
+                                debugError('StripeWebhook', 'Insufficient metal balance (skipping)', { epoch: qualifiedEpoch, metal, balanceBefore, amount })
+                                continue
+                            }
+
                             const allocationId = crypto.randomUUID()
-                            const newBalance = currentBalance - finalAllocation
-                            
-                            // Use first metal or default
-                            const primaryMetal = metals[0] || 'copper'
-                            
                             await db.insert(allocationsTable).values({
                                 id: allocationId,
                                 submission_hash: submissionHash,
                                 contributor: contrib.contributor,
-                                metal: primaryMetal.toLowerCase(),
+                                metal: metal.toLowerCase(),
                                 epoch: qualifiedEpoch,
-                                tier: primaryMetal.toLowerCase(),
-                                reward: finalAllocation.toString(),
-                                tier_multiplier: metalMultiplier.toString(),
-                                epoch_balance_before: currentBalance.toString(),
-                                epoch_balance_after: newBalance.toString(),
+                                tier: metal.toLowerCase(),
+                                reward: amount.toString(),
+                                tier_multiplier: '1.0',
+                                epoch_balance_before: balanceBefore.toString(),
+                                epoch_balance_after: balanceAfter.toString(),
                             })
-                            
-                            // Update epoch balance
+
                             await db
-                                .update(epochBalancesTable)
-                                .set({
-                                    balance: newBalance.toString(),
-                                    updated_at: new Date()
-                                })
-                                .where(eq(epochBalancesTable.epoch, qualifiedEpoch))
-                            
-                            // Update tokenomics total_distributed
+                                .update(epochMetalBalancesTable)
+                                .set({ balance: balanceAfter.toString(), updated_at: new Date() })
+                                .where(eq(epochMetalBalancesTable.id, pool.id))
+
                             const tokenomicsState = await db
                                 .select()
                                 .from(tokenomicsTable)
                                 .where(eq(tokenomicsTable.id, 'main'))
                                 .limit(1)
-                            
+
                             if (tokenomicsState.length > 0) {
-                                const newTotalDistributed = Number(tokenomicsState[0].total_distributed) + finalAllocation
-                                await db
-                                    .update(tokenomicsTable)
-                                    .set({
-                                        total_distributed: newTotalDistributed.toString(),
-                                        updated_at: new Date()
-                                    })
-                                    .where(eq(tokenomicsTable.id, 'main'))
+                                const state: any = tokenomicsState[0]
+                                const metalKey =
+                                    metal === 'gold' ? 'total_distributed_gold' :
+                                    metal === 'silver' ? 'total_distributed_silver' :
+                                    'total_distributed_copper'
+                                const newMetalDistributed = Number(state[metalKey] || 0) + amount
+                                const newTotalDistributed = Number(state.total_distributed || 0) + amount
+                                await db.update(tokenomicsTable).set({
+                                    total_distributed: newTotalDistributed.toString(),
+                                    [metalKey]: newMetalDistributed.toString(),
+                                    updated_at: new Date()
+                                } as any).where(eq(tokenomicsTable.id, 'main'))
                             }
+                        }
                             
                             // Check and transition epoch if balance is exhausted
                             // Transition happens when epoch balance reaches threshold (automatically opens next epoch)
                             const FULLY_ALLOCATED_THRESHOLD = 1000 // Consider fully allocated if balance < 1000 tokens
-                            if (newBalance <= FULLY_ALLOCATED_THRESHOLD) {
+                            // Trigger transition check (it uses per-metal balances when available)
+                            if (projected.projected_allocation > 0) {
                                 const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
                                 // This will check and transition epoch automatically (e.g., founder -> pioneer)
                                 await getOpenEpochInfo()
                                 
                                 debug('StripeWebhook', 'Epoch balance exhausted, triggering automatic epoch transition', {
                                     epoch: qualifiedEpoch,
-                                    balanceBefore: currentBalance,
-                                    balanceAfter: newBalance,
-                                    allocated: finalAllocation,
                                     threshold: FULLY_ALLOCATED_THRESHOLD,
                                     note: 'Automatically transitioning to next epoch when balance is exhausted'
                                 })
@@ -349,25 +334,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                             
                             debug('StripeWebhook', 'Tokens auto-allocated successfully', {
                                 submissionHash,
-                                allocationAmount: finalAllocation,
+                                allocationAmount: projected.projected_allocation,
                                 epoch: qualifiedEpoch,
-                                newBalance,
-                                podScore,
-                                metalMultiplier
+                                podScore
                             })
-                        } else {
-                            debug('StripeWebhook', 'No tokens to allocate (zero allocation or insufficient balance)', {
-                                submissionHash,
-                                podScore,
-                                currentBalance,
-                                finalAllocation
-                            })
-                        }
-                    } else {
-                        debugError('StripeWebhook', 'Epoch balance not found for allocation', {
-                            submissionHash,
-                            epoch: qualifiedEpoch
-                        })
                     }
                 } catch (allocationError) {
                     // Log allocation error but don't fail the registration (payment is complete)
@@ -572,17 +542,17 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
             allocationType: 'fixed_amount'
         })
         
-        // Allocate tokens from Founder epoch
+        // Allocate tokens from Founder epoch, from the specific metal pool (gold/silver/copper)
         try {
             const founderEpoch = 'founder'
-            const epochBalances = await db
+            const pools = await db
                 .select()
-                .from(epochBalancesTable)
-                .where(eq(epochBalancesTable.epoch, founderEpoch))
-                .limit(1)
+                .from(epochMetalBalancesTable)
+                .where(eq(epochMetalBalancesTable.epoch, founderEpoch))
             
-            if (epochBalances.length === 0) {
-                debugError('StripeWebhook', 'Founder epoch balance not found for Financial Alignment allocation', {
+            const pool = pools.find(p => String(p.metal).toLowerCase().trim() === tier.toLowerCase())
+            if (!pool) {
+                debugError('StripeWebhook', 'Founder epoch metal pool not found for Financial Alignment allocation', {
                     submissionHash,
                     tier,
                     synthAllocation
@@ -590,11 +560,10 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 return
             }
             
-            const founderBalance = epochBalances[0]
-            const currentBalance = Number(founderBalance.balance)
+            const currentBalance = Number(pool.balance)
             
             if (currentBalance < synthAllocation) {
-                debugError('StripeWebhook', 'Insufficient Founder epoch balance for Financial Alignment allocation', {
+                debugError('StripeWebhook', 'Insufficient Founder epoch metal balance for Financial Alignment allocation', {
                     submissionHash,
                     tier,
                     requested: synthAllocation,
@@ -620,34 +589,16 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 epoch_balance_after: newBalance.toString(),
             })
             
-            // Update Founder epoch balance
-            const updateResult = await db
-                .update(epochBalancesTable)
+            // Update Founder epoch metal pool balance
+            await db
+                .update(epochMetalBalancesTable)
                 .set({
                     balance: newBalance.toString(),
                     updated_at: new Date()
                 })
-                .where(eq(epochBalancesTable.epoch, founderEpoch))
-                .returning()
+                .where(eq(epochMetalBalancesTable.id, pool.id))
             
-            // Verify the update was successful
-            const verifyBalance = await db
-                .select()
-                .from(epochBalancesTable)
-                .where(eq(epochBalancesTable.epoch, founderEpoch))
-                .limit(1)
-            
-            const verifiedBalance = verifyBalance[0] ? Number(verifyBalance[0].balance) : null
-            
-            debug('StripeWebhook', 'Founder epoch balance update verification', {
-                submissionHash,
-                expectedNewBalance: newBalance,
-                verifiedBalance: verifiedBalance,
-                updateMatches: verifiedBalance === newBalance,
-                updateResultCount: updateResult.length
-            })
-            
-            // Update tokenomics total_distributed
+            // Update tokenomics total_distributed (overall + per metal)
             const tokenomicsState = await db
                 .select()
                 .from(tokenomicsTable)
@@ -655,13 +606,20 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 .limit(1)
             
             if (tokenomicsState.length > 0) {
-                const newTotalDistributed = Number(tokenomicsState[0].total_distributed) + synthAllocation
+                const state: any = tokenomicsState[0]
+                const newTotalDistributed = Number(state.total_distributed) + synthAllocation
+                const metalKey =
+                    tier === 'gold' ? 'total_distributed_gold' :
+                    tier === 'silver' ? 'total_distributed_silver' :
+                    'total_distributed_copper'
+                const newMetalDistributed = Number(state[metalKey] || 0) + synthAllocation
                 await db
                     .update(tokenomicsTable)
                     .set({
                         total_distributed: newTotalDistributed.toString(),
+                        [metalKey]: newMetalDistributed.toString(),
                         updated_at: new Date()
-                    })
+                    } as any)
                     .where(eq(tokenomicsTable.id, 'main'))
             }
             
@@ -672,7 +630,6 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 epoch: founderEpoch,
                 balanceBefore: currentBalance,
                 balanceAfter: newBalance,
-                verifiedBalance: verifiedBalance,
                 allocationRecordId: allocationId
             })
             
@@ -702,7 +659,6 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 synthAllocation: synthAllocation.toLocaleString(),
                 founderBalanceBefore: currentBalance.toLocaleString(),
                 founderBalanceAfter: newBalance.toLocaleString(),
-                founderBalanceVerified: verifiedBalance?.toLocaleString(),
                 submissionHash
             })
         } catch (allocationError) {

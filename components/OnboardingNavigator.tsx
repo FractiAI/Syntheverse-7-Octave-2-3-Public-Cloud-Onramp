@@ -1,6 +1,6 @@
 /**
  * Onboarding Navigator Component
- * Comprehensive training on Syntheverse, SYNTH 90T Motherlode Blockmine,
+ * Comprehensive training on Syntheverse tokenomics (Gold/Silver/Copper),
  * Blockchain, Holographic Hydrogen, and Fractals
  * Holographic Hydrogen Fractal Frontier Noir styling
  */
@@ -147,23 +147,36 @@ export function OnboardingNavigator() {
         },
         {
             id: 'motherlode',
-            title: 'SYNTH 90T Motherlode Blockmine',
+            title: 'SYNTH Metal Genesis (Gold / Silver / Copper)',
             label: 'MODULE 02',
             icon: <Database className="h-6 w-6" />,
             content: (
                 <div className="space-y-4">
                     <div className="cockpit-text">
                         <p className="text-lg mb-4">
-                            The <strong className="cockpit-number">90 Trillion SYNTH Motherlode Blockmine</strong> is the 
-                            economic and mythic substrate of the Syntheverse colony—an ERC-20 token property forming 
-                            the blockchain-anchored foundation.
+                            The Motherlode Blockmine is a three-token ERC-20 genesis:
+                            <strong className="cockpit-number"> 45T SYNTH-GOLD</strong>, <strong className="cockpit-number">22.5T SYNTH-SILVER</strong>,
+                            and <strong className="cockpit-number">22.5T SYNTH-COPPER</strong>.
                         </p>
                         <div className="space-y-3">
                             <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
                                 <div className="cockpit-label mb-2">Total Supply</div>
-                                <div className="cockpit-number cockpit-number-large mb-2" style={{ color: '#ffb84d' }}>90T SYNTH</div>
+                                <div className="grid grid-cols-3 gap-3">
+                                    <div className="p-3 border border-[var(--keyline-accent)]">
+                                        <div className="cockpit-label">GOLD</div>
+                                        <div className="cockpit-number" style={{ color: '#ffb84d' }}>45T</div>
+                                    </div>
+                                    <div className="p-3 border border-[var(--keyline-accent)]">
+                                        <div className="cockpit-label">SILVER</div>
+                                        <div className="cockpit-number" style={{ color: '#94a3b8' }}>22.5T</div>
+                                    </div>
+                                    <div className="p-3 border border-[var(--keyline-accent)]">
+                                        <div className="cockpit-label">COPPER</div>
+                                        <div className="cockpit-number" style={{ color: '#d97706' }}>22.5T</div>
+                                    </div>
+                                </div>
                                 <p className="cockpit-text text-sm">
-                                    The complete token supply distributed across epochs and contributors
+                                    Each metal token distributes across the 4 Outcast Hero epochs (halving cadence).
                                 </p>
                             </div>
                             <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
@@ -197,15 +210,15 @@ export function OnboardingNavigator() {
                     <div className="cockpit-text">
                         <p className="text-lg mb-4">
                             Syntheverse operates on a <strong className="cockpit-number">Layer 1 blockchain</strong> that 
-                            stores immutable records of all Proof-of-Contribution submissions and manages SYNTH token distribution.
+                            stores immutable records of Proof-of-Contribution submissions and manages multi-token distribution (Gold/Silver/Copper).
                         </p>
                         <div className="space-y-3">
                             <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
                                 <div className="cockpit-label mb-2">Blockchain Functions</div>
                                 <ul className="space-y-2 cockpit-text text-sm">
                                     <li>• <strong>Immutable Records:</strong> All PoC submissions stored permanently</li>
-                                    <li>• <strong>Token Management:</strong> SYNTH distribution across 4 epochs</li>
-                                    <li>• <strong>Tier Rewards:</strong> Gold (1000x), Silver (100x), Copper (1x) multipliers</li>
+                                    <li>• <strong>Token Management:</strong> Gold/Silver/Copper distribution across 4 epochs</li>
+                                    <li>• <strong>Metal Assay Allocation:</strong> Multi-metal PoCs allocate from each metal pool proportionally</li>
                                     <li>• <strong>Block Mining:</strong> Proof-of-Discovery consensus mechanism</li>
                                     <li>• <strong>State Tracking:</strong> Contributor balances, reward history, epoch progression</li>
                                 </ul>
@@ -241,15 +254,15 @@ export function OnboardingNavigator() {
                 <div className="space-y-4">
                     <div className="cockpit-text">
                         <p className="text-lg mb-4">
-                            The <strong className="cockpit-number">4-Epoch System</strong> progressively unlocks SYNTH tokens 
-                            based on coherence density and contribution quality.
+                            The <strong className="cockpit-number">4-Epoch Outcast Hero System</strong> progresses in halves.
+                            Each epoch has balances for each token (Gold/Silver/Copper).
                         </p>
                         <div className="grid gap-4 md:grid-cols-2">
                             {[
-                                { name: 'Founder', supply: '45T (50%)', threshold: '≥8,000', desc: 'Highest quality contributions', color: '#ffb84d' },
-                                { name: 'Pioneer', supply: '9T (10%)', threshold: '≥6,000', desc: 'Early high-quality contributions', color: '#94a3b8' },
-                                { name: 'Community', supply: '18T (20%)', threshold: '≥4,000', desc: 'Community contributions', color: '#60a5fa' },
-                                { name: 'Ecosystem', supply: '18T (20%)', threshold: '<4,000', desc: 'All other contributions', color: '#34d399' }
+                                { name: 'Founder', supply: '50% of each metal', threshold: '≥8,000', desc: 'Highest quality contributions', color: '#ffb84d' },
+                                { name: 'Pioneer', supply: '25% of each metal', threshold: '≥4,000', desc: 'Early high-quality contributions', color: '#94a3b8' },
+                                { name: 'Community', supply: '12.5% of each metal', threshold: '≥3,000', desc: 'Community contributions', color: '#60a5fa' },
+                                { name: 'Ecosystem', supply: '12.5% of each metal', threshold: '≥2,000', desc: 'Ecosystem contributions', color: '#34d399' }
                             ].map((epoch) => (
                                 <div key={epoch.name} className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
                                     <div className="cockpit-label mb-2 uppercase">{epoch.name}</div>

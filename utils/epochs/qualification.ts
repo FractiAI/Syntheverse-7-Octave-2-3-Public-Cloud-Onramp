@@ -5,7 +5,7 @@
  */
 
 import { db } from '@/utils/db/db'
-import { tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
+import { tokenomicsTable, epochBalancesTable, epochMetalBalancesTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug } from '@/utils/debug'
 
@@ -53,18 +53,25 @@ async function checkAndTransitionEpoch(): Promise<EpochType> {
         
         const currentEpoch = (tokenomics[0]?.current_epoch || 'founder') as EpochType
         
-        // Get epoch balances
-        const epochBalances = await db
-            .select()
-            .from(epochBalancesTable)
+        // Prefer per-metal epoch balances if available; fallback to legacy epoch_balances
+        let currentEpochBalance = 0
+        try {
+            const metalBalances = await db
+                .select()
+                .from(epochMetalBalancesTable)
+                .where(eq(epochMetalBalancesTable.epoch, currentEpoch))
+            currentEpochBalance = metalBalances.reduce((sum, b) => sum + Number(b.balance || 0), 0)
+        } catch (err) {
+            debug('CheckAndTransitionEpoch', 'epoch_metal_balances not available, falling back to epoch_balances', err)
+            const epochBalances = await db.select().from(epochBalancesTable)
+            const epochBalancesMap = new Map<string, number>()
+            epochBalances.forEach(eb => {
+                epochBalancesMap.set(eb.epoch, Number(eb.balance || 0))
+            })
+            currentEpochBalance = epochBalancesMap.get(currentEpoch) || 0
+        }
         
-        const epochBalancesMap = new Map<string, number>()
-        epochBalances.forEach(eb => {
-            epochBalancesMap.set(eb.epoch, Number(eb.balance || 0))
-        })
-        
-        // Check if current epoch is fully allocated (balance <= 0 or very low)
-        const currentEpochBalance = epochBalancesMap.get(currentEpoch) || 0
+        // Check if current epoch is fully allocated (sum of metal balances <= threshold)
         const FULLY_ALLOCATED_THRESHOLD = 1000 // Consider fully allocated if balance < 1000 tokens
         
         if (currentEpoch === 'founder' && currentEpochBalance <= FULLY_ALLOCATED_THRESHOLD) {

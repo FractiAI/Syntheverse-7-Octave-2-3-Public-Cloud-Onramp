@@ -20,6 +20,12 @@ interface EpochInfo {
         distribution_percent: number
         available_tiers: string[]
     }>
+    epoch_metals?: Record<string, Record<string, {
+        balance: number
+        threshold: number
+        distribution_amount: number
+        distribution_percent: number
+    }>>
 }
 
 export function EpochTokenDisplay() {
@@ -206,15 +212,16 @@ export function EpochTokenDisplay() {
 
     const openEpochs = getOpenEpochs()
     const totalAvailable = openEpochs.reduce((sum, epoch) => {
-        return sum + (epochInfo.epochs[epoch]?.balance || 0)
+        const epochTotal = epochInfo.epochs[epoch]?.balance || 0
+        return sum + epochTotal
     }, 0)
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2">
                     <Coins className="h-5 w-5" />
-                    Open Epochs & Available SYNTH Tokens
+                        Open Epochs & Available SYNTH Tokens (Gold / Silver / Copper)
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -237,12 +244,14 @@ export function EpochTokenDisplay() {
                     {/* Token Balances */}
                     <div>
                         <div className="text-sm font-semibold mb-3">
-                            Available SYNTH Tokens
+                            Available SYNTH Tokens (per epoch)
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             {openEpochs.map((epoch) => {
                                 const epochData = epochInfo.epochs[epoch]
                                 if (!epochData) return null
+
+                                const metalData = epochInfo.epoch_metals?.[epoch] || {}
                                 
                                 return (
                                     <div 
@@ -265,6 +274,20 @@ export function EpochTokenDisplay() {
                                         </div>
                                         <div className="text-2xl font-bold">
                                             {formatTokens(epochData.balance)}
+                                        </div>
+                                        <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                                            <div className="p-2 rounded border bg-background">
+                                                <div className="font-semibold" style={{ color: '#ffb84d' }}>Gold</div>
+                                                <div>{formatTokens(Number(metalData.gold?.balance || 0))}</div>
+                                            </div>
+                                            <div className="p-2 rounded border bg-background">
+                                                <div className="font-semibold" style={{ color: '#94a3b8' }}>Silver</div>
+                                                <div>{formatTokens(Number(metalData.silver?.balance || 0))}</div>
+                                            </div>
+                                            <div className="p-2 rounded border bg-background">
+                                                <div className="font-semibold" style={{ color: '#d97706' }}>Copper</div>
+                                                <div>{formatTokens(Number(metalData.copper?.balance || 0))}</div>
+                                            </div>
                                         </div>
                                         <div className="text-xs text-muted-foreground mt-1">
                                             {epochData.distribution_percent.toFixed(1)}% of total supply

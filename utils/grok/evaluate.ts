@@ -1,6 +1,6 @@
 import { debug, debugError } from '@/utils/debug'
 import { db } from '@/utils/db/db'
-import { contributionsTable, tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
+import { contributionsTable, tokenomicsTable, epochMetalBalancesTable } from '@/utils/db/schema'
 import { ne, sql } from 'drizzle-orm'
 import { qualifyEpoch } from '@/utils/epochs/qualification'
 import { 
@@ -283,9 +283,9 @@ export async function evaluateWithGrok(
         
         if (tokenomics && tokenomics.length > 0) {
             const tk = tokenomics[0]
-            const epochBalances = await db
+            const epochMetalBalances = await db
                 .select()
-                .from(epochBalancesTable)
+                .from(epochMetalBalancesTable)
             
             // Calculate total coherence density from contributions metadata
             const allContribs = await db
@@ -300,12 +300,16 @@ export async function evaluateWithGrok(
                 }
             }
             
+            // Aggregate per-epoch total balances (sum of metal pools)
+            const epochTotals: Record<string, number> = {}
+            for (const row of epochMetalBalances) {
+                const epoch = String(row.epoch).toLowerCase().trim()
+                epochTotals[epoch] = (epochTotals[epoch] || 0) + Number(row.balance || 0)
+            }
+
             tokenomicsInfo = {
                 current_epoch: tk.current_epoch || 'founder',
-                epoch_balances: epochBalances.reduce((acc, eb) => {
-                    acc[eb.epoch] = Number(eb.balance || 0)
-                    return acc
-                }, {} as Record<string, number>),
+                epoch_balances: epochTotals,
                 total_coherence_density: totalCoherenceDensity,
                 founder_halving_count: Number(tk.founder_halving_count || 0),
                 epoch_progression: {

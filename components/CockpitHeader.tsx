@@ -21,7 +21,7 @@ export default function CockpitHeader() {
                         </div>
                         <div>
                             <div className="cockpit-title text-2xl">SYNTHEVERSE</div>
-                            <div className="cockpit-label mt-0.5">SYNTH 90T MOTHERLODE BLOCKMINE</div>
+                            <div className="cockpit-label mt-0.5">SYNTH METAL GENESIS — 45T GOLD · 22.5T SILVER · 22.5T COPPER</div>
                         </div>
                     </div>
 

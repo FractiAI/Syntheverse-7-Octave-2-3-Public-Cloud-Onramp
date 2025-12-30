@@ -6,10 +6,10 @@
  */
 
 import { db } from '@/utils/db/db'
-import { contributionsTable, tokenomicsTable, epochBalancesTable, allocationsTable } from '@/utils/db/schema'
+import { contributionsTable, epochMetalBalancesTable, allocationsTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
-import { calculateMetalAmplification } from './metal-amplification'
 import { isQualifiedForOpenEpoch } from '@/utils/epochs/qualification'
+import { computeMetalAssay, type Metal } from './metal-assay'
 
 export interface ProjectedAllocationResult {
     submission_hash: string
@@ -19,12 +19,9 @@ export interface ProjectedAllocationResult {
     breakdown: {
         base_score: number
         pod_score: number
-        metal_multiplier: number
-        metal_combination: string
         epoch_availability: number
-        allocatable_balance?: number  // 50% of epoch balance available for allocation
-        reserved_balance?: number      // 50% reserved for future contributions
-        tier_multiplier: number
+        metal_assay?: Record<string, number>
+        metal_allocations?: Record<string, number>
         final_amount: number
     }
     error?: string
@@ -53,10 +50,7 @@ export async function calculateProjectedAllocation(
                 breakdown: {
                     base_score: 0,
                     pod_score: 0,
-                    metal_multiplier: 1.0,
-                    metal_combination: 'none',
                     epoch_availability: 0,
-                    tier_multiplier: 1.0,
                     final_amount: 0
                 },
                 error: 'Contribution not found'
@@ -81,10 +75,7 @@ export async function calculateProjectedAllocation(
                 breakdown: {
                     base_score: 0,
                     pod_score: podScore,
-                    metal_multiplier: 1.0,
-                    metal_combination: 'none',
                     epoch_availability: 0,
-                    tier_multiplier: 1.0,
                     final_amount: 0
                 },
                 error: 'PoC not qualified'
@@ -107,10 +98,7 @@ export async function calculateProjectedAllocation(
                 breakdown: {
                     base_score: (podScore / 10000) * 100, // Percentage
                     pod_score: podScore,
-                    metal_multiplier: 1.0,
-                    metal_combination: 'already_allocated',
                     epoch_availability: 0,
-                    tier_multiplier: 1.0,
                     final_amount: totalAllocated
                 },
                 error: 'Already allocated'
@@ -118,44 +106,39 @@ export async function calculateProjectedAllocation(
         }
         
         // Determine epoch from density
-        const epoch = metadata.tokenomics_recommendation?.eligible_epochs?.[0] || 'founder'
-        
-        // Get epoch balance
-        const epochBalances = await db
-            .select()
-            .from(epochBalancesTable)
-            .where(eq(epochBalancesTable.epoch, epoch))
-            .limit(1)
-        
-        const epochBalance = epochBalances[0] 
-            ? Number(epochBalances[0].balance) 
-            : 0
-        
-        // Calculate metallic amplification
-        const amplification = calculateMetalAmplification(metals)
-        const metalMultiplier = amplification.multiplier
-        
-        // Tokenomics formula: (score/10000) * (Available tokens / 2)
-        // Only 50% of available tokens are allocatable - the other 50% is reserved
-        // for future founder-level contributions (research, development, alignment)
-        // This ensures room for continued development throughout each epoch
+        const epoch = metadata.qualified_epoch || metadata.tokenomics_recommendation?.eligible_epochs?.[0] || 'founder'
+
+        const assay = computeMetalAssay(metals)
         const scorePercentage = podScore / 10000.0
-        const allocatableBalance = epochBalance / 2.0  // Only allocate from 50% of available tokens
-        
-        // Base allocation as percentage of allocatable epoch balance (50% of total)
-        const baseAllocation = scorePercentage * allocatableBalance
-        
-        // Apply metal amplification
-        const amplifiedAllocation = baseAllocation * metalMultiplier
-        
-        // Get tier multiplier (default to 1.0, can be enhanced)
-        const tierMultiplier = metadata.tokenomics_recommendation?.tier_multiplier || 1.0
-        
-        // Calculate final allocation with tier multiplier
-        // Cap at allocatable balance (50% of epoch balance - other 50% reserved for future contributions)
-        let finalAmount = Math.floor(amplifiedAllocation * tierMultiplier)
-        finalAmount = Math.min(finalAmount, allocatableBalance)
-        finalAmount = Math.max(0, finalAmount) // Ensure non-negative
+
+        // Fetch per-metal balances for the epoch and allocate per metal by assay proportion.
+        const epochMetalRows = await db
+          .select()
+          .from(epochMetalBalancesTable)
+          .where(eq(epochMetalBalancesTable.epoch, epoch))
+
+        const balanceByMetal: Record<string, number> = {}
+        for (const row of epochMetalRows) {
+          balanceByMetal[String(row.metal).toLowerCase().trim()] = Number(row.balance)
+        }
+
+        const metalAllocations: Record<string, number> = {}
+        let epochAvailability = 0
+        let total = 0
+
+        ;(['gold', 'silver', 'copper'] as Metal[]).forEach((m) => {
+          const bal = balanceByMetal[m] || 0
+          epochAvailability += bal
+          const w = assay[m] || 0
+          if (bal <= 0 || w <= 0) return
+          const amt = Math.min(Math.floor(scorePercentage * bal * w), bal)
+          if (amt > 0) {
+            metalAllocations[m] = amt
+            total += amt
+          }
+        })
+
+        let finalAmount = Math.max(0, total)
         
         return {
             submission_hash: submissionHash,
@@ -165,12 +148,9 @@ export async function calculateProjectedAllocation(
             breakdown: {
                 base_score: scorePercentage * 100, // Percentage (0-100)
                 pod_score: podScore,
-                metal_multiplier: metalMultiplier,
-                metal_combination: amplification.combination,
-                epoch_availability: epochBalance,
-                allocatable_balance: allocatableBalance, // 50% of epoch balance available for allocation
-                reserved_balance: epochBalance - allocatableBalance, // 50% reserved for future contributions
-                tier_multiplier: tierMultiplier,
+                epoch_availability: epochAvailability,
+                metal_assay: assay,
+                metal_allocations: metalAllocations,
                 final_amount: finalAmount
             }
         }
@@ -183,10 +163,7 @@ export async function calculateProjectedAllocation(
             breakdown: {
                 base_score: 0,
                 pod_score: 0,
-                metal_multiplier: 1.0,
-                metal_combination: 'error',
                 epoch_availability: 0,
-                tier_multiplier: 1.0,
                 final_amount: 0
             },
             error: error instanceof Error ? error.message : 'Unknown error'

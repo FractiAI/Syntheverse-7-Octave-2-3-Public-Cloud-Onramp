@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
+import { tokenomicsTable, epochBalancesTable, epochMetalBalancesTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 
@@ -34,7 +34,29 @@ export async function GET(request: NextRequest) {
                         pioneer: { balance: 22500000000000, threshold: 0, distribution_amount: 0, distribution_percent: 25.0, available_tiers: [] },
                         community: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] },
                         ecosystem: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] }
-                    }
+                    },
+                    epoch_metals: {
+                        founder: {
+                            gold: { balance: 22500000000000, threshold: 0, distribution_amount: 0, distribution_percent: 50.0 },
+                            silver: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 50.0 },
+                            copper: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 50.0 },
+                        },
+                        pioneer: {
+                            gold: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 25.0 },
+                            silver: { balance: 5625000000000, threshold: 0, distribution_amount: 0, distribution_percent: 25.0 },
+                            copper: { balance: 5625000000000, threshold: 0, distribution_amount: 0, distribution_percent: 25.0 },
+                        },
+                        community: {
+                            gold: { balance: 5625000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
+                            silver: { balance: 2812500000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
+                            copper: { balance: 2812500000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
+                        },
+                        ecosystem: {
+                            gold: { balance: 5625000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
+                            silver: { balance: 2812500000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
+                            copper: { balance: 2812500000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
+                        },
+                    },
                 }
             }
 
@@ -61,10 +83,58 @@ export async function GET(request: NextRequest) {
             tokenomicsRecord: tokenomics[0]
         })
         
-        // Get all epoch balances
-        const epochBalances = await db
-            .select()
-            .from(epochBalancesTable)
+        // Prefer per-metal epoch balances (new tokenomics model)
+        let metalEpochBalances: any[] = []
+        try {
+            metalEpochBalances = await db.select().from(epochMetalBalancesTable)
+        } catch (metalErr) {
+            debug('EpochInfo', 'epoch_metal_balances not available (fallback to legacy epoch_balances)', metalErr)
+            metalEpochBalances = []
+        }
+
+        if (metalEpochBalances.length > 0) {
+            const epochMetals: Record<string, any> = {}
+            const epochs: Record<string, any> = {}
+
+            for (const row of metalEpochBalances) {
+                const epoch = String(row.epoch).toLowerCase().trim()
+                const metal = String(row.metal).toLowerCase().trim()
+                if (!epochMetals[epoch]) epochMetals[epoch] = {}
+
+                const balance = row.balance ? parseFloat(String(row.balance)) : 0
+                const threshold = row.threshold ? parseFloat(String(row.threshold)) : 0
+                const distributionAmount = row.distribution_amount ? parseFloat(String(row.distribution_amount)) : 0
+                const distributionPercent = row.distribution_percent ? parseFloat(String(row.distribution_percent)) : 0
+
+                epochMetals[epoch][metal] = {
+                    balance,
+                    threshold,
+                    distribution_amount: distributionAmount,
+                    distribution_percent: distributionPercent,
+                }
+
+                // Aggregate epoch totals (sum of metals)
+                if (!epochs[epoch]) {
+                    epochs[epoch] = {
+                        balance: 0,
+                        threshold: 0,
+                        distribution_amount: 0,
+                        distribution_percent: distributionPercent,
+                        available_tiers: [],
+                    }
+                }
+                epochs[epoch].balance += balance
+            }
+
+            return {
+                current_epoch: currentEpoch,
+                epochs,
+                epoch_metals: epochMetals,
+            }
+        }
+
+        // Fallback: legacy epoch_balances table
+        const epochBalances = await db.select().from(epochBalancesTable)
         
         // If no epoch balances exist, try to initialize defaults
         if (epochBalances.length === 0) {

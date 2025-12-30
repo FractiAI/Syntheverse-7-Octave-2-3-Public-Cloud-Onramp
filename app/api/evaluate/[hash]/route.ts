@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable, allocationsTable, tokenomicsTable, epochBalancesTable, pocLogTable } from '@/utils/db/schema'
+import { contributionsTable, allocationsTable, tokenomicsTable, pocLogTable } from '@/utils/db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { evaluateWithGrok } from '@/utils/grok/evaluate'

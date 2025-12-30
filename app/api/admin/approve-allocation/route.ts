@@ -15,12 +15,12 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
-import { contributionsTable, allocationsTable, tokenomicsTable, epochBalancesTable } from '@/utils/db/schema'
+import { contributionsTable, allocationsTable, tokenomicsTable, epochMetalBalancesTable } from '@/utils/db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { createClient } from '@/utils/supabase/server'
 import { isQualifiedForOpenEpoch } from '@/utils/epochs/qualification'
-import { calculateMetalAmplification } from '@/utils/tokenomics/metal-amplification'
+import { computeMetalAssay } from '@/utils/tokenomics/metal-assay'
 import crypto from 'crypto'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'espressolico@gmail.com'
@@ -155,35 +155,21 @@ async function handleApproval(submission_hash: string, approvedBy: string): Prom
         const tokenomicsState = tokenomics[0]
         const currentEpoch = tokenomicsState.current_epoch || 'founder'
         
-        // Get epoch balances
-        const epochBalances = await db
+        // New tokenomics model:
+        // Allocate from each metal pool in proportion to the PoC metal assay, using the same score scaling
+        // against that metal's available balance.
+        const epoch = metadata.qualified_epoch || eligibleEpochs[0] || currentEpoch
+        const assay = computeMetalAssay(metals)
+        const scorePercentage = (podScore || 0) / 10000.0
+
+        const pools = await db
             .select()
-            .from(epochBalancesTable)
-        
-        const epochBalancesMap = new Map<string, { balance: number, threshold: number, distribution_amount: number }>()
-        epochBalances.forEach(eb => {
-            epochBalancesMap.set(eb.epoch, {
-                balance: Number(eb.balance),
-                threshold: Number(eb.threshold),
-                distribution_amount: Number(eb.distribution_amount)
-            })
-        })
-        
-        // Calculate metallic amplification based on COMBINATIONS (Blueprint §3.4)
-        const amplification = calculateMetalAmplification(metals)
-        
-        // Calculate base reward
-        let baseReward = suggestedAllocation
-        if (baseReward === 0) {
-            // Calculate from pod_score if no suggested allocation
-            // Base allocation formula: pod_score / 1000 * tier_multiplier
-            baseReward = Math.floor((metadata.pod_score || 0) / 1000) * tierMultiplier
-        }
-        
-        // Apply combination-based amplification (not individual metal multipliers)
-        const amplifiedReward = Math.floor(baseReward * amplification.multiplier)
-        
-        // Create allocations for each metal (all share the same amplified reward)
+            .from(epochMetalBalancesTable)
+            .where(eq(epochMetalBalancesTable.epoch, epoch))
+
+        const poolsByMetal = new Map<string, any>()
+        pools.forEach(p => poolsByMetal.set(String(p.metal).toLowerCase().trim(), p))
+
         const createdAllocations: Array<{
             id: string
             submission_hash: string
@@ -193,94 +179,71 @@ async function handleApproval(submission_hash: string, approvedBy: string): Prom
             reward: number
             tier_multiplier: number
         }> = []
-        
-        const updatedEpochBalances: Array<{ epoch: string, balance_before: number, balance_after: number }> = []
-        
-        // Determine epoch (use first eligible epoch or current epoch)
-        const epoch = eligibleEpochs[0] || currentEpoch
-        
-        // Calculate reward per metal: divide amplified reward equally among all metals
-        // Each metal gets its own allocation record, but they share the amplified reward
-        const rewardPerMetal = Math.floor(amplifiedReward / metals.length)
-        
-        for (const metal of metals) {
-            const reward = rewardPerMetal
-            
-            // Check epoch balance
-            const epochBalance = epochBalancesMap.get(epoch)
-            if (!epochBalance) {
-                debugError('ApproveAllocation', `Epoch balance not found for ${epoch}`, null)
-                continue
-            }
-            
-            const balanceBefore = epochBalance.balance
+
+        const updatedEpochBalances: Array<{ epoch: string, metal: string, balance_before: number, balance_after: number }> = []
+
+        for (const metal of ['gold', 'silver', 'copper']) {
+            const w = (assay as any)[metal] || 0
+            if (w <= 0) continue
+
+            const pool = poolsByMetal.get(metal)
+            if (!pool) continue
+
+            const balanceBefore = Number(pool.balance)
+            const reward = Math.min(Math.floor(scorePercentage * balanceBefore * w), balanceBefore)
+            if (reward <= 0) continue
+
             const balanceAfter = balanceBefore - reward
-            
-            // Check if epoch has sufficient balance
-            if (balanceAfter < 0) {
-                debug('ApproveAllocation', `Insufficient balance in ${epoch} epoch`, {
-                    balance: balanceBefore,
-                    reward,
-                    epoch
-                })
-                continue // Skip this allocation if insufficient balance
-            }
-            
-            // Create allocation record
             const allocationId = crypto.randomUUID()
+
             await db.insert(allocationsTable).values({
                 id: allocationId,
                 submission_hash,
                 contributor: contrib.contributor,
-                metal: metal.toLowerCase(),
+                metal: metal,
                 epoch,
-                tier: metal.toLowerCase(),
+                tier: metal,
                 reward: reward.toString(),
-                tier_multiplier: amplification.multiplier.toString(), // Store combination amplification multiplier
+                tier_multiplier: '1.0',
                 epoch_balance_before: balanceBefore.toString(),
                 epoch_balance_after: balanceAfter.toString(),
                 created_at: new Date()
             })
-            
-            // Update epoch balance
-            await db
-                .update(epochBalancesTable)
-                .set({
-                    balance: balanceAfter.toString(),
-                    updated_at: new Date()
-                })
-                .where(eq(epochBalancesTable.epoch, epoch))
-            
-            // Update tokenomics total_distributed
+
+            await db.update(epochMetalBalancesTable).set({
+                balance: balanceAfter.toString(),
+                updated_at: new Date()
+            }).where(eq(epochMetalBalancesTable.id, pool.id))
+
+            const metalKey =
+                metal === 'gold' ? 'total_distributed_gold' :
+                metal === 'silver' ? 'total_distributed_silver' :
+                'total_distributed_copper'
+            const currentMetalDistributed = Number((tokenomicsState as any)[metalKey] || 0)
+            const newMetalDistributed = currentMetalDistributed + reward
             const newTotalDistributed = Number(tokenomicsState.total_distributed) + reward
-            await db
-                .update(tokenomicsTable)
-                .set({
-                    total_distributed: newTotalDistributed.toString(),
-                    updated_at: new Date()
-                })
-                .where(eq(tokenomicsTable.id, 'main'))
-            
+
+            await db.update(tokenomicsTable).set({
+                total_distributed: newTotalDistributed.toString(),
+                [metalKey]: newMetalDistributed.toString(),
+                updated_at: new Date()
+            } as any).where(eq(tokenomicsTable.id, 'main'))
+
             createdAllocations.push({
                 id: allocationId,
                 submission_hash,
                 contributor: contrib.contributor,
-                metal: metal.toLowerCase(),
+                metal: metal,
                 epoch,
                 reward,
-                tier_multiplier: amplification.multiplier // Store combination amplification multiplier
+                tier_multiplier: 1.0
             })
-            
+
             updatedEpochBalances.push({
                 epoch,
+                metal,
                 balance_before: balanceBefore,
                 balance_after: balanceAfter
-            })
-            
-            // Update epoch balance in map for next iteration
-            epochBalancesMap.set(epoch, {
-                ...epochBalance,
-                balance: balanceAfter
             })
         }
         
@@ -298,7 +261,7 @@ async function handleApproval(submission_hash: string, approvedBy: string): Prom
                 debug('ApproveAllocation', 'Epoch transitioned after allocation', {
                     old_epoch: currentEpoch,
                     new_epoch: updatedEpochInfo.current_epoch,
-                    founder_balance: epochBalancesMap.get('founder') || 0
+                    founder_balance: 'n/a (per-metal pools)'
                 })
             }
         } catch (transitionError) {
