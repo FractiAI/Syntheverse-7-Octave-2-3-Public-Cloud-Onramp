@@ -65,12 +65,12 @@ export async function POST(request: NextRequest) {
         let pagesExtracted = 1
 
         try {
-            const result = await extractTextWithPdfTextExtract(buffer)
+            const result = await extractTextWithPoppler(buffer)
             extractedText = result.text
             pagesExtracted = result.pages
-            console.log(`[PDF Extract] PDF Text Extract successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
+            console.log(`[PDF Extract] Poppler extraction successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
         } catch (extractError) {
-            console.error('[PDF Extract] PDF Text Extract failed:', extractError)
+            console.error('[PDF Extract] Poppler extraction failed:', extractError)
 
             // Return error instead of fallback - user should know extraction failed
             return NextResponse.json({
@@ -129,40 +129,64 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Extract text from PDF using pdf-text-extract library
- * Lightweight PDF text extraction with minimal dependencies
+ * Extract text from PDF using node-poppler library
+ * Uses poppler PDF library directly - no pdfjs-dist dependencies
  */
-async function extractTextWithPdfTextExtract(buffer: Buffer): Promise<{ text: string; pages: number }> {
-    // Import pdf-text-extract dynamically
-    const pdfTextExtract = (await import('pdf-text-extract')).default
+async function extractTextWithPoppler(buffer: Buffer): Promise<{ text: string; pages: number }> {
+    // Import node-poppler dynamically
+    const { Poppler } = await import('node-poppler')
 
-    return new Promise((resolve, reject) => {
-        // Use pdf-text-extract to extract text from buffer
-        pdfTextExtract(buffer, (error: any, pages: string[]) => {
-            if (error) {
-                reject(new Error(`PDF Text Extract error: ${error.message}`))
-                return
-            }
+    // Create a temporary file path for the PDF
+    const tempDir = '/tmp'
+    const tempFileName = `pdf-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.pdf`
+    const tempFilePath = `${tempDir}/${tempFileName}`
 
-            if (!pages || pages.length === 0) {
-                reject(new Error('No text content found in PDF'))
-                return
-            }
+    try {
+        // Write buffer to temporary file
+        const fs = await import('fs/promises')
+        await fs.writeFile(tempFilePath, buffer)
 
-            // Combine all pages into single text
-            let extractedText = pages.join('\n\n')
+        // Initialize poppler
+        const poppler = new Poppler()
 
-            // Clean and process the extracted text
-            extractedText = extractedText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
-            extractedText = extractedText.replace(/\n\s*\n\s*\n+/g, '\n\n')  // Multiple newlines to double
-            extractedText = extractedText.trim()
+        // Extract text from PDF
+        const outputFilePath = tempFilePath.replace('.pdf', '.txt')
+        await poppler.text(tempFilePath, outputFilePath)
 
-            resolve({
-                text: extractedText,
-                pages: pages.length
-            })
-        })
-    })
+        // Read the extracted text
+        const extractedText = await fs.readFile(outputFilePath, 'utf8')
+
+        // Clean up temporary files
+        await Promise.all([
+            fs.unlink(tempFilePath),
+            fs.unlink(outputFilePath)
+        ])
+
+        // Process the extracted text
+        let cleanText = extractedText.trim()
+
+        // Remove excessive whitespace
+        cleanText = cleanText.replace(/[ \t]+/g, ' ')  // Multiple spaces to single
+        cleanText = cleanText.replace(/\n\s*\n\s*\n+/g, '\n\n')  // Multiple newlines to double
+
+        // Estimate pages (rough calculation based on content length)
+        const estimatedPages = Math.max(1, Math.ceil(cleanText.length / 2500))
+
+        return {
+            text: cleanText,
+            pages: estimatedPages
+        }
+
+    } catch (error) {
+        // Clean up temporary files on error
+        try {
+            const fs = await import('fs/promises')
+            await fs.unlink(tempFilePath).catch(() => {})
+            await fs.unlink(tempFilePath.replace('.pdf', '.txt')).catch(() => {})
+        } catch {}
+
+        throw new Error(`Poppler extraction error: ${error instanceof Error ? error.message : String(error)}`)
+    }
 }
 
 /**

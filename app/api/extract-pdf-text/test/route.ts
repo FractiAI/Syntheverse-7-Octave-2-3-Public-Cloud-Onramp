@@ -1,31 +1,30 @@
 import { NextResponse } from 'next/server'
 
 /**
- * Test endpoint to verify pdf-text-extract is working
+ * Test endpoint to verify node-poppler is working
  * GET /api/extract-pdf-text/test
  */
 export async function GET() {
     try {
-        // Test importing pdf-text-extract
-        const pdfTextExtract = (await import('pdf-text-extract')).default
+        // Test importing node-poppler
+        const { Poppler } = await import('node-poppler')
 
-        // Check module structure
+        // Check if Poppler class is available
         const moduleInfo = {
-            moduleType: typeof pdfTextExtract,
-            isFunction: typeof pdfTextExtract === 'function',
-            moduleKeys: Object.keys(pdfTextExtract || {}).slice(0, 10)
+            popplerAvailable: typeof Poppler === 'function',
+            popplerPrototype: Poppler.prototype ? Object.getOwnPropertyNames(Poppler.prototype).slice(0, 5) : []
         }
 
         return NextResponse.json({
             success: true,
-            pdfTextExtractAvailable: true,
+            nodePopplerAvailable: true,
             moduleInfo,
-            message: 'pdf-text-extract module loaded successfully'
+            message: 'node-poppler module loaded successfully'
         })
     } catch (error) {
         return NextResponse.json({
             success: false,
-            pdfTextExtractAvailable: false,
+            nodePopplerAvailable: false,
             error: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : undefined
         }, { status: 500 })
