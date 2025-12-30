@@ -118,8 +118,8 @@ export async function POST(request: NextRequest) {
         } else {
             const GlobalWorkerOptions = pdfjs.GlobalWorkerOptions || pdfjs.default?.GlobalWorkerOptions
             if (GlobalWorkerOptions) {
-                    // Completely disable workers for server-side
-                GlobalWorkerOptions.workerSrc = null
+                // Completely disable workers for server-side
+                GlobalWorkerOptions.workerSrc = ''
                 GlobalWorkerOptions.workerPort = null
 
                 // Try to disable worker loading entirely by patching PDFWorker
