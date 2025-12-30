@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+    <radialGradient id="r" cx="30%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#ffb84d" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="360" cy="320" r="320" fill="url(#r)"/>
+  <g fill="none" stroke="#ffb84d" stroke-linecap="round">
+    <path d="M210 460c50-90 120-140 210-140 92 0 165 52 220 150" stroke-width="6" stroke-opacity="0.28"/>
+    <path d="M240 480c40-70 95-108 170-108 76 0 138 44 184 128" stroke-width="4" stroke-opacity="0.22"/>
+    <path d="M270 500c30-52 70-80 125-80 56 0 103 32 137 92" stroke-width="3" stroke-opacity="0.18"/>
+  </g>
+  <g fill="#ffb84d" opacity="0.65">
+    <circle cx="420" cy="330" r="7"/>
+  </g>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.2" stroke-width="4">
+    <rect x="690" y="170" width="420" height="340" rx="20"/>
+    <path d="M720 240h360M720 300h300M720 360h330M720 420h260" stroke-width="3" stroke-opacity="0.16"/>
+  </g>
+  <g fill="#ffb84d" opacity="0.8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18">
+    <text x="720" y="210">RESOURCES · SIGNAL</text>
+  </g>
+</svg>
+
+

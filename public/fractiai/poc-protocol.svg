@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.22" stroke-width="4">
+    <rect x="90" y="90" width="1020" height="495" rx="22"/>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">
+    <text x="120" y="140" fill="#ffb84d" opacity="0.8" font-size="18">PROOF-OF-CONTRIBUTION PIPELINE</text>
+  </g>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.18" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M160 210h880"/>
+    <path d="M160 300h880"/>
+    <path d="M160 390h880"/>
+    <path d="M160 480h880"/>
+    <path d="M260 210v270M520 210v270M780 210v270"/>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="16" fill="#ffb84d" opacity="0.75">
+    <text x="180" y="255">SUBMIT</text>
+    <text x="440" y="255">EVALUATE</text>
+    <text x="700" y="255">ARCHIVE</text>
+    <text x="920" y="255">ALLOCATE</text>
+    <text x="180" y="345">TEXT</text>
+    <text x="440" y="345">HHF SCORES</text>
+    <text x="700" y="345">VECTOR MAP</text>
+    <text x="920" y="345">METAL POOLS</text>
+    <text x="180" y="435">HASH</text>
+    <text x="440" y="435">REDUNDANCY</text>
+    <text x="700" y="435">INDEX</text>
+    <text x="920" y="435">ASSAY SPLIT</text>
+  </g>
+  <g fill="#ffb84d" opacity="0.18">
+    <circle cx="260" cy="210" r="8"/>
+    <circle cx="520" cy="210" r="8"/>
+    <circle cx="780" cy="210" r="8"/>
+    <circle cx="1040" cy="210" r="8"/>
+  </g>
+</svg>
+
+

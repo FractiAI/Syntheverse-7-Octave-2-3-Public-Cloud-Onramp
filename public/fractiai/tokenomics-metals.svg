@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.22" stroke-width="4">
+    <rect x="90" y="90" width="1020" height="495" rx="22"/>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18">
+    <text x="120" y="140" fill="#ffb84d" opacity="0.8">GENESIS (90T TOTAL)</text>
+  </g>
+  <g>
+    <rect x="140" y="190" width="920" height="80" rx="12" fill="none" stroke="#ffb84d" stroke-opacity="0.18" stroke-width="3"/>
+    <rect x="140" y="190" width="460" height="80" rx="12" fill="#ffb84d" opacity="0.16"/>
+    <rect x="600" y="190" width="230" height="80" rx="12" fill="#94a3b8" opacity="0.12"/>
+    <rect x="830" y="190" width="230" height="80" rx="12" fill="#d97706" opacity="0.12"/>
+    <text x="160" y="238" fill="#ffb84d" opacity="0.9" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18">GOLD 45T</text>
+    <text x="620" y="238" fill="#94a3b8" opacity="0.9" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18">SILVER 22.5T</text>
+    <text x="850" y="238" fill="#d97706" opacity="0.95" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18">COPPER 22.5T</text>
+  </g>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.18" stroke-width="3">
+    <path d="M160 330h880"/>
+    <path d="M160 390h880"/>
+    <path d="M160 450h880"/>
+  </g>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="16" fill="#ffb84d" opacity="0.75">
+    <text x="160" y="315">EPOCH HALVING CADENCE (PER METAL)</text>
+    <text x="160" y="370">FOUNDER: 50%</text>
+    <text x="160" y="430">PIONEER: 25%</text>
+    <text x="160" y="490">COMMUNITY: 12.5%</text>
+    <text x="560" y="490">ECOSYSTEM: 12.5%</text>
+  </g>
+</svg>
+
+

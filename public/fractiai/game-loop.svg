@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#0a0a0a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.25" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M250 160h320l40-45 40 45h300"/>
+    <path d="M950 160v240l45 40-45 40v55H650l-40 45-40-45H250V320l-45-40 45-40V160z"/>
+  </g>
+  <g fill="#ffb84d" opacity="0.85" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">
+    <text x="210" y="125" font-size="18">DISCOVER</text>
+    <text x="510" y="125" font-size="18">CONTRIBUTE</text>
+    <text x="790" y="125" font-size="18">MAP</text>
+    <text x="905" y="332" font-size="18" transform="rotate(90 905 332)">ALIGN</text>
+    <text x="610" y="615" font-size="18">EVOLVE</text>
+    <text x="240" y="332" font-size="18" transform="rotate(-90 240 332)">RETURN</text>
+  </g>
+  <g fill="none" stroke="#ffb84d" stroke-opacity="0.15">
+    <circle cx="600" cy="340" r="170" stroke-width="2"/>
+    <circle cx="600" cy="340" r="90" stroke-width="2"/>
+  </g>
+  <g fill="#ffb84d" opacity="0.35">
+    <circle cx="600" cy="340" r="6"/>
+  </g>
+</svg>
+
+
