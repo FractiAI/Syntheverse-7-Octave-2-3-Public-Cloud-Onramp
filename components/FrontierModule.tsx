@@ -354,7 +354,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                 <div className="text-center">
                     <div className="cockpit-label text-red-400 mb-4">Module Error</div>
                     <div className="cockpit-text mb-4">{error}</div>
-                    <button onClick={fetchSubmissions} className="cockpit-lever">
+                    <button onClick={() => fetchSubmissions(false)} className="cockpit-lever">
                         Retry Connection
                     </button>
                 </div>
@@ -377,7 +377,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                         </div>
                         <div className="flex items-center gap-3">
                             <button 
-                                onClick={fetchSubmissions}
+                                onClick={() => fetchSubmissions(false)}
                                 className="cockpit-lever text-sm py-2 px-4"
                             >
                                 <RefreshCw className="inline w-4 h-4 mr-2" />
