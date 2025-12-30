@@ -195,32 +195,59 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                     // Import pdfjs-dist - use root import (TypeScript-compatible)
                     try {
                         const rootModule = await import('pdfjs-dist')
+                        
+                        // Log module structure for debugging
+                        console.log('PDF.js module imported:', {
+                            hasDefault: !!rootModule.default,
+                            defaultType: typeof rootModule.default,
+                            hasGetDocument: 'getDocument' in rootModule,
+                            getDocumentType: typeof (rootModule as any).getDocument,
+                            moduleKeys: Object.keys(rootModule).slice(0, 10)
+                        })
+                        
                         // Try various access patterns to find getDocument
                         if (rootModule.default && typeof rootModule.default.getDocument === 'function') {
                             pdfjsLib = rootModule.default
                             getDocumentFn = rootModule.default.getDocument
                             GlobalWorkerOptions = rootModule.default.GlobalWorkerOptions
+                            console.log('Found getDocument via rootModule.default.getDocument')
                         } else if (typeof rootModule.getDocument === 'function') {
                             pdfjsLib = rootModule
                             getDocumentFn = rootModule.getDocument
                             GlobalWorkerOptions = rootModule.GlobalWorkerOptions
+                            console.log('Found getDocument via rootModule.getDocument')
                         } else if ((rootModule as any).getDocument && typeof (rootModule as any).getDocument === 'function') {
                             pdfjsLib = rootModule
                             getDocumentFn = (rootModule as any).getDocument
                             GlobalWorkerOptions = (rootModule as any).GlobalWorkerOptions
+                            console.log('Found getDocument via rootModule (any).getDocument')
+                        } else {
+                            // Log what we actually got
+                            console.error('getDocument not found. Module structure:', {
+                                rootModuleType: typeof rootModule,
+                                defaultExists: !!rootModule.default,
+                                defaultKeys: rootModule.default ? Object.keys(rootModule.default).slice(0, 10) : [],
+                                allKeys: Object.keys(rootModule).slice(0, 20)
+                            })
                         }
                     } catch (rootError) {
                         console.error('PDF.js root import failed:', rootError)
                     }
                     
-                    // Verify getDocument is available
-                    if (!getDocumentFn || typeof getDocumentFn !== 'function') {
-                        console.error('PDF.js import failed. Available modules:', {
-                            triedBuildPdf: true,
-                            triedRoot: true,
-                            pdfjsLibType: pdfjsLib ? typeof pdfjsLib : 'null'
-                        })
+                    // Verify getDocument is available and actually callable
+                    if (!getDocumentFn) {
+                        console.error('PDF.js getDocument function not found')
                         throw new Error('PDF.js library could not be loaded. PDF text extraction will be skipped - submission will use title for evaluation.')
+                    }
+                    
+                    // Double-check it's actually a function before calling
+                    if (typeof getDocumentFn !== 'function') {
+                        console.error('getDocument is not a function:', {
+                            type: typeof getDocumentFn,
+                            value: getDocumentFn,
+                            constructor: getDocumentFn?.constructor?.name
+                        })
+                        throw new Error('PDF.js getDocument is not a callable function. PDF text extraction will be skipped.')
                     }
                     
                     // Set worker source for pdfjs v5.x
@@ -233,16 +260,29 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                     const arrayBuffer = await file.arrayBuffer()
                     
                     // Load PDF document with error handling
+                    // Verify function is still callable right before use
+                    if (typeof getDocumentFn !== 'function') {
+                        throw new Error('getDocument function became unavailable before call')
+                    }
+                    
                     let loadingTask: any
                     try {
+                        console.log('Calling getDocument with arrayBuffer length:', arrayBuffer.byteLength)
                         loadingTask = getDocumentFn({ 
                             data: arrayBuffer,
                             verbosity: 0,
                             useSystemFonts: true,
                             disableFontFace: false
                         })
+                        console.log('getDocument called successfully, got loadingTask:', typeof loadingTask)
                     } catch (callError) {
-                        console.error('Error calling getDocument:', callError)
+                        console.error('Error calling getDocument:', {
+                            error: callError,
+                            errorType: typeof callError,
+                            errorMessage: callError instanceof Error ? callError.message : String(callError),
+                            getDocumentFnType: typeof getDocumentFn,
+                            getDocumentFnValue: getDocumentFn
+                        })
                         throw new Error(`Failed to initialize PDF document: ${callError instanceof Error ? callError.message : String(callError)}`)
                     }
                     
