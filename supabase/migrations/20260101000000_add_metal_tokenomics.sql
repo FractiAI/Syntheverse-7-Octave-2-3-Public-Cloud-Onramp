@@ -3,7 +3,7 @@
 -- ============================================
 -- Introduces per-metal genesis supplies and per-epoch balances per metal.
 --
--- Genesis:
+-- Initial Supply:
 -- - 45T  SYNTHG (Gold)
 -- - 22.5T SYNTHS (Silver)
 -- - 22.5T SYNTHC (Copper)

@@ -54,7 +54,7 @@ export const tokenomicsTable = pgTable('tokenomics', {
     id: text('id').primaryKey().default('main'),
     total_supply: numeric('total_supply', { precision: 20, scale: 0 }).notNull().default('90000000000000'), // 90T
     total_distributed: numeric('total_distributed', { precision: 20, scale: 0 }).notNull().default('0'),
-    // New: per-metal supplies (Genesis: 45T Gold, 22.5T Silver, 22.5T Copper)
+    // New: per-metal supplies (Initial supply: 45T Gold, 22.5T Silver, 22.5T Copper)
     total_supply_gold: numeric('total_supply_gold', { precision: 20, scale: 0 }).notNull().default('45000000000000'),
     total_supply_silver: numeric('total_supply_silver', { precision: 20, scale: 0 }).notNull().default('22500000000000'),
     total_supply_copper: numeric('total_supply_copper', { precision: 20, scale: 0 }).notNull().default('22500000000000'),
