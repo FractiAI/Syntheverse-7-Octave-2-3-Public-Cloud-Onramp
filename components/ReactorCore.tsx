@@ -37,37 +37,52 @@ export function ReactorCore() {
         const params = new URLSearchParams(window.location.search)
         const registrationStatus = params.get('registration')
         const financialAlignmentStatus = params.get('financial_alignment')
+        const shouldPoll = registrationStatus === 'success' || financialAlignmentStatus === 'success'
         
         // Poll for updates after successful registration or financial alignment payment
-        if (registrationStatus === 'success' || financialAlignmentStatus === 'success') {
+        if (shouldPoll) {
             // Show success message
             if (financialAlignmentStatus === 'success') {
                 console.log('✅ Financial Alignment payment successful - polling for balance update...')
             }
             
+            // Immediately remove URL params so other widgets don't start their own polling loops.
+            const newUrl = new URL(window.location.href)
+            newUrl.searchParams.delete('registration')
+            newUrl.searchParams.delete('financial_alignment')
+            newUrl.searchParams.delete('product_id')
+            window.history.replaceState({}, '', newUrl.toString())
+
             let pollCount = 0
-            const maxPolls = 30 // Increase polling time to 30 seconds (webhooks can take time)
-            
-            const pollInterval = setInterval(() => {
+            const maxPolls = 15 // 15 * 2s = 30s
+            const pollEveryMs = 2000
+            let inFlight = false
+            let pollTimer: ReturnType<typeof setTimeout> | null = null
+
+            const poll = async () => {
+                if (inFlight) return
+                inFlight = true
                 pollCount++
                 console.log(`Polling for epoch balance update (${pollCount}/${maxPolls})...`)
-                fetchEpochInfo(true)
-                
-                if (pollCount >= maxPolls) {
-                    clearInterval(pollInterval)
-                    fetchEpochInfo(false)
-                    console.log('✅ Polling complete - balance should be updated')
-                    // Clean up URL parameters after polling completes
-                    const newUrl = new URL(window.location.href)
-                    newUrl.searchParams.delete('registration')
-                    newUrl.searchParams.delete('financial_alignment')
-                    newUrl.searchParams.delete('product_id')
-                    window.history.replaceState({}, '', newUrl.toString())
+                try {
+                    await fetchEpochInfo(true)
+                } finally {
+                    inFlight = false
                 }
-            }, 1000)
+
+                if (pollCount >= maxPolls) {
+                    await fetchEpochInfo(false)
+                    console.log('✅ Polling complete - balance should be updated')
+                    return
+                }
+
+                pollTimer = setTimeout(poll, pollEveryMs)
+            }
+
+            poll()
             
             return () => {
-                clearInterval(pollInterval)
+                if (pollTimer) clearTimeout(pollTimer)
             }
         }
     }, [])

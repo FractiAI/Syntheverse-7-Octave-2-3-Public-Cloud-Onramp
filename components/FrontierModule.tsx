@@ -105,7 +105,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
         
         async function loadData() {
             try {
-                await fetchSubmissions()
+                await fetchSubmissions(false)
             } catch (err) {
                 console.error('Error loading PoC archive:', err)
                 if (isMounted) {
@@ -122,53 +122,63 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
         const registrationHash = params.get('hash')
         
         if (registrationStatus === 'success' && registrationHash) {
+            // Immediately remove URL params so other widgets don't start their own polling loops.
+            // Keep the hash locally for this effect.
+            window.history.replaceState({}, '', window.location.pathname)
+
             let pollCount = 0
-            const maxPolls = 20
-            
-            const pollForRegistration = async () => {
+            const maxPolls = 15 // 15 * 2s = 30s max
+            const pollEveryMs = 2000
+            let inFlight = false
+            let pollTimer: ReturnType<typeof setTimeout> | null = null
+
+            const pollForRegistration = async (): Promise<boolean> => {
+                if (inFlight) return false
+                inFlight = true
                 pollCount++
-                
+
                 try {
                     const statusResponse = await fetch(`/api/poc/${registrationHash}/registration-status?t=${Date.now()}`)
                     if (statusResponse.ok) {
                         const statusData = await statusResponse.json()
-                        
-                        if (statusData.registered && pollCount >= 3) {
-                            await fetchSubmissions()
-                            window.history.replaceState({}, '', window.location.pathname)
+
+                        // Once registered, refresh submissions (silently) and stop polling.
+                        if (statusData.registered && pollCount >= 2) {
+                            await fetchSubmissions(true)
                             return true
                         }
                     }
-                    
-                    if (pollCount % 2 === 0) {
-                        await fetchSubmissions()
+
+                    // Silent refresh occasionally to pick up allocation changes without UI flicker.
+                    if (pollCount % 3 === 0) {
+                        await fetchSubmissions(true)
                     }
                 } catch (err) {
                     console.error(`[Poll ${pollCount}] Error polling:`, err)
+                } finally {
+                    inFlight = false
                 }
-                
+
                 if (pollCount >= maxPolls) {
-                    await fetchSubmissions()
-                    window.history.replaceState({}, '', window.location.pathname)
+                    await fetchSubmissions(true)
                     return true
                 }
-                
+
                 return false
             }
-            
-            pollForRegistration()
-            const pollInterval = setInterval(async () => {
+
+            const scheduleNext = async () => {
                 const shouldStop = await pollForRegistration()
-                if (shouldStop && pollInterval) {
-                    clearInterval(pollInterval)
-                }
-            }, 1000)
+                if (shouldStop) return
+                pollTimer = setTimeout(scheduleNext, pollEveryMs)
+            }
+
+            // Kick off immediately (no overlap due to inFlight guard + chained setTimeout).
+            scheduleNext()
             
             return () => {
                 isMounted = false
-                if (pollInterval) {
-                    clearInterval(pollInterval)
-                }
+                if (pollTimer) clearTimeout(pollTimer)
             }
         } else {
             return () => {
@@ -177,8 +187,10 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
         }
     }, [userEmail])
 
-    async function fetchSubmissions() {
-        setLoading(true)
+    async function fetchSubmissions(silent = false) {
+        if (!silent) {
+            setLoading(true)
+        }
         setError(null)
         try {
             const response = await fetch(`/api/archive/contributions?t=${Date.now()}`, {
@@ -204,7 +216,9 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
             console.error('Error fetching submissions:', err)
             setError(err instanceof Error ? err.message : 'Failed to load submissions')
         } finally {
-            setLoading(false)
+            if (!silent) {
+                setLoading(false)
+            }
         }
     }
 
