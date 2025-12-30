@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
  */
 async function extractTextWithPdfTextExtract(buffer: Buffer): Promise<{ text: string; pages: number }> {
     // Import pdf-text-extract dynamically
-    const pdfTextExtract = (await import('pdf-text-extract')).default
+    const pdfTextExtract = (await import('pdf-text-extract')).default as any
 
     return new Promise((resolve, reject) => {
         // Use pdf-text-extract to extract text from buffer
