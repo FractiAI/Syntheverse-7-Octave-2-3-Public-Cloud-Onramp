@@ -110,20 +110,24 @@ export async function POST(request: NextRequest) {
         const pdfjs = await import('pdfjs-dist')
         
         // Configure worker BEFORE getting getDocument (important!)
-        // For server-side Node.js/serverless, we need to disable workers entirely
+        // For server-side Node.js/serverless, don't set workerSrc (like pdf-parse does)
         if (pdfjs?.GlobalWorkerOptions === null) {
             console.log('[PDF Extract] GlobalWorkerOptions is null, skipping worker configuration')
         } else {
             const GlobalWorkerOptions = pdfjs.GlobalWorkerOptions || pdfjs.default?.GlobalWorkerOptions
             if (GlobalWorkerOptions) {
-                // In Node.js/serverless environments, completely disable worker
-                // This prevents Next.js from bundling the worker and trying to import it
-                GlobalWorkerOptions.workerSrc = null
-                console.log('[PDF Extract] Worker disabled for server-side Node.js environment')
-
-                // Also set other worker-related options to ensure sync processing
-                if ('isWorkerDisabled' in GlobalWorkerOptions) {
-                    (GlobalWorkerOptions as any).isWorkerDisabled = true
+                // In Node.js/serverless environments, don't set workerSrc at all
+                // This is the same approach as pdf-parse library - it only sets workerSrc for browser environments
+                // pdfjs-dist will automatically use synchronous processing in Node.js
+                if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+                    // We're in Node.js - don't set workerSrc to avoid bundling issues
+                    console.log('[PDF Extract] Running in Node.js, skipping workerSrc configuration')
+                } else {
+                    // Browser environment - set a valid workerSrc
+                    if (!GlobalWorkerOptions.workerSrc) {
+                        GlobalWorkerOptions.workerSrc = 'pdfjs-dist/build/pdf.worker.mjs'
+                        console.log('[PDF Extract] Worker configured for browser environment')
+                    }
                 }
             } else {
                 console.warn('[PDF Extract] GlobalWorkerOptions not found')
