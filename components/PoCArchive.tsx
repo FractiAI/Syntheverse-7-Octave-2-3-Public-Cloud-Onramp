@@ -232,7 +232,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         setError(null)
         try {
             // Add cache bust parameter to ensure fresh data
-            const response = await fetch(`/api/archive/contributions?t=${Date.now()}`, {
+            const response = await fetch(`/api/archive/contributions?limit=200&t=${Date.now()}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

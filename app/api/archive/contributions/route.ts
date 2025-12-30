@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
 import { contributionsTable, pocLogTable, allocationsTable } from '@/utils/db/schema'
-import { eq, and, or, like, ilike } from 'drizzle-orm'
+import { eq, and, inArray, desc } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import { createClient } from '@/utils/supabase/server'
 
@@ -19,12 +19,23 @@ export async function GET(request: NextRequest) {
     headers.set('Expires', '0')
     
     try {
+        // Require auth for archive access (prevents bots and reduces accidental load)
+        const supabase = createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers })
+        }
+
         const { searchParams } = new URL(request.url)
         const status = searchParams.get('status')
         const contributor = searchParams.get('contributor')
         const metal = searchParams.get('metal')
+        const limitParam = searchParams.get('limit')
+
+        // Default + clamp to keep response time bounded (prevents Vercel 300s timeouts)
+        const limit = Math.max(1, Math.min(500, Number(limitParam || 200) || 200))
         
-        debug('ArchiveContributions', 'Query parameters', { status, contributor, metal })
+        debug('ArchiveContributions', 'Query parameters', { status, contributor, metal, limit })
         
         // Build query conditions
         const conditions = []
@@ -36,10 +47,27 @@ export async function GET(request: NextRequest) {
         }
         
         let contributions = await db
-            .select()
+            // Avoid pulling large text fields for list view (text_content can be huge)
+            .select({
+                submission_hash: contributionsTable.submission_hash,
+                title: contributionsTable.title,
+                contributor: contributionsTable.contributor,
+                content_hash: contributionsTable.content_hash,
+                status: contributionsTable.status,
+                category: contributionsTable.category,
+                metals: contributionsTable.metals,
+                metadata: contributionsTable.metadata,
+                registered: contributionsTable.registered,
+                registration_date: contributionsTable.registration_date,
+                registration_tx_hash: contributionsTable.registration_tx_hash,
+                stripe_payment_id: contributionsTable.stripe_payment_id,
+                created_at: contributionsTable.created_at,
+                updated_at: contributionsTable.updated_at,
+            })
             .from(contributionsTable)
             .where(conditions.length > 0 ? and(...conditions) : undefined)
-            .orderBy(contributionsTable.created_at)
+            .orderBy(desc(contributionsTable.created_at))
+            .limit(limit)
         
         // Filter by metal if specified (post-query since metals is JSONB array)
         if (metal) {
@@ -49,10 +77,17 @@ export async function GET(request: NextRequest) {
             })
         }
         
-        // Get all allocations to check which contributions are allocated and get allocation amounts
-        const allocations = await db
-            .select()
-            .from(allocationsTable)
+        // Fetch allocations only for the returned contributions (bounded query)
+        const submissionHashes = contributions.map(c => c.submission_hash)
+        const allocations = submissionHashes.length === 0
+            ? []
+            : await db
+                .select({
+                    submission_hash: allocationsTable.submission_hash,
+                    reward: allocationsTable.reward,
+                })
+                .from(allocationsTable)
+                .where(inArray(allocationsTable.submission_hash, submissionHashes))
         
         const allocatedHashes = new Set(allocations.map(a => a.submission_hash))
         // Create a map of submission_hash -> total allocation amount
@@ -94,7 +129,6 @@ export async function GET(request: NextRequest) {
                 title: contrib.title,
                 contributor: contrib.contributor,
                 content_hash: contrib.content_hash,
-                text_content: contrib.text_content,
                 status: displayStatus, // Use corrected status
                 category: contrib.category,
                 metals: contrib.metals as string[] || [],

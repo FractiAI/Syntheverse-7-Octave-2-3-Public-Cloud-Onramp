@@ -193,7 +193,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
         }
         setError(null)
         try {
-            const response = await fetch(`/api/archive/contributions?t=${Date.now()}`, {
+            const response = await fetch(`/api/archive/contributions?limit=200&t=${Date.now()}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
