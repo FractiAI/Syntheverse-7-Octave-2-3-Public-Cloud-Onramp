@@ -66,25 +66,26 @@ export async function POST(request: NextRequest) {
 
         // Use pdf-parse for server-side PDF processing
         console.log('[PDF Extract] Using pdf-parse for text extraction')
-        const pdfParse = (await import('pdf-parse')).default
+        const { PDFParse } = await import('pdf-parse')
 
         // Extract text using pdf-parse
         let pdfData: any
         try {
-            pdfData = await pdfParse(buffer, {
-                // pdf-parse options for better text extraction
-                pagerender: renderPage,
-                max: 0, // Extract all pages
+            const pdfParser = new PDFParse({
+                data: new Uint8Array(buffer),
+                verbosity: 0 // Minimal logging
             })
-            console.log(`[PDF Extract] PDF parsed successfully, pages: ${pdfData.numpages}`)
+
+            pdfData = await pdfParser.getText()
+            console.log(`[PDF Extract] PDF parsed successfully, pages: ${pdfData.total}`)
         } catch (parseError) {
             console.error('[PDF Extract] Error parsing PDF:', parseError)
             throw new Error(`Failed to parse PDF: ${parseError instanceof Error ? parseError.message : String(parseError)}`)
         }
 
-        // Get extracted text
+        // Get extracted text from TextResult
         let extractedText = pdfData.text || ''
-        console.log(`[PDF Extract] Extracted ${extractedText.length} characters from ${pdfData.numpages} pages`)
+        console.log(`[PDF Extract] Extracted ${extractedText.length} characters from ${pdfData.total} pages`)
 
         // Clean up the text (similar to Python scraper's text cleaning)
         // Normalize excessive whitespace but preserve intentional line breaks
@@ -103,10 +104,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
             success: true,
             text: extractedText,
-            pagesExtracted: pdfData.numpages,
-            totalPages: pdfData.numpages,
-            // Include additional metadata from pdf-parse
-            info: pdfData.info || {}
+            pagesExtracted: pdfData.total,
+            totalPages: pdfData.total,
+            // Include page details from TextResult
+            pages: pdfData.pages || []
         })
 
     } catch (error) {
@@ -143,29 +144,4 @@ export async function POST(request: NextRequest) {
     }
 }
 
-/**
- * Custom page renderer for pdf-parse to improve text extraction
- * Based on pdf-parse's internal rendering logic
- */
-function renderPage(pageData: any) {
-    let renderOptions = {
-        normalizeWhitespace: false,
-        disableCombineTextItems: false,
-    }
-
-    return pageData.getTextContent(renderOptions)
-        .then(function(textContent: any) {
-            let lastY, text = ''
-            // Loop through text items and handle positioning
-            for (let item of textContent.items) {
-                if (lastY == null || Math.abs(lastY - item.transform[5]) > 5) {
-                    // New line detected
-                    text += '\n'
-                }
-                text += item.str
-                lastY = item.transform[5]
-            }
-            return text
-        })
-}
 
