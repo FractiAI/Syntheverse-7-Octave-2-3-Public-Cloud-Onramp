@@ -43,11 +43,13 @@ export async function POST(request: NextRequest) {
 
         // Use pdf-parse (similar to Python's pypdf.PdfReader)
         // Much simpler and more reliable than pdfjs-dist for server-side
-        const pdfParse = await import('pdf-parse')
+        // pdf-parse is CommonJS, use require for better compatibility
+        const pdfParse = require('pdf-parse')
         
         let pdfData: any
         try {
-            pdfData = await pdfParse.default(buffer)
+            // pdf-parse is a function that takes a buffer and returns a promise
+            pdfData = await pdfParse(buffer)
         } catch (parseError) {
             console.error('Error parsing PDF:', parseError)
             throw new Error(`Failed to parse PDF: ${parseError instanceof Error ? parseError.message : String(parseError)}`)
