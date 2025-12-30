@@ -65,12 +65,12 @@ export async function POST(request: NextRequest) {
         let pagesExtracted = 1
 
         try {
-            const result = await extractTextWithPdf2Text(buffer)
+            const result = await extractTextWithPdfTextExtract(buffer)
             extractedText = result.text
             pagesExtracted = result.pages
-            console.log(`[PDF Extract] PDF2Text extraction successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
-        } catch (pdf2textError) {
-            console.error('[PDF Extract] PDF2Text extraction failed:', pdf2textError)
+            console.log(`[PDF Extract] PDF Text Extract successful: ${extractedText.length} chars from ${pagesExtracted} pages`)
+        } catch (extractError) {
+            console.error('[PDF Extract] PDF Text Extract failed:', extractError)
 
             // Return error instead of fallback - user should know extraction failed
             return NextResponse.json({
@@ -129,18 +129,18 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Extract text from PDF using pdf2text library
- * Simple and reliable PDF text extraction for serverless environments
+ * Extract text from PDF using pdf-text-extract library
+ * Lightweight PDF text extraction with minimal dependencies
  */
-async function extractTextWithPdf2Text(buffer: Buffer): Promise<{ text: string; pages: number }> {
-    // Import pdf2text dynamically
-    const pdf2text = (await import('pdf2text')).default
+async function extractTextWithPdfTextExtract(buffer: Buffer): Promise<{ text: string; pages: number }> {
+    // Import pdf-text-extract dynamically
+    const pdfTextExtract = (await import('pdf-text-extract')).default
 
     return new Promise((resolve, reject) => {
-        // Use pdf2text to extract text from buffer
-        pdf2text(buffer, (error: any, pages: string[]) => {
+        // Use pdf-text-extract to extract text from buffer
+        pdfTextExtract(buffer, (error: any, pages: string[]) => {
             if (error) {
-                reject(new Error(`PDF2Text extraction error: ${error.message}`))
+                reject(new Error(`PDF Text Extract error: ${error.message}`))
                 return
             }
 
