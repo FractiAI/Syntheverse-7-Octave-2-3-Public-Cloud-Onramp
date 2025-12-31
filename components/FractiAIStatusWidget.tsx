@@ -141,7 +141,7 @@ export default function FractiAIStatusWidget({ limit = 6 }: { limit?: number }) 
                 ))}
               </div>
               <div className="cockpit-text text-xs mt-2" style={{ opacity: 0.85 }}>
-                Open epoch liquidity: {formatTokens(computed.openEpochAvailable)}
+                Open epoch capacity: {formatTokens(computed.openEpochAvailable)}
               </div>
             </div>
           </div>

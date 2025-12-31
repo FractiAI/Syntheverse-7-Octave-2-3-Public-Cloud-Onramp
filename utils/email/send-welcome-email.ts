@@ -50,7 +50,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
                 This is Pru &quot;El Taino,&quot; Architect of Syntheverse. You have arrived. Welcome to the world of holographic hydrogen, element zero—your timeless, infinite homebase.
             </p>
             <p style="font-size: 16px; margin-bottom: 15px; color: #fff; line-height: 1.8;">
-                You stand at the threshold of a <strong style="color: #ffb84d;">new way to collaborate independently</strong> while building a <strong style="color: #ffb84d;">regenerative Proof-of-Contribution (PoC) based internal ERC-20 crypto ecosystem</strong> on the blockchain.
+                You stand at the threshold of a <strong style="color: #ffb84d;">new way to collaborate independently</strong> while building a <strong style="color: #ffb84d;">regenerative Proof-of-Contribution (PoC) system</strong> on the blockchain.
             </p>
             <p style="font-size: 16px; color: #fff; line-height: 1.8;">
                 Within Syntheverse, independent researchers, developers, and alignment contributors work together without traditional institutional constraints. Your contributions—whether scientific, technological, or aligned with our holographic hydrogen fractal principles—become part of a living, self-improving ecosystem anchored by the 90 Trillion SYNTH ERC-20 Motherlode Blockmine.
@@ -65,7 +65,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
             <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.8;">
                 <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Independent Collaboration:</strong> Work on your own timeline, in your own space, transcending traditional publication and institutional silos</li>
                 <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Regenerative PoC System:</strong> Every contribution strengthens the ecosystem through our Holographic Hydrogen Fractal Syntheverse Lens and Sandbox evaluation</li>
-                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Internal ERC-20 Economy:</strong> A self-contained crypto ecosystem on the blockchain, where SYNTH tokens reward alignment and participation—not for external trading or ownership</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Internal Coordination Marker:</strong> SYNTH is a fixed-supply ERC-20 coordination marker used within Syntheverse experiments—not an investment, not a sale, and not for external trading</li>
                 <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Blockchain Legacy:</strong> Your work is permanently recorded, verifiable, and contributes to training the next generation of intelligent systems</li>
             </ul>
         </div>
@@ -100,21 +100,21 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
             <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
                 <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">4. Explore the Archive</h3>
                 <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
-                    View all PoC submissions in the Frontier Module. See how contributions are scored, qualified, and allocated. Study the evaluation reports to understand how our regenerative system measures novelty, density, coherence, and alignment.
+                    View all PoC submissions in the Frontier Module. See how contributions are scored and qualified. Study the evaluation reports to understand how our system measures novelty, density, coherence, and alignment.
                 </p>
             </div>
             
             <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
                 <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">5. Register Qualified PoCs (Optional)</h3>
                 <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
-                    Once your PoC qualifies (pod_score ≥ 8,000 for Founder epoch), you can register it on the blockchain for $200. This anchors your contribution permanently and triggers SYNTH token allocation based on your score, epoch, and metal tier.
+                    Once your PoC qualifies (pod_score ≥ 8,000 for Founder epoch), you can optionally register it on-chain to anchor your contribution permanently. This does not create economic entitlement or ownership rights.
                 </p>
             </div>
             
             <div style="margin-bottom: 0; padding: 15px; background: rgba(255,184,77,0.1); border-left: 3px solid #ffb84d;">
-                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">6. Financial Alignment (Optional)</h3>
+                <h3 style="margin-top: 0; color: #ffb84d; font-size: 18px; margin-bottom: 10px;">6. Ecosystem Support (Optional)</h3>
                 <p style="font-size: 14px; color: #e0e0e0; margin: 0; line-height: 1.7;">
-                    Support the ecosystem through Financial Alignment Contributions (Copper $10K, Silver $25K, Gold $50K-$250K). These ERC-20 tokens are for alignment purposes only—not for ownership or external trading—and help fund infrastructure, research, and development.
+                    You may optionally support the ecosystem to help fund infrastructure, research, and development. This is voluntary support—not a purchase, investment, or token sale. There is no expectation of profit or return.
                 </p>
             </div>
         </div>
@@ -148,7 +148,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
             <div style="margin-bottom: 20px;">
                 <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">Metals & Amplifications</h3>
                 <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 0 0 10px 0;">
-                    Your contributions receive metal classifications (Gold/Silver/Copper) based on type. Metal combinations amplify SYNTH allocation:
+                    Your contributions receive metal classifications (Gold/Silver/Copper) based on type. Metal combinations can influence internal protocol recognition:
                 </p>
                 <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.7;">
                     <li>Gold + Silver + Copper: <strong style="color: #ffb84d;">1.5×</strong> (Full Integration)</li>
@@ -159,9 +159,9 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
             </div>
             
             <div>
-                <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">Epochs: The Token Distribution System</h3>
+                <h3 style="color: #ffb84d; font-size: 18px; margin-bottom: 10px;">Epochs: Protocol Coordination Windows</h3>
                 <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 0 0 10px 0;">
-                    SYNTH tokens are distributed across four epochs based on contribution quality:
+                    The protocol organizes internal coordination capacity across four epochs based on contribution quality:
                 </p>
                 <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.7;">
                     <li><strong style="color: #ffb84d;">Founder:</strong> 45T SYNTH, threshold 8,000 (highest quality)</li>
@@ -170,7 +170,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
                     <li><strong style="color: #ffb84d;">Ecosystem:</strong> 11.25T SYNTH, threshold 5,000</li>
                 </ul>
                 <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 10px 0 0 0;">
-                    Tokens distribute per PoC according to score, with amounts halving as contributions saturate each epoch.
+                    Any protocol recognition (if enabled) is discretionary, non-promissory, and does not imply external monetary value.
                 </p>
             </div>
         </div>
@@ -215,6 +215,10 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; font-size: 12px; color: #666; text-align: center;">
             <p style="margin: 0;">Founder&apos;s Welcome Email | Syntheverse Ecosystem</p>
             <p style="margin: 5px 0 0 0;">Questions? Contact <a href="mailto:info@fractiai.com" style="color: #ffb84d;">info@fractiai.com</a> | Visit <a href="${BASE_URL}" style="color: #ffb84d;">${BASE_URL}</a></p>
+            <p style="margin: 10px 0 0 0; color: #555; line-height: 1.6;">
+                Clarification: Syntheverse is an experimental, non-custodial sandbox. SYNTH is an internal coordination marker
+                and is not a financial instrument. No expectation of profit or return exists.
+            </p>
             <p style="margin: 10px 0 0 0; color: #555;">
                 Website: <a href="http://fractiai.com" style="color: #ffb84d;">fractiai.com</a> | 
                 GitHub: <a href="https://github.com/FractiAI" style="color: #ffb84d;">github.com/FractiAI</a> | 

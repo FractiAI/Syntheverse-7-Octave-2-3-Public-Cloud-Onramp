@@ -36,20 +36,22 @@ export function ReactorCore() {
         
         const params = new URLSearchParams(window.location.search)
         const registrationStatus = params.get('registration')
-        const financialAlignmentStatus = params.get('financial_alignment')
-        const shouldPoll = registrationStatus === 'success' || financialAlignmentStatus === 'success'
+        // Back-compat: support both legacy (?financial_alignment=success) and new (?financial_support=success)
+        const financialSupportStatus = params.get('financial_support') || params.get('financial_alignment')
+        const shouldPoll = registrationStatus === 'success' || financialSupportStatus === 'success'
         
         // Poll for updates after successful registration or financial alignment payment
         if (shouldPoll) {
             // Show success message
-            if (financialAlignmentStatus === 'success') {
-                console.log('✅ Financial Alignment payment successful - polling for balance update...')
+            if (financialSupportStatus === 'success') {
+                console.log('✅ Ecosystem support payment successful - polling for status update...')
             }
             
             // Immediately remove URL params so other widgets don't start their own polling loops.
             const newUrl = new URL(window.location.href)
             newUrl.searchParams.delete('registration')
             newUrl.searchParams.delete('financial_alignment')
+            newUrl.searchParams.delete('financial_support')
             newUrl.searchParams.delete('product_id')
             window.history.replaceState({}, '', newUrl.toString())
 
@@ -240,7 +242,7 @@ export function ReactorCore() {
 
             {/* Central Display - Available SYNTH */}
             <div className="text-center mb-8">
-                <div className="cockpit-label mb-2">Available for Allocation</div>
+                <div className="cockpit-label mb-2">Protocol Reserve Remaining</div>
                 <div className="cockpit-number cockpit-number-large">
                     {formatTokens(totalAvailable)}
                 </div>
@@ -248,7 +250,7 @@ export function ReactorCore() {
                     {((totalAvailable / totalSupply) * 100).toFixed(2)}% of total supply
                 </div>
                 <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.8 }}>
-                    Open epoch liquidity: {formatTokens(openEpochAvailable)}
+                    Open epoch capacity: {formatTokens(openEpochAvailable)}
                 </div>
             </div>
 

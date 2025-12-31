@@ -3,14 +3,10 @@
  * 
  * GET /api/financial-alignment/products
  * 
- * Returns list of active Stripe products that are Financial Alignment contributions
+ * Returns list of active Stripe products used for voluntary ecosystem support.
  * 
  * Expected Financial Alignment Products:
- * - $10,000: prod_ThCg591XcQWl8v
- * - $25,000: prod_ThCivl88RobmOP
- * - $50,000: prod_ThCjft1qMQNBVo
- * - $100,000: prod_ThCkM2ilGNZ1mo
- * - $250,000: prod_ThCn3TWm8mrVqT
+ * (IDs are kept for reliability; UI copy should frame these as support levels.)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -93,9 +89,8 @@ export async function GET(request: NextRequest) {
         const products = { data: Array.from(productMap.values()) }
 
 
-        // Filter for Financial Alignment products
-        // Products should have metadata.type === 'financial_alignment' or name contains "Contribution"
-        // OR match known product IDs
+        // Filter for ecosystem support products.
+        // Always include known product IDs; otherwise include metadata.type matches.
         const financialAlignmentProducts = products.data
             .filter(product => {
                 // Always include known product IDs
@@ -105,19 +100,10 @@ export async function GET(request: NextRequest) {
                 
                 const name = product.name.toLowerCase()
                 const metadataType = product.metadata?.type?.toLowerCase()
-                const hasContributionKeyword = name.includes('contribution')
-                const isFinancialAlignment = metadataType === 'financial_alignment' || metadataType === 'financial_alignment_poc'
+                const hasSupportKeyword = name.includes('support') || name.includes('contribution')
+                const isSupport = metadataType === 'financial_support' || metadataType === 'financial_alignment' || metadataType === 'financial_alignment_poc'
                 
-                return isFinancialAlignment || (hasContributionKeyword && (
-                    name.includes('copper') || 
-                    name.includes('silver') || 
-                    name.includes('gold') ||
-                    name.includes('$10,000') ||
-                    name.includes('$25,000') ||
-                    name.includes('$50,000') ||
-                    name.includes('$100,000') ||
-                    name.includes('$250,000')
-                ))
+                return isSupport || hasSupportKeyword
             })
             .map(product => {
                 // Handle both expanded price object and price ID string

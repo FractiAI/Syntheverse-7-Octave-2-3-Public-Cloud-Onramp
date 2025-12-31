@@ -134,7 +134,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                       </p>
                       <p>
                         The blockchain is not a replacement—it’s a new address. Here, you can operate in real time within the
-                        Syntheverse sandbox, where every action is traceable and rewarded through Proof‑of‑Contribution.
+                        Syntheverse sandbox, where every action is traceable and recorded through Proof‑of‑Contribution.
                       </p>
                       <p>
                         2026 doesn’t start with fireworks—it starts with a new frontier coming online. Come join the
@@ -166,7 +166,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                       <div className="border border-[var(--keyline-accent)] p-4">
                         <div className="cockpit-label">WHAT YOU CAN EXPLORE</div>
                         <div className="cockpit-text mt-3 space-y-2 text-sm">
-                          <div>• Epoch-based token allocation aligned with contribution</div>
+                          <div>• Epoch-based coordination primitives tied to Proof‑of‑Contribution records</div>
                           <div>• Closed, regenerative ERC‑20 ecosystem</div>
                           <div>• Living sandbox where contributions unlock access and progression</div>
                         </div>
@@ -207,6 +207,24 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   </Link>
                 ) : null}
               </div>
+
+              {variant === 'fractiai' ? (
+                <div className="mt-6 cockpit-text text-xs" style={{ opacity: 0.82 }}>
+                  <div className="border border-[var(--keyline-accent)] p-4">
+                    <div className="cockpit-label">CLARIFICATION</div>
+                    <div className="mt-2 space-y-2">
+                      <div>
+                        Syntheverse is an <strong>experimental, non-custodial sandbox</strong>. Participation does not confer
+                        ownership, equity, profit rights, or guaranteed outcomes.
+                      </div>
+                      <div>
+                        SYNTH is a <strong>fixed-supply internal coordination marker</strong>. It is not a financial instrument;
+                        there is no expectation of profit or return.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
 
               <div className="mt-6 grid gap-3 md:grid-cols-3">
                 <ExpandablePanel
@@ -254,8 +272,8 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   <div className="cockpit-text space-y-3 text-sm">
                     <p>Submissions are evaluated for novelty, density, coherence, and alignment to grow the living map.</p>
                     <p>
-                      Rewards allocate from metal pools (Gold/Silver/Copper) using the PoC’s metal assay—auditable and
-                      composition-aware.
+                      The protocol may recognize contributions using internal coordination pools (Gold/Silver/Copper) derived
+                      from a PoC’s metal assay—auditable and composition-aware.
                     </p>
                   </div>
                 </ExpandablePanel>

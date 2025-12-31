@@ -4,7 +4,6 @@ import { usersTable, contributionsTable, allocationsTable, epochMetalBalancesTab
 import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
-import { calculateProjectedAllocation } from '@/utils/tokenomics/projected-allocation'
 import crypto from 'crypto'
 import { advanceGlobalEpochTo, pickEpochForMetalWithBalance, type MetalType, type EpochType } from '@/utils/tokenomics/epoch-metal-pools'
 
@@ -119,8 +118,8 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         metadata: session.metadata 
     })
     
-    // Check if this is a Financial Alignment contribution
-    if (session.metadata?.type === 'financial_alignment_poc') {
+    // Check if this is a voluntary ecosystem support (Financial Alignment legacy naming)
+    if (session.metadata?.type === 'financial_support' || session.metadata?.type === 'financial_alignment_poc') {
         await handleFinancialAlignmentPayment(session)
         return
     }
@@ -378,7 +377,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 }
 
 async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session) {
-    debug('StripeWebhook', 'Processing Financial Alignment payment', {
+    debug('StripeWebhook', 'Processing ecosystem support payment (Financial Alignment)', {
         sessionId: session.id,
         metadata: session.metadata,
         customerEmail: session.customer_email || session.customer_details?.email
@@ -412,11 +411,13 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
         
         const user = users[0]
         const productId = session.metadata?.product_id || ''
-        const productName = session.metadata?.product_name || 'Financial Alignment Contribution'
+        const productName = session.metadata?.product_name || 'Ecosystem Support'
         const amount = session.amount_total ? Number(session.amount_total) / 100 : 0 // Convert from cents
+        const currency = (session.currency || 'usd').toLowerCase()
         
-        // Create a record in the contributions table for financial alignment
+        // Create a PoC record describing the support contribution.
         // Use a hash based on session ID + timestamp for submission_hash
+        // NOTE: Keep legacy prefix stable to avoid duplicates if Stripe retries old events.
         const submissionHash = `financial_alignment_${session.id.replace('cs_', '')}`
         
         // Check if already exists
@@ -434,217 +435,55 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
             return
         }
         
-        // Insert financial alignment contribution record
+        // Insert ecosystem support PoC record.
+        // IMPORTANT COMPLIANCE: this is NOT a token purchase/sale/exchange. No token recognition is guaranteed.
         await db.insert(contributionsTable).values({
             submission_hash: submissionHash,
             title: productName,
             contributor: contributorEmail,
             content_hash: submissionHash, // Use same hash as submission_hash for financial alignment
-            status: 'registered', // Financial alignment contributions are immediately registered
+            status: 'qualified', // Ecosystem support PoCs qualify immediately (no content evaluation required)
             category: 'alignment',
-            metals: ['copper'], // Default metal for financial alignment
+            metals: null, // Do not bind “support” to metal tiers
             metadata: {
-                type: 'financial_alignment_poc',
+                type: 'financial_support',
+                legacy_type: session.metadata?.type,
                 product_id: productId,
                 product_name: productName,
                 amount: amount,
-                erc20_alignment_only: true,
+                currency,
+                stripe_session_id: session.id,
+                stripe_payment_intent: session.payment_intent,
+                // Disclaimers for clarity and compliance (non-promissory, non-sale)
+                support_only: true,
+                not_a_purchase: true,
+                not_a_token_sale: true,
+                no_expectation_of_profit: true,
                 no_ownership: true,
-                no_external_trading: true
+                non_custodial_experimental_sandbox: true,
+                token_recognition_discretionary: true,
             },
-            registered: true,
-            registration_date: new Date(),
+            // This field is reserved for on-chain PoC registration; keep false for support PoCs.
+            registered: false,
+            registration_date: null,
             stripe_payment_id: session.payment_intent as string,
             registration_tx_hash: null, // No blockchain registration for financial alignment (just payment)
             created_at: new Date(),
             updated_at: new Date()
         })
         
-        debug('StripeWebhook', 'Financial Alignment contribution recorded', {
+        debug('StripeWebhook', 'Ecosystem support PoC recorded + qualified', {
             submissionHash,
             sessionId: session.id,
             contributorEmail,
             productName,
             amount,
+            currency,
             stripePaymentId: session.payment_intent
         })
-        
-        // Allocate tokens for Financial Alignment from Founders' 5% (4.5T SYNTH)
-        // Fixed token allocations per contribution level:
-        // $10,000: 18M SYNTH
-        // $25,000: 90M SYNTH
-        // $50,000: 450M SYNTH
-        // $100,000: 1.2B SYNTH
-        // $250,000: 4.5B SYNTH
-        
-        const FINANCIAL_ALIGNMENT_ALLOCATIONS: Record<number, { tokens: number, tier: string }> = {
-            10000: { tokens: 18_000_000, tier: 'copper' },           // 18M SYNTH
-            25000: { tokens: 90_000_000, tier: 'copper' },           // 90M SYNTH
-            50000: { tokens: 450_000_000, tier: 'silver' },          // 450M SYNTH
-            100000: { tokens: 1_200_000_000, tier: 'silver' },       // 1.2B SYNTH
-            250000: { tokens: 4_500_000_000, tier: 'gold' },         // 4.5B SYNTH
-        }
-        
-        // Find matching allocation based on amount (exact match)
-        let synthAllocation = 0
-        let tier = 'copper'
-        
-        if (FINANCIAL_ALIGNMENT_ALLOCATIONS[amount]) {
-            synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[amount].tokens
-            tier = FINANCIAL_ALIGNMENT_ALLOCATIONS[amount].tier
-        } else {
-            // If amount doesn't match exactly, use closest tier
-            // This shouldn't happen with our product structure, but handle gracefully
-            if (amount >= 250000) {
-                tier = 'gold'
-                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[250000].tokens
-            } else if (amount >= 100000) {
-                tier = 'silver'
-                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[100000].tokens
-            } else if (amount >= 50000) {
-                tier = 'silver'
-                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[50000].tokens
-            } else if (amount >= 25000) {
-                tier = 'copper'
-                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[25000].tokens
-            } else if (amount >= 10000) {
-                tier = 'copper'
-                synthAllocation = FINANCIAL_ALIGNMENT_ALLOCATIONS[10000].tokens
-            } else {
-                debugError('StripeWebhook', 'Financial Alignment amount below minimum tier', {
-                    submissionHash,
-                    amount,
-                    minimumAmount: 10000
-                })
-                return
-            }
-        }
-        
-        debug('StripeWebhook', 'Financial Alignment token allocation calculation', {
-            submissionHash,
-            amount,
-            tier,
-            synthAllocation,
-            allocationType: 'fixed_amount'
-        })
-        
-        // Allocate tokens from the earliest epoch that has sufficient balance for the requested metal.
-        // This supports "epoch opens by metal" behavior (if Founder metal pool is depleted, use the next epoch).
-        try {
-            const metal = tier.toLowerCase() as MetalType
-            const pool = await pickEpochForMetalWithBalance(metal, synthAllocation, 'founder')
-
-            if (!pool) {
-                debugError('StripeWebhook', 'No epoch metal pool found for Financial Alignment allocation', {
-                    submissionHash,
-                    metal,
-                    requested: synthAllocation,
-                })
-                return
-            }
-
-            const currentBalance = Number(pool.balance)
-            if (currentBalance < synthAllocation) {
-                debugError('StripeWebhook', 'Insufficient epoch metal balance for Financial Alignment allocation', {
-                    submissionHash,
-                    metal,
-                    epoch: pool.epoch,
-                    requested: synthAllocation,
-                    available: currentBalance
-                })
-                return
-            }
-
-            const epochUsed = pool.epoch as EpochType
-            await advanceGlobalEpochTo(epochUsed)
-            const newBalance = currentBalance - synthAllocation
-            
-            // Create allocation record
-            const allocationId = crypto.randomUUID()
-            await db.insert(allocationsTable).values({
-                id: allocationId,
-                submission_hash: submissionHash,
-                contributor: contributorEmail,
-                metal: tier.toLowerCase(),
-                epoch: epochUsed,
-                tier: tier.toLowerCase(),
-                reward: synthAllocation.toString(),
-                tier_multiplier: '1.0', // No multiplier for Financial Alignment
-                epoch_balance_before: currentBalance.toString(),
-                epoch_balance_after: newBalance.toString(),
-            })
-            
-            // Update epoch metal pool balance
-            await db
-                .update(epochMetalBalancesTable)
-                .set({
-                    balance: newBalance.toString(),
-                    updated_at: new Date()
-                })
-                .where(eq(epochMetalBalancesTable.id, pool.id as any))
-            
-            // Update tokenomics total_distributed (overall + per metal)
-            const tokenomicsState = await db
-                .select()
-                .from(tokenomicsTable)
-                .where(eq(tokenomicsTable.id, 'main'))
-                .limit(1)
-            
-            if (tokenomicsState.length > 0) {
-                const state: any = tokenomicsState[0]
-                const newTotalDistributed = Number(state.total_distributed) + synthAllocation
-                const metalKey =
-                    tier === 'gold' ? 'total_distributed_gold' :
-                    tier === 'silver' ? 'total_distributed_silver' :
-                    'total_distributed_copper'
-                const newMetalDistributed = Number(state[metalKey] || 0) + synthAllocation
-                await db
-                    .update(tokenomicsTable)
-                    .set({
-                        total_distributed: newTotalDistributed.toString(),
-                        [metalKey]: newMetalDistributed.toString(),
-                        updated_at: new Date()
-                    } as any)
-                    .where(eq(tokenomicsTable.id, 'main'))
-            }
-            
-            debug('StripeWebhook', 'Financial Alignment tokens allocated successfully', {
-                submissionHash,
-                tier,
-                synthAllocation,
-                epoch: epochUsed,
-                balanceBefore: currentBalance,
-                balanceAfter: newBalance,
-                allocationRecordId: allocationId
-            })
-            
-            // Best-effort: trigger global epoch transition check (opens next epoch when ALL metals in current epoch are exhausted).
-            // Metal-specific epoch availability is handled by pickEpochForMetalWithBalance().
-            const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
-            await getOpenEpochInfo()
-            
-            // Log allocation summary for debugging
-            console.log('✅ Financial Alignment Allocation Complete:', {
-                contributorEmail,
-                amount: amount,
-                tier,
-                synthAllocation: synthAllocation.toLocaleString(),
-                epochUsed: epochUsed,
-                balanceBefore: currentBalance.toLocaleString(),
-                balanceAfter: newBalance.toLocaleString(),
-                submissionHash
-            })
-        } catch (allocationError) {
-            // Log allocation error but don't fail the webhook (payment is complete)
-            debugError('StripeWebhook', 'Financial Alignment allocation failed (non-fatal)', allocationError)
-            console.error('StripeWebhook: Financial Alignment allocation error:', {
-                submissionHash,
-                tier,
-                synthAllocation,
-                error: allocationError instanceof Error ? allocationError.message : String(allocationError)
-            })
-        }
-        
+        // IMPORTANT COMPLIANCE:
+        // - Ecosystem support does NOT trigger SYNTH recognition automatically.
+        // - Any internal coordination recognition (if ever enabled) is discretionary and handled separately from payment.
     } catch (error) {
         debugError('StripeWebhook', 'Error processing Financial Alignment payment', error)
         // Don't throw - payment is complete, we don't want to retry the webhook

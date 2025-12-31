@@ -219,9 +219,9 @@ export function EpochTokenDisplay() {
     return (
         <Card>
             <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
                     <Coins className="h-5 w-5" />
-                        Open Epochs & Available SYNTH Tokens (Gold / Silver / Copper)
+                        Open Epochs & SYNTH Protocol Reserve (Gold / Silver / Copper)
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -243,9 +243,7 @@ export function EpochTokenDisplay() {
 
                     {/* Token Balances */}
                     <div>
-                        <div className="text-sm font-semibold mb-3">
-                            Available SYNTH Tokens (per epoch)
-                        </div>
+                        <div className="text-sm font-semibold mb-3">SYNTH Reserve (per epoch)</div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             {openEpochs.map((epoch) => {
                                 const epochData = epochInfo.epochs[epoch]
@@ -301,7 +299,7 @@ export function EpochTokenDisplay() {
                     {/* Total Available */}
                     <div className="pt-4 border-t">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold">Total Available for Allocation</span>
+                            <span className="text-sm font-semibold">Total Protocol Reserve Remaining</span>
                             <span className="text-2xl font-bold">{formatTokens(totalAvailable)} SYNTH</span>
                         </div>
                     </div>

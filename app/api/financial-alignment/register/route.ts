@@ -1,11 +1,14 @@
 /**
- * API endpoint to initiate Financial Alignment PoC registration via Stripe checkout
+ * API endpoint to initiate voluntary ecosystem support via Stripe checkout
  * 
  * POST /api/financial-alignment/register
  * 
- * Body: { product_id: string, price_id: string, amount: number }
+ * Body: { product_id: string, price_id: string }
  * 
- * Creates a Stripe checkout session for the selected Financial Alignment contribution level
+ * Creates a Stripe checkout session for a support level.
+ *
+ * IMPORTANT: This is not a token purchase/sale/investment. Any internal token recognition is discretionary and
+ * conceptually/procedurally separated from financial support.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -31,11 +34,11 @@ export async function POST(request: NextRequest) {
 
         // Parse request body
         const body = await request.json()
-        const { product_id, price_id, amount } = body
+        const { product_id, price_id } = body
 
-        if (!product_id || !price_id || !amount) {
+        if (!product_id || !price_id) {
             return NextResponse.json(
-                { error: 'Missing required fields: product_id, price_id, and amount are required' },
+                { error: 'Missing required fields: product_id and price_id are required' },
                 { status: 400 }
             )
         }
@@ -76,7 +79,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Fetch product details from Stripe to get name
-        let productName = 'Financial Alignment PoC'
+        let productName = 'Ecosystem Support'
         let productDescription = ''
         try {
             const product = await stripe.products.retrieve(product_id)
@@ -86,16 +89,10 @@ export async function POST(request: NextRequest) {
             debugError('FinancialAlignmentRegister', 'Failed to fetch product details', err)
         }
 
-        // ERC-20 Alignment Language for checkout description
-        const erc20AlignmentDescription = `ERC-20 Financial Alignment Contribution: ${productName}
-
-IMPORTANT ERC-20 ALIGNMENT TERMS:
-• ALIGNMENT PURPOSE ONLY: ERC-20 tokens (SYNTH) are for alignment with the Syntheverse ecosystem only
-• NOT FOR OWNERSHIP: Tokens do NOT represent equity, ownership, or financial interest
-• NO EXTERNAL TRADING: Tokens are NON-TRANSFERABLE and NON-TRADEABLE on external exchanges
-• ECOSYSTEM UTILITY ONLY: Tokens function exclusively within Syntheverse for participation and alignment tracking
-
-By proceeding, you acknowledge these ERC-20 tokens are for alignment purposes only, do not represent ownership, and cannot be traded externally.`
+        // Checkout description (keep within Stripe's 500 char limit)
+        const supportDescription = `Syntheverse Ecosystem Support: ${productName}.
+Not a purchase, token sale, investment, or exchange of money for tokens. No expectation of profit/return.
+SYNTH is a fixed-supply internal coordination marker; any recognition is optional, discretionary, and separate from support.`
 
         // Create Stripe checkout session using the price_id
         const session = await stripe.checkout.sessions.create({
@@ -107,26 +104,27 @@ By proceeding, you acknowledge these ERC-20 tokens are for alignment purposes on
                 },
             ],
             mode: 'payment',
-            success_url: `${baseUrl}/dashboard?financial_alignment=success&product_id=${product_id}`,
-            cancel_url: `${baseUrl}/dashboard?financial_alignment=cancelled`,
+            success_url: `${baseUrl}/dashboard?financial_support=success&product_id=${product_id}`,
+            cancel_url: `${baseUrl}/dashboard?financial_support=cancelled`,
             metadata: {
                 contributor: user.email!,
-                type: 'financial_alignment_poc',
+                type: 'financial_support',
                 product_id: product_id,
                 product_name: productName,
-                amount: amount.toString(),
-                erc20_alignment_only: 'true',
-                no_ownership: 'true',
-                no_external_trading: 'true',
+                support_only: 'true',
+                not_a_purchase: 'true',
+                not_a_token_sale: 'true',
+                no_expectation_of_profit: 'true',
             },
             // Add custom description to payment intent metadata
             payment_intent_data: {
-                description: erc20AlignmentDescription.substring(0, 500), // Stripe has 500 char limit
+                description: supportDescription.substring(0, 500), // Stripe has 500 char limit
                 metadata: {
-                    erc20_alignment_only: 'true',
-                    no_ownership: 'true',
-                    no_external_trading: 'true',
-                    alignment_purpose: 'Syntheverse ecosystem alignment only',
+                    support_only: 'true',
+                    not_a_purchase: 'true',
+                    not_a_token_sale: 'true',
+                    no_expectation_of_profit: 'true',
+                    purpose: 'Voluntary ecosystem support (infrastructure, research, operations)',
                 }
             }
         })
@@ -134,7 +132,6 @@ By proceeding, you acknowledge these ERC-20 tokens are for alignment purposes on
         debug('FinancialAlignmentRegister', 'Checkout session created', {
             sessionId: session.id,
             productId: product_id,
-            amount
         })
 
         if (!session.url) {

@@ -60,7 +60,7 @@ export function FinancialAlignmentButton() {
         fetchProducts()
     }, [])
 
-    async function handleRegister(product: FinancialAlignmentProduct) {
+    async function handleSupport(product: FinancialAlignmentProduct) {
         if (!product.price_id) {
             alert('Price not available for this product')
             return
@@ -69,12 +69,12 @@ export function FinancialAlignmentButton() {
         // Close dropdown menu first
         setIsOpen(false)
         
-        // Show confirmation dialog with ERC-20 alignment language
+        // Show confirmation dialog with clear, non-promissory support language
         setSelectedProduct(product)
         setConfirmDialogOpen(true)
     }
 
-    async function confirmRegister() {
+    async function confirmSupport() {
         if (!selectedProduct || !selectedProduct.price_id) {
             return
         }
@@ -90,7 +90,6 @@ export function FinancialAlignmentButton() {
                 body: JSON.stringify({
                     product_id: selectedProduct.id,
                     price_id: selectedProduct.price_id,
-                    amount: selectedProduct.amount
                 })
             })
 
@@ -106,7 +105,7 @@ export function FinancialAlignmentButton() {
             }
 
             if (!response.ok) {
-                const errorMessage = data.message || data.error || `Failed to initiate registration (${response.status})`
+                const errorMessage = data.message || data.error || `Failed to initiate checkout (${response.status})`
                 throw new Error(errorMessage)
             }
 
@@ -122,15 +121,15 @@ export function FinancialAlignmentButton() {
             console.log('Redirecting to Stripe checkout:', data.checkout_url)
             window.location.href = data.checkout_url
         } catch (err) {
-            console.error('Registration error:', err)
-            const errorMessage = err instanceof Error ? err.message : 'Failed to register Financial Alignment PoC'
-            alert(`Registration Error: ${errorMessage}`)
+            console.error('Support checkout error:', err)
+            const errorMessage = err instanceof Error ? err.message : 'Failed to start ecosystem support checkout'
+            alert(`Checkout Error: ${errorMessage}`)
             setProcessing(null)
             // Don't close dialog on error so user can try again
         }
     }
 
-    function cancelRegister() {
+    function cancelSupport() {
         setConfirmDialogOpen(false)
         setSelectedProduct(null)
         setProcessing(null) // Reset processing state
@@ -143,32 +142,6 @@ export function FinancialAlignmentButton() {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
         }).format(amount)
-    }
-
-    const formatSynthAmount = (tokens: number): string => {
-        if (tokens >= 1_000_000_000) {
-            // Billions
-            const billions = tokens / 1_000_000_000
-            return billions % 1 === 0 ? `${billions}B` : `${billions.toFixed(1)}B`
-        } else if (tokens >= 1_000_000) {
-            // Millions
-            const millions = tokens / 1_000_000
-            return millions % 1 === 0 ? `${millions}M` : `${millions.toFixed(1)}M`
-        } else if (tokens >= 1_000) {
-            // Thousands
-            const thousands = tokens / 1_000
-            return `${thousands.toFixed(0)}K`
-        }
-        return tokens.toString()
-    }
-
-    // SYNTH token allocations for each contribution level
-    const SYNTH_ALLOCATIONS: Record<number, { tokens: number, tier: string }> = {
-        10000: { tokens: 18_000_000, tier: 'Copper' },           // 18M SYNTH
-        25000: { tokens: 90_000_000, tier: 'Copper' },           // 90M SYNTH
-        50000: { tokens: 450_000_000, tier: 'Silver' },          // 450M SYNTH
-        100000: { tokens: 1_200_000_000, tier: 'Silver' },       // 1.2B SYNTH
-        250000: { tokens: 4_500_000_000, tier: 'Gold' },         // 4.5B SYNTH
     }
 
     if (loading) {
@@ -190,7 +163,7 @@ export function FinancialAlignmentButton() {
                 <DropdownMenuTrigger asChild>
                 <button className="cockpit-lever">
                     <CreditCard className="inline h-4 w-4 mr-2" />
-                    Financial Alignment Contribution
+                    Ecosystem Support
                     <ChevronDown className="inline h-4 w-4 ml-2" />
                 </button>
                 </DropdownMenuTrigger>
@@ -206,8 +179,10 @@ export function FinancialAlignmentButton() {
                     }}
                 >
                     <div className="p-3 border-b border-[var(--keyline-primary)] bg-[var(--cockpit-obsidian)] flex-shrink-0">
-                        <div className="cockpit-label text-xs mb-1">Select Contribution Level</div>
-                        <div className="cockpit-text text-xs">Choose your level and register on blockchain</div>
+                        <div className="cockpit-label text-xs mb-1">Select Support Level</div>
+                        <div className="cockpit-text text-xs">
+                            Voluntary support for infrastructure, research, and ecosystem operations
+                        </div>
                     </div>
                     <div 
                         className="overflow-y-auto overflow-x-hidden flex-1 min-h-0"
@@ -219,16 +194,7 @@ export function FinancialAlignmentButton() {
                         }}
                     >
                         {products.map((product) => {
-                            // Get SYNTH allocation for this contribution amount
-                            const allocation = SYNTH_ALLOCATIONS[product.amount]
-                            const tier = allocation?.tier || 'Contribution'
-                            const synthTokens = allocation?.tokens || 0
-                            const synthFormatted = synthTokens > 0 ? formatSynthAmount(synthTokens) : ''
-                            
-                            // Build description with tier and SYNTH allocation
-                            const description = synthFormatted 
-                                ? `${tier} - ${synthFormatted} SYNTH`
-                                : tier
+                            const description = product.name || 'Support Level'
                             
                             return (
                                 <div key={product.id} className="border-b border-[var(--keyline-primary)] last:border-b-0">
@@ -246,7 +212,7 @@ export function FinancialAlignmentButton() {
                                             </div>
                                             <div className="flex-shrink-0">
                                                 <button
-                                                    onClick={() => handleRegister(product)}
+                                                    onClick={() => handleSupport(product)}
                                                     disabled={processing === product.id || !product.price_id}
                                                     className="cockpit-lever text-xs py-1.5 px-3 whitespace-nowrap"
                                                 >
@@ -258,7 +224,7 @@ export function FinancialAlignmentButton() {
                                                     ) : (
                                                         <>
                                                             <CreditCard className="inline h-3 w-3 mr-1" />
-                                                            Register
+                                                            Support
                                                         </>
                                                     )}
                                                 </button>
@@ -289,10 +255,10 @@ export function FinancialAlignmentButton() {
                         <DialogHeader>
                             <DialogTitle className="cockpit-title text-xl flex items-center gap-2">
                                 <AlertTriangle className="h-5 w-5 text-[var(--hydrogen-amber)]" />
-                                ERC-20 Financial Alignment PoC Contribution
+                                Ecosystem Support (Voluntary)
                             </DialogTitle>
                             <DialogDescription className="cockpit-text">
-                                Important: Please read and acknowledge the following terms before proceeding
+                                Important: please read these terms before proceeding
                             </DialogDescription>
                         </DialogHeader>
                     </div>
@@ -308,35 +274,26 @@ export function FinancialAlignmentButton() {
                         )}
 
                         <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,215,0,0.05)] rounded">
-                            <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">
-                                ERC-20 Token Alignment Purpose & Restrictions
-                            </div>
+                            <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">Clear Terms</div>
                             <div className="cockpit-text space-y-3 text-sm">
                                 <p>
-                                    <strong>ALIGNMENT PURPOSE ONLY:</strong> This Financial Alignment PoC contribution 
-                                    receives ERC-20 tokens (SYNTH) on the Hard Hat L1 blockchain for the sole purpose 
-                                    of <strong>alignment with the Syntheverse ecosystem</strong> and participation in 
-                                    the Motherlode Blockmine collective intelligence network.
+                                    <strong>VOLUNTARY SUPPORT:</strong> This payment is a voluntary contribution to help
+                                    fund infrastructure, research, and ecosystem operations.
                                 </p>
                                 <p>
-                                    <strong>NOT FOR OWNERSHIP:</strong> These ERC-20 tokens do <strong>NOT</strong> represent 
-                                    equity, ownership, shares, or any form of financial interest in any entity, organization, 
-                                    or project. They are utility tokens for alignment and participation purposes only.
+                                    <strong>NOT A PURCHASE / NOT A TOKEN SALE:</strong> This is <strong>not</strong> a purchase,
+                                    investment, or exchange of money for ERC‑20 tokens. There is no expectation of profit or return.
                                 </p>
                                 <p>
-                                    <strong>NO EXTERNAL TRADING:</strong> These ERC-20 tokens are <strong>NON-TRANSFERABLE</strong> 
-                                    and <strong>NON-TRADEABLE</strong> on external exchanges, marketplaces, or trading platforms. 
-                                    They cannot be sold, transferred, or exchanged for other cryptocurrencies, fiat currency, 
-                                    or any other assets outside the Syntheverse ecosystem.
+                                    <strong>EXPERIMENTAL SANDBOX:</strong> Syntheverse is an experimental, non-custodial sandbox.
+                                    Participation does not confer ownership, equity, profit rights, or guaranteed access.
                                 </p>
                                 <p>
-                                    <strong>ECOSYSTEM UTILITY ONLY:</strong> These tokens function exclusively within the 
-                                    Syntheverse ecosystem for participation, governance (if applicable), and alignment tracking 
-                                    within the Motherlode Blockmine network. They have no external monetary value.
+                                    <strong>SYNTH ROLE (INTERNAL ONLY):</strong> SYNTH is a fixed-supply internal coordination marker.
+                                    Any recognition (if enabled) is optional, post hoc, and discretionary—separate from payment.
                                 </p>
                                 <p className="text-xs text-muted-foreground pt-2 border-t border-[var(--keyline-primary)]">
-                                    By proceeding with this contribution, you acknowledge that you understand these tokens 
-                                    are for alignment purposes only, do not represent ownership, and cannot be traded externally.
+                                    By proceeding, you acknowledge the above terms.
                                 </p>
                             </div>
                         </div>
@@ -345,13 +302,13 @@ export function FinancialAlignmentButton() {
                     {/* Sticky footer with action buttons */}
                     <DialogFooter className="flex flex-row gap-3 px-6 py-4 border-t border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
                         <button
-                            onClick={cancelRegister}
+                            onClick={cancelSupport}
                             className="cockpit-lever flex-1 sm:flex-initial"
                         >
                             Cancel
                         </button>
                         <button
-                            onClick={confirmRegister}
+                            onClick={confirmSupport}
                             disabled={processing === selectedProduct?.id}
                             className="cockpit-lever bg-[var(--hydrogen-amber)] text-black hover:bg-[var(--hydrogen-amber)]/90 flex-1 sm:flex-initial font-semibold"
                         >
