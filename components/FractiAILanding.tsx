@@ -367,6 +367,13 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               </p>
             </div>
 
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link href="/fractiai/genome-12d" className="cockpit-lever inline-flex items-center">
+                Read the 1‑page 12D Genome ↔ Syntheverse brief
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+
             <div className="mt-5 relative aspect-[16/9]">
               <Image src="/fractiai/base-lens.svg" alt="Base-chain lens + sandbox illustration" fill className="object-contain" />
             </div>
