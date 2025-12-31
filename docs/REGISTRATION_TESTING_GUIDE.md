@@ -200,11 +200,11 @@ After script tests pass:
    - Ensure it's not already registered
 
 3. **Click Register Button**
-   - Click "Register PoC - $200" button
+   - Click "Anchor PoC on‑chain (optional)" button
    - Should redirect to Stripe checkout
 
 4. **Verify Stripe Checkout**
-   - Checkout page should show $200.00
+   - Checkout page should show $500.00
    - Product name should show PoC title
    - Description should mention "Hard Hat L1 blockchain"
 

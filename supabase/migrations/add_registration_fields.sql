@@ -2,7 +2,7 @@
 -- Add Registration Fields to Contributions Table
 -- ============================================================================
 -- Purpose: Enable PoC registration tracking for blockchain registration
---          via Stripe payment ($200 registration fee)
+--          via Stripe payment ($500 registration fee)
 --
 -- Run this in Supabase Dashboard → SQL Editor → New Query
 -- ============================================================================
@@ -31,7 +31,7 @@ WHERE stripe_payment_id IS NOT NULL;
 -- ============================================================================
 
 COMMENT ON COLUMN "contributions"."registered" IS 
-'Whether the PoC has been registered on the blockchain via Stripe payment ($200 fee).';
+'Whether the PoC has been registered on the blockchain via Stripe payment ($500 fee).';
 
 COMMENT ON COLUMN "contributions"."registration_date" IS 
 'Timestamp when the PoC was registered on the blockchain.';
@@ -40,7 +40,7 @@ COMMENT ON COLUMN "contributions"."registration_tx_hash" IS
 'Blockchain transaction hash for the PoC registration transaction.';
 
 COMMENT ON COLUMN "contributions"."stripe_payment_id" IS 
-'Stripe payment intent ID for the registration payment ($200).';
+'Stripe payment intent ID for the registration payment ($500).';
 
 -- ============================================================================
 -- Migration Complete

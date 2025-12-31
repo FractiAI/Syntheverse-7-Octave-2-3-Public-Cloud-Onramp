@@ -102,7 +102,7 @@ export async function signup(currentState: { message: string }, formData: FormDa
     })
 
     try {
-        // Stripe is only used when registering a PoC (paying the $200 registration fee)
+        // Stripe is only used when anchoring a qualified PoC on-chain (operator fee; default $500).
         // Use a placeholder value - Stripe customer will be created on-demand when user registers a PoC
         const stripeID = 'pending'
         

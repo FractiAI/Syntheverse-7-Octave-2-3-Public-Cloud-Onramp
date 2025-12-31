@@ -64,14 +64,14 @@ ZIP: 12345
 ## 🧪 Testing Registration Flow
 
 1. **Navigate to your PoC in dashboard**
-2. **Click "Register PoC - $200"**
+2. **Click "Anchor PoC on‑chain (optional)"**
 3. **Stripe checkout opens**
 4. **Enter test card:**
    - Card: `4242 4242 4242 4242`
    - Expiry: `12/34`
    - CVC: `123`
    - ZIP: `12345`
-5. **Click "Pay $200.00"**
+5. **Click "Pay $500.00"**
 6. **Payment processes (no real charge)**
 7. **Redirects back to dashboard**
 8. **PoC shows as "Registered"**

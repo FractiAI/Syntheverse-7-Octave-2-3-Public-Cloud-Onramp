@@ -163,7 +163,7 @@ Google OAuth must be configured in **Supabase Dashboard**:
 #### 1. PoC Registration Payment
 - **Route**: `/api/poc/[hash]/register`
 - **Flow**: 
-  1. User clicks "Register PoC - $200"
+  1. User clicks "Anchor PoC on‑chain (optional)"
   2. API creates Stripe Checkout Session
   3. User redirected to Stripe checkout
   4. After payment, webhook updates PoC status

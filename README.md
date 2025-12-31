@@ -85,7 +85,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Operator-configurable anchoring
 # (optional) Fee charged for optional on-chain anchoring service (in cents)
-POC_ANCHORING_FEE_CENTS=20000
+POC_ANCHORING_FEE_CENTS=50000
 # (optional) Display label used in Stripe product description (e.g., "Base", "Hardhat (devnet)")
 POC_ANCHORING_CHAIN_LABEL=Hardhat (devnet)
 
@@ -165,7 +165,7 @@ PoC submission archive with 3D vectorization for redundancy detection.
 | `registered` | boolean | Whether PoC is registered on blockchain (via Stripe payment) |
 | `registration_date` | timestamp | When PoC was registered |
 | `registration_tx_hash` | text | Blockchain transaction hash for registration |
-| `stripe_payment_id` | text | Stripe payment ID for registration ($200 fee) |
+| `stripe_payment_id` | text | Stripe payment ID for registration ($500 fee) |
 | `created_at` | timestamp | Submission timestamp |
 | `updated_at` | timestamp | Last update timestamp |
 
@@ -279,7 +279,7 @@ Contributions are mapped to 3D coordinates in the HHF space:
   - Click nodes to view detailed PoC information
   - Projected token allocation display (for contributors)
   - One-click token allocation (for qualified, registered PoCs)
-  - PoC registration via Stripe checkout ($200 fee)
+  - PoC registration via Stripe checkout ($500 fee)
 - **Status Indicators**:
   - Glow effect for qualified PoCs
   - Border highlights for allocated/registered PoCs

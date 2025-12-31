@@ -142,7 +142,7 @@ When a PoC node is clicked, open a detail panel showing:
    - Tooltip: "SYNTH tokens are allocated based on your PoC score, metallic assay, and current epoch availability."
 
 3. **Register PoC Button**:
-   - Display: "Register PoC - $200"
+   - Display: "Anchor PoC on‑chain (optional)"
    - Enabled only if:
      - PoC is not yet registered
      - User is the contributor

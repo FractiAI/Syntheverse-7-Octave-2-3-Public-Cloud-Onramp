@@ -14,7 +14,7 @@
 - ✅ Interactive PoC detail panel
 - ✅ Projected token allocation
 - ✅ One-click token allocation
-- ✅ PoC registration via Stripe ($200)
+- ✅ PoC registration via Stripe ($500)
 
 ### New Files (24 files changed)
 - `components/SandboxMap3DUpgraded.tsx` - Main upgraded component

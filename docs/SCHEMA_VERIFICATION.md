@@ -21,7 +21,7 @@ The following columns have been added to the `contributions` table:
    - Nullable (only set when registered)
 
 4. **`stripe_payment_id`** (text, nullable)
-   - Stripe payment intent ID for the $200 registration fee
+   - Stripe payment intent ID for the $500 registration fee
    - Nullable (only set when payment is processed)
 
 ## Created Indexes

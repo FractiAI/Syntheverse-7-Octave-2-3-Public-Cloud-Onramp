@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
                                                 name: 'Test PoC Registration',
                                                 description: 'Test checkout session creation',
                                             },
-                                            unit_amount: 20000, // $200.00
+                                            unit_amount: 50000, // $500.00
                                         },
                                         quantity: 1,
                                     },

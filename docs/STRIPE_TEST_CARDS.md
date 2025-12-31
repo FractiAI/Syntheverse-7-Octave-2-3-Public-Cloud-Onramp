@@ -70,7 +70,7 @@ When testing PoC registration in Stripe test mode, use these test card numbers. 
    - Log in as PoC contributor
    - Find qualified PoC in "My Submissions"
 
-2. **Click "Register PoC - $200"**
+2. **Click "Anchor PoC on‑chain (optional)"**
    - Should redirect to Stripe checkout
 
 3. **Use Test Card**
@@ -80,7 +80,7 @@ When testing PoC registration in Stripe test mode, use these test card numbers. 
    - ZIP: `12345`
 
 4. **Complete Payment**
-   - Click "Pay $200.00"
+   - Click "Pay $500.00"
    - Should process successfully in test mode
 
 5. **Verify Registration**

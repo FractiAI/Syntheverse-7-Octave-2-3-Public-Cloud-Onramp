@@ -82,7 +82,7 @@ console.log('□ SYNTH token reward calculations');
 console.log('□ Archive-first storage');
 console.log('□ Redundancy detection');
 console.log('□ Real-time evaluation progress');
-console.log('□ Blockchain registration ($200 fee)');
+console.log('□ Blockchain registration ($500 fee)');
 console.log('□ "I was here first" recognition');
 console.log('');
 

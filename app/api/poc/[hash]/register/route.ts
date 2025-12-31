@@ -18,7 +18,7 @@ import { debug, debugError } from '@/utils/debug'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-const DEFAULT_ANCHORING_FEE_CENTS = 20000
+const DEFAULT_ANCHORING_FEE_CENTS = 50000
 
 function getAnchoringFeeCents(): number {
     const raw = (process.env.POC_ANCHORING_FEE_CENTS || '').trim()
@@ -127,6 +127,18 @@ export async function POST(
             return NextResponse.json(
                 { error: 'Forbidden: You can only register your own PoCs' },
                 { status: 403 }
+            )
+        }
+
+        // Only qualified PoCs can be anchored on-chain (fee-based operator service)
+        if (contrib.status !== 'qualified') {
+            debugError('RegisterPoC', 'PoC is not qualified for on-chain anchoring', {
+                submissionHash,
+                status: contrib.status
+            })
+            return NextResponse.json(
+                { error: 'PoC must be qualified before it can be anchored on-chain' },
+                { status: 400 }
             )
         }
         
