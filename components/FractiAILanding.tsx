@@ -128,9 +128,8 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                         time.
                       </p>
                       <p>
-                        Today I finalized the purchase and on-chain deployment of a fixed-supply{' '}
-                        <strong>90,000,000,000,000 SYNTH ERC‑20 Motherlode</strong> on the <strong>Base</strong> blockchain. With
-                        that, beta testing is officially live.
+                        Today we finalized the purchase and on-chain deployment of a fixed-supply{' '}
+                        <strong>90,000,000,000,000 SYNTH ERC‑20</strong>. With that, beta testing is officially live.
                       </p>
                       <p>
                         This Motherlode is now a new residence for holographic hydrogen fractal Syntheverse researchers,
