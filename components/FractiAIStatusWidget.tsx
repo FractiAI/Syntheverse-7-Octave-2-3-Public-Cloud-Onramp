@@ -95,7 +95,9 @@ export default function FractiAIStatusWidget({ limit = 6 }: { limit?: number }) 
       setEpochInfo(epochJson)
       setQualifiers(Array.isArray(qualJson?.items) ? qualJson.items : [])
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load status')
+      // Soft-fail if we already have data; keep the last-known values visible.
+      const msg = e instanceof Error ? e.message : 'Failed to load status'
+      setError(msg)
     } finally {
       setLoading(false)
     }
@@ -119,10 +121,15 @@ export default function FractiAIStatusWidget({ limit = 6 }: { limit?: number }) 
         <div className="cockpit-text mt-4 text-sm" style={{ opacity: 0.85 }}>
           Loading live status…
         </div>
-      ) : error ? (
+      ) : error && !epochInfo && qualifiers.length === 0 ? (
         <div className="cockpit-text mt-4 text-sm text-red-300">{error}</div>
       ) : (
         <div className="mt-4 grid gap-4">
+          {error ? (
+            <div className="cockpit-text text-xs" style={{ opacity: 0.85, color: '#fca5a5' }}>
+              Live status delayed: {error}. Showing last known values.
+            </div>
+          ) : null}
           <div className="grid gap-3 md:grid-cols-2">
             <div className="cockpit-module p-4">
               <div className="cockpit-label">SYNTH Available</div>

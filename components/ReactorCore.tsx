@@ -183,7 +183,8 @@ export function ReactorCore() {
         )
     }
 
-    if (error) {
+    // If we have stale data, don't hard-fail the whole panel; show a soft warning instead.
+    if (error && !epochInfo) {
         return (
             <div className="reactor-core cockpit-panel">
                 <div className="flex flex-col items-center justify-center min-h-[300px] gap-4 text-center">
@@ -227,6 +228,11 @@ export function ReactorCore() {
                     <div>
                         <div className="cockpit-label">CORE INSTRUMENT PANEL</div>
                         <div className="cockpit-title text-3xl mt-2">SYNTH 90T ERC-20 MINE</div>
+                        {error ? (
+                            <div className="cockpit-text text-xs mt-2" style={{ opacity: 0.85, color: '#fca5a5' }}>
+                                Live status delayed: {error}. Showing last known values.
+                            </div>
+                        ) : null}
                     </div>
                     <div className="text-right">
                         <div className="cockpit-label">Total Supply</div>

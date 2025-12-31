@@ -33,10 +33,22 @@ try {
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
 // Add connection timeout and error handling
+const maxConnections =
+    (() => {
+        const raw = (process.env.DATABASE_POOL_MAX || '').trim()
+        const parsed = raw ? Number(raw) : NaN
+        if (!Number.isFinite(parsed) || parsed <= 0) {
+            // Default to a small pool to prevent request starvation/timeouts under concurrency.
+            // In serverless, each warm instance has its own pool; keeping this modest avoids DB overload.
+            return process.env.NODE_ENV === 'production' ? 5 : 2
+        }
+        return Math.floor(parsed)
+    })()
+
 const client = postgres(databaseUrl, { 
     prepare: false,
     connect_timeout: 10, // 10 second connection timeout
-    max: 1, // Limit connections for serverless
+    max: maxConnections, // Prevent global request starvation; configurable via DATABASE_POOL_MAX
     idle_timeout: 20,
     max_lifetime: 60 * 30
 })

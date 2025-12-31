@@ -182,7 +182,8 @@ export function EpochTokenDisplay() {
         )
     }
 
-    if (error) {
+    // If we have stale data, don't hide the whole widget; show a soft warning instead.
+    if (error && !epochInfo) {
         return (
             <Card>
                 <CardContent className="pt-6">
@@ -223,6 +224,11 @@ export function EpochTokenDisplay() {
                     <Coins className="h-5 w-5" />
                         Open Epochs & SYNTH Protocol Reserve (Gold / Silver / Copper)
                 </CardTitle>
+                {error ? (
+                    <div className="text-xs text-muted-foreground mt-1">
+                        Live status delayed: {error}. Showing last known values.
+                    </div>
+                ) : null}
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
