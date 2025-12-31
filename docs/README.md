@@ -2,6 +2,11 @@
 
 This directory contains all project documentation organized by category.
 
+## Protocol vs Operator
+
+- **Protocol spec (implementation-agnostic)**: see `../protocol/README.md`
+- **Operator (FractiAI reference instance)**: see `../operator/README.md`
+
 ## 📁 Directory Structure
 
 ### `/deployment`

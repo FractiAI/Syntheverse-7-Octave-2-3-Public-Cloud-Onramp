@@ -1,0 +1,7 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerabilities
+    about: Please report security issues privately
+    url: https://github.com/FractiAI/Syntheverse_PoC_Contributer_UI_Vercel_Stripe/blob/main/SECURITY.md
+
+

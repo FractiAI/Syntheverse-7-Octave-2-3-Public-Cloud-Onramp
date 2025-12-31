@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible bug in the operator reference client or docs.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Reference client (Next.js UI/API)
+        - Protocol docs
+        - Operator docs / deployment
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: Include expected vs actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Go to...\n2. Click...\n3. See..."
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots
+      description: Remove any secrets before pasting.
+
+

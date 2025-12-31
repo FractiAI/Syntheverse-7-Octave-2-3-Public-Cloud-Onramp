@@ -1,79 +1,77 @@
-# Syntheverse PoC Contributor UI
+## Syntheverse: protocol + operator reference client
 
-A production-ready web application for the Syntheverse Proof of Contribution system, featuring a dark, minimal, futuristic UI. Built for deployment on Vercel (frontend + API routes) and Supabase (auth + database) using free tiers.
+This repository is organized around a simple distinction:
 
-## 🌐 Live Deployment (Vercel)
+- **The Syntheverse Protocol**: a public, implementation-agnostic specification for Proof‑of‑Contribution (PoC) primitives, scoring lenses, data models, and optional on‑chain anchoring.
+- **Operators**: deployments that run a concrete implementation of the protocol with real infrastructure choices, policies, and costs. **FractiAI** is one operator (and maintains the reference client deployed today).
 
-This app is **already deployed on Vercel**:
+If you only read one thing, start here:
+
+- **Protocol overview**: `protocol/README.md`
+- **Operator (FractiAI) overview**: `operator/README.md`
+
+### Executive overview (intentions + structure)
+
+- **What we’re building**: an operator-safe “lens + archive + optional anchoring” system where contributions become durable, auditable records—without token-sale framing.
+- **What “protocol-first” means here**: the *spec* (what must be true) is separated from the *operator* (how it is run).
+- **What FractiAI is (and is not)**: FractiAI operates a reference instance and evolves the reference client; it does **not** equal “the protocol.”
+
+### Live deployment (FractiAI operator instance)
+
+The current reference client is deployed on Vercel:
 
 - **Production URL**: `https://syntheverse-poc.vercel.app`
 
-If you deploy to a different Vercel project/domain, make sure you update:
-- `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WEBSITE_URL` in Vercel
-- Supabase Auth **Site URL / Redirect URLs**
-- Stripe webhook endpoint URL (see below)
+If you deploy your own operator instance, you must update:
 
-## ✨ Features
+- **Site URLs**: `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WEBSITE_URL`
+- **Supabase Auth**: Site URL + Redirect URLs (OAuth callbacks)
+- **Stripe webhooks**: endpoint URL + `STRIPE_WEBHOOK_SECRET`
 
-- **Hydrogen-Holographic Evaluation**: AI-powered contribution scoring across novelty, density, coherence, and alignment dimensions
-- **Metallic Amplifications**: Combination-based amplifications (Gold+Silver+Copper: 1.5×, Gold+Silver: 1.25×, Gold+Copper: 1.2×, Silver+Copper: 1.15×)
-- **SYNTH Token Rewards**: Blockchain-anchored token allocations based on PoC scores and available tokens at registration time
-- **3D Vectorized Sandbox Map**: Interactive Three.js visualization with nested fractal layers, visual encoding, and full interactivity
-  - **Visual Encoding**: Size (density), Color (novelty), Shape (metals), Transparency (coherence)
-  - **Interactive Features**: Click nodes to view details, allocate tokens, register PoCs
-  - **Token Allocation**: Dynamic projected allocation display and one-click token allocation
-  - **PoC Registration**: Blockchain registration via Stripe checkout ($200 fee)
-- **Secure Authentication**: Supabase-powered auth with Google OAuth and email/password
-- **Real-time Dashboard**: Live evaluation status and ecosystem impact visualization
-- **Stripe Integration**: Subscription management, payment processing, and PoC registration
-- **Dark UI Theme**: Minimal, futuristic design inspired by Syntheverse aesthetics
-- **Archive-First Storage**: All contributions stored immediately for redundancy detection
+### What’s in this repo
 
-## 🏗️ Tech Stack
+This repo currently contains:
+
+- **Operator UI + API routes (Next.js)**: the deployed reference client (root `app/`, `components/`, `utils/`, `supabase/` migrations, etc.)
+- **Protocol documentation**: `protocol/` (spec, invariants, and terminology)
+- **Operator documentation**: `operator/` (policies, infra choices, and boundaries)
+- **Implementation docs**: `docs/` (deployment, OAuth, Supabase, Stripe, testing, etc.)
+- **Legacy / R&D workspace**: `syntheverse-ui/` (large experimental subtree; treated as separate internal workspace)
+
+### Core capabilities (reference client)
+
+- **Proof‑of‑Contribution lifecycle**: submission → archive → evaluation → qualification → optional anchoring
+- **Scoring lens**: novelty, density, coherence, alignment (+ redundancy penalty)
+- **3D vectorized sandbox map**: Three.js + R3F visualization of PoCs as navigable infrastructure
+- **Auth + storage**: Supabase Auth + Postgres
+- **Payments**: Stripe Checkout + Billing Portal for operator-managed flows
+
+### Tech stack (reference client)
 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS + shadcn/ui
-- **3D Visualization**: Three.js + React Three Fiber + Drei
-- **Authentication**: Supabase Auth
-- **Database**: PostgreSQL (Supabase) + Drizzle ORM
-- **Payments**: Stripe Checkout + Customer Portal
+- **3D**: Three.js + React Three Fiber + Drei
+- **Auth/DB**: Supabase Auth + Postgres + Drizzle ORM
+- **Payments**: Stripe
 - **Deployment**: Vercel
 - **Language**: TypeScript
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 18+ and npm/yarn/pnpm
-- Supabase account (free tier)
-- Stripe account (test mode)
-- Vercel account (free tier)
-
-### Installation
+### Quick start (run the operator reference client locally)
 
 ```bash
-# Clone the repository
-git clone https://github.com/FractiAI/Syntheverse_PoC_Contributer_UI_Vercel_Stripe.git
-cd Syntheverse_PoC_Contributer_UI_Vercel_Stripe
-
-# Install dependencies
 npm install
-
-# Set up environment variables
 cp .env.example .env.local
-# Edit .env.local with your credentials
+npm run dev
 ```
 
-### Environment Variables
-
-Create a `.env.local` file with the following variables:
+### Environment variables (operator reference client)
 
 ```env
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-DATABASE_URL=your_database_url
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+DATABASE_URL=...
 
 # Site URLs
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -85,71 +83,45 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID=prctbl_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# OAuth (Optional)
+# Operator-configurable anchoring
+# (optional) Fee charged for optional on-chain anchoring service (in cents)
+POC_ANCHORING_FEE_CENTS=20000
+# (optional) Display label used in Stripe product description (e.g., "Base", "Hardhat (devnet)")
+POC_ANCHORING_CHAIN_LABEL=Hardhat (devnet)
+
+# OAuth (optional)
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 ```
 
-See [docs/deployment/VERCEL_ENV_SETUP.md](docs/deployment/VERCEL_ENV_SETUP.md) for detailed setup instructions.
+See `docs/deployment/VERCEL_ENV_SETUP.md` for the full setup checklist.
 
-### Database Setup
+### Documentation map
 
-```bash
-# Generate migrations
-npm run db:generate
+- **Protocol**: `protocol/README.md`
+- **Operator**: `operator/README.md`
+- **Deployment**: `docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md`
+- **OAuth**: `docs/oauth/OAUTH_QUICK_SETUP.md`
+- **Stripe**: `docs/stripe/STRIPE_WEBHOOK_SETUP.md`
+- **Supabase**: `docs/supabase/`
+- **Testing**: `docs/testing/TESTING_PLAN.md`
 
-# Run migrations
-npm run db:migrate
-```
-
-### Development
-
-```bash
-# Start development server
-npm run dev
-
-# In another terminal, start Stripe webhook listener (for local testing)
-npm run stripe:listen
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## 📚 Documentation
-
-Comprehensive documentation is available in the [`docs/`](docs/) directory:
-
-- **[Deployment Guide](docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md)** - Complete Vercel deployment walkthrough
-- **[3D Map Upgrade Plan](docs/3D_MAP_UPGRADE_PLAN.md)** - Comprehensive 3D map upgrade documentation
-- **[3D Map Implementation Status](docs/3D_MAP_IMPLEMENTATION_STATUS.md)** - Current implementation progress
-- **[OAuth Setup](docs/oauth/OAUTH_QUICK_SETUP.md)** - Google OAuth configuration
-- **[Stripe Setup](docs/stripe/STRIPE_WEBHOOK_SETUP.md)** - Payment and webhook configuration
-- **[Testing Guide](docs/testing/TESTING_PLAN.md)** - Testing strategies and debugging
-- **[Supabase Setup](docs/supabase/)** - Database and authentication configuration
-
-## 🗂️ Project Structure
+### Repository structure
 
 ```
-├── app/                    # Next.js App Router pages
-│   ├── auth/               # Authentication routes
-│   ├── dashboard/          # Protected dashboard pages
-│   └── ...
-├── components/             # React components
-│   └── ui/                 # shadcn/ui components
-├── docs/                   # Documentation
-│   ├── deployment/         # Deployment guides
-│   ├── oauth/              # OAuth setup guides
-│   ├── stripe/             # Stripe integration guides
-│   ├── supabase/           # Supabase configuration
-│   └── testing/            # Testing and debugging
-├── scripts/                # Utility scripts
-├── utils/                  # Utility functions
-│   ├── db/                 # Database utilities
-│   ├── stripe/             # Stripe API utilities
-│   └── supabase/           # Supabase client utilities
-└── public/                 # Static assets
+.
+├── protocol/                # Protocol spec (implementation-agnostic)
+├── operator/                # Operator notes/policies (FractiAI reference instance)
+├── app/                     # Next.js App Router (reference client)
+├── components/              # UI components
+├── utils/                   # Shared utilities (Stripe/Supabase/tokenomics/vectors)
+├── supabase/                # SQL migrations / schema
+├── docs/                    # Implementation + deployment docs
+├── scripts/                 # Utility scripts (SQL/TS/JS)
+└── syntheverse-ui/           # Legacy / R&D workspace (separate subtree)
 ```
 
-## 📊 Database Schema
+### Database schema (reference client)
 
 ### Tables
 
@@ -388,12 +360,10 @@ vercel --prod
 - **Stripe webhook issues**: See [docs/stripe/STRIPE_WEBHOOK_SETUP.md](docs/stripe/STRIPE_WEBHOOK_SETUP.md)
 
 ## 📝 License
-
-[Add your license here]
+MIT (see `LICENSE`).
 
 ## 🤝 Contributing
-
-[Add contributing guidelines here]
+See `CONTRIBUTING.md`.
 
 ## 📧 Support
 
