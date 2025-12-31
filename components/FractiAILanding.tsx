@@ -375,90 +375,9 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
             </div>
 
             <div className="pt-3 border-t border-[var(--keyline-primary)]">
-              <div className="cockpit-label mb-2">CONTACT US</div>
-              <div className="cockpit-text text-sm space-y-2">
-                <div>
-                  General Inquiries:{' '}
-                  <a className="underline" href="mailto:info@fractiai.com">
-                    info@fractiai.com
-                  </a>
-                </div>
-                <div>
-                  Investor Relations:{' '}
-                  <a className="underline" href="mailto:invest@fractiai.com">
-                    invest@fractiai.com
-                  </a>
-                </div>
-                <div>
-                  Demo Registration:{' '}
-                  <a className="underline" href="mailto:demo@fractiai.com">
-                    demo@fractiai.com
-                  </a>
-                </div>
-              </div>
-              <div className="cockpit-text text-sm mt-4" style={{ opacity: 0.9 }}>
-                Interested in contributing to the Syntheverse frontier? Reach out—research, engineering, validation, and ecosystem operations.
-              </div>
-              <div className="cockpit-text text-xs mt-3" style={{ opacity: 0.85 }}>
-                AwarenessAI.com and FractiAI.com are currently searching for 7D AI domestic and international distributor and
-                integrator partners, all regions. High margins and differentiation when applying our cutting edge awareness AI
-                tech which has now arrived! Email{' '}
-                <a className="underline" href="mailto:pru@fractiai.com">
-                  pru@fractiai.com
-                </a>{' '}
-                if interested.
-              </div>
+              {/* Contact block removed (redundant) */}
             </div>
           </div>
-          <div className="mt-5 relative aspect-[16/9]">
-            <Image src="/fractiai/about-blueprint.svg" alt="About FractiAI blueprint panel" fill className="object-contain" />
-          </div>
-        </ExpandablePanel>
-
-        {/* Resources */}
-        <ExpandablePanel label="RESOURCES" title="Links, Code, and Contact" defaultOpen={true}>
-          <div className="cockpit-text">
-            Validation suite (open source):{' '}
-            <a
-              className="underline"
-              href="https://github.com/AiwonA1/FractalHydrogenHolography-Validation"
-              target="_blank"
-              rel="noreferrer"
-            >
-              github.com/AiwonA1/FractalHydrogenHolography-Validation
-            </a>
-          </div>
-          <div className="cockpit-text mt-2">
-            Join the frontier: email <a className="underline" href="mailto:info@fractiai.com">info@fractiai.com</a>
-          </div>
-          <div className="cockpit-text mt-2">
-            Whitepapers: <a className="underline" href="https://zenodo.org/records/17873279" target="_blank" rel="noreferrer">zenodo.org/records/17873279</a>
-          </div>
-          <div className="cockpit-text mt-2">
-            Presentations: <a className="underline" href="https://www.youtube.com/@FractiAI" target="_blank" rel="noreferrer">youtube.com/@FractiAI</a>
-          </div>
-          <div className="cockpit-text mt-2">
-            GitHub: <a className="underline" href="https://github.com/FractiAI" target="_blank" rel="noreferrer">github.com/FractiAI</a>
-          </div>
-          <div className="cockpit-text mt-2">
-            X: <a className="underline" href="https://x.com/FractiAi" target="_blank" rel="noreferrer">x.com/FractiAi</a>
-          </div>
-          <div className="mt-5 relative aspect-[16/9]">
-            <Image src="/fractiai/resources-signal.svg" alt="Resources signal panel" fill className="object-contain" />
-          </div>
-
-          {variant === 'fractiai' ? (
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/dashboard" className="cockpit-lever inline-flex items-center">
-                Return to Dashboard
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-              <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
-                Onboarding
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          ) : null}
         </ExpandablePanel>
       </div>
     </div>
