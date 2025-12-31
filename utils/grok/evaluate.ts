@@ -359,7 +359,7 @@ ${top3Matches
         : ''
 
     // Evaluation query with contribution details + minimal extra instructions.
-    // The REQUIRED JSON schema is already provided in the system prompt; avoid duplicating it here.
+    // IMPORTANT: Even though the system prompt contains narrative guidance, the API response MUST be parseable JSON.
     const evaluationQuery = `Evaluate this Proof-of-Contribution (PoC) using the system prompt rules.
 
 Title: ${title}
@@ -375,7 +375,8 @@ ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
 Notes:
 - ${isSeedSubmission ? 'This is the FIRST submission defining the Syntheverse sandbox. Redundancy penalty MUST be 0%.' : `This is NOT the first submission. Compare against the sandbox + archived PoCs (archived count: ${archivedVectors.length}).`}
 - Apply redundancy penalty ONLY to the composite/total score (as specified in the system prompt).
-- Output: return a single valid JSON object that matches the REQUIRED JSON structure in the system prompt.`
+- Output: return a single valid JSON object that matches the REQUIRED JSON structure in the system prompt.
+- Do NOT output markdown, tables, or prose. Output JSON only (strictly parseable).`
     
     try {
         // Add timeout to prevent hanging
@@ -471,100 +472,163 @@ Notes:
             })
         }
         
-        // IMPROVED: Multi-strategy JSON parsing for better data capture
-        // Try multiple parsing strategies to handle various Grok response formats
-        let evaluation: any = null
-        const parseStrategies = [
-            // Strategy 1: Direct JSON parse
-            () => {
-                try {
-                    return JSON.parse(answer.trim())
-                } catch {
-                    return null
-                }
-            },
-            // Strategy 2: Extract from ```json ... ``` code blocks
-            () => {
-                const jsonBlockMatch = answer.match(/```json\s*([\s\S]*?)\s*```/i)
-                if (jsonBlockMatch) {
-                    try {
-                        return JSON.parse(jsonBlockMatch[1].trim())
-                    } catch {
-                        return null
-                    }
-                }
-                return null
-            },
-            // Strategy 3: Extract from generic ``` ... ``` code blocks
-            () => {
-                const codeBlockMatch = answer.match(/```\s*([\s\S]*?)\s*```/)
-                if (codeBlockMatch) {
-                    try {
-                        return JSON.parse(codeBlockMatch[1].trim())
-                    } catch {
-                        return null
-                    }
-                }
-                return null
-            },
-            // Strategy 4: Find first JSON object in text
-            () => {
-                const jsonMatch = answer.match(/\{[\s\S]*\}/)
-                if (jsonMatch) {
-                    try {
-                        return JSON.parse(jsonMatch[0])
-                    } catch {
-                        return null
-                    }
-                }
-                return null
-            },
-            // Strategy 5: Find JSON between first { and last }
-            () => {
-                const startMarker = answer.indexOf('{')
-                const endMarker = answer.lastIndexOf('}')
-                if (startMarker !== -1 && endMarker !== -1 && endMarker > startMarker) {
-                    try {
-                        return JSON.parse(answer.substring(startMarker, endMarker + 1))
-                    } catch {
-                        return null
-                    }
-                }
-                return null
-            }
-        ]
-        
-        // Try each parsing strategy until one succeeds
-        for (let i = 0; i < parseStrategies.length; i++) {
-            const strategy = parseStrategies[i]
+        const cleanJsonCandidate = (s: string): string => {
+            let out = (s || '').trim()
+            // Common invalid JSON issues from LLMs:
+            // - thousands separators in numbers: 2,400 -> 2400
+            out = out.replace(/(\d),(?=\d{3}\b)/g, '$1')
+            // - trailing commas before closing braces/brackets
+            out = out.replace(/,\s*([}\]])/g, '$1')
+            return out
+        }
+
+        const tryParseJson = (candidate: string): any | null => {
+            const cleaned = cleanJsonCandidate(candidate)
             try {
-                const result = strategy()
-                if (result && typeof result === 'object') {
-                    evaluation = result
-                    debug('EvaluateWithGrok', `JSON parsed successfully using strategy ${i + 1}`, {
-                        strategy: i + 1,
-                        hasScoring: !!evaluation.scoring,
-                        hasDensity: !!evaluation.density,
-                        hasScoringDensity: !!evaluation.scoring?.density,
-                        evaluationKeys: Object.keys(evaluation),
-                        evaluationString: JSON.stringify(evaluation, null, 2).substring(0, 2000)
-                    })
-                    break
-                }
-            } catch (strategyError) {
-                // Continue to next strategy
-                continue
+                const parsed = JSON.parse(cleaned)
+                return parsed && typeof parsed === 'object' ? parsed : null
+            } catch {
+                return null
             }
         }
-        
-        // If all strategies failed, throw error with full context
-        if (!evaluation) {
-            debugError('EvaluateWithGrok', 'Failed to parse JSON from Grok response using all strategies', {
-                responseLength: answer.length,
-                responsePreview: answer.substring(0, 1000),
-                responseEnd: answer.substring(Math.max(0, answer.length - 500))
+
+        const extractJsonCandidates = (raw: string): string[] => {
+            const a = raw || ''
+            const candidates: string[] = []
+            candidates.push(a.trim())
+
+            const jsonBlockMatch = a.match(/```json\s*([\s\S]*?)\s*```/i)
+            if (jsonBlockMatch?.[1]) candidates.push(jsonBlockMatch[1].trim())
+
+            const codeBlockMatch = a.match(/```\s*([\s\S]*?)\s*```/)
+            if (codeBlockMatch?.[1]) candidates.push(codeBlockMatch[1].trim())
+
+            const startMarker = a.indexOf('{')
+            const endMarker = a.lastIndexOf('}')
+            if (startMarker !== -1 && endMarker !== -1 && endMarker > startMarker) {
+                candidates.push(a.substring(startMarker, endMarker + 1))
+            }
+
+            const firstObjectMatch = a.match(/\{[\s\S]*\}/)
+            if (firstObjectMatch?.[0]) candidates.push(firstObjectMatch[0])
+
+            // De-dupe while preserving order
+            const seen = new Set<string>()
+            return candidates.filter((c) => {
+                const key = c.trim()
+                if (!key) return false
+                if (seen.has(key)) return false
+                seen.add(key)
+                return true
             })
-            throw new Error(`Failed to parse Grok response as JSON after trying ${parseStrategies.length} different parsing strategies. Response length: ${answer.length} chars. Preview: ${answer.substring(0, 200)}...`)
+        }
+
+        // Primary parse attempt (tolerant).
+        let evaluation: any = null
+        const candidates = extractJsonCandidates(answer)
+        for (let i = 0; i < candidates.length; i++) {
+            const parsed = tryParseJson(candidates[i])
+            if (parsed) {
+                evaluation = parsed
+                debug('EvaluateWithGrok', 'JSON parsed successfully from Grok response', {
+                    strategy: `candidate_${i + 1}/${candidates.length}`,
+                    hasScoring: !!evaluation.scoring,
+                    hasDensity: !!evaluation.density,
+                    hasScoringDensity: !!evaluation.scoring?.density,
+                    evaluationKeys: Object.keys(evaluation),
+                    evaluationString: JSON.stringify(evaluation, null, 2).substring(0, 2000),
+                })
+                break
+            }
+        }
+
+        // If no JSON was produced, do a single "repair" call to convert the narrative output into strict JSON.
+        if (!evaluation) {
+            debug('EvaluateWithGrok', 'No parseable JSON found. Attempting one-shot JSON repair call.', {
+                responseLength: answer.length,
+                preview: answer.substring(0, 400),
+            })
+
+            const repairSystemPrompt =
+                'You are a strict JSON extraction and normalization engine. Output ONLY valid JSON. No markdown. No prose. No tables.'
+            const repairUserPrompt = `Convert the following evaluation text into a single JSON object with EXACTLY these top-level keys:
+classification, scoring, total_score, pod_score, qualified_founder, metal_alignment, metals, metal_justification, redundancy_analysis, founder_certificate, homebase_intro, tokenomics_recommendation.
+
+Rules:
+- All numeric values MUST be numbers (no commas like 2,400; use 2400).
+- scoring must contain novelty, density, coherence, alignment.
+- density must contain base_score, redundancy_penalty_percent, final_score, score, justification.
+- tokenomics_recommendation must contain eligible_epochs, suggested_allocation, tier_multiplier, epoch_distribution, allocation_notes, requires_admin_approval.
+- If a field is missing in the text, infer it conservatively (use 0, empty string, empty array, or {} as appropriate).
+
+Text to convert:
+${answer}`
+
+            const repairBudgets = [800, 500]
+            let repairedJsonText = ''
+            let repairLastError: string | null = null
+            for (const maxTokens of repairBudgets) {
+                try {
+                    const repairResp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${grokApiKey}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: 'llama-3.1-8b-instant',
+                            messages: [
+                                { role: 'system', content: repairSystemPrompt },
+                                { role: 'user', content: repairUserPrompt },
+                            ],
+                            temperature: 0.0,
+                            max_tokens: maxTokens,
+                        }),
+                    })
+                    const repairText = repairResp.ok ? await repairResp.text() : await repairResp.text().catch(() => '')
+                    if (!repairResp.ok) {
+                        repairLastError = `Repair call failed (${repairResp.status}): ${repairText}`
+                        continue
+                    }
+                    const repairData = JSON.parse(repairText)
+                    repairedJsonText = repairData.choices?.[0]?.message?.content || ''
+                    if (repairedJsonText.trim().length === 0) {
+                        repairLastError = `Repair call returned empty content (max_tokens=${maxTokens})`
+                        continue
+                    }
+                    break
+                } catch (e) {
+                    repairLastError = e instanceof Error ? e.message : String(e)
+                    continue
+                }
+            }
+
+            if (repairedJsonText.trim().length > 0) {
+                const repairCandidates = extractJsonCandidates(repairedJsonText)
+                for (let i = 0; i < repairCandidates.length; i++) {
+                    const parsed = tryParseJson(repairCandidates[i])
+                    if (parsed) {
+                        evaluation = parsed
+                        debug('EvaluateWithGrok', 'JSON repair succeeded', {
+                            repairedLength: repairedJsonText.length,
+                            hasScoring: !!evaluation.scoring,
+                        })
+                        break
+                    }
+                }
+            }
+
+            if (!evaluation) {
+                debugError('EvaluateWithGrok', 'JSON repair failed', {
+                    repairLastError,
+                    responseLength: answer.length,
+                    responsePreview: answer.substring(0, 1000),
+                    responseEnd: answer.substring(Math.max(0, answer.length - 500)),
+                })
+                throw new Error(
+                    `Failed to parse Grok response as JSON after tolerant parsing + repair. Response length: ${answer.length} chars. Preview: ${answer.substring(0, 200)}...`
+                )
+            }
         }
         
         // Debug: Log the full evaluation structure to understand Grok's response format
