@@ -222,7 +222,7 @@ export function EpochTokenDisplay() {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Coins className="h-5 w-5" />
-                        Open Epochs & SYNTH Protocol Reserve (Gold / Silver / Copper)
+                        Open Epochs & SYNTH Motherlode Reserve (Gold / Silver / Copper)
                 </CardTitle>
                 {error ? (
                     <div className="text-xs text-muted-foreground mt-1">
@@ -305,7 +305,7 @@ export function EpochTokenDisplay() {
                     {/* Total Available */}
                     <div className="pt-4 border-t">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold">Total Protocol Reserve Remaining</span>
+                            <span className="text-sm font-semibold">SYNTH 90T MOTHERLODE RESERVE REMAINING</span>
                             <span className="text-2xl font-bold">{formatTokens(totalAvailable)} SYNTH</span>
                         </div>
                     </div>

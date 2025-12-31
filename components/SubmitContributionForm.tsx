@@ -251,23 +251,23 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Coins className="h-5 w-5" />
-                            Step 4: Token Rewards
+                            Step 4: Registration
                         </CardTitle>
                         <CardDescription>
-                            SYNTH tokens and blockchain registration
+                            Qualified PoCs and optional on-chain registration
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
                         <p className="text-sm text-muted-foreground">
-                            Approved contributions earn SYNTH tokens allocated at registration time based on:
+                            Qualified contributions can be optionally registered on-chain to anchor permanently:
                         </p>
                         <ul className="text-sm space-y-1 ml-4">
-                            <li>• Base reward + metallic amplification</li>
-                            <li>• Evaluation scores across dimensions</li>
-                            <li>• Current epoch allocation and available tokens</li>
+                            <li>• Proof-of-Contribution evaluation across dimensions</li>
+                            <li>• Epoch qualification thresholds</li>
+                            <li>• Internal coordination primitives are protocol-discretionary (no promises)</li>
                         </ul>
                         <p className="text-sm text-muted-foreground mt-2">
-                            Tokens are allocated when your PoC is approved by admin and registered on-chain.
+                            Statuses used in the UI: Not Qualified, Qualified, Registered.
                         </p>
                     </CardContent>
                 </Card>

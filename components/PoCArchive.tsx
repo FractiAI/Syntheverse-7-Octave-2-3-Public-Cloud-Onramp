@@ -40,7 +40,7 @@ interface PoCSubmission {
     registration_tx_hash: string | null
     stripe_payment_id: string | null
     allocated: boolean | null
-    allocation_amount: number | null // Total SYNTH tokens allocated
+    allocation_amount: number | null // Total SYNTH amount recorded (legacy field)
     created_at: string
     updated_at: string
     text_content?: string
@@ -370,10 +370,9 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
     }
 
     const getStatusBadge = (submission: PoCSubmission) => {
-        if (submission.allocated) {
-            return <Badge variant="default" className="bg-green-500">Allocated</Badge>
-        }
-        if (submission.registered) {
+        // Only statuses shown in UI: Not Qualified, Qualified, Registered
+        // Treat "allocated" as "Registered" (same terminal state in UI).
+        if (submission.registered || submission.allocated) {
             // Use metal color for registered status
             const primaryMetal = submission.metals && submission.metals.length > 0 
                 ? submission.metals[0].toLowerCase() 
@@ -390,14 +389,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         if (submission.qualified) {
             return <Badge variant="default" className="bg-purple-500">Qualified</Badge>
         }
-        if (submission.status === 'evaluating') {
-            return <Badge variant="secondary">Evaluating</Badge>
-        }
-        if (submission.status === 'unqualified') {
-            return <Badge variant="outline" className="bg-gray-500 text-white">Unqualified</Badge>
-        }
-        // Fallback for any other status
-        return <Badge variant="outline">{submission.status}</Badge>
+        return <Badge variant="outline" className="bg-gray-500 text-white">Not Qualified</Badge>
     }
 
     const getMetalBadges = (metals: string[]) => {
@@ -1022,15 +1014,9 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                             )}
                                         </Button>
                                     )}
-                                    {selectedSubmission.registered && !selectedSubmission.allocated && (
+                                    {(selectedSubmission.registered || selectedSubmission.allocated) && (
                                         <div className="text-sm text-muted-foreground">
-                                            PoC is registered. Allocation can be processed.
-                                        </div>
-                                    )}
-                                    {selectedSubmission.allocated && (
-                                        <div className="text-sm text-green-600">
-                                            <CheckCircle2 className="h-4 w-4 inline mr-2" />
-                                            Tokens allocated
+                                            PoC is registered.
                                         </div>
                                     )}
                                 </div>

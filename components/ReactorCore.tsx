@@ -248,7 +248,7 @@ export function ReactorCore() {
 
             {/* Central Display - Available SYNTH */}
             <div className="text-center mb-8">
-                <div className="cockpit-label mb-2">Protocol Reserve Remaining</div>
+                <div className="cockpit-label mb-2">SYNTH 90T MOTHERLODE RESERVE REMAINING</div>
                 <div className="cockpit-number cockpit-number-large">
                     {formatTokens(totalAvailable)}
                 </div>
@@ -299,7 +299,7 @@ export function ReactorCore() {
                                 </div>
                             </div>
                             <div className="cockpit-text text-xs">
-                                {epochData.distribution_percent.toFixed(1)}% allocated
+                                {epochData.distribution_percent.toFixed(1)}% of Motherlode
                             </div>
                             {isCurrent && (
                                 <div className="mt-2">

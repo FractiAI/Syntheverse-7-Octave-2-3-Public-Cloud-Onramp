@@ -39,7 +39,7 @@ interface PoCSubmission {
     registration_date: string | null
     registration_tx_hash: string | null
     stripe_payment_id: string | null
-    allocated: boolean | null
+    allocated: boolean | null // Legacy; treated as Registered in UI
     allocation_amount: number | null
     created_at: string
     updated_at: string
@@ -324,10 +324,9 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
     }
 
     const getStatusBadge = (submission: PoCSubmission) => {
-        if (submission.allocated) {
-            return <span className="cockpit-badge cockpit-badge-amber">Allocated</span>
-        }
-        if (submission.registered) {
+        // Only statuses shown in UI: Not Qualified, Qualified, Registered
+        // Treat "allocated" as "Registered" (same terminal state in UI).
+        if (submission.registered || submission.allocated) {
             const primaryMetal = submission.metals && submission.metals.length > 0 
                 ? submission.metals[0].toLowerCase() 
                 : 'copper'
@@ -343,10 +342,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
         if (submission.qualified) {
             return <span className="cockpit-badge" style={{ borderColor: 'rgba(147, 51, 234, 0.8)', color: 'rgba(147, 51, 234, 0.8)' }}>Qualified</span>
         }
-        if (submission.status === 'evaluating') {
-            return <span className="cockpit-badge">Evaluating</span>
-        }
-        return <span className="cockpit-badge">Pending</span>
+        return <span className="cockpit-badge">Not Qualified</span>
     }
 
     if (loading) {
@@ -550,14 +546,9 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                             )}
                                         </button>
                                     )}
-                                    {selectedSubmission.registered && !selectedSubmission.allocated && (
+                                    {(selectedSubmission.registered || selectedSubmission.allocated) && (
                                         <div className="cockpit-text text-sm">
-                                            PoC is registered. Allocation can be processed.
-                                        </div>
-                                    )}
-                                    {selectedSubmission.allocated && (
-                                        <div className="cockpit-text text-sm text-green-400">
-                                            Tokens allocated
+                                            PoC is registered.
                                         </div>
                                     )}
                                 </div>
