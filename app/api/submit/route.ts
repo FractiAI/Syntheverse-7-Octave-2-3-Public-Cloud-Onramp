@@ -16,14 +16,45 @@ function toPublicEvaluationError(message: string): string {
         m.includes('Request too large') ||
         m.includes('TPM') ||
         m.includes('rate_limit_exceeded') ||
-        m.includes('Grok API error (413)')
+        m.includes('Grok API error (413)') ||
+        m.includes('token budget')
     ) {
-        return 'Evaluation queued: provider token budget exceeded. Your submission was saved and will be evaluated with a smaller output budget.'
+        return 'Evaluation queued: provider token budget exceeded. Your submission was saved and will be evaluated shortly.'
     }
     if (m.includes('timed out')) {
         return 'Evaluation queued: provider timeout. Your submission was saved and will be evaluated shortly.'
     }
     return m
+}
+
+function isProviderTokenBudgetError(err: unknown): boolean {
+    const msg = err instanceof Error ? err.message : String(err ?? '')
+    return (
+        msg.includes('Request too large') ||
+        msg.includes('TPM') ||
+        msg.includes('rate_limit_exceeded') ||
+        msg.includes('Grok API error (413)') ||
+        msg.toLowerCase().includes('token budget')
+    )
+}
+
+function truncateForEvaluation(text: string, maxChars: number): {
+    text: string
+    truncated: boolean
+    originalChars: number
+    truncatedChars: number
+} {
+    const original = (text || '').trim()
+    if (original.length <= maxChars) {
+        return { text: original, truncated: false, originalChars: original.length, truncatedChars: original.length }
+    }
+    const truncatedText = original.slice(0, maxChars).trimEnd()
+    return {
+        text: truncatedText,
+        truncated: true,
+        originalChars: original.length,
+        truncatedChars: truncatedText.length,
+    }
 }
 
 export async function POST(request: NextRequest) {
@@ -242,6 +273,8 @@ export async function POST(request: NextRequest) {
         // Automatically trigger Grok API evaluation
         let evaluation: any = null
         let evaluationError: Error | null = null
+        let evaluationNotice: string | null = null
+        let evaluationTruncation: { originalChars: number; truncatedChars: number } | null = null
         
         // Check if Grok API key is configured
         if (!process.env.NEXT_PUBLIC_GROK_API_KEY) {
@@ -249,14 +282,45 @@ export async function POST(request: NextRequest) {
             evaluationError = new Error('GROK_API_KEY not configured. Evaluation skipped.')
         } else {
             try {
-                // Use extracted PDF text, text_content from form, or title for evaluation
-                const textContent = textContentForEvaluation
-                debug('SubmitContribution', 'Starting Grok API evaluation', {
-                    textLength: textContent.length,
-                    title: title.trim(),
-                    source: 'user_pasted_text'
-                })
-                evaluation = await evaluateWithGrok(textContent, title.trim(), category || undefined, submission_hash)
+                // Evaluate, retrying with truncated input if provider token budget is exceeded.
+                const charBudgets = [24000, 16000, 10000, 7000]
+                let lastEvalError: Error | null = null
+                let textUsedForEvaluation = textContentForEvaluation
+
+                for (const maxChars of charBudgets) {
+                    const t = truncateForEvaluation(textContentForEvaluation, maxChars)
+                    textUsedForEvaluation = t.text
+
+                    debug('SubmitContribution', 'Starting Grok API evaluation', {
+                        textLength: textUsedForEvaluation.length,
+                        originalLength: t.originalChars,
+                        truncated: t.truncated,
+                        maxChars,
+                        title: title.trim(),
+                        source: 'user_pasted_text',
+                    })
+
+                    try {
+                        evaluation = await evaluateWithGrok(textUsedForEvaluation, title.trim(), category || undefined, submission_hash)
+                        if (t.truncated) {
+                            evaluationTruncation = { originalChars: t.originalChars, truncatedChars: t.truncatedChars }
+                            evaluationNotice = `Evaluated using truncated content (${t.truncatedChars.toLocaleString()} of ${t.originalChars.toLocaleString()} chars).`
+                        }
+                        break
+                    } catch (err) {
+                        const e = err instanceof Error ? err : new Error(String(err))
+                        lastEvalError = e
+                        if (isProviderTokenBudgetError(e)) {
+                            // retry with smaller input budget
+                            continue
+                        }
+                        throw e
+                    }
+                }
+
+                if (!evaluation) {
+                    throw lastEvalError || new Error('Evaluation failed to complete.')
+                }
                 
                 // Use qualified status from evaluation
                 // evaluation.qualified is already calculated with discounted pod_score in evaluateWithGrok
@@ -283,7 +347,8 @@ export async function POST(request: NextRequest) {
                 // Generate vector embedding and 3D coordinates using evaluation scores
                 let vectorizationResult: { embedding: number[], vector: { x: number, y: number, z: number }, embeddingModel: string } | null = null
                 try {
-                    const textContent = textContentForEvaluation
+                    // Vectorize using the same text used for evaluation (may be truncated to fit provider limits).
+                    const textContent = evaluationTruncation ? truncateForEvaluation(textContentForEvaluation, evaluationTruncation.truncatedChars).text : textContentForEvaluation
                     vectorizationResult = await vectorizeSubmission(textContent, {
                         novelty: evaluation.novelty,
                         density: evaluation.density,
@@ -324,6 +389,9 @@ export async function POST(request: NextRequest) {
                                 qualified_founder: qualified,
                                 qualified_epoch: openEpochUsed || evaluation.qualified_epoch || null, // Store the open epoch used to qualify
                                 allocation_status: 'pending_admin_approval', // Token allocation requires admin approval
+                                evaluation_truncated: evaluationTruncation ? true : false,
+                                evaluation_truncated_chars: evaluationTruncation?.truncatedChars ?? null,
+                                evaluation_original_chars: evaluationTruncation?.originalChars ?? null,
                                 // Store detailed Grok evaluation details for detailed report
                                 grok_evaluation_details: {
                                     base_novelty: evaluation.base_novelty,
@@ -500,10 +568,11 @@ export async function POST(request: NextRequest) {
                 }
             } : null,
             evaluation_error: evaluationError ? toPublicEvaluationError(evaluationError.message) : null,
+            evaluation_notice: evaluationNotice,
             status: evaluation ? (evaluation.qualified ? 'qualified' : 'unqualified') : 'evaluating',
             allocation_status: evaluation ? 'pending_admin_approval' : undefined,
             message: evaluation 
-                ? 'Contribution submitted and evaluated successfully'
+                ? (evaluationNotice ? `Contribution submitted and evaluated successfully. ${evaluationNotice}` : 'Contribution submitted and evaluated successfully')
                 : evaluationError 
                     ? 'Contribution submitted successfully. Evaluation is queued and may complete shortly.'
                     : 'Contribution submitted successfully (evaluation pending)'

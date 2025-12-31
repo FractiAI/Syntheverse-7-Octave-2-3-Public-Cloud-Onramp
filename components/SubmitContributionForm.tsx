@@ -25,6 +25,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
         podScore?: number
         qualified?: boolean
         error?: string
+        notice?: string
         evaluation?: any // Full evaluation result for detailed report
     } | null>(null)
     
@@ -133,6 +134,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                         completed: true,
                         podScore: result.evaluation.pod_score,
                         qualified: result.evaluation.qualified || result.evaluation.qualified_founder,
+                        notice: result.evaluation_notice || undefined,
                         evaluation: evaluationData // Store full evaluation for detailed report
                     })
                 } else if (result.evaluation_error) {
@@ -343,6 +345,12 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
+                                    {evaluationStatus.notice ? (
+                                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <div className="text-sm font-semibold text-blue-800">ℹ️ Evaluation Notice</div>
+                                            <div className="text-sm text-blue-700 mt-1">{evaluationStatus.notice}</div>
+                                        </div>
+                                    ) : null}
                                     {evaluationStatus.completed && evaluationStatus.podScore !== undefined ? (
                                         <>
                                             <div className="space-y-4">
