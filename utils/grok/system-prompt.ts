@@ -662,7 +662,6 @@ You MUST include a valid JSON object with the EXACT structure below embedded in 
 **Required JSON Structure:**
 {
     "classification": ["Research"|"Development"|"Alignment"],
-    "detailed_review": "<detailed review of the submission: summary, strengths, weaknesses, concrete improvement suggestions, and any critical issues>",
     "scoring": {
         "novelty": {
             "base_score": <NUMBER 0-2500>,
