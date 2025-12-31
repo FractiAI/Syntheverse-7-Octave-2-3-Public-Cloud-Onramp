@@ -115,15 +115,22 @@ export async function signup(currentState: { message: string }, formData: FormDa
             plan: 'none' 
         })
         
-        // Send welcome email (don't fail signup if email fails)
-        try {
-            await sendWelcomeEmail({
-                userEmail: signUpData.user.email!,
-                userName: data.name
-            })
-        } catch (emailError) {
-            console.error("Failed to send welcome email:", emailError)
-            // Continue - signup should succeed even if email fails
+        // Send welcome email:
+        // - In production, defer until email confirmation (handled in /auth/auth/confirm)
+        // - In development or if already confirmed, send immediately
+        if (!requiresEmailConfirmation || isEmailConfirmed) {
+            try {
+                const res = await sendWelcomeEmail({
+                    userEmail: signUpData.user.email!,
+                    userName: data.name
+                })
+                if (!res.success) {
+                    console.warn('Welcome email not sent:', res.error)
+                }
+            } catch (emailError) {
+                console.error("Failed to send welcome email:", emailError)
+                // Continue - signup should succeed even if email fails
+            }
         }
     } catch (err) {
         console.error("Error in signup:", err instanceof Error ? err.message : "Unknown error")
