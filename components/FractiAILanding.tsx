@@ -201,7 +201,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                 </Link>
 
                 {variant === 'fractiai' ? (
-                  <Link href="/submit" className="cockpit-lever inline-flex items-center">
+                  <Link href="/dashboard" className="cockpit-lever inline-flex items-center">
                     Enter the Syntheverse
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
