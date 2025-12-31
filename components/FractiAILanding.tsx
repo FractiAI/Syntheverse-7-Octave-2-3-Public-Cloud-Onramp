@@ -4,6 +4,7 @@ import { ArrowRight, ChevronDown } from 'lucide-react'
 
 type FractiAILandingProps = {
   variant?: 'home' | 'fractiai'
+  isAuthenticated?: boolean
   cta?: {
     primaryHref: string
     primaryLabel: string
@@ -47,7 +48,8 @@ function ExpandablePanel({
   )
 }
 
-export default function FractiAILanding({ variant = 'home', cta }: FractiAILandingProps) {
+export default function FractiAILanding({ variant = 'home', isAuthenticated = false, cta }: FractiAILandingProps) {
+  const showAuthButtons = variant === 'fractiai' && !isAuthenticated
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto px-6 py-10 space-y-10">
@@ -95,15 +97,19 @@ export default function FractiAILanding({ variant = 'home', cta }: FractiAILandi
                   </Link>
                 ) : null}
 
-                <Link href="/signup" className="cockpit-lever inline-flex items-center">
-                  Sign up
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                {showAuthButtons ? (
+                  <>
+                    <Link href="/signup" className="cockpit-lever inline-flex items-center">
+                      Sign up
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
 
-                <Link href="/login" className="cockpit-lever inline-flex items-center">
-                  Log in
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                    <Link href="/login" className="cockpit-lever inline-flex items-center">
+                      Log in
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </>
+                ) : null}
 
                 <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
                   Onboarding

@@ -12,6 +12,7 @@ export default async function FractiAIPage() {
   return (
     <FractiAILanding
       variant="fractiai"
+      isAuthenticated={!!user}
       cta={
         user ? { primaryHref: '/dashboard', primaryLabel: 'Go to Dashboard' } : undefined
       }
