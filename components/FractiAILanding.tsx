@@ -383,16 +383,96 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
         {/* PRIMITIVES / PROTOCOL / TOKENOMICS sections removed (redundant) */}
 
         {/* About */}
-        <ExpandablePanel label="ABOUT" title="FractiAI: the HHF Whole Brain Blueprint" defaultOpen={true}>
-          <div className="cockpit-text space-y-3">
+        <ExpandablePanel label="ABOUT" title="About FractiAI" defaultOpen={true}>
+          <div className="cockpit-text space-y-4">
+            <div className="cockpit-label">FRACTIAI: PIONEERING THE FRACTAL INTELLIGENCE RENAISSANCE</div>
             <p>
-              FractiAI is building a Hydrogen‑Holographic Fractal “Whole Brain” blueprint: a structural grammar for
-              intelligence spanning perception, memory, reasoning, agency, and alignment.
+              FractiAI is an early trials phase startup, leading a new fractal intelligence paradigm. With our fractal
+              intelligence frameworks, FractiAI is transforming artificial intelligence, computation, and beyond.
             </p>
             <p>
-              Syntheverse is the operational embodiment of that blueprint—turning the grammar into a live frontier: a
-              Base‑chain game, lens, and sandbox where contributions expand the map and shape the economy.
+              FractiAI’s mission is to deliver open-source, fractal-based technologies that unlock universal harmony through
+              scalable, adaptive, and multidimensional systems, lowering costs to implement and operate and democratizing
+              state of the art fractal intelligence solutions.
             </p>
+
+            <div className="pt-3 border-t border-[var(--keyline-primary)]">
+              <div className="cockpit-label mb-3">THE TEAM</div>
+
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="cockpit-module p-4">
+                  <div className="cockpit-title text-lg">Pru Mendez</div>
+                  <div className="cockpit-text text-sm mt-1">Founder and SAUUHUPP Architect</div>
+                  <div className="cockpit-text text-sm mt-2">
+                    Email:{' '}
+                    <a className="underline" href="mailto:pru@fractiai.com">
+                      pru@fractiai.com
+                    </a>
+                  </div>
+                  <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
+                    Pru is the visionary architect and creator of the SAUUHUPP Framework, which forms the foundation of the
+                    company’s technologies. His innovations—including FractiScope 1.3 and Novelty 1.0—leverage SAUUHUPP
+                    fractal intelligence to build scalable and adaptive systems. His interests span fractal AI, networked
+                    systems, genetics, cosmology, and awareness intelligence. Pru is also development lead for EnterpriseWorld
+                    7DAI System, ParadiseWorld 7DAI Eternal Game and OmniScope (previously FractiScope) products.
+                  </div>
+                </div>
+
+                <div className="cockpit-module p-4">
+                  <div className="cockpit-title text-lg">Daniel Ari Friedman, Ph.D.</div>
+                  <div className="cockpit-text text-sm mt-1">Co-Founder, Neural Network Architect, and CEO</div>
+                  <div className="cockpit-text text-sm mt-2">
+                    Email:{' '}
+                    <a className="underline" href="mailto:daniel@fractiai.com">
+                      daniel@fractiai.com
+                    </a>
+                  </div>
+                  <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
+                    Daniel brings deep expertise in neural networks and computational intelligence to FractiAI. With a PhD from
+                    Stanford, where he studied the genetics and neuroscience of collective behavior, Daniel combines academic
+                    rigor with entrepreneurial leadership and pioneering spirit. Daniel is spearheading the development of
+                    fractal AI systems that redefine scalability, adaptability, and efficiency. Daniel is also development lead
+                    for Bucky MythicLink 4D-7DAI Peer Review Bridge.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-[var(--keyline-primary)]">
+              <div className="cockpit-label mb-2">CONTACT US</div>
+              <div className="cockpit-text text-sm space-y-2">
+                <div>
+                  General Inquiries:{' '}
+                  <a className="underline" href="mailto:info@fractiai.com">
+                    info@fractiai.com
+                  </a>
+                </div>
+                <div>
+                  Investor Relations:{' '}
+                  <a className="underline" href="mailto:invest@fractiai.com">
+                    invest@fractiai.com
+                  </a>
+                </div>
+                <div>
+                  Demo Registration:{' '}
+                  <a className="underline" href="mailto:demo@fractiai.com">
+                    demo@fractiai.com
+                  </a>
+                </div>
+              </div>
+              <div className="cockpit-text text-sm mt-4" style={{ opacity: 0.9 }}>
+                FractiAI is ready to revolutionize intelligence—join us in shaping the Fractal Intelligence Renaissance.
+              </div>
+              <div className="cockpit-text text-xs mt-3" style={{ opacity: 0.85 }}>
+                AwarenessAI.com and FractiAI.com are currently searching for 7D AI domestic and international distributor and
+                integrator partners, all regions. High margins and differentiation when applying our cutting edge awareness AI
+                tech which has now arrived! Email{' '}
+                <a className="underline" href="mailto:pru@fractiai.com">
+                  pru@fractiai.com
+                </a>{' '}
+                if interested.
+              </div>
+            </div>
           </div>
           <div className="mt-5 relative aspect-[16/9]">
             <Image src="/fractiai/about-blueprint.svg" alt="About FractiAI blueprint panel" fill className="object-contain" />
