@@ -239,7 +239,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   defaultOpen={true}
                 >
                   <div className="cockpit-text space-y-3 text-sm">
-                    <p>Base‑chain prerelease: gameplay, lens, and sandbox operations begin.</p>
+                    <p>Base‑chain Beta release on Base: gameplay, lens and sandbox operations begin on the chain.</p>
                     <p>
                       This is open tuning: contributors expand the map, the scoring lens stabilizes, and the economy
                       calibrates via real usage.
