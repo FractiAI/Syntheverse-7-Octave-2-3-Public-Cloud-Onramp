@@ -529,20 +529,20 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                                     {evaluationStatus.evaluation.grok_evaluation_details && (
                                                                         <div className="p-3 bg-white rounded-lg border">
                                                                             <div className="font-semibold mb-3 text-slate-700">Scoring Breakdown</div>
-                                                                            <div className="space-y-2 text-sm">
+                                                                            <div className="space-y-2 text-sm text-slate-900">
                                                                                 {/* Base Scores */}
                                                                                 <div className="grid grid-cols-2 gap-3">
                                                                                     {evaluationStatus.evaluation.grok_evaluation_details.base_novelty !== undefined && (
                                                                                         <div className="p-2 bg-slate-50 rounded border">
                                                                                             <div className="text-xs text-slate-600 mb-1">Base Novelty</div>
-                                                                                            <div className="font-semibold">{evaluationStatus.evaluation.grok_evaluation_details.base_novelty.toLocaleString()} / 2,500</div>
+                                                                                            <div className="font-semibold text-slate-900">{evaluationStatus.evaluation.grok_evaluation_details.base_novelty.toLocaleString()} / 2,500</div>
                                                                                             <div className="text-xs text-slate-600 mt-1">Final: {evaluationStatus.evaluation.novelty?.toLocaleString() || 'N/A'} / 2,500</div>
                                                                                         </div>
                                                                                     )}
                                                                                     {evaluationStatus.evaluation.grok_evaluation_details.base_density !== undefined && (
                                                                                         <div className="p-2 bg-slate-50 rounded border">
                                                                                             <div className="text-xs text-slate-600 mb-1">Base Density</div>
-                                                                                            <div className="font-semibold">{evaluationStatus.evaluation.grok_evaluation_details.base_density.toLocaleString()} / 2,500</div>
+                                                                                            <div className="font-semibold text-slate-900">{evaluationStatus.evaluation.grok_evaluation_details.base_density.toLocaleString()} / 2,500</div>
                                                                                             <div className="text-xs text-slate-600 mt-1">Final: {evaluationStatus.evaluation.density?.toLocaleString() || 'N/A'} / 2,500</div>
                                                                                         </div>
                                                                                     )}
@@ -552,11 +552,11 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                                                 <div className="grid grid-cols-2 gap-3">
                                                                                     <div className="p-2 bg-slate-50 rounded border">
                                                                                         <div className="text-xs text-slate-600 mb-1">Coherence</div>
-                                                                                        <div className="font-semibold">{evaluationStatus.evaluation.coherence?.toLocaleString() || 'N/A'} / 2,500</div>
+                                                                                        <div className="font-semibold text-slate-900">{evaluationStatus.evaluation.coherence?.toLocaleString() || 'N/A'} / 2,500</div>
                                                                                     </div>
                                                                                     <div className="p-2 bg-slate-50 rounded border">
                                                                                         <div className="text-xs text-slate-600 mb-1">Alignment</div>
-                                                                                        <div className="font-semibold">{evaluationStatus.evaluation.alignment?.toLocaleString() || 'N/A'} / 2,500</div>
+                                                                                        <div className="font-semibold text-slate-900">{evaluationStatus.evaluation.alignment?.toLocaleString() || 'N/A'} / 2,500</div>
                                                                                     </div>
                                                                                 </div>
                                                                                 
