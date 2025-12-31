@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/utils/db/db'
 import { tokenomicsTable, epochBalancesTable, epochMetalBalancesTable } from '@/utils/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 
 // Force dynamic rendering - always fetch fresh data
@@ -16,11 +16,6 @@ export async function GET(request: NextRequest) {
     headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
     headers.set('Pragma', 'no-cache')
     headers.set('Expires', '0')
-    
-    // Set a timeout for the entire operation (8 seconds to be safe, client times out at 10s)
-    const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Epoch info fetch timed out')), 8000)
-    })
     
     const fetchOperation = async () => {
         try {
@@ -60,13 +55,35 @@ export async function GET(request: NextRequest) {
                 }
             }
 
-        // Get current epoch from tokenomics
-        const tokenomics = await db
-            .select()
-            .from(tokenomicsTable)
-            .where(eq(tokenomicsTable.id, 'main'))
-            .limit(1)
-        
+        // Fetch current epoch + per-metal epoch balances in parallel (keep this endpoint fast).
+        const [tokenomics, metalEpochBalances] = await Promise.all([
+            db
+                .select()
+                .from(tokenomicsTable)
+                .where(eq(tokenomicsTable.id, 'main'))
+                .limit(1),
+            (async () => {
+                try {
+                    // If this table ever accumulates duplicate rows, group down to one row per (epoch, metal).
+                    // Use MAX(...) as a pragmatic “latest/current value” reducer.
+                    return await db
+                        .select({
+                            epoch: epochMetalBalancesTable.epoch,
+                            metal: epochMetalBalancesTable.metal,
+                            balance: sql<string | null>`MAX(${epochMetalBalancesTable.balance})`,
+                            threshold: sql<string | null>`MAX(${epochMetalBalancesTable.threshold})`,
+                            distribution_amount: sql<string | null>`MAX(${epochMetalBalancesTable.distribution_amount})`,
+                            distribution_percent: sql<string | null>`MAX(${epochMetalBalancesTable.distribution_percent})`,
+                        })
+                        .from(epochMetalBalancesTable)
+                        .groupBy(epochMetalBalancesTable.epoch, epochMetalBalancesTable.metal)
+                } catch (metalErr) {
+                    debug('EpochInfo', 'epoch_metal_balances not available (fallback to legacy epoch_balances)', metalErr)
+                    return []
+                }
+            })(),
+        ])
+
         let currentEpoch = tokenomics[0]?.current_epoch || 'founder'
         
         // Ensure currentEpoch is normalized to lowercase
@@ -83,15 +100,6 @@ export async function GET(request: NextRequest) {
             tokenomicsRecord: tokenomics[0]
         })
         
-        // Prefer per-metal epoch balances (new tokenomics model)
-        let metalEpochBalances: any[] = []
-        try {
-            metalEpochBalances = await db.select().from(epochMetalBalancesTable)
-        } catch (metalErr) {
-            debug('EpochInfo', 'epoch_metal_balances not available (fallback to legacy epoch_balances)', metalErr)
-            metalEpochBalances = []
-        }
-
         if (metalEpochBalances.length > 0) {
             const epochMetals: Record<string, any> = {}
             const epochs: Record<string, any> = {}
@@ -136,58 +144,16 @@ export async function GET(request: NextRequest) {
         // Fallback: legacy epoch_balances table
         const epochBalances = await db.select().from(epochBalancesTable)
         
-        // If no epoch balances exist, try to initialize defaults
+        // If no epoch balances exist, DO NOT write defaults here (read-only endpoint).
+        // Return defaults immediately to avoid slow writes/locks and keep this endpoint responsive.
         if (epochBalances.length === 0) {
-            const defaultEpochs = [
-                { epoch: 'founder', balance: '45000000000000', threshold: 0, distribution_amount: 0, distribution_percent: 50.0 },
-                { epoch: 'pioneer', balance: '22500000000000', threshold: 0, distribution_amount: 0, distribution_percent: 25.0 },
-                { epoch: 'community', balance: '11250000000000', threshold: 0, distribution_amount: 0, distribution_percent: 12.5 },
-                { epoch: 'ecosystem', balance: '11250000000000', threshold: 0, distribution_amount: 0, distribution_percent: 12.5 }
-            ]
-            
-            try {
-                for (const epoch of defaultEpochs) {
-                    await db.insert(epochBalancesTable).values({
-                        id: `epoch_${epoch.epoch}`,
-                        epoch: epoch.epoch,
-                        balance: epoch.balance.toString(),
-                        threshold: '0',
-                        distribution_amount: '0',
-                        distribution_percent: epoch.distribution_percent.toString(),
-                    })
-                }
-                
-                // Fetch again after initialization
-                const newBalances = await db
-                    .select()
-                    .from(epochBalancesTable)
-                
-                const epochs: Record<string, any> = {}
-                newBalances.forEach(epoch => {
-                    epochs[epoch.epoch] = {
-                        balance: Number(epoch.balance),
-                        threshold: Number(epoch.threshold),
-                        distribution_amount: Number(epoch.distribution_amount),
-                        distribution_percent: Number(epoch.distribution_percent),
-                        available_tiers: [] // Can be populated later
-                    }
-                })
-                
-                return {
-                    current_epoch: currentEpoch,
-                    epochs
-                }
-            } catch (insertError) {
-                // Table might not exist, return default values
-                debug('EpochInfo', 'Could not insert default epochs, returning defaults', insertError)
-                return {
-                    current_epoch: 'founder',
-                    epochs: {
-                        founder: { balance: 45000000000000, threshold: 0, distribution_amount: 0, distribution_percent: 50.0, available_tiers: [] },
-                        pioneer: { balance: 22500000000000, threshold: 0, distribution_amount: 0, distribution_percent: 25.0, available_tiers: [] },
-                        community: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] },
-                        ecosystem: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] }
-                    }
+            return {
+                current_epoch: currentEpoch,
+                epochs: {
+                    founder: { balance: 45000000000000, threshold: 0, distribution_amount: 0, distribution_percent: 50.0, available_tiers: [] },
+                    pioneer: { balance: 22500000000000, threshold: 0, distribution_amount: 0, distribution_percent: 25.0, available_tiers: [] },
+                    community: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] },
+                    ecosystem: { balance: 11250000000000, threshold: 0, distribution_amount: 0, distribution_percent: 12.5, available_tiers: [] }
                 }
             }
         }
@@ -267,8 +233,8 @@ export async function GET(request: NextRequest) {
     }
     
     try {
-        // Race between fetch operation and timeout
-        const result = await Promise.race([fetchOperation(), timeoutPromise])
+        // Execute the fetch operation (keep this endpoint fast; client has its own timeout).
+        const result = await fetchOperation()
         return NextResponse.json(result, { headers })
     } catch (error) {
         debugError('EpochInfo', 'Error fetching epoch information', error)
