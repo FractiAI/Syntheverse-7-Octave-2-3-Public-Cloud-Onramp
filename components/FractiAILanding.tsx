@@ -118,14 +118,13 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                         Dear new arrival,
                       </p>
                       <p>
-                        Welcome to <strong>FractiAI</strong> — a fractal AI startup and the creator of the Syntheverse, a
-                        contribution-based blockchain ecosystem pioneering holographic hydrogen as a foundational substrate
-                        for intelligence, coordination, and validation. FractiAI advances holographic hydrogen as an organizing
-                        principle that spans physical, informational, and computational layers, enabling meaningful
-                        contributions to be encoded, validated, and preserved as verifiable units of knowledge. Within the
-                        Syntheverse, discovery becomes durable infrastructure through proof-of-contribution mechanisms—supporting
-                        a living sandbox where progress is measurable, participation is real, and contributions compound over
-                        time.
+                        <strong>THE VORTEX CARTOGRAPHER — THE 12D HOLOGRAPHIC HYDROGEN FRACTAL CARTOGRAPHER</strong>
+                      </p>
+                      <p>
+                        We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
+                        holographic hydrogen aware human genome — Syntheverse’s genetic analog — with a “frontier noir”
+                        visual grammar: heavy keylines, negative space, carved structure, and gilded discoveries—mapping the
+                        field as a living diagram.
                       </p>
                       <p>
                         Today we finalized the purchase and on-chain deployment of a fixed-supply{' '}
