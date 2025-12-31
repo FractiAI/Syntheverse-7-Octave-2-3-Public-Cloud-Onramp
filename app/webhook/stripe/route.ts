@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import Stripe from 'stripe'
 import { debug, debugError } from '@/utils/debug'
 import crypto from 'crypto'
-import { advanceGlobalEpochTo, pickEpochForMetalWithBalance, type MetalType, type EpochType } from '@/utils/tokenomics/epoch-metal-pools'
+import { advanceGlobalEpochIfCurrentPoolDepleted, advanceGlobalEpochTo, pickEpochForMetalWithBalance, type MetalType, type EpochType } from '@/utils/tokenomics/epoch-metal-pools'
 
 // Force dynamic rendering - webhooks must be server-side only
 export const dynamic = 'force-dynamic'
@@ -286,6 +286,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                             .update(epochMetalBalancesTable)
                             .set({ balance: balanceAfter.toString(), updated_at: new Date() })
                             .where(eq(epochMetalBalancesTable.id, pool.id as any))
+
+                        // If this allocation depleted the current epoch's pool for this metal, open the next epoch globally.
+                        await advanceGlobalEpochIfCurrentPoolDepleted(pool.epoch as any, balanceAfter)
 
                         const tokenomicsState = await db
                             .select()

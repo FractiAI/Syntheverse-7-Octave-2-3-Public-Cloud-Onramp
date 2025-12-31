@@ -14,7 +14,7 @@ import { eq } from 'drizzle-orm'
 import { calculateProjectedAllocation } from '@/utils/tokenomics/projected-allocation'
 import { debug, debugError } from '@/utils/debug'
 import crypto from 'crypto'
-import { advanceGlobalEpochTo, pickEpochForMetalWithBalance, type MetalType } from '@/utils/tokenomics/epoch-metal-pools'
+import { advanceGlobalEpochIfCurrentPoolDepleted, advanceGlobalEpochTo, pickEpochForMetalWithBalance, type MetalType } from '@/utils/tokenomics/epoch-metal-pools'
 import { computeMetalAssay } from '@/utils/tokenomics/metal-assay'
 
 export async function POST(
@@ -124,6 +124,9 @@ export async function POST(
                 .update(epochMetalBalancesTable)
                 .set({ balance: balanceAfter.toString(), updated_at: new Date() })
                 .where(eq(epochMetalBalancesTable.id, pool.id as any))
+
+            // If this allocation depleted the current epoch's pool for this metal, open the next epoch globally.
+            await advanceGlobalEpochIfCurrentPoolDepleted(pool.epoch as any, balanceAfter)
 
             const tokenomicsState = await db.select().from(tokenomicsTable).where(eq(tokenomicsTable.id, 'main')).limit(1)
             if (tokenomicsState.length > 0) {

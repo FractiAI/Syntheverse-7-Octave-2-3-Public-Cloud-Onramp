@@ -8,6 +8,13 @@ export type MetalType = 'gold' | 'silver' | 'copper'
 
 export const EPOCH_ORDER: EpochType[] = ['founder', 'pioneer', 'community', 'ecosystem']
 
+export function getNextEpoch(epoch: EpochType): EpochType | null {
+  const idx = EPOCH_ORDER.indexOf(epoch)
+  if (idx < 0) return 'pioneer'
+  const next = EPOCH_ORDER[idx + 1]
+  return next || null
+}
+
 // Canonical per-epoch per-metal distribution amounts (should match migration seed).
 const ORIGINAL_EPOCH_METAL_DISTRIBUTIONS: Record<EpochType, Record<MetalType, number>> = {
   founder: { gold: 22_500_000_000_000, silver: 11_250_000_000_000, copper: 11_250_000_000_000 },
@@ -134,6 +141,38 @@ export async function advanceGlobalEpochTo(targetEpoch: EpochType) {
   } catch (err) {
     debugError('EpochMetalPools', 'Failed to advance global epoch', { targetEpoch, err })
     return { changed: false, from: null, to: null }
+  }
+}
+
+/**
+ * If an allocation fully depletes a metal pool for the currently-open epoch,
+ * advance the GLOBAL epoch to the next one.
+ *
+ * This matches the product requirement: "open the next epoch globally if the current epoch's metal pool
+ * is depleted for a specific allocation."
+ */
+export async function advanceGlobalEpochIfCurrentPoolDepleted(
+  epochUsed: EpochType,
+  balanceAfter: number,
+  fullyAllocatedThreshold = 1000
+) {
+  try {
+    // Only trigger when the pool is effectively depleted.
+    if (balanceAfter > fullyAllocatedThreshold) return { changed: false, reason: 'not_depleted' as const }
+
+    const tokenomics = await db.select().from(tokenomicsTable).where(eq(tokenomicsTable.id, 'main')).limit(1)
+    const current = (String(tokenomics[0]?.current_epoch || 'founder').toLowerCase().trim() || 'founder') as EpochType
+
+    // Only auto-advance when depleting the *current* epoch's pool.
+    if (current !== epochUsed) return { changed: false, reason: 'not_current_epoch' as const, current, epochUsed }
+
+    const next = getNextEpoch(epochUsed)
+    if (!next) return { changed: false, reason: 'no_next_epoch' as const, current }
+
+    return await advanceGlobalEpochTo(next)
+  } catch (err) {
+    debugError('EpochMetalPools', 'Failed to advance global epoch after pool depletion', { epochUsed, balanceAfter, err })
+    return { changed: false, reason: 'error' as const }
   }
 }
 

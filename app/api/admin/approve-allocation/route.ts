@@ -22,6 +22,7 @@ import { createClient } from '@/utils/supabase/server'
 import { isQualifiedForOpenEpoch } from '@/utils/epochs/qualification'
 import { computeMetalAssay } from '@/utils/tokenomics/metal-assay'
 import crypto from 'crypto'
+import { advanceGlobalEpochIfCurrentPoolDepleted } from '@/utils/tokenomics/epoch-metal-pools'
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'espressolico@gmail.com'
 
@@ -214,6 +215,9 @@ async function handleApproval(submission_hash: string, approvedBy: string): Prom
                 balance: balanceAfter.toString(),
                 updated_at: new Date()
             }).where(eq(epochMetalBalancesTable.id, pool.id))
+
+            // If this allocation depleted the current epoch's pool for this metal, open the next epoch globally.
+            await advanceGlobalEpochIfCurrentPoolDepleted(epoch as any, balanceAfter)
 
             const metalKey =
                 metal === 'gold' ? 'total_distributed_gold' :
