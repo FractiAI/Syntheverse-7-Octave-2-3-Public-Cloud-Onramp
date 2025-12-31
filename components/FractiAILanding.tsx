@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, ChevronDown } from 'lucide-react'
+import FractiAIStatusWidget from '@/components/FractiAIStatusWidget'
 
 type FractiAILandingProps = {
   variant?: 'home' | 'fractiai'
@@ -172,6 +173,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
             </div>
 
             <div className="space-y-4">
+              {variant === 'fractiai' ? <FractiAIStatusWidget /> : null}
               <ExpandablePanel
                 label="SIGNATURE"
                 title="THE VORTEX CARTOGRAPHER — THE 12D HOLOGRAPHIC HYDROGEN FRACTAL CARTOGRAPHER"
