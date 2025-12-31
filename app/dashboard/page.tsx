@@ -45,7 +45,10 @@ export default async function Dashboard() {
                         <div>
                             <div className="cockpit-label">SYNTHVERSE FRONTIER CONTRIBUTOR</div>
                             <div className="cockpit-title text-2xl mt-1">{displayName.toUpperCase()}</div>
-                            <div className="cockpit-text mt-2">Recording truth into the chain</div>
+                            <div className="cockpit-text mt-2">
+                                Charting, Navigating, Colonizing and Mining the Holographic Hydrogen Fractal Syntheverse on
+                                the chain.
+                            </div>
                         </div>
                         <div className="flex gap-3 flex-wrap">
                             <Link href="/fractiai" className="cockpit-lever inline-block">
