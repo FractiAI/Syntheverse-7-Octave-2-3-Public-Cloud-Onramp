@@ -528,6 +528,41 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                 )}
                             </div>
 
+                            {/* Actions (moved to top for visibility) */}
+                            {selectedSubmission.contributor === userEmail && (
+                                <div className="pt-4 border-t border-[var(--keyline-primary)]">
+                                    {selectedSubmission.qualified && !selectedSubmission.registered && (
+                                        <button 
+                                            onClick={() => handleRegister(selectedSubmission.submission_hash)}
+                                            disabled={registering === selectedSubmission.submission_hash}
+                                            className="cockpit-lever w-full"
+                                        >
+                                            {registering === selectedSubmission.submission_hash ? (
+                                                <>
+                                                    <Loader2 className="inline h-4 w-4 mr-2 animate-spin" />
+                                                    Processing...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <CreditCard className="inline h-4 w-4 mr-2" />
+                                                    Register PoC - $200
+                                                </>
+                                            )}
+                                        </button>
+                                    )}
+                                    {selectedSubmission.registered && !selectedSubmission.allocated && (
+                                        <div className="cockpit-text text-sm">
+                                            PoC is registered. Allocation can be processed.
+                                        </div>
+                                    )}
+                                    {selectedSubmission.allocated && (
+                                        <div className="cockpit-text text-sm text-green-400">
+                                            Tokens allocated
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             {/* Scores */}
                             <div>
                                 <div className="cockpit-label mb-3">Evaluation Scores</div>
@@ -804,40 +839,6 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                 </div>
                             )}
 
-                            {/* Actions */}
-                            {selectedSubmission.contributor === userEmail && (
-                                <div className="pt-4 border-t border-[var(--keyline-primary)]">
-                                    {selectedSubmission.qualified && !selectedSubmission.registered && (
-                                        <button 
-                                            onClick={() => handleRegister(selectedSubmission.submission_hash)}
-                                            disabled={registering === selectedSubmission.submission_hash}
-                                            className="cockpit-lever w-full"
-                                        >
-                                            {registering === selectedSubmission.submission_hash ? (
-                                                <>
-                                                    <Loader2 className="inline h-4 w-4 mr-2 animate-spin" />
-                                                    Processing...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <CreditCard className="inline h-4 w-4 mr-2" />
-                                                    Register PoC - $200
-                                                </>
-                                            )}
-                                        </button>
-                                    )}
-                                    {selectedSubmission.registered && !selectedSubmission.allocated && (
-                                        <div className="cockpit-text text-sm">
-                                            PoC is registered. Allocation can be processed.
-                                        </div>
-                                    )}
-                                    {selectedSubmission.allocated && (
-                                        <div className="cockpit-text text-sm text-green-400">
-                                            Tokens allocated
-                                        </div>
-                                    )}
-                                </div>
-                            )}
                         </div>
                     )}
                 </DialogContent>
