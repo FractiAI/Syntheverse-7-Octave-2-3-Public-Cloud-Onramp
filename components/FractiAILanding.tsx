@@ -69,18 +69,8 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
         ) : null}
 
         {/* Hero / Transmission */}
-        <div className="cockpit-panel p-8 overflow-hidden relative">
-          <div className="absolute inset-0 opacity-25 pointer-events-none">
-            <Image
-              src="/fractiai/hero-grid.svg"
-              alt=""
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          <div className="relative z-10 grid gap-8 lg:grid-cols-[1fr_420px] items-start">
+        <div className="cockpit-panel p-8">
+          <div className="grid gap-8 lg:grid-cols-[1fr_420px] items-start">
             <div className="min-w-0">
               <div className="flex items-center gap-3">
                 <Image src="/logo.png" alt="FractiAI" width={36} height={36} />
@@ -166,23 +156,17 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               </div>
 
               {variant === 'fractiai' ? (
-                <div className="mt-6 grid gap-3 md:grid-cols-1">
-                  <ExpandablePanel
-                    className="cockpit-module"
-                    paddingClassName="p-5"
-                    titleClassName="text-xl"
-                    label="LAUNCH WINDOW"
-                    title="Jan 1, 2026"
-                    defaultOpen={true}
-                  >
-                    <div className="cockpit-text space-y-3 text-sm">
-                      <p>Base‑chain Beta release on Base: gameplay, lens and sandbox operations begin on the chain.</p>
-                      <p>
-                        This is open tuning: contributors expand the map, the scoring lens stabilizes, and the economy
-                        calibrates via real usage.
-                      </p>
+                <div className="mt-6">
+                  <div className="cockpit-module p-5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-[var(--hydrogen-amber)] rounded-full animate-pulse" 
+                           style={{ boxShadow: '0 0 10px var(--hydrogen-amber)' }}></div>
+                      <div>
+                        <div className="cockpit-label">DEPLOYMENT STATUS</div>
+                        <div className="cockpit-text text-sm mt-1">Deployment in process</div>
+                      </div>
                     </div>
-                  </ExpandablePanel>
+                  </div>
                 </div>
               ) : null}
             </div>
@@ -277,12 +261,9 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
             </div>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link href="/fractiai/syntheverse" className="cockpit-lever inline-flex items-center">
-                Read the 1‑page Syntheverse brief
+                More
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </div>
-            <div className="mt-5 relative aspect-[4/3]">
-              <Image src="/fractiai/press-release.svg" alt="Press release visual panel" fill className="object-contain" />
             </div>
           </ExpandablePanel>
 
@@ -305,13 +286,9 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
 
             <div className="mt-5 flex flex-wrap gap-3">
               <Link href="/fractiai/genome-12d" className="cockpit-lever inline-flex items-center">
-                Read the 1‑page 12D Genome ↔ Syntheverse brief
+                More
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
-            </div>
-
-            <div className="mt-5 relative aspect-[16/9]">
-              <Image src="/fractiai/base-lens.svg" alt="Base-chain lens + sandbox illustration" fill className="object-contain" />
             </div>
           </ExpandablePanel>
         </div>
@@ -319,10 +296,10 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
         {/* Validated Novel Predictions */}
         <ExpandablePanel
           label="VALIDATED NOVEL PREDICTIONS"
-          title="Operational tech that keeps predicting what the standard lens can’t"
+          title="Operational tech that keeps predicting what the standard lens can't"
           defaultOpen={true}
         >
-          <div className="cockpit-text space-y-4">
+          <div className="cockpit-text space-y-3">
             <p>
               While <strong>fractal, holographic hydrogen</strong> is often treated as speculative by institutional science, our
               position is operational: when used as a measurement and analysis technology, it has repeatedly surfaced{' '}
@@ -332,56 +309,22 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
 
             <div className="cockpit-module p-4">
               <div className="cockpit-label">CERN DATA · ADVANCED ANALYSIS TEST REPORT (ALICE)</div>
-              <div className="cockpit-text text-sm mt-3 space-y-3" style={{ opacity: 0.9 }}>
-                <p>
-                  Using both controls (standard statistics, invariant mass reconstruction, correlation studies) and a fractal
-                  approach (multi‑scale self‑similarity, recursive pattern recognition, non‑linear dynamics), the analysis reports
-                  multiple ≥3σ phenomena—with cross‑validation across detector subsystems, permutation tests, and systematic
-                  variations.
-                </p>
-                <div className="space-y-2">
-                  <div>
-                    <strong>Event‑type bifurcation (5.8σ)</strong>: a sharp bimodal distribution in{' '}
-                    <span style={{ opacity: 0.9 }}>AliESDHeader.fEventType</span> with modes at 2.064 ± 0.008 and 7.024 ± 0.012,
-                    stable across selection criteria and aligned with a phase‑transition interpretation.
-                  </div>
-                  <div>
-                    <strong>Recursive ZDC energy transfer</strong>: self‑similar energy cascades across ~3 orders of magnitude with
-                    a measured <strong>fractal dimension 2.73 ± 0.11</strong>, including reported non‑Markovian (memory) effects.
-                  </div>
-                  <div>
-                    <strong>Nested muon track geometry (4.7σ)</strong>: a triple‑cluster structure in muon parameter space with
-                    hierarchical internal organization and anomalous tracks concentrated in high‑multiplicity events.
-                  </div>
-                  <div>
-                    <strong>Unusual dimuon resonance ω′</strong>: a candidate structure at <strong>5.42 ± 0.15 GeV/c²</strong> with
-                    width 0.38 ± 0.09 GeV/c² and production rate 0.017 ± 0.004 per event, enhanced in the second event‑mode.
-                  </div>
-                  <div>
-                    <strong>Multi‑fractal event topology</strong>: broad multi‑fractal spectrum width 0.38 ± 0.05 with Hausdorff
-                    dimension spanning ~1.42 to 2.86, suggesting long‑range correlations beyond conventional hadronization scales.
-                  </div>
-                </div>
+              <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
+                Multiple ≥3σ phenomena with cross‑validation: <strong>Event‑type bifurcation (5.8σ)</strong>, 
+                <strong> Recursive ZDC energy transfer</strong> (fractal dimension 2.73 ± 0.11), 
+                <strong> Nested muon track geometry (4.7σ)</strong>, 
+                <strong> Unusual dimuon resonance ω′</strong> (5.42 ± 0.15 GeV/c²), 
+                <strong> Multi‑fractal event topology</strong> (Hausdorff dimension ~1.42 to 2.86).
               </div>
             </div>
 
             <div className="cockpit-module p-4">
               <div className="cockpit-label">HHF VALIDATION SUITE (CROSS‑DOMAIN)</div>
-              <div className="cockpit-text text-sm mt-3 space-y-2" style={{ opacity: 0.9 }}>
-                <div>
-                  <strong>Biological proxy</strong>: environmental time‑series fractal signatures (reported PFD 1.024, HFD 0.871).
-                </div>
-                <div>
-                  <strong>Isotopologue scaling</strong>: hydrogen isotope scaling invariance with Λᴴᴴ deviation reported &lt; 2.4%.
-                </div>
-                <div>
-                  <strong>Molecular/photonic</strong>: HHF constants vs CODATA spectroscopy comparisons reported at relative error
-                  &lt; 10⁻⁶.
-                </div>
-                <div>
-                  <strong>PEFF seismic/EEG</strong>: cross‑domain fractal coherence with reported PFD ~1.02 across geophysical and
-                  neural signals.
-                </div>
+              <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
+                <strong>Biological proxy</strong> (PFD 1.024, HFD 0.871), 
+                <strong> Isotopologue scaling</strong> (Λᴴᴴ deviation &lt; 2.4%), 
+                <strong> Molecular/photonic</strong> (relative error &lt; 10⁻⁶), 
+                <strong> PEFF seismic/EEG</strong> (PFD ~1.02).
               </div>
             </div>
 

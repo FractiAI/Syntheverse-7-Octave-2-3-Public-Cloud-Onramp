@@ -36,6 +36,67 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
         category: defaultCategory,
         text_content: '' as string,
     })
+    const [processingSupport, setProcessingSupport] = useState<string | null>(null)
+    
+    // Character limit based on free Groq API constraints:
+    // - System prompt: ~4,700 tokens (~18,800 chars)
+    // - Evaluation query + archive context: ~1,500 tokens (~6,000 chars)  
+    // - User content: ~3,000 tokens (~12,000 chars) - conservative limit for free tier
+    // Total: ~9,200 tokens, well within limits while avoiding TPM/413 errors
+    const MAX_CONTENT_LENGTH = 12000 // Character limit for submissions (abstract, formulas, constants only)
+    const contentLength = formData.text_content.length
+    const isOverLimit = contentLength > MAX_CONTENT_LENGTH
+
+    const handleFinancialSupport = async (amountCents: number, supportType: string) => {
+        const supportKey = supportType.toLowerCase().includes('copper') ? 'copper' : 
+                          supportType.toLowerCase().includes('silver') ? 'silver' : 'gold'
+        setProcessingSupport(supportKey)
+        setError(null)
+
+        try {
+            const response = await fetch('/api/financial-support/create-checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount_cents: amountCents,
+                    support_type: supportType,
+                })
+            })
+
+            let data: any
+            try {
+                const text = await response.text()
+                if (!text) {
+                    throw new Error(`Empty response from server (status: ${response.status})`)
+                }
+                data = JSON.parse(text)
+            } catch (parseError) {
+                throw new Error(`Invalid response from server (status: ${response.status})`)
+            }
+
+            if (!response.ok) {
+                const errorMessage = data.message || data.error || `Failed to create checkout (${response.status})`
+                throw new Error(errorMessage)
+            }
+
+            if (!data.checkout_url || typeof data.checkout_url !== 'string') {
+                throw new Error('Invalid checkout URL received from server')
+            }
+
+            if (!data.checkout_url.startsWith('http://') && !data.checkout_url.startsWith('https://')) {
+                throw new Error(`Invalid checkout URL format`)
+            }
+
+            // Redirect to Stripe checkout
+            window.location.href = data.checkout_url
+        } catch (err) {
+            console.error('Financial support checkout error:', err)
+            setError(err instanceof Error ? err.message : 'Failed to initiate financial support checkout')
+            setProcessingSupport(null)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -54,6 +115,17 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
         if (!formData.text_content.trim()) {
             setError('Submission text is required')
             setLoading(false)
+            return
+        }
+
+        // Check character limit - don't error, just inform and return to page
+        if (formData.text_content.length > MAX_CONTENT_LENGTH) {
+            setError(`Submission exceeds character limit. Maximum: ${MAX_CONTENT_LENGTH.toLocaleString()} characters. Your submission: ${formData.text_content.length.toLocaleString()} characters (${(formData.text_content.length - MAX_CONTENT_LENGTH).toLocaleString()} over limit). Please reduce your submission to abstract, formulas, and constants only.`)
+            setLoading(false)
+            // Scroll to error message
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+            }, 100)
             return
         }
 
@@ -305,6 +377,69 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                         </p>
                     </CardContent>
                 </Card>
+            </div>
+
+            {/* Contribution Category Explanations */}
+            <div className="grid gap-6 md:grid-cols-3">
+                {/* Scientific Contributions */}
+                <div className="cockpit-module cockpit-panel p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="cockpit-label">SCIENTIFIC DISCOVERY</div>
+                    </div>
+                    <div className="cockpit-title text-lg mb-3">Nature & Value</div>
+                    <div className="cockpit-text text-sm space-y-2">
+                        <p>
+                            Scientific contributions advance our understanding of holographic hydrogen, fractal intelligence, and the structural grammar of awareness itself.
+                        </p>
+                        <p>
+                            <strong>Value in the ecosystem:</strong> Research papers, theoretical frameworks, empirical validations, and novel discoveries form the foundation layer of Syntheverse. Each scientific contribution expands the knowledge frontier, enabling deeper understanding of hydrogen holography, fractal computation, and recursive awareness.
+                        </p>
+                        <p>
+                            <strong>Impact:</strong> Scientific discoveries drive paradigm shifts, validate hypotheses, and reveal new pathways for technological development and practical applications. They establish the empirical and theoretical foundations that make everything else possible.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Technological Contributions */}
+                <div className="cockpit-module cockpit-panel p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                        <div className="cockpit-label">TECHNOLOGICAL INNOVATION</div>
+                    </div>
+                    <div className="cockpit-title text-lg mb-3">Value of New Technologies</div>
+                    <div className="cockpit-text text-sm space-y-2">
+                        <p>
+                            Technological contributions bring scientific insights into operational reality: tools, products, systems, and implementations that make the ecosystem functional.
+                        </p>
+                        <p>
+                            <strong>Value in the ecosystem:</strong> New technologies and products transform research into usable infrastructure. They enable measurement, computation, visualization, and interaction—turning concepts into tools that accelerate discovery and application.
+                        </p>
+                        <p>
+                            <strong>Impact:</strong> Technology contributions create the operational layer that allows the ecosystem to function at scale. They build the bridges between theory and practice, making complex ideas accessible and actionable for researchers, developers, and users.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Alignment Contributions */}
+                <div className="cockpit-module cockpit-panel p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className="w-3 h-3 bg-orange-600 rounded-full"></div>
+                        <div className="cockpit-label">ALIGNMENT RESEARCH</div>
+                    </div>
+                    <div className="cockpit-title text-lg mb-3">Practice & Applications</div>
+                    <div className="cockpit-text text-sm space-y-2">
+                        <p>
+                            Alignment contributions focus on putting holographic hydrogen fractal intelligence into practice across different contexts: enterprise, ecosystem, community, and individual applications.
+                        </p>
+                        <p>
+                            <strong>Value in the ecosystem:</strong> Alignment work connects research and technology to real-world use cases. It addresses how to safely, effectively, and ethically deploy these systems at scale—whether in enterprise environments, ecosystem initiatives, community projects, or personal applications.
+                        </p>
+                        <p>
+                            <strong>Impact:</strong> Alignment contributions ensure the ecosystem remains practical, safe, and accessible. They translate frontier research into actionable strategies for implementation, governance, and responsible deployment across diverse contexts and scales.
+                        </p>
+                    </div>
+                </div>
             </div>
 
             {/* Submission Form */}
@@ -867,18 +1002,32 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                             <Label htmlFor="text_content" className="cockpit-label">Submission Text *</Label>
                             <textarea
                                 id="text_content"
-                                className="cockpit-input"
+                                className={`cockpit-input ${isOverLimit ? 'border-red-500' : ''}`}
                                 value={formData.text_content}
                                 onChange={(e) => setFormData({ ...formData, text_content: e.target.value })}
-                                placeholder="Paste your contribution here (paper text, technical write-up, results, notes, links, citations, etc.)"
+                                placeholder="Paste your contribution here - Abstract, formulas and constants only"
                                 required
                                 disabled={loading}
                                 rows={10}
                             />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                                <span>Tip: include enough detail for evaluation (methods, results, claims, novelty).</span>
-                                <span>{formData.text_content.length.toLocaleString()} chars</span>
+                            <div className="flex justify-between text-xs">
+                                <span className="text-muted-foreground">
+                                    Tip: include abstract, formulas, and constants. Maximum: {MAX_CONTENT_LENGTH.toLocaleString()} characters.
+                                </span>
+                                <span className={isOverLimit ? 'text-red-500 font-semibold' : 'text-muted-foreground'}>
+                                    {contentLength.toLocaleString()} / {MAX_CONTENT_LENGTH.toLocaleString()} {isOverLimit ? '(OVER LIMIT)' : 'chars'}
+                                </span>
                             </div>
+                            {isOverLimit && (
+                                <div className="p-3 bg-red-50 border border-red-500 rounded-lg">
+                                    <div className="text-sm text-red-800 font-semibold mb-1">⚠️ Submission exceeds character limit</div>
+                                    <div className="text-xs text-red-700">
+                                        Your submission is <strong>{(contentLength - MAX_CONTENT_LENGTH).toLocaleString()}</strong> characters over the limit. 
+                                        Please reduce to <strong>abstract, formulas, and constants only</strong>. 
+                                        Current: {contentLength.toLocaleString()} / Limit: {MAX_CONTENT_LENGTH.toLocaleString()} characters.
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex gap-4 pt-4 border-t border-[var(--keyline-primary)]">
@@ -887,7 +1036,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                     Cancel
                                 </button>
                             </Link>
-                            <button type="submit" className="cockpit-transmission flex-1" disabled={loading || !formData.title.trim() || !formData.text_content.trim()}>
+                            <button type="submit" className="cockpit-transmission flex-1" disabled={loading || !formData.title.trim() || !formData.text_content.trim() || isOverLimit}>
                                 {loading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -902,6 +1051,127 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            {/* Financial Support Section */}
+            <div className="cockpit-module cockpit-panel p-8">
+                <div className="mb-6 border-b border-[var(--keyline-primary)] pb-4">
+                    <div className="cockpit-label">ECOSYSTEM SUPPORT</div>
+                    <div className="cockpit-title text-2xl mt-2">Contribute Financial Support</div>
+                    <div className="cockpit-text mt-2">
+                        Voluntary ecosystem support helps sustain infrastructure, research, and operations
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
+                        <p className="mb-3">
+                            Support the Syntheverse ecosystem through voluntary financial contributions. These contributions help fund infrastructure, research, evaluation systems, and operational costs.
+                        </p>
+                        <div className="cockpit-module p-4 bg-yellow-50 border border-yellow-500">
+                            <div className="cockpit-label text-xs mb-2">ERC-20 BOUNDARIES (IMPORTANT)</div>
+                            <div className="text-xs space-y-1" style={{ opacity: 0.9 }}>
+                                <div>• <strong>Not a purchase, token sale, investment, or exchange of money for tokens</strong></div>
+                                <div>• <strong>No expectation of profit or return</strong></div>
+                                <div>• SYNTH is a fixed-supply internal coordination marker</div>
+                                <div>• Any token recognition is optional, discretionary, and separate from support</div>
+                                <div>• Participation does not confer ownership, equity, or guaranteed outcomes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-3 mt-6">
+                        {/* Copper Support */}
+                        <div className="cockpit-module p-6 border-2 border-[var(--keyline-primary)]">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-orange-600 rounded-full"></div>
+                                <div className="cockpit-label">COPPER SUPPORT</div>
+                            </div>
+                            <div className="cockpit-number cockpit-number-medium mb-2">$10,000</div>
+                            <div className="cockpit-text text-xs mb-4" style={{ opacity: 0.8 }}>
+                                Foundation-level ecosystem support
+                            </div>
+                            <button
+                                type="button"
+                                className="cockpit-lever w-full"
+                                onClick={() => handleFinancialSupport(1000000, 'Copper Support')}
+                                disabled={loading || !!processingSupport}
+                            >
+                                {processingSupport === 'copper' ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CreditCard className="mr-2 h-4 w-4" />
+                                        Support
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Silver Support */}
+                        <div className="cockpit-module p-6 border-2 border-[var(--keyline-primary)]">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                <div className="cockpit-label">SILVER SUPPORT</div>
+                            </div>
+                            <div className="cockpit-number cockpit-number-medium mb-2">$50,000</div>
+                            <div className="cockpit-text text-xs mb-4" style={{ opacity: 0.8 }}>
+                                Sustaining-level ecosystem support
+                            </div>
+                            <button
+                                type="button"
+                                className="cockpit-lever w-full"
+                                onClick={() => handleFinancialSupport(5000000, 'Silver Support')}
+                                disabled={loading || !!processingSupport}
+                            >
+                                {processingSupport === 'silver' ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CreditCard className="mr-2 h-4 w-4" />
+                                        Support
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Gold Support */}
+                        <div className="cockpit-module p-6 border-2 border-[var(--keyline-primary)]">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <div className="cockpit-label">GOLD SUPPORT</div>
+                            </div>
+                            <div className="cockpit-number cockpit-number-medium mb-2">$100,000</div>
+                            <div className="cockpit-text text-xs mb-4" style={{ opacity: 0.8 }}>
+                                Leadership-level ecosystem support
+                            </div>
+                            <button
+                                type="button"
+                                className="cockpit-lever w-full"
+                                onClick={() => handleFinancialSupport(10000000, 'Gold Support')}
+                                disabled={loading || !!processingSupport}
+                            >
+                                {processingSupport === 'gold' ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CreditCard className="mr-2 h-4 w-4" />
+                                        Support
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -22,12 +22,6 @@ export default function CockpitHeader() {
                         <div>
                             <div className="cockpit-title text-2xl">SYNTHEVERSE</div>
                             <div className="cockpit-label mt-0.5">SYNTH 90T ERC-20 MOTHERLODE BLOCKMINE</div>
-                            <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.7 }}>
-                                AWARENESSVERSE v2.0+ · Nested Spiraling Pong · Fractal Holographic Hydrogen Awareness
-                            </div>
-                            <div className="cockpit-text text-xs mt-0.5" style={{ opacity: 0.6, fontStyle: 'italic' }}>
-                                From unaware awareness (obsolete) → awareness (current) → meta-awareness (emerging)
-                            </div>
                         </div>
                     </div>
 
