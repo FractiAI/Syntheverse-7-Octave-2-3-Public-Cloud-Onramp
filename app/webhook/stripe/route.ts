@@ -530,6 +530,44 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
         const amount = session.amount_total ? Number(session.amount_total) / 100 : 0 // Convert from cents
         const currency = (session.currency || 'usd').toLowerCase()
         
+        // Map financial support amount to metal tier
+        // Copper: $10,000 (1,000,000 cents), Silver: $50,000 (5,000,000 cents), Gold: $100,000 (10,000,000 cents)
+        let metalTier: string
+        if (amount >= 100000) {
+            metalTier = 'gold'
+        } else if (amount >= 50000) {
+            metalTier = 'silver'
+        } else if (amount >= 10000) {
+            metalTier = 'copper'
+        } else {
+            // Default to copper for smaller amounts
+            metalTier = 'copper'
+        }
+        
+        // Get current open epoch to use epoch baseline score
+        const { getOpenEpochInfo } = await import('@/utils/epochs/qualification')
+        const epochInfo = await getOpenEpochInfo()
+        const currentEpoch = epochInfo.current_epoch
+        
+        // Epoch baseline scores (thresholds)
+        const EPOCH_BASELINE_SCORES: Record<string, number> = {
+            founder: 8000,
+            pioneer: 6000,
+            community: 5000,
+            ecosystem: 4000
+        }
+        
+        // Use epoch baseline score as pod_score
+        const podScore = EPOCH_BASELINE_SCORES[currentEpoch] || EPOCH_BASELINE_SCORES.founder
+        
+        // Distribute scores across dimensions (equal distribution)
+        // For financial support, we use baseline epoch scores distributed equally
+        const baseScore = Math.floor(podScore / 4) // Split equally across 4 dimensions
+        const novelty = baseScore
+        const density = baseScore
+        const coherence = baseScore
+        const alignment = podScore - (baseScore * 3) // Remaining goes to alignment
+        
         // Create a PoC record describing the support contribution.
         // Use a hash based on session ID + timestamp for submission_hash
         // NOTE: Keep legacy prefix stable to avoid duplicates if Stripe retries old events.
@@ -559,7 +597,7 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
             content_hash: submissionHash, // Use same hash as submission_hash for financial alignment
             status: 'qualified', // Ecosystem support PoCs qualify immediately (no content evaluation required)
             category: 'alignment',
-            metals: null, // Do not bind "support" to metal tiers
+            metals: [metalTier], // Assign corresponding metal tier based on amount
             metadata: {
                 type: 'financial_support',
                 legacy_type: session.metadata?.type,
@@ -569,6 +607,15 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 currency,
                 stripe_session_id: session.id,
                 stripe_payment_intent: session.payment_intent,
+                // Scoring based on epoch baseline
+                pod_score: podScore,
+                novelty: novelty,
+                density: density,
+                coherence: coherence,
+                alignment: alignment,
+                qualified: true,
+                qualified_founder: currentEpoch === 'founder' && podScore >= 8000,
+                qualified_epoch: currentEpoch,
                 // Disclaimers for clarity and compliance (non-promissory, non-sale)
                 support_only: true,
                 not_a_purchase: true,
@@ -586,13 +633,17 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
             updated_at: new Date()
         })
         
-        debug('StripeWebhook', 'Financial support PoC recorded + qualified (registration available for free)', {
+        debug('StripeWebhook', 'Financial support PoC recorded + qualified with epoch baseline scores', {
             submissionHash,
             sessionId: session.id,
             contributorEmail,
             productName,
             amount,
             currency,
+            metalTier,
+            currentEpoch,
+            podScore,
+            scores: { novelty, density, coherence, alignment },
             stripePaymentId: session.payment_intent
         })
         // IMPORTANT COMPLIANCE:

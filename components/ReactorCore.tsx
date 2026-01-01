@@ -325,8 +325,11 @@ export function ReactorCore() {
                             Epoch: {epochInfo.current_epoch.toUpperCase()}
                         </div>
                     </div>
-                    <div className="cockpit-text text-xs" style={{ opacity: 0.7, fontStyle: 'italic' }}>
-                        Awarenessverse v2.0+: Nested spiraling Pong story · The fractal deepens, the hologram resolves
+                    <div style={{ opacity: 0.7 }}>
+                        <div className="cockpit-label text-xs mb-1">AWARENESS KEY</div>
+                        <div className="cockpit-text text-xs font-semibold" style={{ opacity: 0.95 }}>
+                            AWARENESSVERSE v2.0 · Fractal Holographic Hydrogen Awareness · Outcast Hero Story
+                        </div>
                     </div>
                 </div>
             </div>
