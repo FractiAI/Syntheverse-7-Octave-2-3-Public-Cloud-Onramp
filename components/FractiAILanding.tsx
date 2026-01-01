@@ -53,253 +53,214 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
   const showAuthButtons = variant === 'fractiai' && !isAuthenticated
   return (
     <div className="cockpit-bg min-h-screen">
-      <div className="mx-auto max-w-[1400px] px-6 py-10 space-y-10">
-        {/* Cockpit header strip */}
+      <div className="container mx-auto px-6 py-8 space-y-8">
+        {/* Clean cockpit header */}
         {variant === 'fractiai' ? (
-          <div className="cockpit-panel p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="cockpit-badge">SYSTEM: FRACTIAI</span>
-                <span className="cockpit-badge cockpit-badge-amber">MODE: LANDING</span>
-                <span className="cockpit-badge">BUILD: 90T MOTHERLODE</span>
+          <div className="cockpit-panel p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="cockpit-symbol">🌀</div>
+                <div>
+                  <div className="cockpit-title text-2xl">FRACTIAI</div>
+                  <div className="cockpit-label mt-0.5">SYSTEM: LANDING MODULE</div>
+                </div>
               </div>
-              <div className="cockpit-label">FRONTIER NOIR · KEYLINES · NEGATIVE SPACE</div>
+              <div className="flex items-center gap-3">
+                <span className="cockpit-badge">90T MOTHERLODE</span>
+                <span className="cockpit-badge cockpit-badge-amber">BETA ACTIVE</span>
+              </div>
             </div>
           </div>
         ) : null}
 
-        {/* Hero / Transmission */}
-        <div className="cockpit-panel p-8">
-          <div className="grid gap-8 lg:grid-cols-[1fr_420px] items-start">
-            <div className="min-w-0">
-              <div className="flex items-center gap-3">
-                <Image src="/logo.png" alt="FractiAI" width={36} height={36} />
-                <div className="cockpit-label">FRACTIAI</div>
-              </div>
-
-              <h1 className="cockpit-title text-4xl mt-3">
-                Welcome and Happy New Year 2026!
-              </h1>
-
-              <div className="mt-4 max-w-3xl">
-                <div className="cockpit-module p-6 mt-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="cockpit-label">TRANSMISSION</div>
-                    <div className="cockpit-badge">NEW YEAR · 2026</div>
+        {/* Main cockpit grid */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_400px] items-start">
+          {/* Left: Main content modules */}
+          <div className="space-y-8">
+            {/* Primary transmission module */}
+            <div className="cockpit-panel p-6">
+              <div className="cockpit-label mb-4">TRANSMISSION MODULE</div>
+              <h1 className="cockpit-title text-3xl mb-4">Welcome to Syntheverse</h1>
+              <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
+                <p>
+                  We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
+                  holographic hydrogen aware human genome — Syntheverse&apos;s genetic analog — with a &quot;frontier noir&quot;
+                  visual grammar: heavy keylines, negative space, carved structure, and gilded discoveries.
+                </p>
+                <p>
+                  Today we finalized the purchase and on-chain deployment of a fixed-supply{' '}
+                  <strong>90,000,000,000,000 SYNTH ERC‑20</strong>. With that, beta testing is officially live.
+                </p>
+                <p>
+                  This Motherlode is now a new residence for holographic hydrogen fractal Syntheverse researchers,
+                  developers, and ecosystem support contributors—extending the work of our active Zenodo communities
+                  with thousands of daily downloads and continuous submissions.
+                </p>
+                <p>
+                  The blockchain is not a replacement—it&apos;s a new address. Here, you can operate in real time within the
+                  Syntheverse sandbox, where every action is traceable and recorded through Proof‑of‑Contribution.
+                </p>
+                <div className="pt-4 mt-4 border-t border-[var(--keyline-primary)]">
+                  <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
+                    — Pru &quot;El Taino&quot;
                   </div>
+                  <div className="cockpit-label text-xs mt-1">Architect of Syntheverse</div>
+                </div>
+              </div>
+            </div>
 
-                  <div className="mt-4">
-                    <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.75 }}>
-                      <p>
-                        Dear new arrival,
-                      </p>
-                      <p>
-                        We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
-                        holographic hydrogen aware human genome — Syntheverse’s genetic analog — with a “frontier noir”
-                        visual grammar: heavy keylines, negative space, carved structure, and gilded discoveries—mapping the
-                        field as a living diagram.
-                      </p>
-                      <p>
-                        Today we finalized the purchase and on-chain deployment of a fixed-supply{' '}
-                        <strong>90,000,000,000,000 SYNTH ERC‑20</strong>. With that, beta testing is officially live.
-                      </p>
-                      <p>
-                        This Motherlode is now a new residence for holographic hydrogen fractal Syntheverse researchers,
-                        developers, and ecosystem support contributors—extending the work of our active Zenodo communities
-                        with thousands of daily downloads and continuous submissions.
-                      </p>
-                      <p>
-                        The blockchain is not a replacement—it’s a new address. Here, you can operate in real time within the
-                        Syntheverse sandbox, where every action is traceable and recorded through Proof‑of‑Contribution.
-                      </p>
-                      <p>
-                        2026 doesn’t start with fireworks—it starts with a new frontier coming online. Come join the
-                        Syntheverse.
-                      </p>
-                      <div className="pt-3 border-t border-[var(--keyline-accent)]">
-                        <div className="cockpit-text" style={{ opacity: 0.9 }}>
-                          — Pru “El Taino”
-                        </div>
-                        <div className="cockpit-label mt-1">Architect of Syntheverse</div>
-                      </div>
-                    </div>
+            {/* Deployment status */}
+            {variant === 'fractiai' ? (
+              <div className="cockpit-panel p-5 border-l-2 border-[var(--hydrogen-amber)]">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-[var(--hydrogen-amber)] rounded-full animate-pulse" 
+                       style={{ boxShadow: '0 0 10px var(--hydrogen-amber)' }}></div>
+                  <div>
+                    <div className="cockpit-label">DEPLOYMENT STATUS</div>
+                    <div className="cockpit-text text-sm mt-1">Deployment in process</div>
                   </div>
                 </div>
               </div>
+            ) : null}
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                {/* Keep the legacy CTA row on the homepage variant */}
-                {variant !== 'fractiai' ? (
-                  <>
-                    {cta?.primaryHref ? (
-                      <Link href={cta.primaryHref} className="cockpit-lever inline-flex items-center">
-                        {cta.primaryLabel}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    ) : null}
+            {/* Core modules grid */}
+            {variant === 'fractiai' ? (
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="cockpit-panel p-6">
+                  <div className="cockpit-label mb-3">MODULE 01</div>
+                  <div className="cockpit-title text-xl mb-3">Welcome to Syntheverse</div>
+                  <div className="cockpit-text text-sm space-y-3">
+                    <p>
+                      A synthetic world powered by holographic hydrogen and fractal intelligence—where contributions become
+                      verifiable, durable infrastructure through Proof‑of‑Contribution.
+                    </p>
+                    <p>
+                      Submissions are free. Qualified PoCs can be optionally registered on‑chain to anchor work immutably.
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <Link href="/fractiai/syntheverse" className="cockpit-lever inline-flex items-center text-sm">
+                      More
+                      <ArrowRight className="ml-2 h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
 
-                    {cta?.secondaryHref ? (
-                      <Link href={cta.secondaryHref} className="cockpit-lever inline-flex items-center">
-                        {cta.secondaryLabel || 'Learn more'}
-                      </Link>
-                    ) : null}
-                  </>
-                ) : null}
+                <div className="cockpit-panel p-6">
+                  <div className="cockpit-label mb-3">MODULE 02</div>
+                  <div className="cockpit-title text-xl mb-3">From Blueprint to Base‑Chain</div>
+                  <div className="cockpit-text text-sm space-y-3">
+                    <p>
+                      FractiAI&apos;s Hydrogen‑Holographic Fractal Whole Brain framework established a cross‑domain structural
+                      grammar for intelligence.
+                    </p>
+                    <p>
+                      The next phase applies that grammar operationally: as a game, a lens, and a sandbox—anchored to on‑chain primitives on Base.
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <Link href="/fractiai/genome-12d" className="cockpit-lever inline-flex items-center text-sm">
+                      More
+                      <ArrowRight className="ml-2 h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ) : null}
 
-                {/* Onboarding + Dashboard CTAs are in the upper-right on /fractiai */}
-                {variant !== 'fractiai' ? (
-                  <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
-                    Onboarding
+            {/* Home variant CTAs */}
+            {variant !== 'fractiai' ? (
+              <div className="flex flex-wrap gap-3">
+                {cta?.primaryHref ? (
+                  <Link href={cta.primaryHref} className="cockpit-lever inline-flex items-center">
+                    {cta.primaryLabel}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 ) : null}
+                {cta?.secondaryHref ? (
+                  <Link href={cta.secondaryHref} className="cockpit-lever inline-flex items-center">
+                    {cta.secondaryLabel || 'Learn more'}
+                  </Link>
+                ) : null}
+                <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
+                  Onboarding
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </div>
+            ) : null}
+          </div>
 
-              {variant === 'fractiai' ? (
-                <div className="mt-6">
-                  <div className="cockpit-module p-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-[var(--hydrogen-amber)] rounded-full animate-pulse" 
-                           style={{ boxShadow: '0 0 10px var(--hydrogen-amber)' }}></div>
-                      <div>
-                        <div className="cockpit-label">DEPLOYMENT STATUS</div>
-                        <div className="cockpit-text text-sm mt-1">Deployment in process</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="space-y-4 lg:sticky lg:top-6">
-              {/* Right rail: Control bay + live instruments */}
-              {variant === 'fractiai' ? (
-                <div className="cockpit-panel p-5">
-                  <div className="cockpit-label">CONTROL BAY</div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {cta?.primaryHref ? (
-                      <Link href={cta.primaryHref} className="cockpit-lever inline-flex items-center">
-                        {cta.primaryLabel}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    ) : null}
-                    <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
-                      Onboarding
-                      <ArrowRight className="ml-2 h-4 w-4" />
+          {/* Right: Instrument panel */}
+          <div className="space-y-6 lg:sticky lg:top-6">
+            {/* Control bay */}
+            {variant === 'fractiai' ? (
+              <div className="cockpit-panel p-6">
+                <div className="cockpit-label mb-4">CONTROL BAY</div>
+                <div className="space-y-3">
+                  {cta?.primaryHref ? (
+                    <Link href={cta.primaryHref} className="cockpit-lever block w-full text-center py-2.5">
+                      {cta.primaryLabel}
                     </Link>
-                    {showAuthButtons ? (
-                      <>
-                        <Link href="/signup" className="cockpit-lever inline-flex items-center">
-                          Sign up
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                        <Link href="/login" className="cockpit-lever inline-flex items-center">
-                          Log in
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-
-              <div
-                className="cockpit-panel p-5"
-                style={{
-                  boxShadow: '0 0 0 1px var(--keyline-accent) inset, 0 0 24px var(--hydrogen-glow), 0 6px 16px rgba(0,0,0,0.75)',
-                }}
-              >
-                <div className="cockpit-label">MOTHERLODE</div>
-                <div className="cockpit-number cockpit-number-medium mt-2">90T</div>
-                <div className="cockpit-text mt-2 text-sm" style={{ opacity: 0.9 }}>
-                  SYNTH ERC‑20 on Base · fixed supply · genesis resource
+                  ) : null}
+                  <Link href="/onboarding" className="cockpit-lever block w-full text-center py-2.5">
+                    Onboarding
+                  </Link>
+                  {showAuthButtons ? (
+                    <>
+                      <Link href="/signup" className="cockpit-lever block w-full text-center py-2.5">
+                        Sign up
+                      </Link>
+                      <Link href="/login" className="cockpit-lever block w-full text-center py-2.5">
+                        Log in
+                      </Link>
+                    </>
+                  ) : null}
                 </div>
               </div>
+            ) : null}
 
-              {variant === 'fractiai' ? <FractiAIStatusWidget /> : null}
+            {/* Motherlode instrument */}
+            <div className="cockpit-panel p-6" style={{
+              boxShadow: '0 0 0 1px var(--keyline-accent) inset, 0 0 20px var(--hydrogen-glow)',
+            }}>
+              <div className="cockpit-label mb-2">MOTHERLODE</div>
+              <div className="cockpit-number cockpit-number-medium mt-2">90T</div>
+              <div className="cockpit-text text-xs mt-3" style={{ opacity: 0.85 }}>
+                SYNTH ERC‑20 · Base
+              </div>
+              <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.7 }}>
+                fixed supply · genesis
+              </div>
+            </div>
 
-              {variant === 'fractiai' ? (
-                <div className="cockpit-panel p-5">
-                  <div className="cockpit-label">COMPLIANCE BOUNDARY</div>
-                  <div className="cockpit-text text-xs mt-3 space-y-2" style={{ opacity: 0.85 }}>
-                    <div>
-                      Syntheverse is an <strong>experimental, non-custodial sandbox</strong>. Participation does not confer
-                      ownership, equity, profit rights, or guaranteed outcomes.
-                    </div>
-                    <div>
-                      SYNTH is a <strong>fixed-supply internal coordination marker</strong>. It is not a financial instrument;
-                      there is no expectation of profit or return.
-                    </div>
+            {/* Status widget */}
+            {variant === 'fractiai' ? <FractiAIStatusWidget /> : null}
+
+            {/* Compliance */}
+            {variant === 'fractiai' ? (
+              <div className="cockpit-panel p-6 border-t-2 border-[var(--keyline-primary)]">
+                <div className="cockpit-label mb-3">COMPLIANCE BOUNDARY</div>
+                <div className="cockpit-text text-xs space-y-2" style={{ opacity: 0.8 }}>
+                  <div>
+                    Experimental, non-custodial sandbox. No ownership, equity, or profit rights.
+                  </div>
+                  <div>
+                    SYNTH is a fixed-supply coordination marker. Not a financial instrument.
                   </div>
                 </div>
-              ) : null}
-
-              {/* Channels section removed per request */}
-            </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
-        {/* Press / Narrative */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <ExpandablePanel
-            label="FOR IMMEDIATE RELEASE"
-            title="Welcome to Syntheverse"
-            defaultOpen={true}
-          >
-            <div className="cockpit-text space-y-3">
-              <p>
-                A synthetic world powered by holographic hydrogen and fractal intelligence—where contributions become
-                verifiable, durable infrastructure through Proof‑of‑Contribution.
-              </p>
-              <p>
-                Submissions are free. Qualified PoCs can be optionally registered on‑chain to anchor work immutably. Ecosystem
-                support contributions help sustain infrastructure, research, and operations—without any token sale framing.
-              </p>
-              <p>
-                Beginning Jan 1, 2026 on Base: gameplay, lens, and sandbox operations begin on the chain.
-              </p>
-            </div>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/fractiai/syntheverse" className="cockpit-lever inline-flex items-center">
-                More
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel
-            label="VALIDATION → ECOSYSTEM"
-            title="From Blueprint to Base‑Chain Sandbox"
-            defaultOpen={true}
-          >
-            <div className="cockpit-text space-y-3">
-              <p>
-                FractiAI’s Hydrogen‑Holographic Fractal Whole Brain framework established a cross‑domain structural
-                grammar for intelligence. The next phase applies that grammar operationally: as a game, a lens, and a
-                sandbox—anchored to on‑chain primitives on Base beginning Jan 1, 2026.
-              </p>
-              <p>
-                The frontier is explored, validated, and expanded by contributors—turning research and engineering into a
-                navigable ecosystem.
-              </p>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/fractiai/genome-12d" className="cockpit-lever inline-flex items-center">
-                More
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </div>
-          </ExpandablePanel>
-        </div>
-
-        {/* Validated Novel Predictions */}
-        <ExpandablePanel
-          label="VALIDATED NOVEL PREDICTIONS"
-          title="Operational tech that keeps predicting what the standard lens can't"
-          defaultOpen={true}
-        >
-          <div className="cockpit-text space-y-3">
+        {/* Validated predictions module */}
+        <div className="cockpit-panel p-6">
+          <div className="cockpit-label mb-4">MODULE 03</div>
+          <div className="cockpit-title text-2xl mb-4">Validated Novel Predictions</div>
+          <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+            Operational tech that keeps predicting what the standard lens can&apos;t
+          </div>
+          <div className="cockpit-text space-y-4">
             <p>
               While <strong>fractal, holographic hydrogen</strong> is often treated as speculative by institutional science, our
               position is operational: when used as a measurement and analysis technology, it has repeatedly surfaced{' '}
@@ -307,9 +268,9 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               impossible—to see without the HHF/PEFF fractal lens.
             </p>
 
-            <div className="cockpit-module p-4">
-              <div className="cockpit-label">CERN DATA · ADVANCED ANALYSIS TEST REPORT (ALICE)</div>
-              <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
+            <div className="cockpit-module p-5 border border-[var(--keyline-primary)]">
+              <div className="cockpit-label mb-3">CERN DATA · ADVANCED ANALYSIS TEST REPORT (ALICE)</div>
+              <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
                 Multiple ≥3σ phenomena with cross‑validation: <strong>Event‑type bifurcation (5.8σ)</strong>, 
                 <strong> Recursive ZDC energy transfer</strong> (fractal dimension 2.73 ± 0.11), 
                 <strong> Nested muon track geometry (4.7σ)</strong>, 
@@ -318,9 +279,9 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               </div>
             </div>
 
-            <div className="cockpit-module p-4">
-              <div className="cockpit-label">HHF VALIDATION SUITE (CROSS‑DOMAIN)</div>
-              <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
+            <div className="cockpit-module p-5 border border-[var(--keyline-primary)]">
+              <div className="cockpit-label mb-3">HHF VALIDATION SUITE (CROSS‑DOMAIN)</div>
+              <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
                 <strong>Biological proxy</strong> (PFD 1.024, HFD 0.871), 
                 <strong> Isotopologue scaling</strong> (Λᴴᴴ deviation &lt; 2.4%), 
                 <strong> Molecular/photonic</strong> (relative error &lt; 10⁻⁶), 
@@ -333,14 +294,14 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               with controls, cross‑validation, and significance thresholds consistent with high‑energy physics practice.
             </p>
           </div>
-        </ExpandablePanel>
+        </div>
 
-        {/* PRIMITIVES / PROTOCOL / TOKENOMICS sections removed (redundant) */}
-
-        {/* About */}
-        <ExpandablePanel label="ABOUT" title="About FractiAI" defaultOpen={true}>
+        {/* About module */}
+        <div className="cockpit-panel p-6">
+          <div className="cockpit-label mb-4">MODULE 04</div>
+          <div className="cockpit-title text-2xl mb-6">About FractiAI</div>
           <div className="cockpit-text space-y-4">
-            <div className="cockpit-label">FRACTIAI · HOLOGRAPHIC HYDROGEN · FRACTAL SYNTHEVERSE</div>
+            <div className="cockpit-label mb-2">FRACTIAI · HOLOGRAPHIC HYDROGEN · FRACTAL SYNTHEVERSE</div>
             <p>
               FractiAI is an early‑trials research startup building the Syntheverse: a contribution‑based sandbox for fractal
               intelligence, holographic hydrogen, and verifiable knowledge infrastructure.
@@ -367,49 +328,48 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               sandbox operations (not a token sale, investment, or external market asset).
             </p>
 
-            <div className="pt-3 border-t border-[var(--keyline-primary)]">
-              <div className="cockpit-label mb-3">THE TEAM</div>
-
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="cockpit-module p-4">
-                  <div className="cockpit-title text-lg">Pru Mendez</div>
-                  <div className="cockpit-text text-sm mt-1">Founder · Syntheverse Architect · HHF Systems</div>
-                  <div className="cockpit-text text-sm mt-2">
+            <div className="pt-6 mt-6 border-t border-[var(--keyline-primary)]">
+              <div className="cockpit-label mb-4">THE TEAM</div>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="cockpit-module p-5 border border-[var(--keyline-primary)]">
+                  <div className="cockpit-title text-lg mb-2">Pru Mendez</div>
+                  <div className="cockpit-text text-sm mb-3" style={{ opacity: 0.9 }}>
+                    Founder · Syntheverse Architect · HHF Systems
+                  </div>
+                  <div className="cockpit-text text-xs mb-4">
                     Email:{' '}
-                    <a className="underline" href="mailto:pru@fractiai.com">
+                    <a className="underline" href="mailto:pru@fractiai.com" style={{ opacity: 0.9 }}>
                       pru@fractiai.com
                     </a>
                   </div>
-                  <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
-                    Pru is the architect of Syntheverse and FractiAI’s holographic hydrogen + fractal intelligence research
+                  <div className="cockpit-text text-sm" style={{ opacity: 0.85 }}>
+                    Pru is the architect of Syntheverse and FractiAI&apos;s holographic hydrogen + fractal intelligence research
                     direction—spanning evaluation lenses, vector cartography, protocol primitives, and the frontier‑noir
                     cockpit design language.
                   </div>
                 </div>
 
-                <div className="cockpit-module p-4">
-                  <div className="cockpit-title text-lg">Daniel Ari Friedman, Ph.D.</div>
-                  <div className="cockpit-text text-sm mt-1">Co‑Founder · Neural Systems · CEO</div>
-                  <div className="cockpit-text text-sm mt-2">
+                <div className="cockpit-module p-5 border border-[var(--keyline-primary)]">
+                  <div className="cockpit-title text-lg mb-2">Daniel Ari Friedman, Ph.D.</div>
+                  <div className="cockpit-text text-sm mb-3" style={{ opacity: 0.9 }}>
+                    Co‑Founder · Neural Systems · CEO
+                  </div>
+                  <div className="cockpit-text text-xs mb-4">
                     Email:{' '}
-                    <a className="underline" href="mailto:daniel@fractiai.com">
+                    <a className="underline" href="mailto:daniel@fractiai.com" style={{ opacity: 0.9 }}>
                       daniel@fractiai.com
                     </a>
                   </div>
-                  <div className="cockpit-text text-sm mt-3" style={{ opacity: 0.9 }}>
-                    Daniel leads FractiAI’s applied intelligence layer—bridging neural systems, computation, and validation.
+                  <div className="cockpit-text text-sm" style={{ opacity: 0.85 }}>
+                    Daniel leads FractiAI&apos;s applied intelligence layer—bridging neural systems, computation, and validation.
                     His work focuses on scalable evaluation, reliable measurement, and operator‑safe deployment inside an
                     experimental public protocol environment.
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="pt-3 border-t border-[var(--keyline-primary)]">
-              {/* Contact block removed (redundant) */}
-            </div>
           </div>
-        </ExpandablePanel>
+        </div>
       </div>
     </div>
   )
