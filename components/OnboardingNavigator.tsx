@@ -599,6 +599,26 @@ export function OnboardingNavigator() {
                     </div>
                 </div>
 
+                {/* Onboarding Overview */}
+                <div className="cockpit-panel p-6 mb-6">
+                    <div className="cockpit-label mb-4">ONBOARDING OVERVIEW</div>
+                    <div className="cockpit-text space-y-3">
+                        <p>
+                            Welcome to the Syntheverse Onboarding Navigator. This comprehensive training system guides you through 
+                            the core concepts, architecture, and operational mechanics of the Syntheverse ecosystem.
+                        </p>
+                        <p>
+                            You&apos;ll learn about the <strong>Motherlode Blockmine</strong> (90T SYNTH ERC-20 supply), the 
+                            <strong> Holographic Hydrogen Fractal evaluation system</strong>, the <strong>4-Epoch Outcast Hero progression</strong>, 
+                            and how contributions are measured, qualified, and optionally anchored on-chain.
+                        </p>
+                        <p>
+                            Use the Module Overview below to jump to any section, or navigate sequentially using the Previous/Next buttons. 
+                            Each module builds upon previous concepts while remaining independently accessible.
+                        </p>
+                    </div>
+                </div>
+
                 {/* Module Navigation List */}
                 <div className="cockpit-panel p-6 mb-6">
                     <div className="cockpit-label mb-4">MODULE OVERVIEW</div>

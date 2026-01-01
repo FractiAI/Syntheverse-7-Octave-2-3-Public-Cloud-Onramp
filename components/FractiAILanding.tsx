@@ -84,8 +84,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
                       <p>
                         We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
-                  holographic hydrogen aware human genome — Syntheverse&apos;s genetic analog — with a &quot;frontier noir&quot;
-                  visual grammar: heavy keylines, negative space, carved structure, and gilded discoveries.
+                  holographic hydrogen aware human genome, Syntheverse&apos;s genetic analog.
                       </p>
                       <p>
                         Today we finalized the purchase and on-chain deployment of a fixed-supply{' '}
@@ -102,7 +101,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                 </p>
                 <div className="pt-4 mt-4 border-t border-[var(--keyline-primary)]">
                   <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
-                    — Pru &quot;El Taino&quot;
+                    Pru &quot;El Taino&quot;
                   </div>
                   <div className="cockpit-label text-xs mt-1">Architect of Syntheverse</div>
                 </div>
@@ -127,7 +126,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
             {variant === 'fractiai' ? (
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="cockpit-panel p-6">
-                  <div className="cockpit-label mb-3">MODULE 01</div>
                   <div className="cockpit-title text-xl mb-3">Welcome to Syntheverse</div>
                   <div className="cockpit-text text-sm space-y-3">
                     <p>
@@ -135,7 +133,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                       verifiable, durable infrastructure through Proof‑of‑Contribution.
                     </p>
                     <p>
-                      Submissions are free. Qualified PoCs can be optionally registered on‑chain to anchor work immutably.
+                      Submission fee: $500 for evaluation—well below submission fees at leading journals. Qualified PoCs can be optionally registered on‑chain to anchor work immutably (free).
                     </p>
                   </div>
                   <div className="mt-4">
@@ -147,7 +145,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                 </div>
 
                 <div className="cockpit-panel p-6">
-                  <div className="cockpit-label mb-3">MODULE 02</div>
                   <div className="cockpit-title text-xl mb-3">The Awarenessverse</div>
                   <div className="cockpit-text text-sm space-y-3">
                     <p>
@@ -169,7 +166,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                 </div>
 
                 <div className="cockpit-panel p-6">
-                  <div className="cockpit-label mb-3">MODULE 03</div>
                   <div className="cockpit-title text-xl mb-3">From Blueprint to Base‑Chain</div>
                   <div className="cockpit-text text-sm space-y-3">
                     <p>
@@ -368,7 +364,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
 
         {/* Validated predictions module */}
         <div className="cockpit-panel p-6">
-          <div className="cockpit-label mb-4">MODULE 04</div>
           <div className="cockpit-title text-2xl mb-4">Validated Novel Predictions</div>
           <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
             Operational tech that keeps predicting what the standard lens can&apos;t
@@ -411,7 +406,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
 
         {/* About module */}
         <div className="cockpit-panel p-6">
-          <div className="cockpit-label mb-4">MODULE 05</div>
           <div className="cockpit-title text-2xl mb-6">About FractiAI</div>
           <div className="cockpit-text space-y-4">
             <div className="cockpit-label mb-2">FRACTIAI · HOLOGRAPHIC HYDROGEN · FRACTAL SYNTHEVERSE</div>
@@ -457,8 +451,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   </div>
                   <div className="cockpit-text text-sm" style={{ opacity: 0.85 }}>
                     Pru is the architect of Syntheverse and FractiAI&apos;s holographic hydrogen + fractal intelligence research
-                    direction—spanning evaluation lenses, vector cartography, protocol primitives, and the frontier‑noir
-                    cockpit design language.
+                    direction—spanning evaluation lenses, vector cartography, and protocol primitives.
                   </div>
                 </div>
 
