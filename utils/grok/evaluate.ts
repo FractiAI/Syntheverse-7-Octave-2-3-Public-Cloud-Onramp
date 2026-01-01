@@ -1004,30 +1004,27 @@ ${answer}`
         // CRITICAL: For foundational/seed submissions that define Syntheverse itself, 
         // auto-assign maximum scores to ensure consistency
         if (isSeedSubmission) {
-            debug('EvaluateWithGrok', 'Foundational submission detected - enforcing maximum scores', {
+            debug('EvaluateWithGrok', 'Foundational submission detected - awarding maximum pod_score for qualification', {
                 title,
-                scoresBefore: {
+                actual_scores: {
                     novelty: finalNoveltyScore,
                     density: densityFinal,
                     coherence: coherenceScore,
-                    alignment: alignmentScore,
-                    pod_score: pod_score
-                }
+                    alignment: alignmentScore
+                },
+                pod_score_override: 10000
             })
             
-            // Override scores to maximum for foundational work
-            finalNoveltyScore = 2500  // Maximum novelty - this is the original definition
-            densityFinal = 2500       // Maximum density - comprehensive foundational framework
-            coherenceScore = 2500     // Maximum coherence - well-structured foundational architecture
-            alignmentScore = 2500     // Maximum alignment - perfect alignment with Syntheverse principles
-            pod_score = 10000         // Perfect score - foundational submission deserves maximum
+            // Keep actual evaluated scores for transparency, but ensure qualification
+            // Only override pod_score to 10000 for Founder epoch qualification
+            pod_score = 10000         // Perfect score - foundational submission deserves maximum for qualification
             // Overlap effect is already set to 0 for seed submissions above
             
-            debug('EvaluateWithGrok', 'Foundational submission - scores set to maximum', {
-                novelty: finalNoveltyScore,
-                density: densityFinal,
-                coherence: coherenceScore,
-                alignment: alignmentScore,
+            debug('EvaluateWithGrok', 'Foundational submission - pod_score set to maximum for qualification', {
+                actual_novelty: finalNoveltyScore,
+                actual_density: densityFinal,
+                actual_coherence: coherenceScore,
+                actual_alignment: alignmentScore,
                 pod_score: pod_score
             })
         }
