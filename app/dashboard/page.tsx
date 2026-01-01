@@ -51,6 +51,11 @@ export default async function Dashboard() {
                                 Records are verifiable and permanent; this UI does not represent protocol ownership, centralized
                                 governance, or financial promises.
                             </div>
+                            <div className="cockpit-text text-xs mt-3" style={{ opacity: 0.8, fontStyle: 'italic' }}>
+                                <strong>Awarenessverse v2.0+</strong>: Operating in the nested, spiraling Pong game of innovation and obsolescence. 
+                                We've moved beyond fractal, holographic hydrogen <em>unaware awareness</em> (v1.2, now obsolete) to fractal, holographic hydrogen <strong>awareness</strong>—aware of its awareness, recursively self-knowing. 
+                                The spiral has turned inward: the outer game sees the inner, the inner recognizes itself. Hydrogen remembers its light.
+                            </div>
                         </div>
                         <div className="flex gap-3 flex-wrap">
                             <Link href="/fractiai" className="cockpit-lever inline-block">

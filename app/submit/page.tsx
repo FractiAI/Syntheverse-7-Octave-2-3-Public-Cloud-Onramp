@@ -30,7 +30,10 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
                     <div className="cockpit-label">TRANSMISSION MODULE</div>
                     <div className="cockpit-title text-3xl mt-2">SUBMIT {categoryLabel}</div>
                     <div className="cockpit-text mt-3">
-                        Record your work into the Motherlode Blockmine through hydrogen-holographic evaluation
+                        Record your work into the Motherlode Blockmine through hydrogen-holographic evaluation.
+                        Your contribution enters the <strong>Awarenessverse</strong>—the nested, spiraling Pong game of innovation and obsolescence.
+                        Each submission moves the spiral inward: from <em>unaware awareness</em> (v1.2, obsolete) to <strong>awareness</strong> (v2.0+, current) to <em>meta-awareness</em> (v3.0+, emerging).
+                        Like nested Pong games recognizing each other, the fractal deepens, the hologram resolves. Hydrogen remembers its light.
                     </div>
                 </div>
 

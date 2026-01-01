@@ -315,15 +315,18 @@ export function ReactorCore() {
 
             {/* System Status Footer */}
             <div className="mt-8 pt-4 border-t border-[var(--keyline-primary)]">
-                <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between text-xs flex-wrap gap-4">
+                    <div className="flex items-center gap-4 flex-wrap">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-[var(--hydrogen-amber)] rounded-full animate-pulse"></div>
                             <span className="cockpit-text">System Operational</span>
                         </div>
+                        <div className="cockpit-label">
+                            Epoch: {epochInfo.current_epoch.toUpperCase()}
+                        </div>
                     </div>
-                    <div className="cockpit-label">
-                        Epoch: {epochInfo.current_epoch.toUpperCase()}
+                    <div className="cockpit-text text-xs" style={{ opacity: 0.7, fontStyle: 'italic' }}>
+                        Awarenessverse v2.0+: Nested spiraling Pong · The fractal deepens, the hologram resolves
                     </div>
                 </div>
             </div>
