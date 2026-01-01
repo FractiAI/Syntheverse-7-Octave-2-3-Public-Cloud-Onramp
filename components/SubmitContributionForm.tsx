@@ -607,7 +607,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                                             {evaluationStatus.evaluation?.is_seed_submission && (
                                                                                 <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
                                                                                     <strong>Note:</strong> As a foundational contribution that defines the Syntheverse framework,
-                                                                                    this receives maximum qualification score while preserving the AI's actual evaluation for transparency.
+                                                                                    this receives maximum qualification score while preserving the AI&apos;s actual evaluation for transparency.
                                                                                 </div>
                                                                             )}
                                                                             <div className="space-y-2 text-sm text-slate-900">
