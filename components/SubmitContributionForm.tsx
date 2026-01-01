@@ -391,10 +391,17 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                 
                                                 {/* PoC Score */}
                                                 <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
-                                                    <div className="text-sm text-muted-foreground mb-1">PoC Score</div>
+                                                    <div className="text-sm text-muted-foreground mb-1">
+                                                        {evaluationStatus.evaluation?.is_seed_submission ? 'Qualification Score' : 'PoC Score'}
+                                                    </div>
                                                     <div className="text-3xl font-bold text-primary">
                                                         {evaluationStatus.podScore.toLocaleString()} / 10,000
                                                     </div>
+                                                    {evaluationStatus.evaluation?.is_seed_submission && (
+                                                        <div className="text-xs text-muted-foreground mt-2">
+                                                            Maximum score awarded for foundational contribution
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Qualification Status */}
@@ -406,7 +413,14 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                         </div>
                                                         <div className="text-sm text-green-700 mt-2">
                                                             {evaluationStatus.evaluation?.qualified_epoch ? (
-                                                                <>Your contribution qualifies for the <strong>{evaluationStatus.evaluation.qualified_epoch.charAt(0).toUpperCase() + evaluationStatus.evaluation.qualified_epoch.slice(1)}</strong> epoch (PoC Score: {evaluationStatus.podScore.toLocaleString()})</>
+                                                                <>
+                                                                    Your contribution qualifies for the <strong>{evaluationStatus.evaluation.qualified_epoch.charAt(0).toUpperCase() + evaluationStatus.evaluation.qualified_epoch.slice(1)}</strong> epoch
+                                                                    {evaluationStatus.evaluation?.is_seed_submission ? (
+                                                                        <> (maximum qualification score awarded for foundational contribution)</>
+                                                                    ) : (
+                                                                        <> (PoC Score: {evaluationStatus.podScore.toLocaleString()})</>
+                                                                    )}
+                                                                </>
                                                             ) : (
                                                                 <>Your contribution has met the qualification threshold (≥8,000 points)</>
                                                             )}
@@ -590,6 +604,12 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                                     {evaluationStatus.evaluation.grok_evaluation_details && (
                                                                         <div className="p-3 bg-white rounded-lg border">
                                                                             <div className="font-semibold mb-3 text-slate-700">Scoring Breakdown</div>
+                                                                            {evaluationStatus.evaluation?.is_seed_submission && (
+                                                                                <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
+                                                                                    <strong>Note:</strong> As a foundational contribution that defines the Syntheverse framework,
+                                                                                    this receives maximum qualification score while preserving the AI's actual evaluation for transparency.
+                                                                                </div>
+                                                                            )}
                                                                             <div className="space-y-2 text-sm text-slate-900">
                                                                                 {/* Base Scores */}
                                                                                 <div className="grid grid-cols-2 gap-3">

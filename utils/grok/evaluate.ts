@@ -1132,6 +1132,8 @@ ${answer}`
             base_novelty: baseNoveltyScore,
             base_density: baseDensityScore,
             redundancy_overlap_percent: redundancyOverlapPercent,
+            // Flag to indicate if this was a seed submission with qualification override
+            is_seed_submission: isSeedSubmission,
             // Store raw Grok API response for display
             raw_grok_response: answer // Store the raw markdown/text response from Grok
         }
