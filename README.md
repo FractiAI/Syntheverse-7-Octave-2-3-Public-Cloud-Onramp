@@ -12,9 +12,11 @@ If you only read one thing, start here:
 
 ### Executive overview (intentions + structure)
 
-- **What we’re building**: an operator-safe “lens + archive + optional anchoring” system where contributions become durable, auditable records—without token-sale framing.
-- **What “protocol-first” means here**: the *spec* (what must be true) is separated from the *operator* (how it is run).
-- **What FractiAI is (and is not)**: FractiAI operates a reference instance and evolves the reference client; it does **not** equal “the protocol.”
+- **What we’re building**: an operator-safe "lens + archive + optional anchoring" system where contributions become durable, auditable records—without token-sale framing.
+- **What "protocol-first" means here**: the *spec* (what must be true) is separated from the *operator* (how it is run).
+- **What FractiAI is (and is not)**: FractiAI operates a reference instance and evolves the reference client; it does **not** equal "the protocol."
+
+**Note**: Repository was reset to commit `8f61e53` on Jan 1, 2026 due to TypeScript compilation regressions introduced during blockchain genesis implementation. Previous blockchain integration work remains available in local `syntheverse-ui/` directory for future reference.
 
 ### Live deployment (FractiAI operator instance)
 
