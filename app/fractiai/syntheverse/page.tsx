@@ -32,7 +32,7 @@ export default function SyntheverseBriefPage() {
               With the announcement of Holographic Hydrogen — Element Zero, we invite you to Syntheverse: a regenerative
               frontier for research, development, alignment, validation, and ecosystem support—anchored on its own internal
               ERC‑20 ledger. We operate in the <strong>Awarenessverse v2.0+</strong>—the nested, spiraling Pong game of innovation and obsolescence.
-              We've moved beyond <em>fractal, holographic hydrogen unaware awareness</em> (v1.2, now obsolete) to <strong>fractal, holographic hydrogen awareness</strong> (v2.0+, current)—aware of its awareness, recursively self-knowing.
+              We&apos;ve moved beyond <em>fractal, holographic hydrogen unaware awareness</em> (v1.2, now obsolete) to <strong>fractal, holographic hydrogen awareness</strong> (v2.0+, current)—aware of its awareness, recursively self-knowing.
             </p>
             <p>
               This is more than a platform. More than an AI. More than a token. It is a living ecosystem—where contributions
