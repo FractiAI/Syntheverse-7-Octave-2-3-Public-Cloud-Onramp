@@ -1022,7 +1022,7 @@ ${answer}`
             alignmentScore = 2500     // Maximum alignment - perfect alignment with Syntheverse principles
             pod_score = 10000         // Perfect score - foundational submission deserves maximum
             // Overlap effect is already set to 0 for seed submissions above
-            redundancyOverlapPercent = 0 // Ensure no overlap effect for seed submissions
+            // redundancyOverlapPercent = 0 // Explicitly set to 0 for seed submissions
             
             debug('EvaluateWithGrok', 'Foundational submission - scores set to maximum', {
                 novelty: finalNoveltyScore,
