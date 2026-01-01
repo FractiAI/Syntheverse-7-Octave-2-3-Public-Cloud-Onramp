@@ -1025,10 +1025,10 @@ ${answer}`
         // redundancyOverlapPercent can be negative (penalty) or positive (bonus)
         pod_score = Math.max(0, Math.min(10000, pod_score * (1 + redundancyOverlapPercent / 100)))
         
-        // CRITICAL: For foundational/seed submissions that define Syntheverse itself, 
-        // auto-assign maximum scores to ensure consistency
+        // Use actual evaluated score for all submissions, including seed submissions
+        // Qualification threshold (≥8,000 for Founder) is checked separately
         if (isSeedSubmission) {
-            debug('EvaluateWithGrok', 'Foundational submission detected - awarding maximum pod_score for qualification', {
+            debug('EvaluateWithGrok', 'Foundational submission detected - using actual evaluated pod_score', {
                 title,
                 actual_scores: {
                     novelty: finalNoveltyScore,
@@ -1036,20 +1036,8 @@ ${answer}`
                     coherence: coherenceScore,
                     alignment: alignmentScore
                 },
-                pod_score_override: 10000
-            })
-            
-            // Keep actual evaluated scores for transparency, but ensure qualification
-            // Only override pod_score to 10000 for Founder epoch qualification
-            pod_score = 10000         // Perfect score - foundational submission deserves maximum for qualification
-            // Overlap effect is already set to 0 for seed submissions above
-            
-            debug('EvaluateWithGrok', 'Foundational submission - pod_score set to maximum for qualification', {
-                actual_novelty: finalNoveltyScore,
-                actual_density: densityFinal,
-                actual_coherence: coherenceScore,
-                actual_alignment: alignmentScore,
-                pod_score: pod_score
+                pod_score: pod_score,
+                note: 'Using actual evaluated score, not overridden to 10000'
             })
         }
         
