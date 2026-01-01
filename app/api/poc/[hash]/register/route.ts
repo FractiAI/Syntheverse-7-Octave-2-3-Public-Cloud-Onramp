@@ -12,7 +12,7 @@ import { db } from '@/utils/db/db'
 import { contributionsTable, allocationsTable, epochMetalBalancesTable, tokenomicsTable } from '@/utils/db/schema'
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
-import type { MetalType } from '@/utils/tokenomics/metal-assay'
+import type { MetalType } from '@/utils/tokenomics/epoch-metal-pools'
 
 // Force dynamic rendering - this route must be server-side only
 export const dynamic = 'force-dynamic'
