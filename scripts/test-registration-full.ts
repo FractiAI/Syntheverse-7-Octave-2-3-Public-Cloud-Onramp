@@ -261,7 +261,7 @@ async function testRegistrationFull() {
         console.log('   1. Log in to the dashboard as the PoC contributor')
         console.log('   2. Navigate to "My Submissions"')
         console.log('   3. Find the qualified PoC')
-        console.log('   4. Click "Anchor PoC on-chain (optional)" button')
+        console.log('   4. Click "Anchor PoC on-chain - $500" button')
         console.log('   5. Verify Stripe checkout opens')
         console.log('   6. Complete or cancel the checkout')
         console.log('   7. Verify registration status updates')

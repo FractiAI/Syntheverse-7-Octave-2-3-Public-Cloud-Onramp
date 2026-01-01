@@ -64,7 +64,7 @@ ZIP: 12345
 ## 🧪 Testing Registration Flow
 
 1. **Navigate to your PoC in dashboard**
-2. **Click "Anchor PoC on‑chain (optional)"**
+2. **Click "Anchor PoC on-chain - $500"**
 3. **Stripe checkout opens**
 4. **Enter test card:**
    - Card: `4242 4242 4242 4242`

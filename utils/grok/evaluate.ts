@@ -67,8 +67,7 @@ export async function evaluateWithGrok(
     }
     base_novelty?: number
     base_density?: number
-    redundancy_penalty_percent?: number
-    density_penalty_percent?: number
+    redundancy_overlap_percent?: number
     raw_grok_response?: string
 }> {
     const grokApiKey = process.env.NEXT_PUBLIC_GROK_API_KEY
@@ -237,7 +236,9 @@ export async function evaluateWithGrok(
     // Calculate actual vector-based redundancy if we have current vectorization
     // Seed submissions always have 0% redundancy (they define the system)
     let calculatedRedundancy: {
-        redundancy_percent: number
+        overlap_percent: number
+        penalty_percent: number
+        bonus_multiplier: number
         similarity_score: number
         closest_vectors: Array<{ hash: string, title: string, similarity: number, distance: number }>
         analysis: string
@@ -245,7 +246,9 @@ export async function evaluateWithGrok(
     
     if (isSeedSubmission) {
         calculatedRedundancy = {
-            redundancy_percent: 0,
+            overlap_percent: 0,
+            penalty_percent: 0,
+            bonus_multiplier: 1,
             similarity_score: 0,
             closest_vectors: [],
             analysis: 'This is the FIRST submission that defines the Syntheverse sandbox itself. Redundancy is 0% because nothing exists to be redundant with - this submission establishes the framework everything else operates within.',
@@ -264,7 +267,9 @@ export async function evaluateWithGrok(
             debug('EvaluateWithGrok', 'Calculated redundancy by comparing to sandbox + prior submissions', {
                 comparisonTargets: archivedVectors.length,
                 note: 'Includes Syntheverse sandbox definition (first submission) + all prior submissions',
-                redundancy_percent: calculatedRedundancy.redundancy_percent,
+                overlap_percent: calculatedRedundancy.overlap_percent,
+                penalty_percent: calculatedRedundancy.penalty_percent,
+                bonus_multiplier: calculatedRedundancy.bonus_multiplier,
                 similarity_score: calculatedRedundancy.similarity_score,
                 closest_count: calculatedRedundancy.closest_vectors.length,
             })
@@ -348,14 +353,16 @@ ${top3Matches
     // Add calculated redundancy information if available (compact).
     const calculatedRedundancyContext = calculatedRedundancy
         ? `Vector redundancy (HHF 3D):
-- penalty_percent=${calculatedRedundancy.redundancy_percent.toFixed(1)}%
+- overlap_percent=${calculatedRedundancy.overlap_percent.toFixed(1)}%
+- penalty_percent=${calculatedRedundancy.penalty_percent.toFixed(1)}%
+- bonus_multiplier=${calculatedRedundancy.bonus_multiplier.toFixed(3)}
 - similarity=${(calculatedRedundancy.similarity_score * 100).toFixed(1)}%
 - closest="${calculatedRedundancy.closest_vectors[0]?.title || 'N/A'}"`
         : ''
 
     // Format tokenomics context (condensed)
-    const tokenomicsContext = tokenomicsInfo 
-        ? `**Tokenomics:** Epoch=${tokenomicsInfo.current_epoch}, Founder=${tokenomicsInfo.epoch_balances.founder?.toLocaleString() || 0} SYNTH. Thresholds: Founder≥8000, Pioneer≥4000, Community≥3000, Ecosystem≥2000.`
+    const tokenomicsContext = tokenomicsInfo
+        ? `**Tokenomics:** Epoch=${tokenomicsInfo.current_epoch}, Founder=${tokenomicsInfo.epoch_balances.founder?.toLocaleString() || 0} SYNTH. Thresholds: Founder≥8000, Pioneer≥6000, Community≥5000, Ecosystem≥4000.`
         : ''
 
     // Evaluation query with contribution details + minimal extra instructions.
@@ -909,15 +916,12 @@ ${answer}`
             })
         }
         
-        // Extract redundancy penalty as percentage (0-100%)
-        // Prefer calculated vector-based redundancy if available, otherwise use Grok's estimate
-        // Redundancy penalty will be applied to the COMPOSITE/TOTAL score, not individual category scores
-        const redundancyPenaltyPercent = calculatedRedundancy 
-            ? calculatedRedundancy.redundancy_percent
-            : (evaluation.redundancy_penalty_percent ??
-               (typeof noveltyRaw === 'object' && noveltyRaw !== null ? noveltyRaw.redundancy_penalty_percent : null) ?? 
-               (typeof noveltyRaw === 'object' && noveltyRaw !== null && noveltyRaw.redundancy_penalty && baseNoveltyScore > 0 ? (noveltyRaw.redundancy_penalty / baseNoveltyScore * 100) : null) ?? 
-               0)
+        // Extract overlap effect as percentage (-100 to +100)
+        // Positive = bonus (sweet-spot), Negative = penalty (excessive overlap), Zero = neutral
+        // Prefer calculated vector-based analysis if available, otherwise use Grok's estimate
+        const redundancyOverlapPercent = calculatedRedundancy
+            ? (calculatedRedundancy.bonus_multiplier - 1 - calculatedRedundancy.penalty_percent / 100) * 100
+            : Math.max(-100, Math.min(100, Number(evaluation.redundancy_overlap_percent ?? evaluation.redundancy ?? 0)))
         
         // Use final_score if provided, otherwise use base score
         // Individual category scores are NOT penalized - penalty is applied to total composite score
@@ -984,18 +988,24 @@ ${answer}`
             evaluationDensity: evaluation.density,
         })
         
-        // Calculate composite/total score from all individual category scores (without penalty)
-        const compositeScoreBeforePenalty = finalNoveltyScore + densityFinal + coherenceScore + alignmentScore
-        
+        // Calculate composite/total score from all individual category scores
+        const compositeScore = finalNoveltyScore + densityFinal + coherenceScore + alignmentScore
+
         // Get base total score if provided by Grok
-        let pod_scoreBeforePenalty = evaluation.total_score ?? evaluation.pod_score ?? evaluation.poc_score ?? 0
-        if (!pod_scoreBeforePenalty || pod_scoreBeforePenalty === 0) {
-            pod_scoreBeforePenalty = compositeScoreBeforePenalty
+        let pod_score = evaluation.total_score ?? evaluation.pod_score ?? evaluation.poc_score ?? compositeScore
+        if (!pod_score || pod_score === 0) {
+            pod_score = compositeScore
         }
-        
-        // Apply redundancy penalty to the COMPOSITE/TOTAL score, not individual category scores
-        let redundancy = Math.max(0, Math.min(100, redundancyPenaltyPercent))
-        let pod_score = Math.max(0, Math.min(10000, pod_scoreBeforePenalty * (1 - redundancy / 100)))
+
+        // Apply overlap effect (penalty or bonus) to the composite/total score
+        // redundancyOverlapPercent can be negative (penalty) or positive (bonus)
+        pod_score = Math.max(0, Math.min(10000, pod_score * (1 + redundancyOverlapPercent / 100)))
+
+        // Reward edge sweet-spot overlap (no reward for seed submissions).
+        // Example: overlap=13% -> multiplier ≈ 1.13 (when inside the sweet spot band).
+        if (!isSeedSubmission && redundancyBonusMultiplier > 1) {
+            pod_score = Math.max(0, Math.min(10000, pod_score * redundancyBonusMultiplier))
+        }
         
         // CRITICAL: For foundational/seed submissions that define Syntheverse itself, 
         // auto-assign maximum scores to ensure consistency
@@ -1097,11 +1107,13 @@ ${answer}`
         const finalAlignment = Math.max(0, Math.min(2500, alignmentScore))
         const finalPodScore = Math.max(0, Math.min(10000, pod_score))
         const finalRedundancy = isSeedSubmission ? 0 : Math.max(0, Math.min(100, redundancy)) // Always 0 for foundational submissions
+        const finalOverlap = isSeedSubmission ? 0 : Math.max(0, Math.min(100, redundancyOverlapPercent))
         
         return {
             coherence: finalCoherence,
             density: finalDensity,
-            redundancy: finalRedundancy, // Redundancy penalty as percentage (0-100%)
+            // "redundancy" is now the overlap % (display metric). Penalty is stored separately.
+            redundancy: finalOverlap,
             pod_score: finalPodScore,
             metals,
             qualified,
@@ -1124,10 +1136,10 @@ ${answer}`
                 allocation_notes: 'Token allocation requires human admin approval',
                 requires_admin_approval: true
             },
-            // Store base scores and penalty percentages for transparency
+            // Store base scores and overlap effect for transparency
             base_novelty: baseNoveltyScore,
             base_density: baseDensityScore,
-            redundancy_penalty_percent: redundancy, // Applied to composite score, not individual scores
+            redundancy_overlap_percent: redundancyOverlapPercent,
             // Store raw Grok API response for display
             raw_grok_response: answer // Store the raw markdown/text response from Grok
         }

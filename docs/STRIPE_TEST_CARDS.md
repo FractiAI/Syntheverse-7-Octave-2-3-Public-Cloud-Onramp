@@ -70,7 +70,7 @@ When testing PoC registration in Stripe test mode, use these test card numbers. 
    - Log in as PoC contributor
    - Find qualified PoC in "My Submissions"
 
-2. **Click "Anchor PoC on‑chain (optional)"**
+2. **Click "Anchor PoC on-chain - $500"**
    - Should redirect to Stripe checkout
 
 3. **Use Test Card**

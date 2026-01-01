@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
         const isUserInDB = checkUserInDB.length > 0
         
         if (!isUserInDB) {
-            // Stripe is only used when anchoring a qualified PoC on-chain (operator fee; default $500).
+            // Stripe is only used when anchoring/registering a qualified PoC (fee-based operator service)
             // Use a placeholder value - Stripe customer will be created on-demand when user registers a PoC
             const stripeID = 'pending'
             const userName = user.user_metadata?.full_name || 

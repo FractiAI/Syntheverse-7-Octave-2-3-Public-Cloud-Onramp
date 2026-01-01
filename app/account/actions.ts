@@ -43,7 +43,7 @@ export async function updateUsername(formData: FormData) {
             
             if (usersByEmail.length === 0) {
                 // User doesn't exist at all - create the record automatically
-                // Stripe is only used when anchoring a qualified PoC on-chain (operator fee; default $500).
+                // Stripe is only used when anchoring/registering a qualified PoC (fee-based operator service)
                 // Use a placeholder value that indicates "free user, Stripe customer created on-demand when needed"
                 const stripeID = 'pending' // Placeholder - Stripe customer created when user registers a PoC
                 console.log('Creating user account (Stripe customer will be created when user registers a PoC):', {

@@ -200,7 +200,7 @@ After script tests pass:
    - Ensure it's not already registered
 
 3. **Click Register Button**
-   - Click "Anchor PoC on‑chain (optional)" button
+   - Click "Anchor PoC on-chain - $500" button
    - Should redirect to Stripe checkout
 
 4. **Verify Stripe Checkout**

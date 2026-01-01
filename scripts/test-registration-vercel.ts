@@ -285,7 +285,7 @@ async function testRegistrationEndpoint() {
         console.log('\n🎯 Ready for browser testing:')
         console.log('   1. Log in to the dashboard')
         console.log('   2. Find a qualified PoC in "My Submissions"')
-        console.log('   3. Click "Anchor PoC on-chain (optional)" button')
+        console.log('   3. Click "Anchor PoC on-chain - $500" button')
         console.log('   4. Verify Stripe checkout opens')
         process.exit(0)
     } else {

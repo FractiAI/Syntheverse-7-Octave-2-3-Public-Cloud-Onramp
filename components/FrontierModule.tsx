@@ -33,6 +33,7 @@ interface PoCSubmission {
     coherence: number | null
     alignment: number | null
     redundancy: number | null
+    redundancy_overlap_percent?: number | null
     qualified: boolean | null
     qualified_epoch: string | null
     registered: boolean | null
@@ -435,6 +436,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                         <th>Epoch</th>
                                         <th>Metals</th>
                                         <th className="text-right">PoC Score</th>
+                                        <th className="text-right">Overlap</th>
                                         <th className="text-right">Allocation</th>
                                         <th>Date</th>
                                     </tr>
@@ -474,6 +476,19 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                             </td>
                                             <td className="text-right font-mono cockpit-number">
                                                 {formatScore(submission.pod_score)}
+                                            </td>
+                                            <td className="text-right font-mono cockpit-number">
+                                                <span
+                                                    className={
+                                                        submission.redundancy && submission.redundancy > 0
+                                                            ? 'text-green-400'
+                                                            : submission.redundancy && submission.redundancy < 0
+                                                              ? 'text-orange-400'
+                                                              : ''
+                                                    }
+                                                >
+                                                    {formatRedundancy(submission.redundancy)}
+                                                </span>
                                             </td>
                                             <td className="text-right font-mono cockpit-number">
                                                 {formatAllocation(submission.allocation_amount)}
@@ -541,7 +556,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                             ) : (
                                                 <>
                                                     <CreditCard className="inline h-4 w-4 mr-2" />
-                                                    Anchor PoC on‑chain (optional)
+                                                    Anchor PoC on‑chain - $500
                                                 </>
                                             )}
                                         </button>
@@ -668,20 +683,17 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                                         </div>
                                                     </div>
                                                     
-                                                    {/* Penalties Applied */}
-                                                    {(selectedSubmission.metadata.grok_evaluation_details.redundancy_penalty_percent !== undefined || 
-                                                      selectedSubmission.metadata.grok_evaluation_details.density_penalty_percent !== undefined) && (
+                                                    {/* Overlap Effect */}
+                                                    {selectedSubmission.redundancy !== null && selectedSubmission.redundancy !== 0 && (
                                                         <div className="pt-3 border-t border-[var(--keyline-primary)]">
-                                                            <div className="cockpit-text text-xs mb-2">Penalties Applied</div>
+                                                            <div className="cockpit-text text-xs mb-2">Overlap Effect</div>
                                                             <div className="space-y-1">
-                                                                {selectedSubmission.metadata.grok_evaluation_details.redundancy_penalty_percent !== undefined && (
-                                                                    <div className="flex justify-between items-center text-xs">
-                                                                        <span className="cockpit-text">Redundancy Penalty:</span>
-                                                                        <span className="cockpit-number text-orange-400">
-                                                                            {selectedSubmission.metadata.grok_evaluation_details.redundancy_penalty_percent.toFixed(1)}%
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                <div className="flex justify-between items-center text-xs">
+                                                                    <span className="cockpit-text">Overlap Impact:</span>
+                                                                    <span className={`cockpit-number ${selectedSubmission.redundancy > 0 ? 'text-green-400' : 'text-orange-400'}`}>
+                                                                        {selectedSubmission.redundancy > 0 ? '+' : ''}{selectedSubmission.redundancy.toFixed(1)}%
+                                                                    </span>
+                                                                </div>
                                                                 {selectedSubmission.metadata.grok_evaluation_details.density_penalty_percent !== undefined && (
                                                                     <div className="flex justify-between items-center text-xs">
                                                                         <span className="cockpit-text">Density Penalty:</span>

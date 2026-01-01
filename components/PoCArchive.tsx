@@ -33,6 +33,7 @@ interface PoCSubmission {
     coherence: number | null
     alignment: number | null
     redundancy: number | null // Redundancy percentage (0-100)
+    redundancy_overlap_percent?: number | null
     qualified: boolean | null
     qualified_epoch: string | null
     registered: boolean | null
@@ -48,7 +49,7 @@ interface PoCSubmission {
     grok_evaluation_details?: {
         base_novelty?: number
         base_density?: number
-        redundancy_penalty_percent?: number
+        redundancy_overlap_percent?: number
         density_penalty_percent?: number
         full_evaluation?: any
         raw_grok_response?: string // Raw Grok API response text/markdown
@@ -457,7 +458,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                     <th className="text-right p-2 font-semibold">Novelty</th>
                                     <th className="text-right p-2 font-semibold">Density</th>
                                     <th className="text-right p-2 font-semibold">Coherence</th>
-                                    <th className="text-right p-2 font-semibold">Redundancy</th>
+                                    <th className="text-right p-2 font-semibold">Overlap</th>
                                     <th className="text-right p-2 font-semibold">SYNTH Allocation</th>
                                     <th className="text-left p-2 font-semibold">Date</th>
                                 </tr>
@@ -499,7 +500,20 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                             {formatScore(submission.coherence)}
                                         </td>
                                         <td className="p-2 text-right font-mono text-sm">
-                                            <span className={submission.redundancy !== null && submission.redundancy > 50 ? 'text-orange-600' : submission.redundancy !== null && submission.redundancy > 25 ? 'text-yellow-600' : ''}>
+                                            <span
+                                                className={
+                                                    submission.redundancy && submission.redundancy > 0
+                                                        ? 'text-green-600'
+                                                        : submission.redundancy && submission.redundancy < 0
+                                                          ? 'text-orange-600'
+                                                          : ''
+                                                }
+                                                title={
+                                                    submission.redundancy !== null && submission.redundancy !== undefined
+                                                        ? `${submission.redundancy > 0 ? 'Bonus' : 'Penalty'}: ${submission.redundancy > 0 ? '+' : ''}${submission.redundancy.toFixed(1)}%`
+                                                        : undefined
+                                                }
+                                            >
                                                 {formatRedundancy(submission.redundancy)}
                                             </span>
                                         </td>
@@ -615,7 +629,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                 <th className="text-right p-2 font-semibold">Novelty</th>
                                                 <th className="text-right p-2 font-semibold">Density</th>
                                                 <th className="text-right p-2 font-semibold">Coherence</th>
-                                                <th className="text-right p-2 font-semibold">Redundancy</th>
+                                                <th className="text-right p-2 font-semibold">Overlap</th>
                                                 <th className="text-right p-2 font-semibold">SYNTH Allocation</th>
                                                 <th className="text-left p-2 font-semibold">Date</th>
                                             </tr>
@@ -662,7 +676,22 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                         {formatScore(submission.coherence)}
                                                     </td>
                                                     <td className="p-2 text-right font-mono text-sm">
-                                                        {formatRedundancy(submission.redundancy)}
+                                                        <span
+                                                            className={
+                                                                submission.redundancy && submission.redundancy > 0
+                                                                    ? 'text-green-600'
+                                                                    : submission.redundancy && submission.redundancy < 0
+                                                                      ? 'text-orange-600'
+                                                                      : ''
+                                                            }
+                                                            title={
+                                                                submission.redundancy !== null && submission.redundancy !== undefined
+                                                                    ? `${submission.redundancy > 0 ? 'Bonus' : 'Penalty'}: ${submission.redundancy > 0 ? '+' : ''}${submission.redundancy.toFixed(1)}%`
+                                                                    : undefined
+                                                            }
+                                                        >
+                                                            {formatRedundancy(submission.redundancy)}
+                                                        </span>
                                                     </td>
                                                     <td className="p-2 text-right font-mono text-sm">
                                                         {formatAllocation(submission.allocation_amount)}
@@ -757,8 +786,16 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                     )}
                                     {selectedSubmission.redundancy !== null && (
                                         <div>
-                                            <div className="text-xs text-muted-foreground">Redundancy</div>
-                                            <div className={`font-mono ${selectedSubmission.redundancy > 50 ? 'text-orange-600' : selectedSubmission.redundancy > 25 ? 'text-yellow-600' : ''}`}>
+                                            <div className="text-xs text-muted-foreground">Overlap</div>
+                                            <div
+                                                className={`font-mono ${
+                                                    selectedSubmission.redundancy && selectedSubmission.redundancy > 0
+                                                        ? 'text-green-600'
+                                                        : selectedSubmission.redundancy && selectedSubmission.redundancy < 0
+                                                          ? 'text-orange-600'
+                                                          : ''
+                                                }`}
+                                            >
                                                 {formatRedundancy(selectedSubmission.redundancy)}
                                             </div>
                                         </div>
@@ -826,20 +863,17 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                                         </div>
                                                     </div>
                                                     
-                                                    {/* Penalties Applied */}
-                                                    {(selectedSubmission.metadata.grok_evaluation_details.redundancy_penalty_percent !== undefined || 
-                                                      selectedSubmission.metadata.grok_evaluation_details.density_penalty_percent !== undefined) && (
+                                                    {/* Overlap Effect */}
+                                                    {selectedSubmission.redundancy !== null && selectedSubmission.redundancy !== 0 && (
                                                         <div className="pt-2 border-t">
-                                                            <div className="text-xs text-muted-foreground mb-2">Penalties Applied</div>
+                                                            <div className="text-xs text-muted-foreground mb-2">Overlap Effect</div>
                                                             <div className="space-y-1">
-                                                                {selectedSubmission.metadata.grok_evaluation_details.redundancy_penalty_percent !== undefined && (
-                                                                    <div className="flex justify-between items-center text-xs">
-                                                                        <span className="text-muted-foreground">Redundancy Penalty:</span>
-                                                                        <span className="font-semibold text-orange-600">
-                                                                            {selectedSubmission.metadata.grok_evaluation_details.redundancy_penalty_percent.toFixed(1)}%
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                <div className="flex justify-between items-center text-xs">
+                                                                    <span className="text-muted-foreground">Overlap Impact:</span>
+                                                                    <span className={`font-semibold ${selectedSubmission.redundancy > 0 ? 'text-green-600' : 'text-orange-600'}`}>
+                                                                        {selectedSubmission.redundancy > 0 ? '+' : ''}{selectedSubmission.redundancy.toFixed(1)}%
+                                                                    </span>
+                                                                </div>
                                                                 {selectedSubmission.metadata.grok_evaluation_details.density_penalty_percent !== undefined && (
                                                                     <div className="flex justify-between items-center text-xs">
                                                                         <span className="text-muted-foreground">Density Penalty:</span>
@@ -1022,7 +1056,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                             ) : (
                                                 <>
                                                     <CreditCard className="h-4 w-4 mr-2" />
-                                                    Anchor PoC on‑chain (optional)
+                                                    Anchor PoC on‑chain - $500
                                                 </>
                                             )}
                                         </Button>

@@ -41,7 +41,7 @@ This repo currently contains:
 ### Core capabilities (reference client)
 
 - **Proof‑of‑Contribution lifecycle**: submission → archive → evaluation → qualification → optional anchoring
-- **Scoring lens**: novelty, density, coherence, alignment (+ redundancy penalty)
+- **Scoring lens**: novelty, density, coherence, alignment (+ overlap-aware redundancy with edge sweet-spot rewards)
 - **3D vectorized sandbox map**: Three.js + R3F visualization of PoCs as navigable infrastructure
 - **Auth + storage**: Supabase Auth + Postgres
 - **Payments**: Stripe Checkout + Billing Portal for operator-managed flows
@@ -155,7 +155,7 @@ PoC submission archive with 3D vectorization for redundancy detection.
 | `status` | text | Status: `draft`, `submitted`, `evaluating`, `qualified`, `unqualified`, `archived`, `superseded` |
 | `category` | text | Category: `scientific`, `tech`, `alignment` |
 | `metals` | jsonb | Array of metal types: `gold`, `silver`, `copper` |
-| `metadata` | jsonb | Evaluation metadata (coherence, density, redundancy, pod_score) |
+| `metadata` | jsonb | Evaluation metadata (coherence, density, overlap%, pod_score) |
 | `embedding` | jsonb | Vector embedding array (for similarity search) |
 | `vector_x` | numeric(20,10) | X coordinate in 3D HHF space (Novelty dimension) |
 | `vector_y` | numeric(20,10) | Y coordinate in 3D HHF space (Density dimension) |
@@ -231,7 +231,7 @@ Audit trail for all PoC submissions and evaluations.
 | `category` | text | Contribution category |
 | `request_data` | jsonb | Full request payload |
 | `response_data` | jsonb | Full response payload |
-| `evaluation_result` | jsonb | Evaluation result with fields: `coherence`, `density`, `redundancy`, `pod_score`, `novelty`, `alignment`, `metals`, `qualified`, `classification`, `redundancy_analysis`, `metal_justification` |
+| `evaluation_result` | jsonb | Evaluation result with fields: `coherence`, `density`, `overlap%`, `pod_score`, `novelty`, `alignment`, `metals`, `qualified`, `classification`, `redundancy_analysis`, `metal_justification` |
 | `grok_api_request` | jsonb | Grok API request details |
 | `grok_api_response` | jsonb | Grok API response details (includes full evaluation JSON) |
 | `error_message` | text | Error message if event failed |
@@ -251,13 +251,23 @@ Audit trail for all PoC submissions and evaluations.
 **Composite Score Calculation:**
 ```
 Composite_Score = Novelty + Density + Coherence + Alignment
-Final_Total_Score = Composite_Score × (1 - Redundancy_Penalty% / 100)
+Final_Total_Score = Composite_Score × (1 + Overlap_Effect% / 100)
 ```
 
 **Qualification:**
-- Redundancy penalty (0-100%) is applied to the composite/total score, not individual category scores
-- Founder qualification: Final total score ≥ 8,000
-- Qualification is epoch-based (must meet both density and pod_score thresholds for current open epoch)
+- **Overlap model**:
+  - **Overlap%** is a single field (-100 to +100) shown in the archive UI
+  - **Positive values** = sweet-spot rewards for beneficial boundary overlap (Λ_edge ≈ 1.42)
+  - **Negative values** = penalties for excessive redundancy
+  - **Zero** = neutral effect for moderate overlap levels
+  - **Display**: Green for bonuses, orange for penalties in PoC Archive dashboard
+- Overlap effects are applied to the composite/total score, not individual category scores
+- **Epoch thresholds (adjusted for overlap-aware scoring)**:
+  - Founder: Final total score ≥ 8,000
+  - Pioneer: Final total score ≥ 6,000
+  - Community: Final total score ≥ 5,000
+  - Ecosystem: Final total score ≥ 4,000
+- Qualification is epoch-based (based on pod_score threshold for current open epoch)
 
 ### 3D Vectorization (Holographic Hydrogen Fractal Sandbox)
 
@@ -265,8 +275,8 @@ Contributions are mapped to 3D coordinates in the HHF space:
 - **X-axis (vector_x)**: Novelty dimension
 - **Y-axis (vector_y)**: Density dimension
 - **Z-axis (vector_z)**: Coherence dimension
-- **Distance calculation**: Euclidean distance between vectors for redundancy detection
-- **Similarity**: Cosine similarity and distance-based similarity for redundancy percentage
+- **Distance calculation**: Euclidean distance between vectors for overlap/redundancy detection
+- **Similarity**: cosine similarity + distance-based signal used to compute **Overlap Effect** (-100 to +100)
 
 **Interactive 3D Visualization** (Upgraded):
 - **Three.js Rendering**: True 3D visualization with WebGL acceleration
@@ -287,7 +297,7 @@ Contributions are mapped to 3D coordinates in the HHF space:
 
 This enables:
 - Visual representation of contributions in 3D space
-- Vector-based redundancy calculation
+- Vector-based overlap/redundancy calculation
 - Spatial clustering of related contributions
 - Holographic visualization on the dashboard
 - Interactive token allocation and registration workflow

@@ -21,7 +21,9 @@ export interface ArchivedVector {
 }
 
 export interface RedundancyResult {
-    redundancy_percent: number // 0-100% redundancy penalty
+    overlap_percent: number // 0-100% overlap (highest similarity * 100)
+    penalty_percent: number // 0-100% penalty applied only for excessive overlap
+    bonus_multiplier: number // 1.00..~1.30 multiplier awarded for "edge sweet spot" overlap
     similarity_score: number // 0-1 similarity (1 = identical)
     closest_vectors: Array<{
         hash: string
@@ -47,7 +49,9 @@ export function calculateRedundancy(
 ): RedundancyResult {
     if (archivedVectors.length === 0) {
         return {
-            redundancy_percent: 0,
+            overlap_percent: 0,
+            penalty_percent: 0,
+            bonus_multiplier: 1,
             similarity_score: 0,
             closest_vectors: [],
             analysis: 'No archived PoCs to compare against. This is the first submission.',
@@ -121,38 +125,42 @@ export function calculateRedundancy(
     // Convert similarity (0-1) to redundancy penalty (0-100%)
     // Higher similarity = higher redundancy penalty
     const maxSimilarity = similarities.length > 0 ? similarities[0].combinedSimilarity : 0
-    
-    // Map similarity to redundancy percentage (0-100%).
-    // This curve is intentionally steep near the top end so that near-duplicates
-    // receive near-100% redundancy penalties.
+
+    const overlapPercent = Math.min(100, Math.max(0, maxSimilarity * 100))
+
+    // Edge sweet-spot overlap policy (HHFS expedition prerelease):
+    // - Some overlap is beneficial: it connects nodes at the boundaries.
+    // - Reward a "sweet spot" of overlap at the edges (Λ_edge ≈ 1.42 ± 0.05).
+    // - Do not penalize overlap until it becomes excessive.
     //
-    // Guiding intent:
-    // - <= 0.70 similarity: low/no penalty
-    // - 0.70..0.90: ramps into meaningful penalties
-    // - 0.90..0.95: high redundancy
-    // - >= 0.95: near-duplicate (95–100%)
-    // - >= 0.985: hard 100% (effectively duplicate)
-    let redundancyPercent = 0
-    if (maxSimilarity >= 0.985) {
-        redundancyPercent = 100
-    } else if (maxSimilarity >= 0.95) {
-        // 0.95..0.985 -> 95..100
-        redundancyPercent = 95 + ((maxSimilarity - 0.95) / (0.985 - 0.95)) * 5
-    } else if (maxSimilarity >= 0.90) {
-        // 0.90..0.95 -> 80..95
-        redundancyPercent = 80 + ((maxSimilarity - 0.90) / (0.95 - 0.90)) * 15
-    } else if (maxSimilarity >= 0.70) {
-        // 0.70..0.90 -> 25..80
-        redundancyPercent = 25 + ((maxSimilarity - 0.70) / (0.90 - 0.70)) * 55
-    } else if (maxSimilarity >= 0.40) {
-        // 0.40..0.70 -> 5..25
-        redundancyPercent = 5 + ((maxSimilarity - 0.40) / (0.70 - 0.40)) * 20
+    // We operationalize Λ_edge into an overlap target centered at 14.2% (1.42 * 10),
+    // with a practical tolerance band. Inside the band, award a multiplier tied to the
+    // measured overlap%, e.g. 13% overlap -> ×1.13 on composite score, tapered by distance
+    // from the center so the multiplier returns to ×1.00 at the band edges.
+    const LAMBDA_EDGE = 1.42
+    const SWEET_SPOT_CENTER = LAMBDA_EDGE * 10 // 14.2%
+    const SWEET_SPOT_TOLERANCE = 5.0 // 9.2%..19.2%
+
+    const sweetSpotDistance = Math.abs(overlapPercent - SWEET_SPOT_CENTER)
+    const sweetSpotFactor =
+        sweetSpotDistance <= SWEET_SPOT_TOLERANCE ? 1 - sweetSpotDistance / SWEET_SPOT_TOLERANCE : 0
+    const bonusMultiplier = 1 + (overlapPercent / 100) * sweetSpotFactor
+
+    // Penalty applies ONLY once overlap is excessive. Below the threshold, penalty is 0.
+    // Above the threshold, ramp non-linearly up to 100% for near-duplicates.
+    const PENALTY_START_OVERLAP = 30 // allow meaningful overlap before penalties begin
+    const PENALTY_FULL_OVERLAP = 98 // treat near-duplicates as effectively duplicate
+
+    let penaltyPercent = 0
+    if (overlapPercent <= PENALTY_START_OVERLAP) {
+        penaltyPercent = 0
+    } else if (overlapPercent >= PENALTY_FULL_OVERLAP) {
+        penaltyPercent = 100
     } else {
-        // 0..0.40 -> 0..5
-        redundancyPercent = (maxSimilarity / 0.40) * 5
+        const t = (overlapPercent - PENALTY_START_OVERLAP) / (PENALTY_FULL_OVERLAP - PENALTY_START_OVERLAP)
+        penaltyPercent = 100 * Math.pow(t, 2) // gentle early, steep late
     }
-    
-    redundancyPercent = Math.min(100, Math.max(0, redundancyPercent))
+    penaltyPercent = Math.min(100, Math.max(0, penaltyPercent))
     
     // Generate analysis text
     const closestVectors = topSimilar.map(sim => ({
@@ -172,10 +180,14 @@ export function calculateRedundancy(
             })
         }
     }
-    analysis += `\nRedundancy penalty: ${redundancyPercent.toFixed(1)}%`
+    analysis += `\nOverlap (max similarity): ${overlapPercent.toFixed(1)}%`
+    analysis += `\nEdge sweet-spot multiplier (Λ_edge≈1.42): ×${bonusMultiplier.toFixed(3)} (center=${SWEET_SPOT_CENTER.toFixed(1)}% ± ${SWEET_SPOT_TOLERANCE.toFixed(1)}%)`
+    analysis += `\nExcess-overlap penalty: ${penaltyPercent.toFixed(1)}% (starts > ${PENALTY_START_OVERLAP}%)`
     
     return {
-        redundancy_percent: redundancyPercent,
+        overlap_percent: overlapPercent,
+        penalty_percent: penaltyPercent,
+        bonus_multiplier: bonusMultiplier,
         similarity_score: maxSimilarity,
         closest_vectors: closestVectors,
         analysis,

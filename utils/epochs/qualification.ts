@@ -10,11 +10,12 @@ import { eq } from 'drizzle-orm'
 import { debug } from '@/utils/debug'
 
 // Epoch qualification thresholds based on composite/pod_score
+// Adjusted upward to account for overlap-aware scoring (bonuses/penalties)
 export const EPOCH_THRESHOLDS = {
     founder: 8000,    // Pod Score >= 8000
-    pioneer: 4000,    // Pod Score >= 4000
-    community: 3000,  // Pod Score >= 3000
-    ecosystem: 2000,  // Pod Score >= 2000
+    pioneer: 6000,    // Pod Score >= 6000
+    community: 5000,  // Pod Score >= 5000
+    ecosystem: 4000,  // Pod Score >= 4000
 } as const
 
 // Epoch unlock thresholds (coherence density required to unlock)
@@ -205,9 +206,9 @@ export function qualifyEpoch(pod_score: number): EpochType {
  * 
  * Qualification is based on the current epoch's threshold:
  * - Founder: pod_score >= 8000
- * - Pioneer: pod_score >= 4000
- * - Community: pod_score >= 3000
- * - Ecosystem: pod_score >= 2000
+ * - Pioneer: pod_score >= 6000
+ * - Community: pod_score >= 5000
+ * - Ecosystem: pod_score >= 4000
  * 
  * @param pod_score - Total PoC score (0-10000) - used for epoch qualification
  * @param density - Density score (0-2500) - not used for qualification, kept for backward compatibility

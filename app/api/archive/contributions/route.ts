@@ -63,7 +63,9 @@ export async function GET(request: NextRequest) {
                 meta_density: sql<number | null>`NULLIF((${contributionsTable.metadata} ->> 'density'), '')::double precision`,
                 meta_coherence: sql<number | null>`NULLIF((${contributionsTable.metadata} ->> 'coherence'), '')::double precision`,
                 meta_alignment: sql<number | null>`NULLIF((${contributionsTable.metadata} ->> 'alignment'), '')::double precision`,
-                meta_redundancy: sql<number | null>`NULLIF((${contributionsTable.metadata} ->> 'redundancy'), '')::double precision`,
+                meta_redundancy_overlap: sql<number | null>`NULLIF((${contributionsTable.metadata} ->> 'redundancy_overlap_percent'), '')::double precision`,
+                meta_redundancy_penalty: sql<number | null>`NULLIF(((${contributionsTable.metadata} -> 'grok_evaluation_details' ->> 'redundancy_penalty_percent')), '')::double precision`,
+                meta_redundancy_bonus: sql<number | null>`NULLIF(((${contributionsTable.metadata} -> 'grok_evaluation_details' ->> 'redundancy_bonus_points')), '')::double precision`,
                 meta_qualified_founder: sql<boolean | null>`NULLIF((${contributionsTable.metadata} ->> 'qualified_founder'), '')::boolean`,
                 meta_qualified_epoch: sql<string | null>`(${contributionsTable.metadata} ->> 'qualified_epoch')`,
                 registered: contributionsTable.registered,
@@ -114,7 +116,10 @@ export async function GET(request: NextRequest) {
             // This should have been set to the open epoch that was used to qualify the submission
             // If missing, we can't reliably determine which epoch was open at qualification time,
             // so we'll return null rather than calculating based on density (which doesn't reflect historical epoch state)
-            const qualified_epoch = contrib.meta_qualified_epoch ?? null
+            // Only show a qualified epoch when the PoC is actually qualified.
+            // Some historical records may have an epoch-like value even when unqualified
+            // (e.g., derived from score bands). That should not render as an epoch.
+            const qualified_epoch = qualified ? (contrib.meta_qualified_epoch ?? null) : null
             
             // Determine status: use qualified_founder from metadata as source of truth
             // If metadata says qualified but status field says unqualified, trust metadata
@@ -139,14 +144,14 @@ export async function GET(request: NextRequest) {
                 content_hash: contrib.content_hash,
                 status: displayStatus, // Use corrected status
                 category: contrib.category,
-                metals: contrib.metals as string[] || [],
+                metals: Array.isArray(contrib.metals) ? (contrib.metals as string[]) : [],
                 // Extract scores from metadata
                 pod_score: contrib.meta_pod_score ?? null,
                 novelty: contrib.meta_novelty ?? null,
                 density: contrib.meta_density ?? null,
                 coherence: contrib.meta_coherence ?? null,
                 alignment: contrib.meta_alignment ?? null,
-                redundancy: contrib.meta_redundancy ?? null, // Redundancy percentage (0-100)
+                redundancy: contrib.meta_redundancy_overlap ?? null, // Overlap effect (-100 to +100)
                 qualified: qualified, // Use qualified_founder from metadata as source of truth
                 qualified_epoch: qualified_epoch,
                 // Direct fields

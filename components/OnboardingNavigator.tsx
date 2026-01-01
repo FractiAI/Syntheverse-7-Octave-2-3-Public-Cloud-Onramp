@@ -188,7 +188,7 @@ export function OnboardingNavigator() {
                             <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
                                 <div className="cockpit-label mb-2">Optional On‑Chain Anchoring</div>
                                 <ul className="space-y-2 cockpit-text text-sm">
-                                    <li>• Qualified PoCs may be optionally anchored on-chain (fee-based service; operator configured)</li>
+                                    <li>• Qualified PoCs may be optionally anchored on-chain ($500 fee; operator configured)</li>
                                     <li>• Anchoring stores a transaction hash for independent verification</li>
                                     <li>• Establishes provenance (“I was here first”) without creating economic entitlement</li>
                                     <li>• The protocol remains public; this dashboard is a reference client</li>
@@ -235,7 +235,7 @@ export function OnboardingNavigator() {
                                 <div className="cockpit-text text-sm space-y-2">
                                     <div>1. Submit PoC → archived + evaluated</div>
                                     <div>2. Qualify → PoC thresholds determine epoch eligibility</div>
-                                    <div>3. Optional on-chain anchoring → fee-based service (operator configured)</div>
+                                    <div>3. Optional on-chain anchoring → $500 fee (operator configured)</div>
                                     <div>4. Protocol recognition → internal coordination accounting updates</div>
                                 </div>
                             </div>
@@ -422,7 +422,7 @@ export function OnboardingNavigator() {
                                 {
                                     step: '04',
                                     title: 'Blockchain Registration',
-                                    desc: 'Optionally anchor qualified PoCs on-chain (fee-based service; operator configured)'
+                                    desc: 'Optionally anchor qualified PoCs on-chain ($500 fee; operator configured)'
                                 },
                                 {
                                     step: '05',

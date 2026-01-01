@@ -129,24 +129,24 @@ export async function POST(
                 { status: 403 }
             )
         }
-
-        // Only qualified PoCs can be anchored on-chain (fee-based operator service)
-        if (contrib.status !== 'qualified') {
-            debugError('RegisterPoC', 'PoC is not qualified for on-chain anchoring', {
-                submissionHash,
-                status: contrib.status
-            })
-            return NextResponse.json(
-                { error: 'PoC must be qualified before it can be anchored on-chain' },
-                { status: 400 }
-            )
-        }
         
         // Check if already registered
         if (contrib.registered) {
             debug('RegisterPoC', 'PoC already registered', { submissionHash })
             return NextResponse.json(
                 { error: 'PoC is already registered' },
+                { status: 400 }
+            )
+        }
+
+        // Enforce: only qualified PoCs can be anchored/registered
+        if (contrib.status !== 'qualified') {
+            debugError('RegisterPoC', 'PoC is not qualified for on-chain anchoring', {
+                submissionHash,
+                status: contrib.status,
+            })
+            return NextResponse.json(
+                { error: 'PoC is not qualified for on-chain anchoring' },
                 { status: 400 }
             )
         }
