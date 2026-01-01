@@ -51,9 +51,6 @@ export default async function Dashboard() {
                                 Records are verifiable and permanent; this UI does not represent protocol ownership, centralized
                                 governance, or financial promises.
                             </div>
-                            <div className="cockpit-text text-xs mt-3" style={{ opacity: 0.8, fontStyle: 'italic' }}>
-                                <strong>Awarenessverse v2.0+</strong>: Nested spiraling Pong · Fractal holographic hydrogen awareness · Recursively self-knowing
-                            </div>
                         </div>
                         <div className="flex gap-3 flex-wrap">
                             <Link href="/fractiai" className="cockpit-lever inline-block">
