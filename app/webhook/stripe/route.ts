@@ -320,6 +320,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
             // Check if PoC is qualified (either qualified_founder or qualified flag in metadata)
             const isQualified = metadata.qualified_founder === true || metadata.qualified === true || contrib.status === 'qualified'
             
+            // Skip allocations for financial support contributions (they qualify but don't receive token allocations)
+            const isFinancialSupport = metadata.type === 'financial_support' || metadata.type === 'financial_alignment_poc' || metadata.support_only === true
+            
             debug('StripeWebhook', 'Allocation check', {
                 submissionHash,
                 existingAllocationsCount: existingAllocations.length,
@@ -327,10 +330,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                 qualified: metadata.qualified,
                 status: contrib.status,
                 isQualified,
+                isFinancialSupport,
                 pod_score: metadata.pod_score
             })
             
-            if (existingAllocations.length === 0 && isQualified) {
+            if (existingAllocations.length === 0 && isQualified && !isFinancialSupport) {
                 try {
                     const podScore = metadata.pod_score || 0
                     const qualifiedEpoch = metadata.qualified_epoch || 'founder' // Use the epoch that was open when PoC qualified
@@ -444,6 +448,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                     submissionHash,
                     existingAllocationCount: existingAllocations.length
                 })
+            } else if (isFinancialSupport) {
+                debug('StripeWebhook', 'Financial support contribution - skipping allocation (qualifies but no tokens)', {
+                    submissionHash,
+                    type: metadata.type
+                })
             } else if (!isQualified) {
                 debug('StripeWebhook', 'PoC not qualified, skipping allocation', {
                     submissionHash,
@@ -550,7 +559,7 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
             content_hash: submissionHash, // Use same hash as submission_hash for financial alignment
             status: 'qualified', // Ecosystem support PoCs qualify immediately (no content evaluation required)
             category: 'alignment',
-            metals: null, // Do not bind “support” to metal tiers
+            metals: null, // Do not bind "support" to metal tiers
             metadata: {
                 type: 'financial_support',
                 legacy_type: session.metadata?.type,
@@ -569,16 +578,15 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
                 non_custodial_experimental_sandbox: true,
                 token_recognition_discretionary: true,
             },
-            // This field is reserved for on-chain PoC registration; keep false for support PoCs.
-            registered: false,
+            registered: false, // Registration is free and optional - user can register via UI
             registration_date: null,
             stripe_payment_id: session.payment_intent as string,
-            registration_tx_hash: null, // No blockchain registration for financial alignment (just payment)
+            registration_tx_hash: null,
             created_at: new Date(),
             updated_at: new Date()
         })
         
-        debug('StripeWebhook', 'Ecosystem support PoC recorded + qualified', {
+        debug('StripeWebhook', 'Financial support PoC recorded + qualified (registration available for free)', {
             submissionHash,
             sessionId: session.id,
             contributorEmail,
