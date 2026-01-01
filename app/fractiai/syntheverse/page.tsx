@@ -101,6 +101,7 @@ export default function SyntheverseBriefPage() {
           </div>
         </div>
 
+
         <div className="cockpit-panel p-6">
           <div className="cockpit-label">EMPIRICAL VALIDATION (SELECTED)</div>
           <div className="cockpit-text mt-3 text-sm space-y-2">
