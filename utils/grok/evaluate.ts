@@ -1131,6 +1131,7 @@ ${answer}`
                 requires_admin_approval: true
             },
             // Store base scores and overlap effect for transparency
+            // For seed submissions, keep original base scores for transparency but award maximum final scores
             base_novelty: baseNoveltyScore,
             base_density: baseDensityScore,
             redundancy_overlap_percent: redundancyOverlapPercent,
