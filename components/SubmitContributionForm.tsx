@@ -654,17 +654,19 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                                     type="button"
                                                                     onClick={handleRegisterQualifiedPoC}
                                                                     disabled={registeringPoC}
-                                                                    className="w-full"
+                                                                    size="lg"
+                                                                    variant="default"
+                                                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-primary/20"
                                                                 >
                                                                     {registeringPoC ? (
                                                                         <>
-                                                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                                                            Processing…
+                                                                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                                                                            Processing Registration...
                                                                         </>
                                                                     ) : (
                                                                         <>
-                                                                            <CreditCard className="h-4 w-4 mr-2" />
-                                                                            Register PoC (On-chain)
+                                                                            <CreditCard className="h-5 w-5 mr-2" />
+                                                                            ⚡ Register PoC on‑chain
                                                                         </>
                                                                     )}
                                                                 </Button>

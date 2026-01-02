@@ -546,17 +546,17 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                                         <button 
                                             onClick={() => handleRegister(selectedSubmission.submission_hash)}
                                             disabled={registering === selectedSubmission.submission_hash}
-                                            className="cockpit-lever w-full"
+                                            className="cockpit-lever w-full bg-[var(--hydrogen-amber)] hover:bg-[var(--hydrogen-amber)]/90 text-black font-bold text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-[var(--hydrogen-amber)]/50 rounded-md"
                                         >
                                             {registering === selectedSubmission.submission_hash ? (
                                                 <>
-                                                    <Loader2 className="inline h-4 w-4 mr-2 animate-spin" />
-                                                    Processing...
+                                                    <Loader2 className="inline h-5 w-5 mr-2 animate-spin" />
+                                                    Processing Registration...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <CreditCard className="inline h-4 w-4 mr-2" />
-                                                    Anchor PoC on‑chain
+                                                    <CreditCard className="inline h-5 w-5 mr-2" />
+                                                    ⚡ Anchor PoC on‑chain
                                                 </>
                                             )}
                                         </button>

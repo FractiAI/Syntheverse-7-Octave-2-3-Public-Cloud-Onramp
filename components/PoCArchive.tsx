@@ -1037,17 +1037,19 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                         <Button 
                                             onClick={() => handleRegister(selectedSubmission.submission_hash)}
                                             disabled={registering === selectedSubmission.submission_hash}
-                                            className="w-full"
+                                            size="lg"
+                                            variant="default"
+                                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6 shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-primary/20"
                                         >
                                             {registering === selectedSubmission.submission_hash ? (
                                                 <>
-                                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                                    Processing...
+                                                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                                                    Processing Registration...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <CreditCard className="h-4 w-4 mr-2" />
-                                                    Anchor PoC on‑chain
+                                                    <CreditCard className="h-5 w-5 mr-2" />
+                                                    ⚡ Anchor PoC on‑chain
                                                 </>
                                             )}
                                         </Button>
