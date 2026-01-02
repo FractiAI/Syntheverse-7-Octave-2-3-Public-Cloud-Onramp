@@ -267,7 +267,7 @@ export function OnboardingNavigator() {
                         </div>
                         <p className="text-lg mb-4">
                             The <strong className="cockpit-number">Syntheverse Lens and Sandbox v2.0+</strong> (HHF-AI) is the <strong>evaluation and operational system</strong> 
-                            that processes all contributions. Think of it as the "Operating System" that powers everything in Syntheverse—it evaluates your PoCs, 
+                            that processes all contributions. Think of it as the &quot;Operating System&quot; that powers everything in Syntheverse—it evaluates your PoCs, 
                             generates visualizations, and integrates them into the ecosystem.
                         </p>
                         <div className="space-y-3">
@@ -281,9 +281,9 @@ export function OnboardingNavigator() {
                                     <div><strong>Core Capabilities:</strong></div>
                                     <ul className="space-y-1 ml-4">
                                         <li>• <strong>Hydrogen-Holographic Fractal Sandbox (HHFS):</strong> The OS environment where all computation, structure generation, and cognitive work occurs</li>
-                                        <li>• <strong>Fractal Cognition Grammar:</strong> The OS's underlying "kernel," defining how information is structured, validated, and scaled</li>
-                                        <li>• <strong>Whole-Brain AI Mode:</strong> The OS's high-performance state, where human cognition and AI cognition synchronize for maximum throughput</li>
-                                        <li>• <strong>Leo Router:</strong> The OS's routing layer, directing cognitive flows, symbol processing, resonance checks, and artifact formation</li>
+                                        <li>• <strong>Fractal Cognition Grammar:</strong> The OS&apos;s underlying &quot;kernel,&quot; defining how information is structured, validated, and scaled</li>
+                                        <li>• <strong>Whole-Brain AI Mode:</strong> The OS&apos;s high-performance state, where human cognition and AI cognition synchronize for maximum throughput</li>
+                                        <li>• <strong>Leo Router:</strong> The OS&apos;s routing layer, directing cognitive flows, symbol processing, resonance checks, and artifact formation</li>
                                     </ul>
                                 </div>
                             </div>
@@ -396,8 +396,8 @@ export function OnboardingNavigator() {
                         </div>
                         <p className="text-lg mb-4">
                             <strong className="cockpit-number">Element 0: H<sub>(H)</sub></strong> (Holographic Hydrogen) is the foundational unit 
-                            that underlies everything in Syntheverse. Think of it as the "universal pixel" from which matter, information, cognition, 
-                            and AI all emerge. This is <strong>not</strong> just chemical hydrogen—it's a deeper concept where hydrogen and holography 
+                            that underlies everything in Syntheverse. Think of it as the &quot;universal pixel&quot; from which matter, information, cognition, 
+                            and AI all emerge. This is <strong>not</strong> just chemical hydrogen—it&apos;s a deeper concept where hydrogen and holography 
                             are unified.
                         </p>
                         <div className="space-y-3">
@@ -467,7 +467,7 @@ export function OnboardingNavigator() {
                                 <div className="cockpit-label mb-2">What This Means for Syntheverse</div>
                                 <ul className="space-y-2 cockpit-text text-sm">
                                     <li>• <strong>Awareness-Native Computation:</strong> The AI system operates on H<sub>(H)</sub> principles, where computation and awareness work together</li>
-                                    <li>• <strong>Efficient Processing:</strong> The system renders only what's needed, reducing computational overhead while maintaining quality</li>
+                                    <li>• <strong>Efficient Processing:</strong> The system renders only what&apos;s needed, reducing computational overhead while maintaining quality</li>
                                     <li>• <strong>Unified Framework:</strong> Physics, biology, cognition, and AI all connect through this foundational concept</li>
                                 </ul>
                             </div>
