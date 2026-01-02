@@ -105,7 +105,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               <h1 className="cockpit-title text-3xl mb-4">Welcome to Syntheverse</h1>
               <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
                       <p>
-                        <strong>Welcome to the new Syntheverse</strong>—a new alternative or complement to journal submissions.
+                        <strong>Welcome to Syntheverse</strong>—the blockchain-native research ecosystem that replaces journal gatekeeping with <strong>AI evaluation, instant blockchain anchoring, and permanent preservation</strong>. Submit for $500. Get evaluated. Get recorded forever. <strong>No paywalls. No politics. No waiting.</strong>
                       </p>
                       <p>
                         We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
