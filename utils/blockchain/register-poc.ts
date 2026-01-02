@@ -1,16 +1,21 @@
 /**
- * Blockchain Integration (Legacy - Hardhat)
+ * Blockchain Integration - Base Mainnet/Testnet
  * 
- * ⚠️ DEPRECATED: This file contains legacy Hardhat integration code.
+ * Registers PoC on Base blockchain using Syntheverse Genesis contracts:
+ * - SyntheverseGenesisLensKernel: Emits events for PoC registration
+ * - SyntheverseGenesisSYNTH90T: Allocates tokens (if amount provided)
+ * 
  * For Base mainnet/testnet integration, see: utils/blockchain/base-mainnet-integration.ts
- * 
- * Registers PoC on blockchain after Stripe payment confirmation
- * Returns transaction hash for storage in database
  */
 
 import { debug, debugError } from '@/utils/debug'
 import { ethers } from 'ethers'
-import POCRegistryABI from './POCRegistry.abi.json'
+import { 
+    getBaseMainnetConfig, 
+    createBaseProvider, 
+    emitLensEvent, 
+    allocateTokens 
+} from './base-mainnet-integration'
 
 export interface BlockchainRegistrationResult {
     success: boolean
@@ -49,15 +54,14 @@ async function deriveAddressFromEmail(email: string): Promise<string> {
 }
 
 /**
- * Register PoC on Hard Hat L1 blockchain
+ * Register PoC on Base blockchain (defaults to Sepolia testnet)
  * 
- * This function creates a blockchain transaction to register the PoC
- * on the Hard Hat L1 network. The transaction includes:
- * - Submission hash
- * - Contributor address (derived from email)
- * - Metal type (first metal from array)
- * - Allocated amount (0 if allocations not yet created)
- * - Epoch number
+ * This function registers the PoC on Base using Syntheverse Genesis contracts:
+ * - Emits a Lens event via SyntheverseGenesisLensKernel to record the PoC registration
+ * - Optionally allocates tokens via SyntheverseGenesisSYNTH90T (if amount provided)
+ * 
+ * Default network: Base Sepolia Testnet (Chain ID: 84532)
+ * Set BLOCKCHAIN_NETWORK=base_mainnet to use mainnet
  * 
  * @param submissionHash - PoC submission hash
  * @param contributor - Contributor email/address
@@ -80,136 +84,96 @@ export async function registerPoCOnBlockchain(
     metals: string[],
     submissionText?: string | null
 ): Promise<BlockchainRegistrationResult> {
-    debug('RegisterPoCBlockchain', 'Initiating blockchain registration', {
+    debug('RegisterPoCBlockchain', 'Initiating Base blockchain registration', {
         submissionHash,
         contributor,
         metals,
         hasSubmissionText: !!submissionText && submissionText.trim().length > 0
     })
     
-    // Compute a stable content hash for anchoring (text-only submissions)
-    let submissionTextHash: string | null = null
     try {
-        const normalized = (submissionText || '').trim()
-        if (normalized.length > 0) {
-            const crypto = await import('crypto')
-            submissionTextHash = crypto.createHash('sha256').update(normalized, 'utf8').digest('hex')
-        }
-    } catch (hashError) {
-        debugError('RegisterPoCBlockchain', 'Failed to hash submission text (non-fatal)', hashError)
-    }
-    
-    try {
-        // Check if Hard Hat RPC URL is configured
-        const hardhatRpcUrl = process.env.HARDHAT_RPC_URL || process.env.NEXT_PUBLIC_HARDHAT_RPC_URL
-        const contractAddress = process.env.POC_REGISTRY_ADDRESS
-        const privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY
-        
-        if (!hardhatRpcUrl) {
-            debugError('RegisterPoCBlockchain', 'Hard Hat RPC URL not configured', {
-                submissionHash,
-                note: 'Set HARDHAT_RPC_URL or NEXT_PUBLIC_HARDHAT_RPC_URL environment variable'
-            })
+        // Get Base configuration
+        const config = getBaseMainnetConfig()
+        if (!config) {
+            debugError('RegisterPoCBlockchain', 'Base blockchain configuration not available', new Error('Missing Base configuration'))
             return {
                 success: false,
-                error: 'Hard Hat RPC URL not configured'
+                error: 'Base blockchain configuration not available. Please check environment variables.'
             }
         }
-        
-        if (!contractAddress) {
-            debugError('RegisterPoCBlockchain', 'POC Registry contract address not configured', {
-                submissionHash,
-                note: 'Set POC_REGISTRY_ADDRESS environment variable'
-            })
-            return {
-                success: false,
-                error: 'POC Registry contract address not configured'
-            }
-        }
-        
-        if (!privateKey) {
-            debugError('RegisterPoCBlockchain', 'Blockchain private key not configured', {
-                submissionHash,
-                note: 'Set BLOCKCHAIN_PRIVATE_KEY environment variable (owner wallet private key)'
-            })
-            return {
-                success: false,
-                error: 'Blockchain private key not configured'
-            }
-        }
-        
-        // Connect to Hardhat network
-        debug('RegisterPoCBlockchain', 'Connecting to Hardhat network', {
-            rpcUrl: hardhatRpcUrl.substring(0, 30) + '...',
-            contractAddress: contractAddress.substring(0, 20) + '...'
-        })
-        
-        const provider = new ethers.JsonRpcProvider(hardhatRpcUrl)
-        const wallet = new ethers.Wallet(privateKey, provider)
-        
-        // Create contract instance
-        const contract = new ethers.Contract(contractAddress, POCRegistryABI, wallet)
-        
-        // Prepare contract parameters
-        // submissionHash is hex string (64 chars), convert to bytes32
-        const submissionHashWithPrefix = submissionHash.startsWith('0x') ? submissionHash : '0x' + submissionHash
-        const submissionHashBytes32 = ethers.zeroPadValue(submissionHashWithPrefix, 32)
         
         // Derive contributor address from email (placeholder - in production use wallet addresses)
         const contributorAddress = await deriveAddressFromEmail(contributor)
         
-        // Use first metal from array (contract takes single string)
-        const metal = metals && metals.length > 0 ? metals[0] : 'copper'
+        // Use first metal from array
+        const metal = (metals && metals.length > 0 ? metals[0] : 'copper') as 'gold' | 'silver' | 'copper'
         
-        // Allocated amount - use 0 as default since allocations may not be created yet
-        // Contract can be updated later via updateContribution if needed
-        const allocatedAmount = 0
+        // Compute submission text hash for anchoring
+        let submissionTextHash: string | null = null
+        try {
+            const normalized = (submissionText || '').trim()
+            if (normalized.length > 0) {
+                const crypto = await import('crypto')
+                submissionTextHash = crypto.createHash('sha256').update(normalized, 'utf8').digest('hex')
+            }
+        } catch (hashError) {
+            debugError('RegisterPoCBlockchain', 'Failed to hash submission text (non-fatal)', hashError)
+        }
         
-        // Get epoch number (default to founder if not specified)
-        const epochStr = metadata.qualified_epoch || 'founder'
-        const epochNumber = epochToNumber(epochStr)
+        // Prepare event data for LensKernel
+        // Format: JSON-encoded PoC registration data
+        const eventData = {
+            type: 'poc_registration',
+            submissionHash,
+            contributor: contributorAddress,
+            contributorEmail: contributor,
+            metal,
+            metadata: {
+                novelty: metadata.novelty,
+                density: metadata.density,
+                coherence: metadata.coherence,
+                alignment: metadata.alignment,
+                pod_score: metadata.pod_score,
+                qualified_epoch: metadata.qualified_epoch || 'founder'
+            },
+            submissionTextHash,
+            timestamp: Date.now()
+        }
         
-        debug('RegisterPoCBlockchain', 'Calling registerContribution', {
+        const eventDataJson = JSON.stringify(eventData)
+        const eventDataBytes = ethers.toUtf8Bytes(eventDataJson)
+        
+        debug('RegisterPoCBlockchain', 'Emitting Lens event for PoC registration', {
             submissionHash: submissionHash.substring(0, 20) + '...',
             contributorAddress,
             metal,
-            allocatedAmount,
-            epoch: epochNumber,
-            epochStr
+            network: config.chainId === 8453 ? 'base_mainnet' : 'base_sepolia'
         })
         
-        // Call registerContribution function
-        const tx = await contract.registerContribution(
-            submissionHashBytes32,
-            contributorAddress,
-            metal,
-            allocatedAmount,
-            epochNumber,
-            {
-                // Gas limit (adjust if needed)
-                gasLimit: 500000
+        // Emit Lens event to record PoC registration
+        const lensResult = await emitLensEvent('poc_registration', ethers.hexlify(eventDataBytes))
+        
+        if (!lensResult.success || !lensResult.transaction_hash) {
+            debugError('RegisterPoCBlockchain', 'Failed to emit Lens event', new Error(lensResult.error || 'Unknown error'))
+            return {
+                success: false,
+                error: lensResult.error || 'Failed to emit PoC registration event'
             }
-        )
+        }
         
-        debug('RegisterPoCBlockchain', 'Transaction sent, waiting for confirmation', {
-            txHash: tx.hash,
+        debug('RegisterPoCBlockchain', 'PoC registration event emitted successfully', {
+            txHash: lensResult.transaction_hash,
+            blockNumber: lensResult.block_number,
             submissionHash: submissionHash.substring(0, 20) + '...'
         })
         
-        // Wait for transaction confirmation
-        const receipt = await tx.wait()
-        
-        debug('RegisterPoCBlockchain', 'Transaction confirmed', {
-            txHash: receipt.hash,
-            blockNumber: receipt.blockNumber,
-            gasUsed: receipt.gasUsed?.toString(),
-            submissionHash: submissionHash.substring(0, 20) + '...'
-        })
+        // Note: Token allocation is handled separately via allocateTokens()
+        // This registration only records the PoC on-chain via Lens event
         
         return {
             success: true,
-            transaction_hash: receipt.hash,
-            block_number: receipt.blockNumber
+            transaction_hash: lensResult.transaction_hash,
+            block_number: lensResult.block_number
         }
         
     } catch (error) {
@@ -229,6 +193,8 @@ export async function registerPoCOnBlockchain(
                 errorMessage = `Transaction reverted: ${errorMessage}`
             } else if (errorMessage.includes('network')) {
                 errorMessage = `Network error: ${errorMessage}`
+            } else if (errorMessage.includes('rate limit')) {
+                errorMessage = 'Rate limit exceeded (try again later)'
             }
         }
         
@@ -240,22 +206,25 @@ export async function registerPoCOnBlockchain(
 }
 
 /**
- * Verify blockchain transaction
+ * Verify blockchain transaction on Base
  * 
- * Checks if a transaction hash exists on Hard Hat L1 blockchain
+ * Checks if a transaction hash exists on Base blockchain (mainnet or testnet)
  */
 export async function verifyBlockchainTransaction(txHash: string): Promise<boolean> {
     try {
-        const hardhatRpcUrl = process.env.HARDHAT_RPC_URL || process.env.NEXT_PUBLIC_HARDHAT_RPC_URL
+        const config = getBaseMainnetConfig()
         
-        if (!hardhatRpcUrl) {
-            debug('VerifyBlockchainTransaction', 'Hard Hat RPC URL not configured, skipping verification')
+        if (!config) {
+            debug('VerifyBlockchainTransaction', 'Base configuration not available, skipping verification')
             return false
         }
         
-        debug('VerifyBlockchainTransaction', 'Verifying transaction', { txHash })
+        debug('VerifyBlockchainTransaction', 'Verifying transaction on Base', { 
+            txHash,
+            network: config.chainId === 8453 ? 'base_mainnet' : 'base_sepolia'
+        })
         
-        const provider = new ethers.JsonRpcProvider(hardhatRpcUrl)
+        const { provider } = createBaseProvider(config)
         const receipt = await provider.getTransactionReceipt(txHash)
         
         if (receipt && receipt.status === 1) {

@@ -1,12 +1,17 @@
 /**
- * Base Mainnet Blockchain Integration
+ * Base Blockchain Integration (Testnet/Mainnet)
  * 
- * Integrates with Syntheverse Genesis contracts on Base mainnet:
+ * Integrates with Syntheverse Genesis contracts on Base:
  * - SyntheverseGenesisSYNTH90T: Token allocations (Gold/Silver/Copper)
  * - SyntheverseGenesisLensKernel: Event emission for protocol events
  * 
- * Network: Base Mainnet (Chain ID: 8453)
+ * Default: Base Sepolia Testnet (Chain ID: 84532)
+ * RPC: https://sepolia.base.org
+ * 
+ * Mainnet: Base Mainnet (Chain ID: 8453)
  * RPC: https://mainnet.base.org
+ * 
+ * Set BLOCKCHAIN_NETWORK=base_mainnet to use mainnet
  */
 
 import { debug, debugError } from '@/utils/debug'
@@ -41,10 +46,12 @@ export interface OnChainFacts {
 }
 
 /**
- * Get Base mainnet configuration from environment variables
+ * Get Base configuration from environment variables (testnet or mainnet)
+ * Defaults to Base Sepolia testnet for safety
  */
 export function getBaseMainnetConfig(): BaseMainnetConfig | null {
-    const network = process.env.BLOCKCHAIN_NETWORK || 'base_mainnet'
+    // Default to Base Sepolia testnet (not mainnet) for safety
+    const network = process.env.BLOCKCHAIN_NETWORK || 'base_sepolia'
     
     // Determine RPC URL based on network
     let rpcUrl: string
@@ -77,7 +84,7 @@ export function getBaseMainnetConfig(): BaseMainnetConfig | null {
 }
 
 /**
- * Create Base mainnet provider and wallet
+ * Create Base provider and wallet (testnet or mainnet based on config)
  */
 export function createBaseProvider(config: BaseMainnetConfig): {
     provider: ethers.JsonRpcProvider
@@ -120,7 +127,7 @@ export async function allocateTokens(
         if (!config) {
             return {
                 success: false,
-                error: 'Base mainnet configuration not available'
+                error: 'Base blockchain configuration not available'
             }
         }
         
@@ -292,7 +299,7 @@ export async function emitLensEvent(
         if (!config) {
             return {
                 success: false,
-                error: 'Base mainnet configuration not available'
+                error: 'Base blockchain configuration not available'
             }
         }
         
@@ -456,7 +463,7 @@ export async function queryMetalAllocatedEvents(
 }
 
 /**
- * Verify transaction on Base mainnet
+ * Verify transaction on Base (testnet or mainnet)
  */
 export async function verifyBaseTransaction(txHash: string): Promise<boolean> {
     try {

@@ -227,7 +227,7 @@ export function ReactorCore() {
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="cockpit-label">CORE INSTRUMENT PANEL</div>
-                        <div className="cockpit-title text-3xl mt-2">SYNTH 90T ERC-20 MINE</div>
+                        <div className="cockpit-title text-3xl mt-2">SYNTH 90T ERC-20 BLOCKMINE</div>
                         {error ? (
                             <div className="cockpit-text text-xs mt-2" style={{ opacity: 0.85, color: '#fca5a5' }}>
                                 Live status delayed: {error}. Showing last known values.
