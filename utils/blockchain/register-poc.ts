@@ -54,14 +54,14 @@ async function deriveAddressFromEmail(email: string): Promise<string> {
 }
 
 /**
- * Register PoC on Base blockchain (defaults to Sepolia testnet)
+ * Register PoC on Base blockchain (defaults to mainnet)
  * 
  * This function registers the PoC on Base using Syntheverse Genesis contracts:
  * - Emits a Lens event via SyntheverseGenesisLensKernel to record the PoC registration
  * - Optionally allocates tokens via SyntheverseGenesisSYNTH90T (if amount provided)
  * 
- * Default network: Base Sepolia Testnet (Chain ID: 84532)
- * Set BLOCKCHAIN_NETWORK=base_mainnet to use mainnet
+ * Default network: Base Mainnet (Chain ID: 8453)
+ * Set BLOCKCHAIN_NETWORK=base_sepolia to use testnet
  * 
  * @param submissionHash - PoC submission hash
  * @param contributor - Contributor email/address

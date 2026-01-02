@@ -1,17 +1,17 @@
 /**
- * Base Blockchain Integration (Testnet/Mainnet)
+ * Base Blockchain Integration (Mainnet/Testnet)
  * 
  * Integrates with Syntheverse Genesis contracts on Base:
  * - SyntheverseGenesisSYNTH90T: Token allocations (Gold/Silver/Copper)
  * - SyntheverseGenesisLensKernel: Event emission for protocol events
  * 
- * Default: Base Sepolia Testnet (Chain ID: 84532)
- * RPC: https://sepolia.base.org
- * 
- * Mainnet: Base Mainnet (Chain ID: 8453)
+ * Default: Base Mainnet (Chain ID: 8453)
  * RPC: https://mainnet.base.org
  * 
- * Set BLOCKCHAIN_NETWORK=base_mainnet to use mainnet
+ * Testnet: Base Sepolia Testnet (Chain ID: 84532)
+ * RPC: https://sepolia.base.org
+ * 
+ * Set BLOCKCHAIN_NETWORK=base_sepolia to use testnet
  */
 
 import { debug, debugError } from '@/utils/debug'
@@ -46,12 +46,12 @@ export interface OnChainFacts {
 }
 
 /**
- * Get Base configuration from environment variables (testnet or mainnet)
- * Defaults to Base Sepolia testnet for safety
+ * Get Base configuration from environment variables (mainnet or testnet)
+ * Defaults to Base Mainnet for production
  */
 export function getBaseMainnetConfig(): BaseMainnetConfig | null {
-    // Default to Base Sepolia testnet (not mainnet) for safety
-    const network = process.env.BLOCKCHAIN_NETWORK || 'base_sepolia'
+    // Default to Base Mainnet for production
+    const network = process.env.BLOCKCHAIN_NETWORK || 'base_mainnet'
     
     // Determine RPC URL based on network
     let rpcUrl: string
