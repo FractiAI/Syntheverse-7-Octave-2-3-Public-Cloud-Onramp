@@ -366,33 +366,92 @@ export async function emitLensEvent(
     } catch (error) {
         debugError('EmitLensEvent', 'Failed to emit lens event', error)
         
+        // Extract detailed error information
         let errorMessage = 'Unknown error'
+        let errorDetails: any = {}
+        
         if (error instanceof Error) {
             errorMessage = error.message
+            errorDetails = {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            }
             
-            // Check for common errors
+            // Extract ethers.js specific error information
+            // @ts-ignore - ethers errors may have additional properties
+            if (error.code) {
+                errorDetails.code = error.code
+            }
+            // @ts-ignore
+            if (error.reason) {
+                errorDetails.reason = error.reason
+            }
+            // @ts-ignore
+            if (error.data) {
+                errorDetails.data = error.data
+            }
+            // @ts-ignore
+            if (error.transaction) {
+                errorDetails.transaction = {
+                    to: error.transaction.to,
+                    data: error.transaction.data?.substring(0, 20) + '...',
+                    value: error.transaction.value?.toString()
+                }
+            }
+            // @ts-ignore
+            if (error.receipt) {
+                errorDetails.receipt = {
+                    status: error.receipt.status,
+                    gasUsed: error.receipt.gasUsed?.toString()
+                }
+            }
+            
+            // Parse revert reason if available
+            // @ts-ignore
+            if (error.reason || error.data) {
+                try {
+                    // @ts-ignore
+                    const revertReason = error.reason || (error.data ? JSON.stringify(error.data) : null)
+                    if (revertReason) {
+                        errorDetails.revertReason = revertReason
+                    }
+                } catch (e) {
+                    // Ignore parsing errors
+                }
+            }
+            
+            // Log full error details for debugging
+            debug('EmitLensEvent', 'Error details', errorDetails)
+            
+            // Check for common errors and provide helpful messages
             if (errorMessage.includes('Ownable: caller is not the owner') || errorMessage.includes('onlyOwner')) {
                 errorMessage = 'Wallet is not the owner of the LensKernel contract. Check BLOCKCHAIN_PRIVATE_KEY matches the contract owner.'
-            } else if (errorMessage.includes('insufficient funds')) {
-                errorMessage = 'Insufficient funds in wallet for gas fees'
+            } else if (errorMessage.includes('insufficient funds') || errorMessage.includes('insufficient balance')) {
+                errorMessage = `Insufficient funds in wallet for gas fees. ${errorDetails.reason || ''}`
             } else if (errorMessage.includes('nonce')) {
-                errorMessage = 'Transaction nonce error (try again)'
-            } else if (errorMessage.includes('revert')) {
-                errorMessage = `Transaction reverted: ${errorMessage}`
-            } else if (errorMessage.includes('network') || errorMessage.includes('ECONNREFUSED')) {
-                errorMessage = `Network error: ${errorMessage}. Check RPC URL and network connectivity.`
+                errorMessage = `Transaction nonce error: ${errorDetails.reason || errorMessage}. Try again.`
+            } else if (errorMessage.includes('revert') || errorDetails.revertReason) {
+                const revertInfo = errorDetails.revertReason || errorMessage
+                errorMessage = `Transaction reverted: ${revertInfo}`
+            } else if (errorMessage.includes('network') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('TIMEOUT')) {
+                errorMessage = `Network error: ${errorMessage}. Check RPC URL (${config?.rpcUrl}) and network connectivity.`
             } else if (errorMessage.includes('rate limit')) {
                 errorMessage = 'Rate limit exceeded (try again later)'
             } else if (errorMessage.includes('ENS') || errorMessage.includes('getEnsAddress') || errorMessage.includes('UNSUPPORTED_OPERATION')) {
-                // Ignore ENS errors - Base doesn't support ENS, but this shouldn't block transactions
-                // If the error is specifically about ENS, we can continue without it
-                errorMessage = `ENS not supported on Base (this is expected). ${errorMessage}`
+                // ENS errors shouldn't block - try to continue
+                errorMessage = `ENS not supported on Base. ${errorDetails.reason || errorMessage}`
+            } else if (errorDetails.code) {
+                // Include error code in message
+                errorMessage = `[${errorDetails.code}] ${errorMessage}${errorDetails.reason ? ` - ${errorDetails.reason}` : ''}`
             }
         }
         
         return {
             success: false,
-            error: errorMessage
+            error: errorMessage,
+            // Include error details in development
+            ...(process.env.NODE_ENV === 'development' ? { errorDetails } : {})
         }
     }
 }

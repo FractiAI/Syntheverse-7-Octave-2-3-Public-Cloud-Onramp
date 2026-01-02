@@ -179,28 +179,59 @@ export async function registerPoCOnBlockchain(
     } catch (error) {
         debugError('RegisterPoCBlockchain', 'Blockchain registration failed', error)
         
-        // Provide more detailed error information
+        // Extract detailed error information
         let errorMessage = 'Unknown blockchain error'
+        let errorDetails: any = {}
+        
         if (error instanceof Error) {
             errorMessage = error.message
+            errorDetails = {
+                name: error.name,
+                message: error.message
+            }
             
-            // Check for common errors
-            if (errorMessage.includes('insufficient funds')) {
-                errorMessage = 'Insufficient funds in wallet for gas fees'
+            // Extract ethers.js specific error information
+            // @ts-ignore - ethers errors may have additional properties
+            if (error.code) {
+                errorDetails.code = error.code
+            }
+            // @ts-ignore
+            if (error.reason) {
+                errorDetails.reason = error.reason
+            }
+            // @ts-ignore
+            if (error.data) {
+                errorDetails.data = error.data
+            }
+            
+            // Log full error details for debugging
+            debug('RegisterPoCBlockchain', 'Error details', errorDetails)
+            
+            // Check for common errors and provide helpful messages
+            if (errorMessage.includes('insufficient funds') || errorMessage.includes('insufficient balance')) {
+                errorMessage = `Insufficient funds in wallet for gas fees. ${errorDetails.reason || ''}`
             } else if (errorMessage.includes('nonce')) {
-                errorMessage = 'Transaction nonce error (try again)'
-            } else if (errorMessage.includes('revert')) {
-                errorMessage = `Transaction reverted: ${errorMessage}`
-            } else if (errorMessage.includes('network')) {
-                errorMessage = `Network error: ${errorMessage}`
+                errorMessage = `Transaction nonce error: ${errorDetails.reason || errorMessage}. Try again.`
+            } else if (errorMessage.includes('revert') || errorDetails.revertReason) {
+                const revertInfo = errorDetails.revertReason || errorMessage
+                errorMessage = `Transaction reverted: ${revertInfo}`
+            } else if (errorMessage.includes('network') || errorMessage.includes('ECONNREFUSED') || errorMessage.includes('TIMEOUT')) {
+                errorMessage = `Network error: ${errorMessage}. Check RPC URL and network connectivity.`
             } else if (errorMessage.includes('rate limit')) {
                 errorMessage = 'Rate limit exceeded (try again later)'
+            } else if (errorMessage.includes('ENS') || errorMessage.includes('getEnsAddress')) {
+                errorMessage = `ENS error (Base doesn't support ENS): ${errorMessage}`
+            } else if (errorDetails.code) {
+                // Include error code in message
+                errorMessage = `[${errorDetails.code}] ${errorMessage}${errorDetails.reason ? ` - ${errorDetails.reason}` : ''}`
             }
         }
         
         return {
             success: false,
-            error: errorMessage
+            error: errorMessage,
+            // Include error details in development
+            ...(process.env.NODE_ENV === 'development' ? { errorDetails } : {})
         }
     }
 }
