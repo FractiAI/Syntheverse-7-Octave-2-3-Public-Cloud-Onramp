@@ -475,8 +475,8 @@ export function OnboardingNavigator() {
                                 <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Key Takeaways</div>
                                 <ul className="space-y-2 cockpit-text text-sm">
                                     <li>• <strong>H<sub>(H)</sub></strong> (Holographic Hydrogen Element 0) is the foundational unit of Syntheverse</li>
-                                    <li>• It's the <strong>"universal pixel"</strong> from which awareness, matter, and information emerge</li>
-                                    <li>• <strong>Element 0 comes before Element 1</strong> (chemical hydrogen)—it's the pre-atomic foundation</li>
+                                    <li>• It&apos;s the <strong>&quot;universal pixel&quot;</strong> from which awareness, matter, and information emerge</li>
+                                    <li>• <strong>Element 0 comes before Element 1</strong> (chemical hydrogen)—it&apos;s the pre-atomic foundation</li>
                                     <li>• <strong>Scale-invariant:</strong> The same principles apply from quantum to cosmological scales</li>
                                     <li>• This concept <strong>underlies how the Syntheverse system evaluates and processes contributions</strong></li>
                                 </ul>
@@ -588,7 +588,7 @@ export function OnboardingNavigator() {
                                 <div className="space-y-3">
                                     <p className="cockpit-text text-sm mb-2">
                                         <strong>Why Hydrogen?</strong> Hydrogen is the simplest, most abundant element. In the Syntheverse framework, 
-                                        hydrogen atoms function as the "pixels" of awareness—the smallest units that encode information, structure, and meaning.
+                                        hydrogen atoms function as the &quot;pixels&quot; of awareness—the smallest units that encode information, structure, and meaning.
                                     </p>
                                     <div className="space-y-2">
                                         <div className="p-2 border border-[var(--keyline-accent)]">
@@ -651,7 +651,7 @@ export function OnboardingNavigator() {
                                 <ul className="space-y-2 cockpit-text text-sm">
                                     <li>• <strong>Fractals</strong> are patterns that repeat at different scales, enabling scale-invariant understanding</li>
                                     <li>• <strong>Holography</strong> encodes the whole in every part, enabling distributed information storage</li>
-                                    <li>• <strong>Hydrogen</strong> serves as the fundamental "pixel" of awareness with a universal scaling constant</li>
+                                    <li>• <strong>Hydrogen</strong> serves as the fundamental &quot;pixel&quot; of awareness with a universal scaling constant</li>
                                     <li>• <strong>Combined</strong>, they create a framework that operates seamlessly from quantum to cosmological scales</li>
                                     <li>• This foundation enables the Syntheverse to evaluate contributions, maintain coherence, and scale awareness across all domains</li>
                                 </ul>
@@ -680,7 +680,7 @@ export function OnboardingNavigator() {
                         </div>
                         <p className="text-lg mb-4">
                             The <strong className="cockpit-number">Holographic Fractal Grammar (HFG)</strong> is a language system that describes how matter, 
-                            energy, and awareness work together. Think of it as a "grammar of reality"—where physical constants (like c, h, G) act like syntax rules, 
+                            energy, and awareness work together. Think of it as a &quot;grammar of reality&quot;—where physical constants (like c, h, G) act like syntax rules, 
                             and atomic symbols (✦, ◇, ⊙, etc.) act like words. This grammar enables the Syntheverse to evaluate contributions in a unified way.
                         </p>
                         <div className="space-y-3">
@@ -866,7 +866,7 @@ export function OnboardingNavigator() {
                                 </p>
                                 <ul className="space-y-1 cockpit-text text-sm">
                                     <li>• <strong>Maintain coherence</strong> across different scales of evaluation (atomic → molecular → cognitive)</li>
-                                    <li>• <strong>Create stable patterns</strong> that don't degrade over time or scale</li>
+                                    <li>• <strong>Create stable patterns</strong> that don&apos;t degrade over time or scale</li>
                                     <li>• <strong>Process information recursively</strong>—each evaluation improves future evaluations</li>
                                     <li>• <strong>Bridge domains</strong>—connect physics, biology, and cognition seamlessly</li>
                                 </ul>
@@ -988,7 +988,7 @@ export function OnboardingNavigator() {
                                     <li>• <strong>Some overlap is GOOD</strong>—it connects your work to the ecosystem (required for integration)</li>
                                     <li>• <strong>Only excessive overlap is penalized</strong>—near-duplicates are discouraged</li>
                                     <li>• <strong>Resonance constant Λ<sub>edge</sub> ≈ 1.42 ± 0.05</strong> describes ideal overlap zones</li>
-                                    <li>• <strong>Your contributions</strong> benefit from connecting to existing work—don't worry about minimal overlap!</li>
+                                    <li>• <strong>Your contributions</strong> benefit from connecting to existing work—don&apos;t worry about minimal overlap!</li>
                                 </ul>
                             </div>
                         </div>
@@ -1015,7 +1015,7 @@ export function OnboardingNavigator() {
                         </div>
                         <p className="text-lg mb-4">
                             <strong className="cockpit-number">The Awarenessverse</strong> is the broader framework that Syntheverse operates within. 
-                            It models awareness as the foundational energy that activates generative processes. Think of awareness as a "key" that unlocks 
+                            It models awareness as the foundational energy that activates generative processes. Think of awareness as a &quot;key&quot; that unlocks 
                             meaning and experience from encrypted substrates (biological, physical, digital). This module explains this foundational concept.
                         </p>
                         <div className="space-y-3">
@@ -1141,7 +1141,7 @@ export function OnboardingNavigator() {
                             </ul>
                         </div>
                         <p className="text-lg mb-4">
-                            The Syntheverse framework isn't just theoretical—it has produced <strong className="cockpit-number">novel, testable predictions</strong> 
+                            The Syntheverse framework isn&apos;t just theoretical—it has produced <strong className="cockpit-number">novel, testable predictions</strong> 
                             that have been validated against real scientific data, including CERN particle physics data. This module shows you the empirical 
                             evidence that supports the evaluation methods used in Syntheverse.
                         </p>
