@@ -91,10 +91,11 @@ export function createBaseProvider(config: BaseMainnetConfig): {
     wallet: ethers.Wallet
 } {
     // Base doesn't support ENS, so we disable it to avoid errors
+    // Note: We don't set ensAddress to avoid ENS resolution attempts
     const provider = new ethers.JsonRpcProvider(config.rpcUrl, {
         chainId: config.chainId,
-        name: config.chainId === 8453 ? 'base-mainnet' : 'base-sepolia',
-        ensAddress: null // Disable ENS resolution (Base doesn't support ENS)
+        name: config.chainId === 8453 ? 'base-mainnet' : 'base-sepolia'
+        // ensAddress is omitted - Base doesn't support ENS
     })
     
     const wallet = new ethers.Wallet(config.privateKey, provider)
