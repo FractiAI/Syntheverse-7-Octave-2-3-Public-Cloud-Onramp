@@ -100,6 +100,9 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               <h1 className="cockpit-title text-3xl mb-4">Welcome to Syntheverse</h1>
               <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
                       <p>
+                        <strong>Welcome to the new Syntheverse</strong>—a new alternative or complement to journal submissions.
+                      </p>
+                      <p>
                         We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
                   holographic hydrogen aware human genome, Syntheverse&apos;s genetic analog.
                       </p>
@@ -120,7 +123,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
                     Pru &quot;El Taino&quot;
                   </div>
-                  <div className="cockpit-label text-xs mt-1">Architect of Syntheverse</div>
+                  <div className="cockpit-label text-xs mt-1">ARCHITECT OF SYNTHEVERSE</div>
                 </div>
               </div>
             </div>
@@ -318,33 +321,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
 
           {/* Right: Instrument panel */}
           <div className="space-y-6 lg:sticky lg:top-6">
-            {/* Control bay */}
-              {variant === 'fractiai' ? (
-              <div className="cockpit-panel p-6">
-                <div className="cockpit-label mb-4">CONTROL BAY</div>
-                <div className="space-y-3">
-                    {cta?.primaryHref ? (
-                    <Link href={cta.primaryHref} className="cockpit-lever block w-full text-center py-2.5">
-                        {cta.primaryLabel}
-                      </Link>
-                    ) : null}
-                  <Link href="/onboarding" className="cockpit-lever block w-full text-center py-2.5">
-                      Onboarding
-                    </Link>
-                    {showAuthButtons ? (
-                      <>
-                      <Link href="/signup" className="cockpit-lever block w-full text-center py-2.5">
-                          Sign up
-                        </Link>
-                      <Link href="/login" className="cockpit-lever block w-full text-center py-2.5">
-                          Log in
-                        </Link>
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-
             {/* Motherlode instrument */}
             <div className="cockpit-panel p-6" style={{
               boxShadow: '0 0 0 1px var(--keyline-accent) inset, 0 0 20px var(--hydrogen-glow)',
