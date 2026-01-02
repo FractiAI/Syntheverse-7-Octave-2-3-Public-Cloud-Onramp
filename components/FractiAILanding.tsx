@@ -137,11 +137,11 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
             {variant === 'fractiai' ? (
               <div className="cockpit-panel p-5 border-l-2 border-[var(--hydrogen-amber)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-[var(--hydrogen-amber)] rounded-full animate-pulse" 
-                       style={{ boxShadow: '0 0 10px var(--hydrogen-amber)' }}></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" 
+                       style={{ boxShadow: '0 0 10px #22c55e' }}></div>
                   <div>
                     <div className="cockpit-label">DEPLOYMENT STATUS</div>
-                    <div className="cockpit-text text-sm mt-1">Deployment in process</div>
+                    <div className="cockpit-text text-sm mt-1">Base Testnet Live</div>
                   </div>
                 </div>
               </div>

@@ -1,76 +1,313 @@
-## Syntheverse: protocol + operator reference client
+# Syntheverse PoC Contributor Dashboard
 
-This repository is organized around a simple distinction:
+> **Protocol + Operator Reference Client** - A production-ready Next.js application for Proof-of-Contribution (PoC) submissions, evaluations, and blockchain anchoring.
 
-- **The Syntheverse Protocol**: a public, implementation-agnostic specification for Proof‑of‑Contribution (PoC) primitives, scoring lenses, data models, and optional on‑chain anchoring.
-- **Operators**: deployments that run a concrete implementation of the protocol with real infrastructure choices, policies, and costs. **FractiAI** is one operator (and maintains the reference client deployed today).
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed-Vercel-black)](https://vercel.com)
+[![Base Mainnet](https://img.shields.io/badge/Blockchain-Base%20Mainnet-blue)](https://base.org)
 
-If you only read one thing, start here:
+---
 
-- **Protocol overview**: `protocol/README.md`
-- **Operator (FractiAI) overview**: `operator/README.md`
+## 📋 Table of Contents
 
-### Executive overview (intentions + structure)
+- [Overview](#overview)
+- [Pre-Migration Report](#pre-migration-report)
+- [Current Status](#current-status)
+- [Quick Start](#quick-start)
+- [Repository Structure](#repository-structure)
+- [Environment Variables](#environment-variables)
+- [Documentation](#documentation)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
 
-- **What we’re building**: an operator-safe "lens + archive + optional anchoring" system where contributions become durable, auditable records—without token-sale framing.
-- **What "protocol-first" means here**: the *spec* (what must be true) is separated from the *operator* (how it is run).
-- **What FractiAI is (and is not)**: FractiAI operates a reference instance and evolves the reference client; it does **not** equal "the protocol."
+---
 
-**Note**: Repository was reset to commit `8f61e53` on Jan 1, 2026 due to TypeScript compilation regressions introduced during blockchain genesis implementation. Previous blockchain integration work remains available in local `syntheverse-ui/` directory for future reference.
+## Overview
 
-### Live deployment (FractiAI operator instance)
+This repository implements the **Syntheverse Protocol** - a public, implementation-agnostic specification for Proof-of-Contribution (PoC) primitives, scoring lenses, data models, and optional on-chain anchoring.
 
-The current reference client is deployed on Vercel:
+### Key Concepts
 
-- **Production URL**: `https://syntheverse-poc.vercel.app`
+- **The Syntheverse Protocol**: Public specification for PoC primitives, scoring, and anchoring
+- **Operators**: Concrete implementations with infrastructure choices, policies, and costs
+- **FractiAI**: Reference operator maintaining this client
 
-If you deploy your own operator instance, you must update:
+### What We're Building
 
-- **Site URLs**: `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_WEBSITE_URL`
-- **Supabase Auth**: Site URL + Redirect URLs (OAuth callbacks)
-- **Stripe webhooks**: endpoint URL + `STRIPE_WEBHOOK_SECRET`
+An operator-safe "lens + archive + optional anchoring" system where contributions become durable, auditable records—without token-sale framing.
 
-### What’s in this repo
+**Protocol-first approach**: The *spec* (what must be true) is separated from the *operator* (how it is run).
 
-This repo currently contains:
+---
 
-- **Operator UI + API routes (Next.js)**: the deployed reference client (root `app/`, `components/`, `utils/`, `supabase/` migrations, etc.)
-- **Protocol documentation**: `protocol/` (spec, invariants, and terminology)
-- **Operator documentation**: `operator/` (policies, infra choices, and boundaries)
-- **Implementation docs**: `docs/` (deployment, OAuth, Supabase, Stripe, testing, etc.)
-- **Legacy / R&D workspace**: `syntheverse-ui/` (large experimental subtree; treated as separate internal workspace)
+## 🔄 Pre-Migration Report
 
-### Core capabilities (reference client)
+### Migration Context: Hardhat → Base Mainnet
 
-- **Proof‑of‑Contribution lifecycle**: submission → archive → evaluation → qualification → optional anchoring
-- **Scoring lens**: novelty, density, coherence, alignment (+ overlap-aware redundancy with edge sweet-spot rewards)
-- **3D vectorized sandbox map**: Three.js + R3F visualization of PoCs as navigable infrastructure
-- **Auth + storage**: Supabase Auth + Postgres
-- **Payments**: Stripe Checkout + Billing Portal for operator-managed flows
-- **Blockchain integration**: Hardhat L1 blockchain registration with ethers.js v6
+**Migration Date**: January 2025  
+**Status**: Phase 1 Complete - Infrastructure & Configuration  
+**Target Network**: Base Mainnet (Chain ID: 8453)
 
-### Tech stack (reference client)
+### Pre-Migration State (Before Base Migration)
 
-- **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS + shadcn/ui
-- **3D**: Three.js + React Three Fiber + Drei
-- **Auth/DB**: Supabase Auth + Postgres + Drizzle ORM
-- **Payments**: Stripe
-- **Blockchain**: Hardhat + ethers.js v6
-- **AI Evaluation**: Groq API (Grok)
-- **Deployment**: Vercel
-- **Language**: TypeScript
+#### Network Configuration
+- **Network**: Hardhat (local/testnet)
+- **Chain ID**: 31337 (Hardhat local) or custom testnet
+- **RPC**: `http://localhost:8545` or custom Hardhat node
+- **Block Explorer**: None (local network)
 
-### Quick start (run the operator reference client locally)
+#### Contract Architecture
+- **Contracts**: Custom SYNTH, SyntheverseLens, POCRegistry
+- **Solidity Version**: 0.8.19
+- **Hardhat Version**: v2.22.18
+- **Deployment**: Manual Hardhat deployment scripts
+- **Contract Addresses**: Local/testnet addresses (not on public mainnet)
+
+#### Integration Status
+- ✅ Basic PoC registration via POCRegistry
+- ✅ Transaction hash storage in database
+- ✅ Hardhat RPC integration with ethers.js v6
+- ⚠️ Limited to test environments
+- ⚠️ No public mainnet deployment
+- ⚠️ No integration with production Genesis contracts
+
+#### Environment Variables (Pre-Migration)
+```env
+# Hardhat Configuration
+HARDHAT_RPC_URL=http://localhost:8545
+POC_REGISTRY_ADDRESS=0x...  # Local/testnet address
+BLOCKCHAIN_PRIVATE_KEY=0x... # Test wallet
+```
+
+#### Limitations
+1. **Network Isolation**: Hardhat networks are not publicly accessible
+2. **No Mainnet Presence**: Contracts not deployed on production blockchain
+3. **Limited Scalability**: Hardhat suitable for development only
+4. **No Public Verification**: Transactions not verifiable on public explorers
+5. **Contract Mismatch**: Using custom contracts instead of deployed Genesis contracts
+
+### Post-Migration State (Current - Phase 1 Complete)
+
+#### Network Configuration
+- **Network**: Base Mainnet (Chain ID: 8453) + Base Sepolia (Chain ID: 84532)
+- **RPC**: `https://mainnet.base.org` / `https://sepolia.base.org`
+- **Block Explorer**: https://basescan.org
+- **Gas Costs**: ~0.1 gwei (very low)
+
+#### Contract Architecture
+- **Contracts**: SyntheverseGenesisSYNTH90T, SyntheverseGenesisLensKernel (deployed on Base mainnet)
+- **Solidity Version**: 0.8.24
+- **Hardhat Version**: v2.22.18 (updated for Base)
+- **Deployment**: Genesis contracts already deployed
+- **Contract Addresses**: 
+  - SYNTH90T: `0xAC9fa48Ca1D60e5274d14c7CEd6B3F4C1ADd1Aa3`
+  - LensKernel: `0xD9ABf9B19B4812A2fd06c5E8986B84040505B9D8`
+
+#### Integration Status
+- ✅ Base mainnet network configuration complete
+- ✅ Genesis contract ABIs created
+- ✅ Base mainnet integration code implemented
+- ✅ Environment variables documented
+- ✅ Vercel environment variables configured
+- ⏳ Contract integration (Phase 2 - Pending)
+- ⏳ Dashboard UI updates (Phase 3 - Pending)
+- ⏳ Testing on Base Sepolia (Phase 4 - Pending)
+
+#### Environment Variables (Post-Migration)
+```env
+# Base Network Configuration
+BASE_MAINNET_RPC_URL=https://mainnet.base.org
+BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
+BLOCKCHAIN_NETWORK=base_mainnet  # or base_sepolia for testing
+
+# Genesis Contract Addresses
+SYNTH90T_CONTRACT_ADDRESS=0xAC9fa48Ca1D60e5274d14c7CEd6B3F4C1ADd1Aa3
+LENS_KERNEL_CONTRACT_ADDRESS=0xD9ABf9B19B4812A2fd06c5E8986B84040505B9D8
+MOTHERLODE_VAULT_ADDRESS=0x3563388d0e1c2d66a004e5e57717dc6d7e568be3
+
+# Deployment Wallet
+BLOCKCHAIN_PRIVATE_KEY=0x...  # Production wallet
+DEPLOYER_ADDRESS=0x...        # Public address
+```
+
+### Migration Benefits
+
+1. **Public Mainnet**: Contracts deployed on Base mainnet (publicly verifiable)
+2. **Low Gas Costs**: Base has very low transaction fees (~$0.01 per transaction)
+3. **Production Ready**: Real blockchain with public explorers
+4. **Genesis Integration**: Using official Syntheverse Genesis contracts
+5. **Scalability**: Base L2 provides high throughput and low latency
+6. **Ecosystem**: Part of Coinbase's Base ecosystem
+
+### Migration Phases
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Phase 1: Infrastructure | ✅ Complete | Hardhat config, ABIs, integration code, docs |
+| Phase 2: Contract Integration | ⏳ Pending | Update register-poc.ts, integrate Genesis contracts |
+| Phase 3: Dashboard UI/UX | ⏳ Pending | On-chain facts display, wallet integration |
+| Phase 4: Testing | ⏳ Pending | Base Sepolia testnet validation |
+| Phase 5: Production | ⏳ Pending | Base mainnet deployment |
+
+**Overall Progress**: 20% (Phase 1 Complete)
+
+---
+
+## Current Status
+
+### ✅ Production Ready Features
+
+- **PoC Lifecycle**: Submission → Archive → Evaluation → Qualification → Optional Anchoring
+- **Scoring Lens**: Novelty, density, coherence, alignment with overlap-aware redundancy
+- **3D Vectorized Sandbox**: Three.js + R3F visualization of PoCs
+- **Authentication**: Supabase Auth (OAuth + email/password)
+- **Payments**: Stripe Checkout + Billing Portal
+- **Database**: PostgreSQL via Supabase with Drizzle ORM
+- **Blockchain**: Base mainnet integration (Phase 1 complete)
+
+### 🚧 In Progress
+
+- Base mainnet contract integration (Phase 2)
+- Dashboard UI updates for on-chain data (Phase 3)
+- Base Sepolia testing (Phase 4)
+
+### 📋 Pending
+
+- Production deployment to Base mainnet (Phase 5)
+- Wallet integration UI
+- Event subscription implementation
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- Supabase account and project
+- Stripe account (for payments)
+- Base wallet with ETH (for blockchain operations)
+
+### Local Development
 
 ```bash
+# Clone repository
+git clone <repository-url>
+cd Syntheverse_PoC_Contributer_UI_Vercel_Stripe
+
+# Install dependencies
 npm install
+
+# Copy environment variables
 cp .env.example .env.local
+# Edit .env.local with your values
+
+# Run development server
 npm run dev
 ```
 
-### Environment variables (operator reference client)
+Visit `http://localhost:3000`
 
+### Environment Setup
+
+See [Environment Variables](#environment-variables) section below for complete configuration.
+
+---
+
+## Repository Structure
+
+```
+.
+├── 📁 app/                          # Next.js App Router
+│   ├── api/                         # API routes
+│   │   ├── test/                    # Test endpoints (Base Sepolia)
+│   │   ├── poc/                     # PoC operations
+│   │   ├── evaluate/                # Evaluation endpoints
+│   │   └── ...
+│   ├── auth/                        # Authentication routes
+│   ├── dashboard/                   # Protected dashboard
+│   └── ...
+│
+├── 📁 components/                    # React components
+│   ├── ui/                          # shadcn/ui components
+│   ├── 3d/                          # 3D visualization
+│   └── ...
+│
+├── 📁 utils/                         # Shared utilities
+│   ├── blockchain/                  # Blockchain integration
+│   │   ├── base-mainnet-integration.ts
+│   │   ├── register-poc.ts
+│   │   └── *.abi.json              # Contract ABIs
+│   ├── grok/                        # AI evaluation
+│   ├── tokenomics/                  # Token allocation logic
+│   └── ...
+│
+├── 📁 syntheverse-ui/                # Legacy/R&D workspace
+│   └── src/blockchain/contracts/     # Hardhat contracts
+│       ├── hardhat.config.js         # Base mainnet config
+│       ├── deploy/                   # Deployment scripts
+│       └── src/                     # Solidity contracts
+│
+├── 📁 docs/                          # Documentation
+│   ├── BASE_MAINNET_MIGRATION_PLAN.md
+│   ├── BASE_MAINNET_ENV_SETUP.md
+│   ├── BASE_SEPOLIA_TESTING_PLAN.md
+│   └── ...
+│
+├── 📁 scripts/                       # Utility scripts
+│   ├── setup-vercel-env.sh          # Vercel env setup
+│   ├── test-base-sepolia.ts         # Base Sepolia testing
+│   └── ...
+│
+├── 📁 supabase/                      # Database migrations
+│   └── migrations/                  # SQL migration files
+│
+├── 📁 protocol/                      # Protocol specification
+├── 📁 operator/                      # Operator documentation
+│
+├── 📄 .env                           # Environment variables (gitignored)
+├── 📄 .env.example                   # Environment template
+├── 📄 package.json
+└── 📄 README.md                      # This file
+```
+
+### Key Directories
+
+- **`app/`**: Next.js 14 App Router pages and API routes
+- **`components/`**: React components (UI + business logic)
+- **`utils/`**: Shared utilities organized by domain
+- **`syntheverse-ui/src/blockchain/`**: Hardhat contracts and deployment scripts
+- **`docs/`**: Comprehensive documentation including migration plans
+- **`scripts/`**: Utility scripts for deployment and testing
+
+---
+
+## Environment Variables
+
+### Required Variables
+
+#### Base Network Configuration
+```env
+BASE_MAINNET_RPC_URL=https://mainnet.base.org
+BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
+BLOCKCHAIN_NETWORK=base_mainnet  # or base_sepolia for testing
+```
+
+#### Genesis Contract Addresses
+```env
+SYNTH90T_CONTRACT_ADDRESS=0xAC9fa48Ca1D60e5274d14c7CEd6B3F4C1ADd1Aa3
+LENS_KERNEL_CONTRACT_ADDRESS=0xD9ABf9B19B4812A2fd06c5E8986B84040505B9D8
+MOTHERLODE_VAULT_ADDRESS=0x3563388d0e1c2d66a004e5e57717dc6d7e568be3
+```
+
+#### Deployment Wallet (SECURE)
+```env
+BLOCKCHAIN_PRIVATE_KEY=0x...  # NEVER commit to git
+DEPLOYER_ADDRESS=0x...
+```
+
+#### Application Services
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=...
@@ -78,323 +315,167 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 DATABASE_URL=...
 
-# Site URLs
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_WEBSITE_URL=http://localhost:3000
-
 # Stripe
-STRIPE_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID=prctbl_...
+STRIPE_SECRET_KEY=sk_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# Operator-configurable anchoring
-# (optional) Fee charged for optional on-chain anchoring service (in cents)
-POC_ANCHORING_FEE_CENTS=50000
-# (optional) Display label used in Stripe product description (e.g., "Base", "Hardhat (devnet)")
-POC_ANCHORING_CHAIN_LABEL=Hardhat (devnet)
-
-# Blockchain (Hardhat)
-# (required for blockchain registration) Hardhat RPC endpoint URL
-HARDHAT_RPC_URL=http://localhost:8545
-# (required for blockchain registration) Deployed POCRegistry contract address
-POC_REGISTRY_ADDRESS=0x...
-# (required for blockchain registration) Contract owner's private key
-BLOCKCHAIN_PRIVATE_KEY=0x...
-
-# OAuth (optional)
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
+# Site URLs
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_WEBSITE_URL=https://your-domain.com
 ```
 
-See `docs/deployment/VERCEL_ENV_SETUP.md` for the full setup checklist.  
-See `docs/HARDHAT_BLOCKCHAIN_SETUP.md` for blockchain integration setup.
+### Complete Setup
 
-### Documentation map
-
-- **Protocol**: `protocol/README.md`
-- **Operator**: `operator/README.md`
-- **Code Review**: `docs/CODE_REVIEW_SENIOR_ENGINEER.md` - Comprehensive senior engineer code review
-- **Deployment**: `docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md`
-- **Blockchain**: `docs/HARDHAT_BLOCKCHAIN_SETUP.md` - Hardhat integration setup
-- **OAuth**: `docs/oauth/OAUTH_QUICK_SETUP.md`
-- **Stripe**: `docs/stripe/STRIPE_WEBHOOK_SETUP.md`
-- **Supabase**: `docs/supabase/`
-- **Testing**: `docs/testing/TESTING_PLAN.md`
-
-### Repository structure
-
-```
-.
-├── protocol/                # Protocol spec (implementation-agnostic)
-├── operator/                # Operator notes/policies (FractiAI reference instance)
-├── app/                     # Next.js App Router (reference client)
-├── components/              # UI components
-├── utils/                   # Shared utilities (Stripe/Supabase/tokenomics/vectors)
-├── supabase/                # SQL migrations / schema
-├── docs/                    # Implementation + deployment docs
-├── scripts/                 # Utility scripts (SQL/TS/JS)
-└── syntheverse-ui/           # Legacy / R&D workspace (separate subtree)
-```
-
-### Database schema (reference client)
-
-### Tables
-
-#### `users_table`
-User accounts and Stripe integration.
-
-**IMPORTANT**: This table must be created manually via migration. See `supabase/migrations/create_users_table.sql` or `supabase/migrations/combined_all_migrations.sql`.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | text | Primary key (Supabase auth user ID) |
-| `name` | text | User's display name |
-| `email` | text | User's email (unique) |
-| `plan` | text | Subscription plan |
-| `stripe_id` | text | Stripe customer ID |
-
-**Indexes:**
-- `idx_users_table_email` on `email` column
-
-#### `contributions`
-PoC submission archive with 3D vectorization for redundancy detection.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `submission_hash` | text | Primary key (SHA-256 hash of submission) |
-| `title` | text | Contribution title |
-| `contributor` | text | Contributor identifier (email or user ID) |
-| `content_hash` | text | Hash of content for deduplication |
-| `text_content` | text | Full text content (optional) |
-| `pdf_path` | text | Legacy field (unused for text-only submissions) |
-| `status` | text | Status: `draft`, `submitted`, `evaluating`, `qualified`, `unqualified`, `archived`, `superseded` |
-| `category` | text | Category: `scientific`, `tech`, `alignment` |
-| `metals` | jsonb | Array of metal types: `gold`, `silver`, `copper` |
-| `metadata` | jsonb | Evaluation metadata (coherence, density, overlap%, pod_score) |
-| `embedding` | jsonb | Vector embedding array (for similarity search) |
-| `vector_x` | numeric(20,10) | X coordinate in 3D HHF space (Novelty dimension) |
-| `vector_y` | numeric(20,10) | Y coordinate in 3D HHF space (Density dimension) |
-| `vector_z` | numeric(20,10) | Z coordinate in 3D HHF space (Coherence dimension) |
-| `embedding_model` | text | Embedding model used (e.g., `text-embedding-3-small`) |
-| `vector_generated_at` | timestamp | When vector was generated |
-| `registered` | boolean | Whether PoC is registered on blockchain (via Stripe payment) |
-| `registration_date` | timestamp | When PoC was registered |
-| `registration_tx_hash` | text | Blockchain transaction hash for registration |
-| `stripe_payment_id` | text | Stripe payment ID for registration ($500 fee) |
-| `created_at` | timestamp | Submission timestamp |
-| `updated_at` | timestamp | Last update timestamp |
-
-#### `tokenomics`
-SYNTH token supply and epoch state.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | text | Primary key (default: `'main'`) |
-| `total_supply` | numeric(20,0) | Total SYNTH supply (default: 90T = 90,000,000,000,000) |
-| `total_distributed` | numeric(20,0) | Total SYNTH distributed (default: 0) |
-| `current_epoch` | text | Current epoch: `founder`, `pioneer`, `community`, `ecosystem` (default: `founder`) |
-| `founder_halving_count` | integer | Number of founder epoch halvings (default: 0) |
-| `updated_at` | timestamp | Last update timestamp |
-
-#### `epoch_balances`
-Epoch-specific token balances and thresholds.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | text | Primary key |
-| `epoch` | text | Epoch name: `founder`, `pioneer`, `community`, `ecosystem` |
-| `balance` | numeric(20,0) | Current epoch balance |
-| `threshold` | numeric(20,0) | Qualification threshold (pod_score required) |
-| `distribution_amount` | numeric(20,0) | Initial distribution amount for epoch |
-| `distribution_percent` | numeric(5,2) | Distribution percentage of total supply |
-| `updated_at` | timestamp | Last update timestamp |
-
-**Epoch Thresholds:**
-- Founder: 45T SYNTH, threshold 8,000 pod_score
-- Pioneer: 22.5T SYNTH, threshold 7,000 pod_score
-- Community: 11.25T SYNTH, threshold 6,000 pod_score
-- Ecosystem: 11.25T SYNTH, threshold 5,000 pod_score
-
-#### `allocations`
-Individual token allocations per contribution (requires admin approval).
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | text | Primary key (UUID) |
-| `submission_hash` | text | Foreign key to `contributions.submission_hash` |
-| `contributor` | text | Contributor identifier |
-| `metal` | text | Metal type: `gold`, `silver`, `copper` |
-| `epoch` | text | Epoch for allocation |
-| `tier` | text | Optional tier information |
-| `reward` | numeric(20,0) | SYNTH tokens allocated |
-| `tier_multiplier` | numeric(10,4) | Multiplier applied (default: 1.0) |
-| `epoch_balance_before` | numeric(20,0) | Epoch balance before allocation |
-| `epoch_balance_after` | numeric(20,0) | Epoch balance after allocation |
-| `created_at` | timestamp | Allocation timestamp |
-
-#### `poc_log`
-Audit trail for all PoC submissions and evaluations.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | text | Primary key (UUID) |
-| `submission_hash` | text | Foreign key to `contributions.submission_hash` |
-| `contributor` | text | Contributor identifier |
-| `event_type` | text | Event: `submission`, `evaluation_start`, `evaluation_complete`, `evaluation_error`, `status_change`, `allocation` |
-| `event_status` | text | Status: `success`, `error`, `pending` |
-| `title` | text | Contribution title |
-| `category` | text | Contribution category |
-| `request_data` | jsonb | Full request payload |
-| `response_data` | jsonb | Full response payload |
-| `evaluation_result` | jsonb | Evaluation result with fields: `coherence`, `density`, `overlap%`, `pod_score`, `novelty`, `alignment`, `metals`, `qualified`, `classification`, `redundancy_analysis`, `metal_justification` |
-| `grok_api_request` | jsonb | Grok API request details |
-| `grok_api_response` | jsonb | Grok API response details (includes full evaluation JSON) |
-| `error_message` | text | Error message if event failed |
-| `error_stack` | text | Error stack trace if event failed |
-| `processing_time_ms` | integer | Processing time in milliseconds |
-| `metadata` | jsonb | Additional metadata |
-| `created_at` | timestamp | Event timestamp |
-
-### Scoring Methodology
-
-**Individual Category Scores (0-2,500 each, no penalties):**
-- **Novelty**: Originality, frontier contribution, non-derivative insight
-- **Density**: Information richness, depth, insight compression
-- **Coherence**: Internal consistency, clarity, structural integrity
-- **Alignment**: Fit with hydrogen-holographic fractal principles
-
-**Composite Score Calculation:**
-```
-Composite_Score = Novelty + Density + Coherence + Alignment
-Final_Total_Score = Composite_Score × (1 + Overlap_Effect% / 100)
-```
-
-**Qualification:**
-- **Overlap model**:
-  - **Overlap%** is a single field (-100 to +100) shown in the archive UI
-  - **Positive values** = sweet-spot rewards for beneficial boundary overlap (Λ_edge ≈ 1.42)
-  - **Negative values** = penalties for excessive redundancy
-  - **Zero** = neutral effect for moderate overlap levels
-  - **Display**: Green for bonuses, orange for penalties in PoC Archive dashboard
-- Overlap effects are applied to the composite/total score, not individual category scores
-- **Epoch thresholds (adjusted for overlap-aware scoring)**:
-  - Founder: Final total score ≥ 8,000
-  - Pioneer: Final total score ≥ 6,000
-  - Community: Final total score ≥ 5,000
-  - Ecosystem: Final total score ≥ 4,000
-- Qualification is epoch-based (based on pod_score threshold for current open epoch)
-
-### 3D Vectorization (Holographic Hydrogen Fractal Sandbox)
-
-Contributions are mapped to 3D coordinates in the HHF space:
-- **X-axis (vector_x)**: Novelty dimension
-- **Y-axis (vector_y)**: Density dimension
-- **Z-axis (vector_z)**: Coherence dimension
-- **Distance calculation**: Euclidean distance between vectors for overlap/redundancy detection
-- **Similarity**: cosine similarity + distance-based signal used to compute **Overlap Effect** (-100 to +100)
-
-**Interactive 3D Visualization** (Upgraded):
-- **Three.js Rendering**: True 3D visualization with WebGL acceleration
-- **Visual Encoding**:
-  - **Size**: Proportional to density score (0.3x to 3.0x base size)
-  - **Color**: Novelty gradient (blue → green → red based on score)
-  - **Shape**: Metal-based geometry (Icosahedron for Gold, Octahedron for Silver, Tetrahedron for Copper)
-  - **Transparency**: Coherence-based opacity (0.3 to 1.0)
-- **Interactive Features**:
-  - Click nodes to view detailed PoC information
-  - Projected token allocation display (for contributors)
-  - One-click token allocation (for qualified, registered PoCs)
-  - PoC registration via Stripe checkout ($500 fee)
-- **Status Indicators**:
-  - Glow effect for qualified PoCs
-  - Border highlights for allocated/registered PoCs
-  - Dimmed appearance for non-qualified PoCs
-
-This enables:
-- Visual representation of contributions in 3D space
-- Vector-based overlap/redundancy calculation
-- Spatial clustering of related contributions
-- Holographic visualization on the dashboard
-- Interactive token allocation and registration workflow
-
-## 🔧 Available Scripts
-
-```bash
-# Development
-npm run dev              # Start development server
-npm run build            # Build for production
-npm run start            # Start production server
-
-# Database
-npm run db:generate      # Generate database migrations
-npm run db:migrate       # Run database migrations
-
-# Stripe
-npm run stripe:setup     # Setup Stripe products
-npm run stripe:listen    # Listen to Stripe webhooks locally
-
-# Testing
-npm run test             # Run tests (if configured)
-```
-
-## 🚢 Deployment
-
-### Vercel (Recommended)
-
-**Status**: This project is deployed on Vercel (see “Live Deployment” above).
-
-1. **Connect Repository**: Import this GitHub repository to Vercel
-2. **Environment Variables**: Add all required variables in Vercel dashboard
-3. **Deploy**: Vercel will automatically deploy on push to main branch
-
-See [docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md](docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md) for detailed instructions.
-
-### Post-Deploy Setup Checklist (Required for full functionality)
-
-- **Supabase Auth URLs**: Set Supabase Auth “Site URL” + “Redirect URLs” to match your deployed domain (OAuth callbacks rely on this).
-- **Stripe webhooks**: Create a Stripe webhook pointing to `https://<your-domain>/webhook/stripe` and set `STRIPE_WEBHOOK_SECRET` in Vercel. See `docs/stripe/STRIPE_WEBHOOK_SETUP.md`.
-- **PoC submissions are text-only**: No file uploads / no Supabase Storage bucket is required for submissions.
-
-### Manual Deployment
-
-```bash
-# Build the application
-npm run build
-
-# Deploy to Vercel
-vercel --prod
-```
-
-## 🔒 Security
-
-- ✅ Environment variables are never committed to git
-- ✅ Supabase service role key is kept secret
-- ✅ Stripe webhook signatures are verified
-- ✅ OAuth redirects are validated
-- ✅ All API routes are protected
-
-**Important**: Never commit `.env` files or expose API keys in the repository.
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-- **Authentication not persisting**: Check [docs/testing/DEBUG_SESSION_ISSUE.md](docs/testing/DEBUG_SESSION_ISSUE.md)
-- **OAuth not working**: See [docs/oauth/OAUTH_TROUBLESHOOTING.md](docs/oauth/OAUTH_TROUBLESHOOTING.md)
-- **Database connection errors**: Check [docs/supabase/HOW_TO_GET_DATABASE_URL.md](docs/supabase/HOW_TO_GET_DATABASE_URL.md)
-- **Stripe webhook issues**: See [docs/stripe/STRIPE_WEBHOOK_SETUP.md](docs/stripe/STRIPE_WEBHOOK_SETUP.md)
-
-## 📝 License
-MIT (see `LICENSE`).
-
-## 🤝 Contributing
-See `CONTRIBUTING.md`.
-
-## 📧 Support
-
-For issues and questions, please open an issue on GitHub.
+See:
+- **Local Setup**: `.env.example` file
+- **Vercel Setup**: `docs/VERCEL_BASE_SEPOLIA_SETUP.md`
+- **Base Mainnet**: `docs/BASE_MAINNET_ENV_SETUP.md`
 
 ---
 
-Built with ❤️ for the Syntheverse ecosystem
+## Documentation
+
+### Core Documentation
+
+- **Protocol**: [`protocol/README.md`](protocol/README.md) - Protocol specification
+- **Operator**: [`operator/README.md`](operator/README.md) - Operator documentation
+- **Code Review**: [`docs/CODE_REVIEW_SENIOR_ENGINEER.md`](docs/CODE_REVIEW_SENIOR_ENGINEER.md)
+
+### Migration Documentation
+
+- **Migration Plan**: [`docs/BASE_MAINNET_MIGRATION_PLAN.md`](docs/BASE_MAINNET_MIGRATION_PLAN.md) - Comprehensive migration strategy
+- **Migration Summary**: [`docs/BASE_MAINNET_MIGRATION_SUMMARY.md`](docs/BASE_MAINNET_MIGRATION_SUMMARY.md) - Current status
+- **Environment Setup**: [`docs/BASE_MAINNET_ENV_SETUP.md`](docs/BASE_MAINNET_ENV_SETUP.md) - Base mainnet configuration
+- **Testing Plan**: [`docs/BASE_SEPOLIA_TESTING_PLAN.md`](docs/BASE_SEPOLIA_TESTING_PLAN.md) - Testnet validation
+
+### Deployment Documentation
+
+- **Vercel Deployment**: [`docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md`](docs/deployment/VERCEL_DEPLOYMENT_GUIDE.md)
+- **Vercel Base Sepolia**: [`docs/VERCEL_BASE_SEPOLIA_SETUP.md`](docs/VERCEL_BASE_SEPOLIA_SETUP.md)
+- **Base Sepolia Quick Start**: [`docs/BASE_SEPOLIA_QUICK_START.md`](docs/BASE_SEPOLIA_QUICK_START.md)
+
+### Integration Documentation
+
+- **Stripe**: [`docs/stripe/STRIPE_WEBHOOK_SETUP.md`](docs/stripe/STRIPE_WEBHOOK_SETUP.md)
+- **OAuth**: [`docs/oauth/OAUTH_QUICK_SETUP.md`](docs/oauth/OAUTH_QUICK_SETUP.md)
+- **Supabase**: [`docs/supabase/`](docs/supabase/)
+
+---
+
+## Deployment
+
+### Live Deployment
+
+**Production URL**: https://syntheverse-poc.vercel.app
+
+### Vercel Deployment
+
+1. **Connect Repository**: Import GitHub repository to Vercel
+2. **Environment Variables**: Add all required variables in Vercel dashboard
+3. **Deploy**: Vercel automatically deploys on push to main branch
+
+**Quick Setup Script**:
+```bash
+./scripts/setup-vercel-env.sh
+```
+
+### Post-Deploy Checklist
+
+- [ ] Supabase Auth URLs configured (Site URL + Redirect URLs)
+- [ ] Stripe webhook configured (`/webhook/stripe`)
+- [ ] Base mainnet environment variables set
+- [ ] Wallet funded with ETH for gas fees
+- [ ] Test endpoint accessible: `/api/test/base-sepolia`
+
+---
+
+## Tech Stack
+
+### Core Framework
+- **Next.js 14** (App Router) - React framework
+- **TypeScript 5** - Type safety
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - UI components
+
+### Backend Services
+- **Supabase** - Auth + PostgreSQL database
+- **Stripe** - Payment processing
+- **Groq API** - AI evaluation (Grok)
+
+### Blockchain
+- **Base Mainnet** - L2 blockchain (Coinbase)
+- **Hardhat** - Smart contract development
+- **ethers.js v6** - Blockchain interaction
+- **Solidity 0.8.24** - Smart contracts
+
+### 3D Visualization
+- **Three.js** - 3D graphics
+- **React Three Fiber** - React renderer for Three.js
+- **Drei** - Useful helpers for R3F
+
+### Deployment
+- **Vercel** - Hosting and deployment
+
+---
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+### Code Standards
+
+- TypeScript strict mode
+- ESLint configuration
+- Prettier formatting
+- Comprehensive documentation
+
+---
+
+## Security
+
+- ✅ Environment variables never committed to git
+- ✅ Private keys stored securely in Vercel
+- ✅ Stripe webhook signatures verified
+- ✅ OAuth redirects validated
+- ✅ API routes protected
+- ✅ Database queries parameterized
+
+**Important**: Never commit `.env` files or expose API keys.
+
+---
+
+## License
+
+MIT License - See [`LICENSE`](LICENSE) file.
+
+---
+
+## Support
+
+- **Issues**: Open an issue on GitHub
+- **Documentation**: See [`docs/`](docs/) directory
+- **Protocol**: See [`protocol/README.md`](protocol/README.md)
+
+---
+
+## Acknowledgments
+
+Built for the Syntheverse ecosystem with ❤️
+
+**FractiAI** - Reference Operator  
+**Base** - Blockchain Infrastructure  
+**Vercel** - Deployment Platform
+
+---
+
+**Last Updated**: January 2025  
+**Version**: 2.0 (Base Mainnet Migration - Phase 1 Complete)

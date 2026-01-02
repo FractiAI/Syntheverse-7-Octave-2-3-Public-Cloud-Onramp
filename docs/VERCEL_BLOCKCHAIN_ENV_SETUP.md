@@ -1,8 +1,12 @@
 # Vercel Blockchain Environment Variables Setup
 
-## ✅ Environment Variables Added
+> ⚠️ **DEPRECATED**: This document describes the old Hardhat setup. The dashboard now uses **Base Mainnet/Testnet**.  
+> **See**: [`docs/VERCEL_BASE_SEPOLIA_SETUP.md`](VERCEL_BASE_SEPOLIA_SETUP.md) for current Vercel setup.  
+> **See**: [`docs/BASE_MAINNET_ENV_SETUP.md`](BASE_MAINNET_ENV_SETUP.md) for Base mainnet environment variables.
 
-The following blockchain-related environment variables have been added to your Vercel project:
+## ✅ Environment Variables Added (Historical - Hardhat)
+
+The following blockchain-related environment variables were used for Hardhat integration (now deprecated):
 
 ### 1. HARDHAT_RPC_URL
 - **Value**: `http://localhost:8545`

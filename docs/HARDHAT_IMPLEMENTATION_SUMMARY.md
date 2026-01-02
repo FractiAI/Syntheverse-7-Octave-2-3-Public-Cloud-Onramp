@@ -1,8 +1,13 @@
 # Hardhat Blockchain Implementation - Summary
 
-## ✅ Implementation Complete
+> ⚠️ **DEPRECATED**: This document describes the old Hardhat implementation. The dashboard has been migrated to **Base Mainnet/Testnet**.  
+> **See**: [`docs/BASE_MAINNET_MIGRATION_SUMMARY.md`](BASE_MAINNET_MIGRATION_SUMMARY.md) for current migration status.
+
+## ✅ Implementation Complete (Historical)
 
 The Hardhat blockchain integration has been successfully implemented, replacing the mock implementation with actual blockchain functionality.
+
+**Note**: This implementation has been superseded by Base mainnet integration.
 
 ## What Was Implemented
 

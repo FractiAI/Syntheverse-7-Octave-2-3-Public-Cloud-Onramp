@@ -192,6 +192,7 @@ export async function POST(
         }
         
         // Update contribution with registration info
+        // Note: metadata field (including llm_metadata) is preserved - only registration fields are updated
         try {
             await db
                 .update(contributionsTable)
@@ -201,6 +202,7 @@ export async function POST(
                     registration_date: new Date(),
                     registration_tx_hash: blockchainTxHash,
                     updated_at: new Date()
+                    // metadata field is NOT updated here - preserves llm_metadata from evaluation
                 })
                 .where(eq(contributionsTable.submission_hash, submissionHash))
             

@@ -1,7 +1,10 @@
 /**
- * Hard Hat L1 Blockchain Integration
+ * Blockchain Integration (Legacy - Hardhat)
  * 
- * Registers PoC on Hard Hat L1 blockchain after Stripe payment confirmation
+ * ⚠️ DEPRECATED: This file contains legacy Hardhat integration code.
+ * For Base mainnet/testnet integration, see: utils/blockchain/base-mainnet-integration.ts
+ * 
+ * Registers PoC on blockchain after Stripe payment confirmation
  * Returns transaction hash for storage in database
  */
 

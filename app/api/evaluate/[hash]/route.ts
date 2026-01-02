@@ -153,7 +153,9 @@ export async function POST(
                         density_penalty_percent: evaluation.density_penalty_percent,
                         full_evaluation: evaluation, // Store full evaluation object
                         raw_grok_response: (evaluation as any).raw_grok_response || null // Store raw Grok API response text/markdown
-                    }
+                    },
+                    // LLM Metadata for provenance (timestamp, date, model, version, system prompt)
+                    llm_metadata: (evaluation as any).llm_metadata || null
                 },
                 // Store vector embedding and 3D coordinates if available
                 embedding: vectorizationResult ? vectorizationResult.embedding : undefined,
@@ -292,7 +294,9 @@ export async function POST(
                     density_penalty_percent: evaluation.density_penalty_percent,
                     full_evaluation: evaluation, // Include full evaluation object
                     raw_grok_response: (evaluation as any).raw_grok_response || null // Include raw Grok API response text/markdown
-                }
+                },
+                // LLM Metadata for provenance (timestamp, date, model, version, system prompt)
+                llm_metadata: (evaluation as any).llm_metadata || null
             },
             status: qualified ? 'qualified' : 'unqualified',
             qualified,

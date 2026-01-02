@@ -1,5 +1,9 @@
 # Hardhat Blockchain Integration Setup
 
+> ⚠️ **DEPRECATED**: This document describes the old Hardhat integration. The dashboard has been migrated to **Base Mainnet/Testnet**.  
+> **See**: [`docs/BASE_MAINNET_ENV_SETUP.md`](BASE_MAINNET_ENV_SETUP.md) for current Base mainnet setup.  
+> **See**: [`docs/BASE_SEPOLIA_QUICK_START.md`](BASE_SEPOLIA_QUICK_START.md) for Base Sepolia testnet setup.
+
 This document describes how to configure the actual Hardhat blockchain integration for PoC registration.
 
 ## Environment Variables Required

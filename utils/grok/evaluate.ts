@@ -10,6 +10,7 @@ import {
     Vector3D 
 } from '@/utils/vectors'
 import { SYNTHEVERSE_SYSTEM_PROMPT } from '@/utils/grok/system-prompt'
+import crypto from 'crypto'
 
 interface ArchivedPoC {
     submission_hash: string
@@ -1112,6 +1113,20 @@ ${answer}`
         const finalRedundancy = isSeedSubmission ? 0 : Math.max(0, Math.min(100, redundancyOverlapPercent)) // Always 0 for foundational submissions
         const finalOverlap = isSeedSubmission ? 0 : Math.max(0, Math.min(100, redundancyOverlapPercent))
         
+        // Capture LLM metadata for provenance (timestamp, date, model, version, system prompt)
+        const evaluationTimestamp = new Date()
+        const llmMetadata = {
+            timestamp: evaluationTimestamp.toISOString(),
+            date: evaluationTimestamp.toISOString().split('T')[0], // YYYY-MM-DD format
+            model: 'llama-3.1-8b-instant',
+            model_version: '3.1',
+            provider: 'Groq',
+            system_prompt_preview: systemPrompt.substring(0, 500) + '...', // First 500 chars + indicator
+            system_prompt_hash: crypto.createHash('sha256').update(systemPrompt).digest('hex').substring(0, 16), // Hash for verification
+            system_prompt_file: 'utils/grok/system-prompt.ts', // Reference to full prompt location
+            evaluation_timestamp_ms: evaluationTimestamp.getTime()
+        }
+
         return {
             coherence: finalCoherence,
             density: finalDensity,
@@ -1147,7 +1162,9 @@ ${answer}`
             // Flag to indicate if this was a seed submission with qualification override
             is_seed_submission: isSeedSubmission,
             // Store raw Grok API response for display
-            raw_grok_response: answer // Store the raw markdown/text response from Grok
+            raw_grok_response: answer, // Store the raw markdown/text response from Grok
+            // LLM Metadata for provenance and audit trail (required for all qualifying PoCs)
+            llm_metadata: llmMetadata
         }
     } catch (error) {
         debugError('EvaluateWithGrok', 'Grok API call failed', error)

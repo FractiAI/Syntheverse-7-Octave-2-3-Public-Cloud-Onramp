@@ -299,6 +299,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
             }
             
             // Update contribution with registration info (Stripe payment + blockchain transaction)
+            // Note: metadata field (including llm_metadata) is preserved - only registration fields are updated
             await db
                 .update(contributionsTable)
                 .set({
@@ -306,8 +307,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
                     status: 'registered', // Set status to registered so UI displays correctly
                     registration_date: new Date(),
                     stripe_payment_id: session.payment_intent as string,
-                    registration_tx_hash: blockchainTxHash, // Hard Hat L1 transaction hash
+                    registration_tx_hash: blockchainTxHash, // Base mainnet/testnet transaction hash
                     updated_at: new Date()
+                    // metadata field is NOT updated here - preserves llm_metadata from evaluation
                 })
                 .where(eq(contributionsTable.submission_hash, submissionHash))
             
