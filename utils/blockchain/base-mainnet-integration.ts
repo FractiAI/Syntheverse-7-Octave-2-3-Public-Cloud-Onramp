@@ -331,8 +331,11 @@ export async function emitLensEvent(
         
         const { provider, wallet } = createBaseProvider(config)
         
+        // Ensure contract address is properly formatted (checksummed) to avoid ENS resolution
+        const lensKernelAddress = ethers.getAddress(config.lensKernelAddress)
+        
         const lensContract = new ethers.Contract(
-            config.lensKernelAddress,
+            lensKernelAddress,
             SyntheverseGenesisLensKernelABI,
             wallet
         )
