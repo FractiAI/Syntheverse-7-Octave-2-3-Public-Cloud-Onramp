@@ -63,7 +63,7 @@ export function getBaseMainnetConfig(): BaseMainnetConfig | null {
     const privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY
     
     if (!privateKey) {
-        debugError('BaseMainnetConfig', 'BLOCKCHAIN_PRIVATE_KEY not configured')
+        debugError('BaseMainnetConfig', 'BLOCKCHAIN_PRIVATE_KEY not configured', new Error('Missing BLOCKCHAIN_PRIVATE_KEY environment variable'))
         return null
     }
     
