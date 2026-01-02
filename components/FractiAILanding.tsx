@@ -57,7 +57,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
         {/* Clean cockpit header */}
         {variant === 'fractiai' ? (
           <div className="cockpit-panel p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
                 <div className="cockpit-symbol">🌀</div>
                 <div>
@@ -65,9 +65,26 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   <div className="cockpit-label mt-0.5">SYSTEM: LANDING MODULE</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="cockpit-badge">90T MOTHERLODE</span>
                 <span className="cockpit-badge cockpit-badge-amber">BETA ACTIVE</span>
+                <div className="flex items-center gap-3 ml-4">
+                  {!isAuthenticated ? (
+                    <>
+                      <Link href="/signup" className="cockpit-lever inline-flex items-center">
+                        Join the Frontier
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                      <Link href="/login" className="cockpit-lever inline-flex items-center">
+                        Log in
+                      </Link>
+                    </>
+                  ) : null}
+                  <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
+                    Onboarding
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
