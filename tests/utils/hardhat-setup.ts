@@ -88,7 +88,7 @@ export async function setupHardhatNetwork(): Promise<HardhatTestSetup> {
         console.log(`✓ Deployer address: ${deployer.address}`)
         console.log(`✓ Deployer balance: ${ethers.formatEther(balance)} ETH (on forked Base Mainnet)`)
         
-        if (balance === 0n) {
+        if (balance === BigInt(0)) {
             console.warn('⚠️  WARNING: Deployer account has zero balance. Hardhat should provide default accounts with ETH.')
         }
     } catch (error) {
