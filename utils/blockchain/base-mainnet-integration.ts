@@ -432,21 +432,60 @@ export async function emitLensEvent(
         
         // Direct call with explicit gas limit to bypass estimation issues
         // This prevents the require(false) error during estimateGas
-        const tx = await lensContract.extendLens(extensionType, dataBytes, {
-            gasLimit: gasLimit
-        })
-        
-        debug('EmitLensEvent', 'Transaction sent', { txHash: tx.hash })
+        let tx
+        try {
+            tx = await lensContract.extendLens(extensionType, dataBytes, {
+                gasLimit: gasLimit
+            })
+            debug('EmitLensEvent', 'Transaction sent', { txHash: tx.hash })
+        } catch (sendError: any) {
+            // If sending fails, try to get more details
+            debugError('EmitLensEvent', 'Failed to send transaction', sendError)
+            
+            // Check if it's a revert during send
+            if (sendError.reason || sendError.data) {
+                return {
+                    success: false,
+                    error: `Transaction failed: ${sendError.reason || sendError.message || 'Unknown error'}`
+                }
+            }
+            
+            throw sendError
+        }
         
         // Wait for confirmation (simple pattern)
-        const receipt = await tx.wait()
+        let receipt
+        try {
+            receipt = await tx.wait()
+        } catch (waitError: any) {
+            // If wait fails, try to get the receipt anyway
+            debugError('EmitLensEvent', 'Transaction wait failed', waitError)
+            
+            try {
+                receipt = await provider.getTransactionReceipt(tx.hash)
+                if (!receipt) {
+                    throw waitError
+                }
+            } catch {
+                throw waitError
+            }
+        }
         
         // Validate transaction status (HIGH priority fix)
         if (receipt.status === 0) {
-            debugError('EmitLensEvent', 'Transaction reverted', new Error('Transaction status is 0 (failed)'))
+            debugError('EmitLensEvent', 'Transaction reverted on-chain', new Error('Transaction status is 0 (failed)'))
+            
+            // Try to get revert reason by calling the function again (static call)
+            let revertReason = 'Unknown revert reason'
+            try {
+                await lensContract.extendLens.staticCall(extensionType, dataBytes)
+            } catch (staticError: any) {
+                revertReason = staticError.reason || staticError.message || 'Contract reverted (require(false) or similar)'
+            }
+            
             return {
                 success: false,
-                error: 'Transaction reverted on-chain. Check contract logs for details.'
+                error: `Transaction reverted on-chain: ${revertReason}. Gas used: ${receipt.gasUsed.toString()}. This suggests the contract has validation that failed.`
             }
         }
         
