@@ -108,12 +108,15 @@ BLOCKCHAIN_PRIVATE_KEY=0x... # Test wallet
 - ✅ Base mainnet network configuration complete
 - ✅ Genesis contract ABIs created
 - ✅ Base mainnet integration code implemented
-- ✅ Environment variables documented
-- ✅ Vercel environment variables configured
+- ✅ Environment variables documented and validated
+- ✅ Vercel environment variables configured (with newline fixes)
 - ✅ Contract integration complete (register-poc.ts updated)
-- ✅ Lens event emission working
+- ✅ Lens event emission working with ownership verification
 - ✅ Default network set to Base Mainnet
 - ✅ Gas balance checker implemented
+- ✅ Contract ownership verification script added
+- ✅ Environment variable trimming (fixes newline issues)
+- ✅ Enhanced error handling and logging
 - ✅ Production ready for PoC registrations
 
 #### Environment Variables (Post-Migration)
@@ -174,9 +177,20 @@ DEPLOYER_ADDRESS=0x...        # Public address
 - ✅ Base Mainnet integration complete
 - ✅ Genesis contracts integrated (SYNTH90T, LensKernel)
 - ✅ PoC registration via Lens events working
+- ✅ Contract ownership verification implemented
+- ✅ Environment variable handling (newline fixes)
+- ✅ Enhanced error handling and transaction logging
 - ✅ Gas balance checker implemented
 - ✅ Default network: Base Mainnet (Chain ID: 8453)
 - ✅ Ready for production PoC registrations
+
+### 🔧 Recent Improvements (January 2025)
+
+- **Environment Variable Fixes**: Aggressive trimming of contract addresses to prevent newline issues
+- **Ownership Verification**: Automatic verification that wallet is contract owner before transactions
+- **Error Handling**: Enhanced error messages with detailed transaction information
+- **Vercel Integration**: Scripts to fix and update environment variables via CLI
+- **Debugging Tools**: Contract ownership verification and gas balance checking scripts
 
 ### 📋 Future Enhancements
 
@@ -263,7 +277,10 @@ See [Environment Variables](#environment-variables) section below for complete c
 │
 ├── 📁 scripts/                       # Utility scripts
 │   ├── setup-vercel-env.sh          # Vercel env setup
+│   ├── fix-vercel-addresses.sh       # Fix contract addresses in Vercel
+│   ├── verify-contract-ownership.ts  # Verify wallet is contract owner
 │   ├── test-base-sepolia.ts         # Base Sepolia testing
+│   ├── check-gas-balance.ts         # Check wallet ETH balance
 │   └── ...
 │
 ├── 📁 supabase/                      # Database migrations
@@ -381,18 +398,33 @@ See:
 2. **Environment Variables**: Add all required variables in Vercel dashboard
 3. **Deploy**: Vercel automatically deploys on push to main branch
 
-**Quick Setup Script**:
+**Quick Setup Scripts**:
 ```bash
+# Setup environment variables
 ./scripts/setup-vercel-env.sh
+
+# Fix contract addresses (removes newlines)
+VERCEL_TOKEN=your_token ./scripts/fix-vercel-addresses.sh
+
+# Verify contract ownership
+npm run tsx scripts/verify-contract-ownership.ts
 ```
 
 ### Post-Deploy Checklist
 
 - [ ] Supabase Auth URLs configured (Site URL + Redirect URLs)
 - [ ] Stripe webhook configured (`/webhook/stripe`)
-- [ ] Base mainnet environment variables set
-- [ ] Wallet funded with ETH for gas fees
+- [ ] Base mainnet environment variables set (without trailing newlines)
+- [ ] Contract addresses verified in Vercel (use `fix-vercel-addresses.sh`)
+- [ ] Wallet funded with ETH for gas fees (check via `/api/check-gas-balance`)
+- [ ] Contract ownership verified (wallet must be contract owner)
 - [ ] Test endpoint accessible: `/api/test/base-sepolia`
+
+### Important Notes
+
+⚠️ **Environment Variables**: Contract addresses in Vercel must not have trailing newlines. Use `fix-vercel-addresses.sh` to ensure clean addresses.
+
+⚠️ **Contract Ownership**: The `BLOCKCHAIN_PRIVATE_KEY` must correspond to the contract owner (deployer: `0x3563388d0E1c2D66A004E5E57717dc6D7e568BE3`). Use `verify-contract-ownership.ts` to verify.
 
 ---
 
@@ -484,4 +516,9 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 2025  
-**Version**: 2.0 (Base Mainnet Migration - Phase 1 Complete)
+**Version**: 2.1 (Base Mainnet Production - Environment & Error Handling Improvements)
+
+### Recent Changes
+
+- **v2.1** (January 2025): Environment variable fixes, ownership verification, enhanced error handling
+- **v2.0** (January 2025): Base Mainnet migration complete, production ready
