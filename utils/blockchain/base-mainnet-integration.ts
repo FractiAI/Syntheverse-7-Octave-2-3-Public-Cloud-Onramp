@@ -345,11 +345,64 @@ export async function emitLensEvent(
         
         // Direct call - match working deployment pattern exactly
         // No pre-flight checks, no gas estimation - trust the contract and network
+        debug('EmitLensEvent', 'Calling extendLens', {
+            extensionType,
+            dataLength: dataBytes.length,
+            contractAddress: lensKernelAddress,
+            walletAddress: await wallet.getAddress()
+        })
+        
         const tx = await lensContract.extendLens(extensionType, dataBytes)
         
-        debug('EmitLensEvent', 'Transaction sent', { txHash: tx.hash })
+        debug('EmitLensEvent', 'Transaction sent', { 
+            txHash: tx.hash,
+            from: tx.from,
+            to: tx.to,
+            gasLimit: tx.gasLimit?.toString(),
+            value: tx.value?.toString()
+        })
         
-        const receipt = await tx.wait()
+        // Wait for transaction with detailed error handling
+        let receipt
+        try {
+            receipt = await tx.wait()
+        } catch (waitError: any) {
+            // If wait() fails, try to get the receipt anyway to see what happened
+            debugError('EmitLensEvent', 'Transaction wait failed', waitError)
+            
+            try {
+                // Try to get the receipt to see if it was mined
+                const possibleReceipt = await provider.getTransactionReceipt(tx.hash)
+                if (possibleReceipt) {
+                    receipt = possibleReceipt
+                    debug('EmitLensEvent', 'Retrieved receipt after wait error', {
+                        status: receipt.status,
+                        gasUsed: receipt.gasUsed?.toString()
+                    })
+                } else {
+                    throw waitError // Re-throw if no receipt
+                }
+            } catch (receiptError) {
+                // If we can't get receipt, re-throw original error
+                throw waitError
+            }
+        }
+        
+        // Check transaction status
+        if (receipt.status === 0) {
+            // Transaction failed - try to get revert reason
+            debugError('EmitLensEvent', 'Transaction reverted', new Error('Transaction status is 0 (failed)'))
+            
+            // Try to call the transaction again to get revert reason
+            try {
+                await lensContract.extendLens.staticCall(extensionType, dataBytes)
+            } catch (staticCallError: any) {
+                const revertReason = staticCallError.reason || staticCallError.message || 'Unknown revert reason'
+                throw new Error(`Transaction reverted: ${revertReason}`)
+            }
+            
+            throw new Error('Transaction reverted: status 0 (failed)')
+        }
         
         debug('EmitLensEvent', 'Lens event emitted', {
             txHash: receipt.hash,
