@@ -465,8 +465,8 @@ export async function getLensInfo(): Promise<{
         
         const { provider } = createBaseProvider(config)
         
-        // Normalize contract address to checksummed format to prevent ENS resolution
-        const lensKernelAddress = ethers.getAddress(config.lensKernelAddress)
+        // Simple address normalization - trim only, trust ethers.getAddress()
+        const lensKernelAddress = ethers.getAddress(config.lensKernelAddress.trim())
         
         const lensContract = new ethers.Contract(
             lensKernelAddress,
