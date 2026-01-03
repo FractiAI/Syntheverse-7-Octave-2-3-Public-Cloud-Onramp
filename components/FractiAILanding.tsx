@@ -316,6 +316,24 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               </div>
             ) : null}
 
+            {/* Onboarding CTA - Always visible for fractiai variant */}
+            {variant === 'fractiai' ? (
+              <div className="cockpit-panel p-6 border-l-2 border-[var(--hydrogen-amber)]">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <div className="cockpit-label mb-2">GET STARTED</div>
+                    <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
+                      New to Syntheverse? Complete the onboarding to understand the system, evaluation process, and how to contribute.
+                    </div>
+                  </div>
+                  <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
+                    Start Onboarding
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            ) : null}
+
             {/* Home variant CTAs */}
                 {variant !== 'fractiai' ? (
               <div className="flex flex-wrap gap-3">
