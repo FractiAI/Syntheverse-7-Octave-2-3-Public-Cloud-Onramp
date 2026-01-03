@@ -8,6 +8,8 @@ import { vectorizeSubmission } from '@/utils/vectors'
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request'
 import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification'
 import crypto from 'crypto'
+import { checkRateLimit, getRateLimitIdentifier, createRateLimitHeaders, RateLimitConfig } from '@/utils/rate-limit'
+import { handleCorsPreflight, createCorsHeaders } from '@/utils/cors'
 
 // Increase timeout for Grok API evaluation (can take up to 2 minutes)
 export const maxDuration = 120 // 120 seconds (2 minutes)
@@ -18,10 +20,34 @@ export async function POST(
     request: NextRequest,
     { params }: { params: { hash: string } }
 ) {
+    // Handle CORS preflight
+    const corsPreflight = handleCorsPreflight(request)
+    if (corsPreflight) return corsPreflight
+    
     const submissionHash = params.hash
     debug('EvaluateContribution', 'Evaluation request received', { submissionHash })
     
     try {
+        // Rate limiting
+        const identifier = getRateLimitIdentifier(request)
+        const rateLimitResult = await checkRateLimit(identifier, RateLimitConfig.EVALUATE)
+        const rateLimitHeaders = createRateLimitHeaders(rateLimitResult)
+        
+        if (!rateLimitResult.success) {
+            debug('EvaluateContribution', 'Rate limit exceeded', { identifier: identifier.substring(0, 20) + '...', submissionHash })
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
+            return NextResponse.json(
+                { 
+                    error: 'Rate limit exceeded',
+                    message: `Too many evaluation requests. Please try again after ${new Date(rateLimitResult.reset).toISOString()}`
+                },
+                { 
+                    status: 429,
+                    headers: rateLimitHeaders
+                }
+            )
+        }
         // Get contribution
         const contribution = await db
             .select()
@@ -30,9 +56,11 @@ export async function POST(
             .limit(1)
         
         if (!contribution || contribution.length === 0) {
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
             return NextResponse.json(
                 { error: 'Contribution not found' },
-                { status: 404 }
+                { status: 404, headers: rateLimitHeaders }
             )
         }
         
@@ -264,6 +292,9 @@ export async function POST(
             created_at: a.created_at?.toISOString()
         }))
         
+        // Return success with CORS and rate limit headers
+        const corsHeaders = createCorsHeaders(request)
+        corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
         return NextResponse.json({
             success: true,
             submission_hash: submissionHash,
@@ -301,7 +332,7 @@ export async function POST(
             status: qualified ? 'qualified' : 'unqualified',
             qualified,
             qualified_founder: qualified
-        })
+        }, { headers: rateLimitHeaders })
     } catch (error) {
         debugError('EvaluateContribution', 'Error evaluating contribution', error)
         
@@ -370,6 +401,7 @@ export async function POST(
             debugError('EvaluateContribution', 'Error updating status', updateError)
         }
         
+        const corsHeaders = createCorsHeaders(request)
         return NextResponse.json(
             { 
                 success: false,
@@ -378,8 +410,14 @@ export async function POST(
                 status: 'unqualified',
                 qualified: false
             },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
         )
     }
+}
+
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+    const corsPreflight = handleCorsPreflight(request)
+    return corsPreflight || new Response(null, { status: 204 })
 }
 

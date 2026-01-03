@@ -18,6 +18,7 @@
 - [Repository Structure](#repository-structure)
 - [Environment Variables](#environment-variables)
 - [Documentation](#documentation)
+- [Testing](#testing)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 
@@ -383,6 +384,92 @@ See:
 - **Stripe**: [`docs/stripe/STRIPE_WEBHOOK_SETUP.md`](docs/stripe/STRIPE_WEBHOOK_SETUP.md)
 - **OAuth**: [`docs/oauth/OAUTH_QUICK_SETUP.md`](docs/oauth/OAUTH_QUICK_SETUP.md)
 - **Supabase**: [`docs/supabase/`](docs/supabase/)
+
+### Testing Documentation
+
+- **Pre-Test Report**: [`tests/PRETEST_REPORT.md`](tests/PRETEST_REPORT.md) - **Executive summary and testing readiness assessment** ⭐
+- **Test Suite Overview**: [`tests/README.md`](tests/README.md) - Complete test suite documentation
+- **Comprehensive Coverage**: [`tests/COMPREHENSIVE_TEST_COVERAGE.md`](tests/COMPREHENSIVE_TEST_COVERAGE.md) - All components, pages, and functions
+- **Lens & Sandbox Testing**: [`tests/LENS_AND_SANDBOX_TESTING.md`](tests/LENS_AND_SANDBOX_TESTING.md) - HHF-AI lens and sandbox validation
+- **Constants Validation**: [`tests/CONSTANTS_VALIDATION.md`](tests/CONSTANTS_VALIDATION.md) - Physical constants and equations
+- **Vercel Testing Config**: [`tests/VERCEL_TESTING_CONFIG.md`](tests/VERCEL_TESTING_CONFIG.md) - Vercel server testing setup
+
+---
+
+## Testing
+
+### Testing Status
+
+**✅ Testing Infrastructure**: Fully configured and ready  
+**✅ Test Framework**: Mocha + Chai + TypeScript  
+**✅ Hardhat Configuration**: Base Mainnet forking enabled  
+**📊 Current Coverage**: ~30% (expanding to 90%+)  
+**🎯 Testing Readiness**: **READY TO PROCEED**
+
+### Pre-Test Report
+
+**📄 [Pre-Test Report](tests/PRETEST_REPORT.md)** - Comprehensive executive summary and testing readiness assessment
+
+The pre-test report includes:
+- Executive summary
+- System overview
+- Testing infrastructure
+- Test coverage plan (36 components, 20 pages, 33 utilities)
+- Test execution plan (5 phases)
+- Risk assessment
+- Success criteria
+- Recommendations
+
+### Test Suites
+
+**Hardhat Tests** (6 suites) - ✅ Complete
+- Scoring determinism
+- Tokenomics validation
+- Lens consistency
+- Sandbox vector mapping
+- Calibration (peer-reviewed papers)
+- Constants & equations validation
+
+**Integration Tests** (3 suites) - 📋 Pending
+- PoC submission flow
+- Evaluation flow
+- Registration flow
+
+**Security Tests** (2 suites) - 📋 Pending
+- Authentication security
+- API security
+
+**Load Tests** (1 suite) - 📋 Pending
+- API load testing
+
+### Running Tests
+
+```bash
+# Run all tests
+npm run test:all
+
+# Run specific test suites
+npm run test:hardhat      # Hardhat/blockchain tests
+npm run test:integration  # Integration tests
+npm run test:security     # Security tests
+npm run test:load         # Load tests
+```
+
+### Test Environment
+
+- **Execution**: Vercel server (production/preview environments)
+- **Blockchain**: Hardhat forking Base Mainnet (Chain ID: 8453)
+- **Database**: PostgreSQL via Supabase (test database)
+- **AI Evaluation**: Grok API (test mode)
+
+### Test Reports
+
+Test reports are generated in `tests/reports/`:
+- **JSON Reports**: Machine-readable test results
+- **HTML Reports**: Human-readable test reports
+- **Boot Sequence Report**: Available at `/fractiai/test-report`
+
+See [`tests/README.md`](tests/README.md) for complete testing documentation.
 
 ---
 

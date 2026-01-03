@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
+import { BootSequenceIndicators } from '@/components/BootSequenceIndicators'
 
 interface EpochInfo {
     current_epoch: string
@@ -323,6 +324,10 @@ export function ReactorCore() {
                         </div>
                         <div className="cockpit-label">
                             Epoch: {epochInfo.current_epoch.toUpperCase()}
+                        </div>
+                        {/* Boot Sequence Indicators */}
+                        <div className="flex items-center gap-2 pl-4 border-l border-[var(--keyline-primary)]">
+                            <BootSequenceIndicators />
                         </div>
                     </div>
                     <div style={{ opacity: 0.7 }}>

@@ -10,6 +10,8 @@ import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request'
 import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification'
 import * as crypto from 'crypto'
 import Stripe from 'stripe'
+import { checkRateLimit, getRateLimitIdentifier, createRateLimitHeaders, RateLimitConfig } from '@/utils/rate-limit'
+import { handleCorsPreflight, createCorsHeaders } from '@/utils/cors'
 
 function toPublicEvaluationError(message: string): string {
     const m = String(message || '')
@@ -61,16 +63,43 @@ function truncateForEvaluation(text: string, maxChars: number): {
 export async function POST(request: NextRequest) {
     debug('SubmitContribution', 'Submission request received')
     
+    // Handle CORS preflight
+    const corsPreflight = handleCorsPreflight(request)
+    if (corsPreflight) return corsPreflight
+    
     try {
+        // Rate limiting
+        const identifier = getRateLimitIdentifier(request)
+        const rateLimitResult = await checkRateLimit(identifier, RateLimitConfig.SUBMIT)
+        const rateLimitHeaders = createRateLimitHeaders(rateLimitResult)
+        
+        if (!rateLimitResult.success) {
+            debug('SubmitContribution', 'Rate limit exceeded', { identifier: identifier.substring(0, 20) + '...' })
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
+            return NextResponse.json(
+                { 
+                    error: 'Rate limit exceeded',
+                    message: `Too many submission requests. Please try again after ${new Date(rateLimitResult.reset).toISOString()}`
+                },
+                { 
+                    status: 429,
+                    headers: rateLimitHeaders
+                }
+            )
+        }
+        
         // Check authentication
         const supabase = createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         
         if (authError || !user || !user.email) {
             debug('SubmitContribution', 'Unauthorized submission attempt')
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
             return NextResponse.json(
                 { error: 'Unauthorized' },
-                { status: 401 }
+                { status: 401, headers: rateLimitHeaders }
             )
         }
         
@@ -81,9 +110,11 @@ export async function POST(request: NextRequest) {
         const text_content = (formData.get('text_content') as string | null) || ''
         
         if (!title || !title.trim()) {
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
             return NextResponse.json(
                 { error: 'Title is required' },
-                { status: 400 }
+                { status: 400, headers: rateLimitHeaders }
             )
         }
 
@@ -289,13 +320,15 @@ export async function POST(request: NextRequest) {
             checkoutUrl: session.url.substring(0, 50) + '...'
         })
 
-        // Return checkout URL to frontend
+        // Return checkout URL to frontend with CORS and rate limit headers
+        const corsHeaders = createCorsHeaders(request)
+        corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
         return NextResponse.json({
             checkout_url: session.url,
             session_id: session.id,
             submission_hash: submissionHash,
             message: 'Redirecting to payment for PoC evaluation service'
-        })
+        }, { headers: rateLimitHeaders })
     } catch (error) {
         debugError('SubmitContribution', 'Error submitting contribution', error)
         
@@ -309,7 +342,10 @@ export async function POST(request: NextRequest) {
             error: error
         })
         
-        // Return detailed error for debugging
+        // Return detailed error for debugging with CORS headers
+        const corsHeaders = createCorsHeaders(request)
+        const errorHeaders = new Headers()
+        corsHeaders.forEach((value, key) => errorHeaders.set(key, value))
         return NextResponse.json(
             { 
                 error: 'Failed to submit contribution',
@@ -322,8 +358,14 @@ export async function POST(request: NextRequest) {
                     name: error instanceof Error ? error.name : undefined
                 } : {})
             },
-            { status: 500 }
+            { status: 500, headers: errorHeaders }
         )
     }
+}
+
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+    const corsPreflight = handleCorsPreflight(request)
+    return corsPreflight || new Response(null, { status: 204 })
 }
 

@@ -6,8 +6,9 @@ import { usersTable } from '@/utils/db/schema'
 import { eq } from "drizzle-orm"
 import { FrontierModule } from '@/components/FrontierModule'
 import { ReactorCore } from '@/components/ReactorCore'
+import { BootSequenceIndicators } from '@/components/BootSequenceIndicators'
 // Optional ecosystem support is intentionally not placed in the primary beta cockpit.
-// The reference client stays protocol-first and avoids any “package” framing in the main dashboard.
+// The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
 import { BookOpen } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -43,8 +44,12 @@ export default async function Dashboard() {
                 {/* Command Zone - Welcome & Action Control */}
                 <div className="cockpit-panel p-6">
                     <div className="flex items-center justify-between">
-                        <div>
-                            <div className="cockpit-label">SYNTHEVERSE PROTOCOL (PUBLIC) · FRACTIAI REFERENCE CLIENT</div>
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="cockpit-label">SYNTHEVERSE PROTOCOL (PUBLIC) · FRACTIAI REFERENCE CLIENT</div>
+                                {/* Boot Sequence Indicator Lights */}
+                                <BootSequenceIndicators />
+                            </div>
                             <div className="cockpit-title text-2xl mt-1">{displayName.toUpperCase()}</div>
                             <div className="cockpit-text mt-2">
                                 You are using the FractiAI reference client to interact with the public Syntheverse protocol.

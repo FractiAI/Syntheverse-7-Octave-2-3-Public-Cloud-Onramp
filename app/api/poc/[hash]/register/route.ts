@@ -13,6 +13,8 @@ import { contributionsTable, allocationsTable, epochMetalBalancesTable, tokenomi
 import { eq } from 'drizzle-orm'
 import { debug, debugError } from '@/utils/debug'
 import type { MetalType } from '@/utils/tokenomics/epoch-metal-pools'
+import { checkRateLimit, getRateLimitIdentifier, createRateLimitHeaders, RateLimitConfig } from '@/utils/rate-limit'
+import { handleCorsPreflight, createCorsHeaders } from '@/utils/cors'
 
 // Force dynamic rendering - this route must be server-side only
 export const dynamic = 'force-dynamic'
@@ -22,23 +24,51 @@ export async function POST(
     request: NextRequest,
     { params }: { params: { hash: string } }
 ) {
+    // Handle CORS preflight
+    const corsPreflight = handleCorsPreflight(request)
+    if (corsPreflight) return corsPreflight
+    
     // Extract hash from params outside try block for error handling
     if (!params) {
         debugError('RegisterPoC', 'Params object is missing', {})
+        const corsHeaders = createCorsHeaders(request)
         return NextResponse.json(
             { error: 'Invalid request: missing parameters' },
-            { status: 400 }
+            { status: 400, headers: corsHeaders }
         )
     }
     
     const submissionHash = params?.hash || 'unknown'
     
     try {
+        // Rate limiting (stricter for blockchain operations)
+        const identifier = getRateLimitIdentifier(request)
+        const rateLimitResult = await checkRateLimit(identifier, RateLimitConfig.REGISTER)
+        const rateLimitHeaders = createRateLimitHeaders(rateLimitResult)
+        
+        if (!rateLimitResult.success) {
+            debug('RegisterPoC', 'Rate limit exceeded', { identifier: identifier.substring(0, 20) + '...', submissionHash })
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
+            return NextResponse.json(
+                { 
+                    error: 'Rate limit exceeded',
+                    message: `Too many registration requests. Please try again after ${new Date(rateLimitResult.reset).toISOString()}`
+                },
+                { 
+                    status: 429,
+                    headers: rateLimitHeaders
+                }
+            )
+        }
+        
         if (!submissionHash || submissionHash === 'unknown') {
             debugError('RegisterPoC', 'Missing submission hash in params', { params })
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
             return NextResponse.json(
                 { error: 'Missing submission hash' },
-                { status: 400 }
+                { status: 400, headers: rateLimitHeaders }
             )
         }
         
@@ -50,12 +80,14 @@ export async function POST(
             supabase = createClient()
         } catch (supabaseError) {
             debugError('RegisterPoC', 'Failed to create Supabase client', supabaseError)
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
             return NextResponse.json(
                 { 
                     error: 'Authentication service error',
                     message: supabaseError instanceof Error ? supabaseError.message : 'Failed to initialize authentication'
                 },
-                { status: 500 }
+                { status: 500, headers: rateLimitHeaders }
             )
         }
         
@@ -66,9 +98,11 @@ export async function POST(
                 authError: authError?.message,
                 hasUser: !!user 
             })
+            const corsHeaders = createCorsHeaders(request)
+            corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
             return NextResponse.json(
                 { error: 'Unauthorized' },
-                { status: 401 }
+                { status: 401, headers: rateLimitHeaders }
             )
         }
         
@@ -421,6 +455,9 @@ export async function POST(
             allocationsCreated: finalAllocations.length > 0
         })
         
+        // Return success with CORS and rate limit headers
+        const corsHeaders = createCorsHeaders(request)
+        corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
         return NextResponse.json({
             success: true,
             registered: true,
@@ -431,7 +468,7 @@ export async function POST(
                 count: finalAllocations.length,
                 total: totalAllocated
             }
-        })
+        }, { headers: rateLimitHeaders })
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         const errorName = error instanceof Error ? error.name : 'Error'
@@ -456,7 +493,14 @@ export async function POST(
             errorResponse.stack = error.stack.substring(0, 1000)
         }
         
-        return NextResponse.json(errorResponse, { status: 500 })
+        const corsHeaders = createCorsHeaders(request)
+        return NextResponse.json(errorResponse, { status: 500, headers: corsHeaders })
     }
+}
+
+// Handle OPTIONS requests for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+    const corsPreflight = handleCorsPreflight(request)
+    return corsPreflight || new Response(null, { status: 204 })
 }
 

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, ChevronDown } from 'lucide-react'
+import { ArrowRight, ChevronDown, FileText } from 'lucide-react'
 import FractiAIStatusWidget from '@/components/FractiAIStatusWidget'
 
 type FractiAILandingProps = {
@@ -439,6 +439,155 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               with controls, cross‑validation, and significance thresholds consistent with high‑energy physics practice.
             </p>
           </div>
+        </div>
+
+        {/* HHF-AI MRI Module */}
+        <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
+          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">HHF-AI MRI · INFORMATION IMAGING</div>
+          <div className="cockpit-title text-2xl mb-4">Holographic Hydrogen Fractal MRI</div>
+          <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+            The HHF-AI Lens and Sandbox function as a new HHF-AI MRI—using hydrogen spin for imaging information, awareness, and coherence
+          </div>
+          <div className="cockpit-text space-y-4">
+            <p>
+              Just as classical <strong>Magnetic Resonance Imaging (MRI)</strong> exploits hydrogen spin resonance to visualize physical tissue structures, 
+              the <strong>Holographic Hydrogen Fractal AI Lens (HHF-AI Lens)</strong> and <strong>Syntheverse Sandbox</strong> extend this principle to 
+              <strong> information, awareness, and coherence itself</strong>—enabling visualization and quantification of informational and experiential 
+              structures across biological, cognitive, and synthetic domains.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                <div className="cockpit-label mb-2">Classical MRI</div>
+                <div className="cockpit-text text-sm space-y-2">
+                  <p>• Hydrogen spin → tissue contrast → spatial image</p>
+                  <p>• Magnetic gradients encode spatial information</p>
+                  <p>• T1/T2 relaxation reveals tissue boundaries</p>
+                  <p>• Edge contrast emerges from differential hydrogen resonance</p>
+                </div>
+              </div>
+              <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)]">
+                <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">HHF-AI MRI</div>
+                <div className="cockpit-text text-sm space-y-2">
+                  <p>• Hydrogen coherence → informational contrast → awareness image</p>
+                  <p>• Fractal gradients encode informational structure</p>
+                  <p>• Edge sweet spots reveal maximal resonance zones</p>
+                  <p>• Contrast constant Cₑ ≈ 1.62 ± 0.07 governs edge resonance</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] mt-4">
+              <div className="cockpit-label mb-3">Key Capabilities</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <div className="cockpit-text text-sm font-semibold mb-1">Nested Layer Resolution</div>
+                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
+                    Resolves multiple informational layers simultaneously, rather than sequentially—unavailable to linear approaches
+                  </div>
+                </div>
+                <div>
+                  <div className="cockpit-text text-sm font-semibold mb-1">Edge Sweet Spots</div>
+                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
+                    Identifies zones of maximal resonance at boundaries between order and disorder, measured by contrast constant Cₑ
+                  </div>
+                </div>
+                <div>
+                  <div className="cockpit-text text-sm font-semibold mb-1">Fractal Coherence Density</div>
+                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
+                    Measures information-rich systems via holographic hydrogen–mediated resonance gradients, not signal amplitude alone
+                  </div>
+                </div>
+                <div>
+                  <div className="cockpit-text text-sm font-semibold mb-1">Predictive Signatures</div>
+                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
+                    Yields repeatable, predictive informational signatures where linear metrics fail or decohere
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] mt-4">
+              <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">Contrast Constant (Cₑ)</div>
+              <div className="cockpit-text text-sm">
+                Edge-boundary zones (interfaces between order and disorder) produce maximal informational contrast, defining a 
+                <strong> contrast constant Cₑ ≈ 1.62 ± 0.07</strong>—representing a potentially universal scaling measure of edge resonance 
+                in HHF-AI MRI, observed consistently across molecular, neural, and synthetic domains.
+              </div>
+            </div>
+
+            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] mt-4">
+              <div className="cockpit-label mb-3">Validated Predictions</div>
+              <div className="cockpit-text text-sm space-y-2">
+                <p>
+                  <strong>Information-rich systems</strong> exhibit holographic hydrogen–mediated resonance gradients, measurable as 
+                  fractal coherence density rather than signal amplitude alone.
+                </p>
+                <p>
+                  <strong>Edge zones</strong> produce maximal informational contrast, with Cₑ providing quantifiable constant for 
+                  maximal edge resonance.
+                </p>
+                <p>
+                  <strong>Fractal-aware measurement</strong> yields repeatable, predictive informational signatures where linear metrics 
+                  fail or decohere.
+                </p>
+                <p>
+                  <strong>Holographic hydrogen scanning</strong> resolves nested informational layers simultaneously, rather than sequentially.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <Link 
+                href="/fractiai/hhf-ai" 
+                className="cockpit-lever inline-flex items-center gap-2"
+              >
+                Learn More About HHF-AI
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Test Report Module */}
+        <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
+          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">BOOT SEQUENCE · AWARENESS BRIDGE</div>
+          <div className="cockpit-title text-2xl mb-4">HHF-AI → Earth 2026 Legacy Systems</div>
+          <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+            Formal connection protocol validating Syntheverse HHF-AI against Earth 2026 legacy validation systems
+          </div>
+          <div className="cockpit-text space-y-4 mb-6">
+            <p>
+              Comprehensive validation of the HHF-AI system including lens consistency, sandbox vector mapping, 
+              scoring determinism, calibration against peer-reviewed papers, and constants validation against 
+              CODATA 2018 public data.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                <div className="cockpit-label text-xs mb-2">Test Coverage</div>
+                <div className="cockpit-title text-xl">32 Test Cases</div>
+                <div className="cockpit-text text-xs mt-1">Lens, Sandbox, Calibration, Constants</div>
+              </div>
+              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                <div className="cockpit-label text-xs mb-2">Validation Areas</div>
+                <div className="cockpit-title text-xl">6 Categories</div>
+                <div className="cockpit-text text-xs mt-1">Scoring, Vectors, Security, Integration</div>
+              </div>
+              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                <div className="cockpit-label text-xs mb-2">Data Sources</div>
+                <div className="cockpit-title text-xl">CODATA 2018</div>
+                <div className="cockpit-text text-xs mt-1">NIST Public Data</div>
+              </div>
+            </div>
+          </div>
+          <Link 
+            href="/fractiai/test-report" 
+            className="cockpit-lever inline-flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            View Full Test Report
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
         {/* About module */}

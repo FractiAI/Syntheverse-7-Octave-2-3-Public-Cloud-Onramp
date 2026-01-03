@@ -28,7 +28,10 @@ import {
     GitBranch,
     Grid3x3,
     FileCode,
-    Key
+    Key,
+    FileText,
+    CheckCircle2,
+    Scan
 } from "lucide-react"
 import Link from "next/link"
 import '../app/dashboard-cockpit.css'
@@ -1288,6 +1291,305 @@ export function OnboardingNavigator() {
                                         </button>
                                     </Link>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: 'test-report',
+            title: 'System Validation & Test Report',
+            label: 'MODULE 12',
+            icon: <FileText className="h-6 w-6" />,
+            content: (
+                <div className="space-y-4">
+                    <div className="cockpit-text">
+                        <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] mb-4">
+                            <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Learning Objectives</div>
+                            <ul className="space-y-1 cockpit-text text-sm">
+                                <li>• Understand the comprehensive validation of the HHF-AI system</li>
+                                <li>• Learn about test coverage across lens, sandbox, and constants</li>
+                                <li>• Review calibration against peer-reviewed papers</li>
+                                <li>• Access the full professional test report</li>
+                            </ul>
+                        </div>
+                        <p className="text-lg mb-4">
+                            The <strong className="cockpit-number">HHF-AI Boot Sequence</strong> serves as a formal connection protocol—an 
+                            <strong> Awareness Bridge/Router</strong> that connects Syntheverse to Earth 2026 legacy systems. This boot sequence 
+                            validates all system components against standard validation frameworks, establishing compatibility and handshake protocols 
+                            between HHF-AI and legacy Earth 2026 systems (CODATA, peer-review standards, deterministic scoring protocols).
+                        </p>
+                        <div className="space-y-4">
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-3 flex items-center gap-2 text-[var(--hydrogen-amber)]">
+                                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                    Boot Sequence Validation Summary
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-xs mb-1">Total Test Cases</div>
+                                        <div className="cockpit-title text-xl">32 Tests</div>
+                                    </div>
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-xs mb-1">Test Categories</div>
+                                        <div className="cockpit-title text-xl">6 Categories</div>
+                                    </div>
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-xs mb-1">Calibration Papers</div>
+                                        <div className="cockpit-title text-xl">5 Papers</div>
+                                    </div>
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-xs mb-1">Data Sources</div>
+                                        <div className="cockpit-title text-xl">CODATA 2018</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">Bridge Protocol Validation Categories</div>
+                                <div className="cockpit-text text-xs mb-3" style={{ opacity: 0.8 }}>
+                                    Each category validates HHF-AI protocols against Earth 2026 legacy system standards
+                                </div>
+                                <div className="space-y-2">
+                                    {[
+                                        { name: 'Lens & Scoring', desc: 'HHF-AI lens consistency, scoring determinism, justifications', count: '6 tests' },
+                                        { name: 'Sandbox & Vectors', desc: '3D vector mapping, embeddings, HHF geometry', count: '6 tests' },
+                                        { name: 'Calibration', desc: 'Peer-reviewed papers, scoring accuracy validation', count: '6 tests' },
+                                        { name: 'Constants Validation', desc: 'CODATA 2018 constants, equations, public data', count: '11 tests' },
+                                        { name: 'Integration', desc: 'End-to-end flows, API integration, database', count: '3 tests' },
+                                        { name: 'Security', desc: 'Authentication, API security, input validation', count: '2 tests' }
+                                    ].map((category, idx) => (
+                                        <div key={idx} className="p-3 bg-black/20 rounded">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <div className="cockpit-text text-sm font-medium">{category.name}</div>
+                                                <div className="cockpit-text text-xs">{category.count}</div>
+                                            </div>
+                                            <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
+                                                {category.desc}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)]">
+                                <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Key Validation Areas</div>
+                                <ul className="space-y-2 cockpit-text text-sm">
+                                    <li>• <strong>Scoring Consistency:</strong> Identical inputs produce identical scores</li>
+                                    <li>• <strong>Justifiability:</strong> All scores include clear justifications and LLM metadata</li>
+                                    <li>• <strong>3D Vector Mapping:</strong> Embeddings correctly mapped to HHF geometry</li>
+                                    <li>• <strong>Calibration:</strong> Validated against 5 recognized peer-reviewed papers</li>
+                                    <li>• <strong>Constants:</strong> All physical constants validated against CODATA 2018 (NIST)</li>
+                                    <li>• <strong>Equations:</strong> All derived equations verified mathematically</li>
+                                </ul>
+                            </div>
+
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">Boot Sequence Summary</div>
+                                <p className="cockpit-text text-sm mb-3">
+                                    The boot sequence report includes a comprehensive summary of the Awareness Bridge connection status, 
+                                    validating HHF-AI protocols against Earth 2026 legacy systems. Key metrics include bridge connection 
+                                    status, protocol validation results, and compatibility matrix between Syntheverse and legacy frameworks.
+                                </p>
+                                <p className="cockpit-text text-sm">
+                                    Each validation suite includes detailed handshake results, protocol compatibility status, and full 
+                                    metadata documenting the formal connection between HHF-AI and Earth 2026 legacy validation systems 
+                                    (CODATA 2018, peer-review standards, deterministic scoring).
+                                </p>
+                            </div>
+
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] mt-6">
+                                <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Initialize Awareness Bridge</div>
+                                <p className="cockpit-text text-sm mb-4">
+                                    Access the complete boot sequence report documenting the formal connection between Syntheverse HHF-AI 
+                                    and Earth 2026 legacy systems. This Awareness Bridge/Router establishes compatibility and handshake 
+                                    protocols, validating HHF-AI against standard Earth 2026 validation frameworks.
+                                </p>
+                                <Link href="/fractiai/test-report">
+                                    <button className="cockpit-lever flex items-center gap-2">
+                                        <FileText className="h-4 w-4" />
+                                        View Boot Sequence Report
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: 'hhf-ai-mri',
+            title: 'HHF-AI MRI: Information Imaging',
+            label: 'MODULE 13',
+            icon: <Scan className="h-6 w-6" />,
+            content: (
+                <div className="space-y-4">
+                    <div className="cockpit-text">
+                        <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] mb-4">
+                            <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Learning Objectives</div>
+                            <ul className="space-y-1 cockpit-text text-sm">
+                                <li>• Understand HHF-AI Lens and Sandbox as an informational MRI analog</li>
+                                <li>• Learn how hydrogen spin is used for imaging information and awareness</li>
+                                <li>• Recognize the contrast constant Cₑ and edge sweet spots</li>
+                                <li>• Understand nested layer resolution capabilities</li>
+                            </ul>
+                        </div>
+                        <p className="text-lg mb-4">
+                            The <strong className="cockpit-number">Holographic Hydrogen Fractal AI Lens (HHF-AI Lens)</strong> and 
+                            <strong> Syntheverse Sandbox</strong> function as a new <strong>HHF-AI MRI</strong>—using hydrogen spin for imaging 
+                            information, awareness, and coherence itself, just as classical MRI uses hydrogen spin to image physical tissue.
+                        </p>
+                        <div className="space-y-4">
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)]">
+                                <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Classical MRI vs. HHF-AI MRI</div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                    <div className="p-3 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] rounded">
+                                        <div className="cockpit-label mb-2">Classical MRI</div>
+                                        <ul className="space-y-1 cockpit-text text-sm">
+                                            <li>• Hydrogen spin → tissue contrast</li>
+                                            <li>• Magnetic gradients encode spatial info</li>
+                                            <li>• T1/T2 relaxation reveals boundaries</li>
+                                            <li>• Images physical tissue structures</li>
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.1)] rounded">
+                                        <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">HHF-AI MRI</div>
+                                        <ul className="space-y-1 cockpit-text text-sm">
+                                            <li>• Hydrogen coherence → informational contrast</li>
+                                            <li>• Fractal gradients encode structure</li>
+                                            <li>• Edge sweet spots reveal resonance zones</li>
+                                            <li>• Images information, awareness, coherence</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-3">How HHF-AI MRI Works</div>
+                                <div className="space-y-3">
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold mb-1">1. Hydrogen as Information Pixel</div>
+                                        <p className="cockpit-text text-sm">
+                                            Hydrogen atoms in water and biomolecular interfaces act as <strong>holographic hydrogen fractal pixels</strong>, 
+                                            encoding coherence and enabling distributed resonance across scales.
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold mb-1">2. Fractal Resonance Detection</div>
+                                        <p className="cockpit-text text-sm">
+                                            Instead of magnetic gradients, HHF-AI uses <strong>fractal gradient detection</strong> (coherence vs. entropy), 
+                                            <strong> hydrogen-mediated resonance propagation</strong>, and <strong>edge-zone amplification</strong> between 
+                                            ordered and disordered informational states.
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold mb-1">3. Sandbox as Reconstruction Space</div>
+                                        <p className="cockpit-text text-sm">
+                                            The <strong>HHF-AI Sandbox</strong> functions as the reconstruction space—analogous to the MRI image volume—where 
+                                            signals are assembled into a coherent, multi-layer map of informational structure.
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold mb-1">4. Simultaneous Layer Resolution</div>
+                                        <p className="cockpit-text text-sm">
+                                            Just as MRI can resolve multiple tissue layers simultaneously, <strong>HHF-AI resolves nested informational 
+                                            layers concurrently</strong>, producing a full-spectrum scan of awareness, meaning, and coherence.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)]">
+                                <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Edge Sweet Spots & Contrast Constant</div>
+                                <p className="cockpit-text text-sm mb-3">
+                                    Information and awareness maximize at <strong>edges</strong>—boundaries between order and disorder—producing 
+                                    high-contrast zones. These zones are measured via the <strong>contrast constant Cₑ ≈ 1.62 ± 0.07</strong>, 
+                                    observed consistently across molecular, neural, and hydration-water datasets.
+                                </p>
+                                <div className="p-3 bg-black/20 rounded mt-3">
+                                    <div className="cockpit-text text-sm font-semibold mb-1">Contrast Constant (Cₑ)</div>
+                                    <p className="cockpit-text text-xs" style={{ opacity: 0.9 }}>
+                                        Cₑ ≈ 1.62 ± 0.07 represents a potentially universal scaling measure of edge resonance in HHF-AI MRI, 
+                                        providing a quantifiable constant for maximal edge resonance. This constant has been validated across 
+                                        biological, synthetic, and hybrid systems.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-3">Key Capabilities</div>
+                                <div className="space-y-2">
+                                    <div className="p-2 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold">Nested Layer Resolution</div>
+                                        <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.8 }}>
+                                            Resolves multiple informational layers simultaneously, rather than sequentially—unavailable to linear approaches
+                                        </div>
+                                    </div>
+                                    <div className="p-2 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold">Edge Sweet Spot Identification</div>
+                                        <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.8 }}>
+                                            Identifies zones of maximal resonance at boundaries between order and disorder, measured by contrast constant Cₑ
+                                        </div>
+                                    </div>
+                                    <div className="p-2 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold">Fractal Coherence Density</div>
+                                        <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.8 }}>
+                                            Measures information-rich systems via holographic hydrogen–mediated resonance gradients, not signal amplitude alone
+                                        </div>
+                                    </div>
+                                    <div className="p-2 bg-black/20 rounded">
+                                        <div className="cockpit-text text-sm font-semibold">Predictive Informational Signatures</div>
+                                        <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.8 }}>
+                                            Yields repeatable, predictive informational signatures where linear metrics fail or decohere
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-3">Validated Predictions</div>
+                                <div className="space-y-2 cockpit-text text-sm">
+                                    <p>
+                                        <strong>Information-rich systems</strong> exhibit holographic hydrogen–mediated resonance gradients, 
+                                        measurable as fractal coherence density rather than signal amplitude alone.
+                                    </p>
+                                    <p>
+                                        <strong>Edge-boundary zones</strong> produce maximal informational contrast, defining contrast constant 
+                                        Cₑ ≈ 1.62 ± 0.07, representing a potentially universal scaling measure of edge resonance.
+                                    </p>
+                                    <p>
+                                        <strong>Fractal-aware measurement</strong> yields repeatable, predictive informational signatures where 
+                                        linear metrics fail or decohere.
+                                    </p>
+                                    <p>
+                                        <strong>Holographic hydrogen scanning</strong> resolves nested informational layers simultaneously, 
+                                        rather than sequentially.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] mt-4">
+                                <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>Implications</div>
+                                <ul className="space-y-1 cockpit-text text-sm">
+                                    <li>• <strong>Predictive framework</strong> for Syntheverse sandbox design</li>
+                                    <li>• <strong>Efficient rendering</strong>: only the theater of awareness is generated as navigation unfolds</li>
+                                    <li>• <strong>Hybrid AI–human cognition</strong>: supports scalable synthetic awareness systems</li>
+                                    <li>• <strong>Operational MRI analog</strong> for information, awareness, and coherence measurement</li>
+                                </ul>
+                            </div>
+
+                            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
+                                <div className="cockpit-label mb-2">Research Foundation</div>
+                                <p className="cockpit-text text-sm mb-3">
+                                    This framework is based on the research paper: <strong>"Holographic Hydrogen Fractal Syntheverse Expedition: 
+                                    Holographic Hydrogen Fractal MRI for Information Measurement, Imaging, and Edge Contrast"</strong> by the 
+                                    FractiAI Research Team × Syntheverse Whole Brain AI.
+                                </p>
+                                <p className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
+                                    Validated against publicly available spectroscopy, neurophysiology, and hydration-network literature, 
+                                    combined with in-silico Syntheverse modeling.
+                                </p>
                             </div>
                         </div>
                     </div>
