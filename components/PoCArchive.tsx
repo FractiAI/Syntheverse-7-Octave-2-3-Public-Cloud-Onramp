@@ -1079,6 +1079,144 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                     )}
                 </DialogContent>
             </Dialog>
+
+            {/* On-Chain PoCs Dialog */}
+            <Dialog open={onChainDialogOpen} onOpenChange={setOnChainDialogOpen}>
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Link2 className="h-5 w-5" />
+                            PoCs Registered on Base Mainnet
+                        </DialogTitle>
+                        <DialogDescription>
+                            View and sync PoC registrations from Base Mainnet blockchain
+                        </DialogDescription>
+                    </DialogHeader>
+                    
+                    {onChainLoading && (
+                        <div className="flex items-center justify-center py-8">
+                            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                            <span>Fetching on-chain PoCs...</span>
+                        </div>
+                    )}
+                    
+                    {onChainError && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div className="flex items-center gap-2 text-red-800">
+                                <AlertCircle className="h-5 w-5" />
+                                <span className="font-semibold">Error</span>
+                            </div>
+                            <p className="text-red-700 mt-2">{onChainError}</p>
+                        </div>
+                    )}
+                    
+                    {onChainData && !onChainLoading && (
+                        <div className="space-y-4">
+                            {/* Summary */}
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h3 className="font-semibold text-blue-900 mb-2">Sync Summary</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                    <div>
+                                        <div className="text-blue-600 font-medium">On-Chain</div>
+                                        <div className="text-2xl font-bold text-blue-900">{onChainData.summary.onChainCount}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-blue-600 font-medium">In Database</div>
+                                        <div className="text-2xl font-bold text-blue-900">{onChainData.summary.databaseCount}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-green-600 font-medium">Synced</div>
+                                        <div className="text-2xl font-bold text-green-900">{onChainData.summary.syncedCount}</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-amber-600 font-medium">Missing from DB</div>
+                                        <div className="text-2xl font-bold text-amber-900">{onChainData.summary.missingFromDb}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* On-Chain Registrations */}
+                            <div>
+                                <h3 className="font-semibold mb-3">On-Chain PoC Registrations</h3>
+                                {onChainData.onChainRegistrations.length === 0 ? (
+                                    <div className="text-center py-8 text-gray-500">
+                                        No PoCs found on Base Mainnet
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2">
+                                        {onChainData.onChainRegistrations.map((reg: any, index: number) => (
+                                            <div key={index} className="border rounded-lg p-4 hover:bg-gray-50">
+                                                <div className="flex items-start justify-between">
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                                                On-Chain
+                                                            </Badge>
+                                                            <Badge variant="outline">{reg.metal}</Badge>
+                                                        </div>
+                                                        <div className="text-sm space-y-1">
+                                                            <div><span className="font-medium">Hash:</span> <code className="text-xs bg-gray-100 px-1 rounded">{reg.submissionHash.substring(0, 16)}...</code></div>
+                                                            <div><span className="font-medium">Contributor:</span> {reg.contributorEmail}</div>
+                                                            <div><span className="font-medium">Block:</span> {reg.blockNumber.toLocaleString()}</div>
+                                                            <div><span className="font-medium">Timestamp:</span> {new Date(reg.timestamp).toLocaleString()}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="ml-4">
+                                                        <a
+                                                            href={reg.baseScanUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                                                        >
+                                                            View on BaseScan
+                                                            <ExternalLink className="h-4 w-4" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Sync Status */}
+                            {onChainData.syncStatus.missingFromDb.length > 0 && (
+                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                    <h3 className="font-semibold text-amber-900 mb-2">⚠️ Missing from Database</h3>
+                                    <p className="text-sm text-amber-800 mb-2">
+                                        {onChainData.syncStatus.missingFromDb.length} PoC(s) found on-chain but not in database
+                                    </p>
+                                    <div className="text-xs text-amber-700 space-y-1">
+                                        {onChainData.syncStatus.missingFromDb.slice(0, 5).map((m: any, i: number) => (
+                                            <div key={i} className="font-mono">{m.submissionHash.substring(0, 32)}...</div>
+                                        ))}
+                                        {onChainData.syncStatus.missingFromDb.length > 5 && (
+                                            <div>... and {onChainData.syncStatus.missingFromDb.length - 5} more</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {onChainData.syncStatus.missingFromChain.length > 0 && (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                    <h3 className="font-semibold text-red-900 mb-2">⚠️ Missing from Blockchain</h3>
+                                    <p className="text-sm text-red-800 mb-2">
+                                        {onChainData.syncStatus.missingFromChain.length} PoC(s) marked as registered in database but not found on-chain
+                                    </p>
+                                    <div className="text-xs text-red-700 space-y-1">
+                                        {onChainData.syncStatus.missingFromChain.slice(0, 5).map((m: any, i: number) => (
+                                            <div key={i} className="font-mono">{m.submissionHash.substring(0, 32)}...</div>
+                                        ))}
+                                        {onChainData.syncStatus.missingFromChain.length > 5 && (
+                                            <div>... and {onChainData.syncStatus.missingFromChain.length - 5} more</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </>
     )
 }
