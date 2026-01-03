@@ -1582,8 +1582,8 @@ export function OnboardingNavigator() {
                             <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
                                 <div className="cockpit-label mb-2">Research Foundation</div>
                                 <p className="cockpit-text text-sm mb-3">
-                                    This framework is based on the research paper: <strong>"Holographic Hydrogen Fractal Syntheverse Expedition: 
-                                    Holographic Hydrogen Fractal MRI for Information Measurement, Imaging, and Edge Contrast"</strong> by the 
+                                    This framework is based on the research paper: <strong>&quot;Holographic Hydrogen Fractal Syntheverse Expedition: 
+                                    Holographic Hydrogen Fractal MRI for Information Measurement, Imaging, and Edge Contrast&quot;</strong> by the 
                                     FractiAI Research Team × Syntheverse Whole Brain AI.
                                 </p>
                                 <p className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
