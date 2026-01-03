@@ -68,10 +68,12 @@ export function getBaseMainnetConfig(): BaseMainnetConfig | null {
     // Simple address handling - trim only, trust ethers.getAddress() for validation
     const synth90TAddress = (process.env.SYNTH90T_CONTRACT_ADDRESS || '0xAC9fa48Ca1D60e5274d14c7CEd6B3F4C1ADd1Aa3').trim()
     const lensKernelAddress = (process.env.LENS_KERNEL_CONTRACT_ADDRESS || '0xD9ABf9B19B4812A2fd06c5E8986B84040505B9D8').trim()
-    let privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY?.trim()
+    
+    // Check both BLOCKCHAIN_PRIVATE_KEY and DEPLOYER_PRIVATE_KEY (for compatibility)
+    let privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY?.trim() || process.env.DEPLOYER_PRIVATE_KEY?.trim()
     
     if (!privateKey) {
-        debugError('BaseMainnetConfig', 'BLOCKCHAIN_PRIVATE_KEY not configured', new Error('Missing BLOCKCHAIN_PRIVATE_KEY environment variable'))
+        debugError('BaseMainnetConfig', 'BLOCKCHAIN_PRIVATE_KEY not configured', new Error('Missing BLOCKCHAIN_PRIVATE_KEY or DEPLOYER_PRIVATE_KEY environment variable'))
         return null
     }
     
@@ -342,6 +344,7 @@ export async function emitLensEvent(
         )
         
         // Verify wallet is contract owner before calling extendLens (onlyOwner modifier)
+        // Note: If owner() function is not available or reverts, we'll proceed and let the transaction fail with a clear error
         const walletAddress = await wallet.getAddress()
         try {
             const contractOwner = await lensContract.owner()
@@ -349,16 +352,17 @@ export async function emitLensEvent(
                 debugError('EmitLensEvent', 'Wallet is not contract owner', new Error(`Wallet ${walletAddress} is not the owner. Contract owner: ${contractOwner}`))
                 return {
                     success: false,
-                    error: `Wallet ${walletAddress} is not the owner of the LensKernel contract. Only the contract owner can call extendLens(). Expected owner: ${contractOwner}`
+                    error: `Wallet ${walletAddress} is not the owner of the LensKernel contract. Only the contract owner can call extendLens(). Contract owner: ${contractOwner}`
                 }
             }
             debug('EmitLensEvent', 'Ownership verified', { walletAddress, contractOwner })
         } catch (ownerError) {
-            debugError('EmitLensEvent', 'Failed to verify ownership', ownerError)
-            return {
-                success: false,
-                error: `Failed to verify contract ownership: ${ownerError instanceof Error ? ownerError.message : 'Unknown error'}`
-            }
+            // If owner() call fails, log warning but proceed - the transaction will fail with a clearer error
+            debug('EmitLensEvent', 'Could not verify ownership (owner() call failed)', { 
+                walletAddress,
+                error: ownerError instanceof Error ? ownerError.message : 'Unknown error'
+            })
+            // Continue - the extendLens call will fail with a clear error if wallet is not owner
         }
         
         // Convert data to bytes
