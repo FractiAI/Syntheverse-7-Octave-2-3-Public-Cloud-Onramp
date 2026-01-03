@@ -65,24 +65,10 @@ export function getBaseMainnetConfig(): BaseMainnetConfig | null {
         chainId = 8453
     }
     
-    // Trim all addresses and keys to remove any trailing newlines/whitespace
-    // CRITICAL: Environment variables from Vercel may have trailing newlines
-    // We need to trim aggressively to ensure clean addresses
-    const synth90TAddress = (process.env.SYNTH90T_CONTRACT_ADDRESS || '0xAC9fa48Ca1D60e5274d14c7CEd6B3F4C1ADd1Aa3')
-        .trim()
-        .replace(/\n/g, '')
-        .replace(/\r/g, '')
-        .trim()
-    const lensKernelAddress = (process.env.LENS_KERNEL_CONTRACT_ADDRESS || '0xD9ABf9B19B4812A2fd06c5E8986B84040505B9D8')
-        .trim()
-        .replace(/\n/g, '')
-        .replace(/\r/g, '')
-        .trim()
-    const privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY
-        ?.trim()
-        .replace(/\n/g, '')
-        .replace(/\r/g, '')
-        .trim() // Trim whitespace/newlines aggressively
+    // Simple address handling - trim only, trust ethers.getAddress() for validation
+    const synth90TAddress = (process.env.SYNTH90T_CONTRACT_ADDRESS || '0xAC9fa48Ca1D60e5274d14c7CEd6B3F4C1ADd1Aa3').trim()
+    const lensKernelAddress = (process.env.LENS_KERNEL_CONTRACT_ADDRESS || '0xD9ABf9B19B4812A2fd06c5E8986B84040505B9D8').trim()
+    const privateKey = process.env.BLOCKCHAIN_PRIVATE_KEY?.trim()
     
     if (!privateKey) {
         debugError('BaseMainnetConfig', 'BLOCKCHAIN_PRIVATE_KEY not configured', new Error('Missing BLOCKCHAIN_PRIVATE_KEY environment variable'))
@@ -100,57 +86,19 @@ export function getBaseMainnetConfig(): BaseMainnetConfig | null {
 
 /**
  * Create Base provider and wallet (testnet or mainnet based on config)
+ * Simplified to match working Base deployment pattern
  */
 export function createBaseProvider(config: BaseMainnetConfig): {
     provider: ethers.JsonRpcProvider
     wallet: ethers.Wallet
 } {
-    // Base doesn't support ENS, so we disable it to avoid errors
+    // Simple provider creation - ethers.js v6 handles Base network correctly
     const provider = new ethers.JsonRpcProvider(config.rpcUrl, {
         chainId: config.chainId,
         name: config.chainId === 8453 ? 'base-mainnet' : 'base-sepolia'
     })
     
-    // Override resolveName to prevent ENS resolution attempts on Base network
-    // Base doesn't support ENS, so we return checksummed addresses immediately
-    const originalResolveName = provider.resolveName.bind(provider)
-    provider.resolveName = async (name: string): Promise<string | null> => {
-        // If it's already a valid address, return it checksummed immediately
-        // This prevents ethers.js from attempting ENS resolution
-        if (ethers.isAddress(name)) {
-            return ethers.getAddress(name) // Return checksummed address
-        }
-        // For non-address strings, return null (don't attempt ENS resolution)
-        // This prevents the "network does not support ENS" error
-        return null
-    }
-    
-    // Override getEnsAddress to prevent ENS lookups
-    // @ts-ignore - getEnsAddress might not be in the type definition but exists at runtime
-    if (provider.getEnsAddress) {
-        // @ts-ignore
-        provider.getEnsAddress = async (name: string): Promise<string | null> => {
-            // If it's already a valid address, return it checksummed immediately
-            if (ethers.isAddress(name)) {
-                return ethers.getAddress(name) // Return checksummed address
-            }
-            // Return null instead of trying ENS resolution
-            return null
-        }
-    }
-    
-    // Also override _getAddress to prevent internal ENS resolution
-    // @ts-ignore - Internal method that might be called
-    if ((provider as any)._getAddress) {
-        // @ts-ignore
-        (provider as any)._getAddress = async (name: string): Promise<string | null> => {
-            if (ethers.isAddress(name)) {
-                return ethers.getAddress(name)
-            }
-            return null
-        }
-    }
-    
+    // Simple wallet creation
     const wallet = new ethers.Wallet(config.privateKey, provider)
     
     return { provider, wallet }
@@ -189,15 +137,8 @@ export async function allocateTokens(
         
         const { provider, wallet } = createBaseProvider(config)
         
-        // Normalize contract address to checksummed format to prevent ENS resolution
-        // Aggressively trim to remove any newlines/carriage returns from Vercel environment variables
-        const synth90TAddress = ethers.getAddress(
-            config.synth90TAddress
-                .trim()
-                .replace(/\n/g, '')
-                .replace(/\r/g, '')
-                .trim()
-        )
+        // Simple address normalization - trim only, trust ethers.getAddress()
+        const synth90TAddress = ethers.getAddress(config.synth90TAddress.trim())
         
         // Create contract instance
         const synthContract = new ethers.Contract(
@@ -302,15 +243,8 @@ export async function getMetalBalance(metal: 'gold' | 'silver' | 'copper'): Prom
         
         const { provider } = createBaseProvider(config)
         
-        // Normalize contract address to checksummed format to prevent ENS resolution
-        // Aggressively trim to remove any newlines/carriage returns from Vercel environment variables
-        const synth90TAddress = ethers.getAddress(
-            config.synth90TAddress
-                .trim()
-                .replace(/\n/g, '')
-                .replace(/\r/g, '')
-                .trim()
-        )
+        // Simple address normalization - trim only, trust ethers.getAddress()
+        const synth90TAddress = ethers.getAddress(config.synth90TAddress.trim())
         
         const synthContract = new ethers.Contract(
             synth90TAddress,
@@ -342,15 +276,8 @@ export async function getContributorBalance(contributorAddress: string): Promise
         
         const { provider } = createBaseProvider(config)
         
-        // Normalize contract address to checksummed format to prevent ENS resolution
-        // Aggressively trim to remove any newlines/carriage returns from Vercel environment variables
-        const synth90TAddress = ethers.getAddress(
-            config.synth90TAddress
-                .trim()
-                .replace(/\n/g, '')
-                .replace(/\r/g, '')
-                .trim()
-        )
+        // Simple address normalization - trim only, trust ethers.getAddress()
+        const synth90TAddress = ethers.getAddress(config.synth90TAddress.trim())
         
         const synthContract = new ethers.Contract(
             synth90TAddress,
@@ -391,49 +318,15 @@ export async function emitLensEvent(
         
         const { provider, wallet } = createBaseProvider(config)
         
-        // Ensure contract address is properly formatted (checksummed) to avoid ENS resolution
-        // Aggressively trim to remove any newlines/carriage returns from Vercel environment variables
-        const lensKernelAddress = ethers.getAddress(
-            config.lensKernelAddress
-                .trim()
-                .replace(/\n/g, '')
-                .replace(/\r/g, '')
-                .trim()
-        )
+        // Simple address handling - trim only at config level, trust ethers.getAddress()
+        const lensKernelAddress = ethers.getAddress(config.lensKernelAddress.trim())
         
-        // Create contract instance with wallet as signer
+        // Simple contract creation - direct pattern matching working deployment
         const lensContract = new ethers.Contract(
             lensKernelAddress,
             SyntheverseGenesisLensKernelABI,
             wallet
         )
-        
-        const walletAddress = await wallet.getAddress()
-        
-        // Verify contract is accessible by calling a view function
-        try {
-            const [name, purpose, version, genesis] = await lensContract.getLensInfo()
-            debug('EmitLensEvent', 'Contract accessible', { name, purpose, version: version.toString(), genesis: genesis.toString() })
-        } catch (viewError) {
-            debugError('EmitLensEvent', 'Failed to call getLensInfo view function', viewError)
-            return {
-                success: false,
-                error: `Cannot access contract at ${lensKernelAddress}. Check contract address and network configuration.`
-            }
-        }
-        
-        // Check if wallet is the contract owner (extendLens requires onlyOwner)
-        // Based on successful deployment: https://github.com/FractiAI/Syntheverse-Genesis-Base-Blockchain
-        // Expected owner (deployer): 0x3563388d0E1c2D66A004E5E57717dc6D7e568BE3
-        const contractOwner = await lensContract.owner()
-        
-        if (contractOwner.toLowerCase() !== walletAddress.toLowerCase()) {
-            debugError('EmitLensEvent', 'Wallet is not contract owner', new Error(`Wallet ${walletAddress} is not the owner. Contract owner is ${contractOwner}`))
-            return {
-                success: false,
-                error: `Wallet address ${walletAddress} is not the owner of the LensKernel contract. The contract owner is ${contractOwner}. Please ensure BLOCKCHAIN_PRIVATE_KEY corresponds to the deployer wallet (0x3563388d0E1c2D66A004E5E57717dc6D7e568BE3). The extendLens() function requires onlyOwner modifier.`
-            }
-        }
         
         // Convert data to bytes
         const dataBytes = ethers.toUtf8Bytes(data)
@@ -441,40 +334,14 @@ export async function emitLensEvent(
         debug('EmitLensEvent', 'Calling extendLens', {
             extensionType,
             dataLength: dataBytes.length,
-            walletAddress,
-            contractOwner
+            contractAddress: lensKernelAddress
         })
         
-        // Try to estimate gas first - this will fail early if there's an issue
-        let gasEstimate: bigint
-        try {
-            gasEstimate = await lensContract.extendLens.estimateGas(extensionType, dataBytes)
-            debug('EmitLensEvent', 'Gas estimate successful', { gasEstimate: gasEstimate.toString() })
-        } catch (estimateError: any) {
-            debugError('EmitLensEvent', 'Gas estimation failed', estimateError)
-            // If gas estimation fails, try to extract the revert reason
-            const revertReason = estimateError.reason || estimateError.message || 'Gas estimation failed'
-            return {
-                success: false,
-                error: `Gas estimation failed: ${revertReason}. This usually means the transaction would revert. Check that the wallet is the contract owner and all parameters are valid.`
-            }
-        }
+        // Direct call - match working deployment pattern exactly
+        // No pre-flight checks, no gas estimation - trust the contract and network
+        const tx = await lensContract.extendLens(extensionType, dataBytes)
         
-        // Call extendLens function
-        // Use the wallet's signer explicitly to ensure proper authorization
-        const tx = await lensContract.extendLens(extensionType, dataBytes, {
-            gasLimit: gasEstimate * BigInt(120) / BigInt(100), // Add 20% buffer
-            // Don't set gasPrice - let the network determine it
-        })
-        
-        debug('EmitLensEvent', 'Transaction created', {
-            hash: tx.hash,
-            from: tx.from,
-            to: tx.to,
-            gasLimit: tx.gasLimit?.toString()
-        })
-        
-        debug('EmitLensEvent', 'Transaction sent, waiting for confirmation', { txHash: tx.hash })
+        debug('EmitLensEvent', 'Transaction sent', { txHash: tx.hash })
         
         const receipt = await tx.wait()
         
@@ -643,15 +510,8 @@ export async function queryMetalAllocatedEvents(
         
         const { provider } = createBaseProvider(config)
         
-        // Normalize contract address to checksummed format to prevent ENS resolution
-        // Aggressively trim to remove any newlines/carriage returns from Vercel environment variables
-        const synth90TAddress = ethers.getAddress(
-            config.synth90TAddress
-                .trim()
-                .replace(/\n/g, '')
-                .replace(/\r/g, '')
-                .trim()
-        )
+        // Simple address normalization - trim only, trust ethers.getAddress()
+        const synth90TAddress = ethers.getAddress(config.synth90TAddress.trim())
         
         const synthContract = new ethers.Contract(
             synth90TAddress,
