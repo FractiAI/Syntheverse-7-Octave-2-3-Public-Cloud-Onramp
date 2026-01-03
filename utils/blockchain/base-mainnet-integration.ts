@@ -374,7 +374,18 @@ export async function emitLensEvent(
         
         // Use a reasonable gas limit for extendLens (typically 100-150k, but use 200k for safety)
         const gasLimit = BigInt(200000)
-        const gasPrice = feeData.gasPrice || await provider.getFeeData().then(f => f.gasPrice || BigInt(0))
+        // Get gas price, fallback to 0 if not available
+        let gasPrice: bigint = BigInt(0)
+        if (feeData.gasPrice) {
+            gasPrice = feeData.gasPrice
+        } else {
+            try {
+                const fallbackFeeData = await provider.getFeeData()
+                gasPrice = fallbackFeeData.gasPrice || BigInt(0)
+            } catch {
+                gasPrice = BigInt(0)
+            }
+        }
         const estimatedGasCost = gasPrice * gasLimit
         
         // Convert to USD for better understanding (Base ETH price ~$2500, but this is approximate)
