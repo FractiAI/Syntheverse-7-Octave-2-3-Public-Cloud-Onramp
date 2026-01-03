@@ -371,22 +371,43 @@ export async function emitLensEvent(
         // Check wallet balance before attempting transaction
         const balance = await provider.getBalance(walletAddress)
         const feeData = await provider.getFeeData()
-        const estimatedGasCost = (feeData.gasPrice || 0n) * 200000n // Estimate ~200k gas
+        
+        // Use a reasonable gas limit for extendLens (typically 100-150k, but use 200k for safety)
+        const gasLimit = 200000n
+        const gasPrice = feeData.gasPrice || await provider.getFeeData().then(f => f.gasPrice || 0n)
+        const estimatedGasCost = gasPrice * gasLimit
+        
+        // Convert to USD for better understanding (Base ETH price ~$2500, but this is approximate)
+        const balanceEth = parseFloat(ethers.formatEther(balance))
+        const estimatedCostEth = parseFloat(ethers.formatEther(estimatedGasCost))
         
         debug('EmitLensEvent', 'Pre-transaction checks', {
             extensionType,
             dataLength: dataBytes.length,
             contractAddress: lensKernelAddress,
             walletAddress,
-            balance: ethers.formatEther(balance),
-            gasPrice: feeData.gasPrice ? ethers.formatUnits(feeData.gasPrice, 'gwei') : 'unknown',
-            estimatedCost: ethers.formatEther(estimatedGasCost)
+            balance: {
+                wei: balance.toString(),
+                eth: balanceEth.toFixed(6),
+                usd: `~$${(balanceEth * 2500).toFixed(2)}` // Approximate USD
+            },
+            gas: {
+                limit: gasLimit.toString(),
+                priceGwei: ethers.formatUnits(gasPrice, 'gwei'),
+                estimatedCost: {
+                    wei: estimatedGasCost.toString(),
+                    eth: estimatedCostEth.toFixed(6),
+                    usd: `~$${(estimatedCostEth * 2500).toFixed(2)}` // Approximate USD
+                }
+            }
         })
         
-        if (balance < estimatedGasCost) {
+        // Check if balance is sufficient (with 20% buffer for price fluctuations)
+        const requiredBalance = estimatedGasCost * 120n / 100n
+        if (balance < requiredBalance) {
             return {
                 success: false,
-                error: `Insufficient balance for gas. Balance: ${ethers.formatEther(balance)} ETH, Estimated cost: ${ethers.formatEther(estimatedGasCost)} ETH`
+                error: `Insufficient balance for gas. Balance: ${balanceEth.toFixed(6)} ETH (~$${(balanceEth * 2500).toFixed(2)}), Estimated cost: ${estimatedCostEth.toFixed(6)} ETH (~$${(estimatedCostEth * 2500).toFixed(2)}). Please add more ETH to your wallet.`
             }
         }
         
@@ -394,13 +415,14 @@ export async function emitLensEvent(
             extensionType,
             dataLength: dataBytes.length,
             contractAddress: lensKernelAddress,
-            walletAddress
+            walletAddress,
+            gasLimit: gasLimit.toString()
         })
         
         // Direct call with explicit gas limit to bypass estimation issues
-        // Use a generous gas limit (300k) to avoid estimation failures
+        // This prevents the require(false) error during estimateGas
         const tx = await lensContract.extendLens(extensionType, dataBytes, {
-            gasLimit: 300000n
+            gasLimit: gasLimit
         })
         
         debug('EmitLensEvent', 'Transaction sent', { txHash: tx.hash })
