@@ -141,7 +141,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                        style={{ boxShadow: '0 0 10px #22c55e' }}></div>
                   <div>
                     <div className="cockpit-label">DEPLOYMENT STATUS</div>
-                    <div className="cockpit-text text-sm mt-1">Base Testnet Live</div>
+                    <div className="cockpit-text text-sm mt-1">Base Mainnet Offline</div>
                   </div>
                 </div>
               </div>

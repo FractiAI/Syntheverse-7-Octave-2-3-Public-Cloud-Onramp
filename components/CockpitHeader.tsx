@@ -35,10 +35,10 @@ export default function CockpitHeader() {
                     <div className="flex items-center gap-6">
                         {/* Syntheverse Deployment Status */}
                         <div className="hidden md:flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" 
-                                 style={{ boxShadow: '0 0 8px #22c55e' }}></div>
+                            <div className="w-2 h-2 bg-red-500 rounded-full" 
+                                 style={{ boxShadow: '0 0 8px #ef4444' }}></div>
                             <div className="cockpit-badge">
-                                <span>BASE TESTNET LIVE</span>
+                                <span>BASE MAINNET OFFLINE</span>
                             </div>
                         </div>
                         <DashboardHeaderProfileDropdown />

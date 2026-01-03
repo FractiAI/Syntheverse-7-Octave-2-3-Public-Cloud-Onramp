@@ -17,8 +17,9 @@ import {
     DialogHeader, 
     DialogTitle 
 } from '@/components/ui/dialog'
-import { Loader2, RefreshCw, FileText, CheckCircle2, XCircle, Clock, CreditCard, ExternalLink } from 'lucide-react'
+import { Loader2, RefreshCw, FileText, CheckCircle2, XCircle, Clock, CreditCard, ExternalLink, Link2, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { debug, debugError } from '@/utils/debug'
 
 interface PoCSubmission {
     submission_hash: string
@@ -70,6 +71,10 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
     const [error, setError] = useState<string | null>(null)
     const [registering, setRegistering] = useState<string | null>(null)
     const [viewMode, setViewMode] = useState<ViewMode>('my')
+    const [onChainDialogOpen, setOnChainDialogOpen] = useState(false)
+    const [onChainLoading, setOnChainLoading] = useState(false)
+    const [onChainData, setOnChainData] = useState<any>(null)
+    const [onChainError, setOnChainError] = useState<string | null>(null)
 
     const mySubmissions = allSubmissions.filter(s => s.contributor === userEmail)
     const qualifiedSubmissions = allSubmissions.filter(s => s.qualified === true)

@@ -650,6 +650,106 @@ export async function queryMetalAllocatedEvents(
 }
 
 /**
+ * Query LensExtended events from SyntheverseGenesisLensKernel
+ * Filters for poc_registration extension type
+ * 
+ * @param fromBlock - Starting block number (optional)
+ * @param toBlock - Ending block number (optional)
+ * @returns Array of PoC registration events
+ */
+export async function queryPoCRegistrationEvents(
+    fromBlock?: number,
+    toBlock?: number
+): Promise<Array<{
+    submissionHash: string
+    contributor: string
+    contributorEmail: string
+    metal: string
+    metadata: any
+    submissionTextHash: string | null
+    timestamp: number
+    transactionHash: string
+    blockNumber: number
+    extensionType: string
+}>> {
+    try {
+        const config = getBaseMainnetConfig()
+        if (!config) {
+            debug('QueryPoCRegistrationEvents', 'Base configuration not available')
+            return []
+        }
+        
+        const { provider } = createBaseProvider(config)
+        
+        // Simple address normalization - trim only, trust ethers.getAddress()
+        const lensKernelAddress = ethers.getAddress(config.lensKernelAddress.trim())
+        
+        const lensContract = new ethers.Contract(
+            lensKernelAddress,
+            SyntheverseGenesisLensKernelABI,
+            provider
+        )
+        
+        // Query LensExtended events with extensionType = 'poc_registration'
+        const filter = lensContract.filters.LensExtended('poc_registration')
+        
+        const events = await lensContract.queryFilter(
+            filter,
+            fromBlock || 0,
+            toBlock || 'latest'
+        )
+        
+        debug('QueryPoCRegistrationEvents', `Found ${events.length} PoC registration events`)
+        
+        // Parse events and extract PoC data
+        const registrations = []
+        for (const event of events) {
+            try {
+                // Type guard for EventLog
+                if (!('args' in event) || !event.args) {
+                    continue
+                }
+                
+                const eventLog = event as ethers.EventLog
+                const extensionType = eventLog.args[0] as string
+                const dataBytes = eventLog.args[1] as string
+                const timestamp = Number(eventLog.args[2])
+                
+                // Decode the data bytes (should be UTF-8 JSON string)
+                const dataJson = ethers.toUtf8String(dataBytes)
+                const eventData = JSON.parse(dataJson)
+                
+                // Only process poc_registration events
+                if (eventData.type === 'poc_registration') {
+                    registrations.push({
+                        submissionHash: eventData.submissionHash,
+                        contributor: eventData.contributor,
+                        contributorEmail: eventData.contributorEmail,
+                        metal: eventData.metal,
+                        metadata: eventData.metadata,
+                        submissionTextHash: eventData.submissionTextHash,
+                        timestamp: eventData.timestamp || timestamp,
+                        transactionHash: eventLog.transactionHash,
+                        blockNumber: eventLog.blockNumber,
+                        extensionType
+                    })
+                }
+            } catch (parseError) {
+                debugError('QueryPoCRegistrationEvents', 'Failed to parse event', parseError)
+                // Continue with next event
+            }
+        }
+        
+        debug('QueryPoCRegistrationEvents', `Parsed ${registrations.length} valid PoC registrations`)
+        return registrations
+        
+    } catch (error) {
+        debugError('QueryPoCRegistrationEvents', 'Failed to query PoC registration events', error)
+        return []
+    }
+}
+
+/**
  * Verify transaction on Base (testnet or mainnet)
  */
 export async function verifyBaseTransaction(txHash: string): Promise<boolean> {
