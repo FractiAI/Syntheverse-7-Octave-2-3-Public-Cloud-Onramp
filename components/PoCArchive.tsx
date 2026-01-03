@@ -233,6 +233,28 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
         }
     }, [userEmail])
 
+    const fetchOnChainPoCs = async () => {
+        setOnChainLoading(true)
+        setOnChainError(null)
+        setOnChainDialogOpen(true)
+        
+        try {
+            const response = await fetch('/api/blockchain/on-chain-pocs')
+            const data = await response.json()
+            
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || data.message || 'Failed to fetch on-chain PoCs')
+            }
+            
+            setOnChainData(data)
+        } catch (error) {
+            debugError('PoCArchive', 'Failed to fetch on-chain PoCs', error)
+            setOnChainError(error instanceof Error ? error.message : 'Unknown error')
+        } finally {
+            setOnChainLoading(false)
+        }
+    }
+    
     async function fetchSubmissions() {
         setLoading(true)
         setError(null)
@@ -574,10 +596,21 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <CardTitle>PoC Submissions Archive</CardTitle>
-                            <Button variant="outline" size="sm" onClick={fetchSubmissions}>
-                                <RefreshCw className="h-4 w-4 mr-2" />
-                                Refresh
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={fetchOnChainPoCs}
+                                    className="border-blue-500 text-blue-500 hover:bg-blue-50"
+                                >
+                                    <Link2 className="h-4 w-4 mr-2" />
+                                    View On-Chain
+                                </Button>
+                                <Button variant="outline" size="sm" onClick={fetchSubmissions}>
+                                    <RefreshCw className="h-4 w-4 mr-2" />
+                                    Refresh
+                                </Button>
+                            </div>
                         </div>
                     </CardHeader>
                     <CardContent>

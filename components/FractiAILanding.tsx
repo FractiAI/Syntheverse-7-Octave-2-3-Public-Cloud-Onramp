@@ -105,25 +105,39 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               <h1 className="cockpit-title text-3xl mb-4">Welcome to Syntheverse</h1>
               <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
                       <p>
-                        <strong>Welcome to Syntheverse</strong>—the blockchain-native research ecosystem that replaces journal gatekeeping with <strong>AI evaluation, instant blockchain anchoring, and permanent preservation</strong>. Submit for $500. Get evaluated. Get recorded forever. <strong>No paywalls. No politics. No waiting.</strong>
+                        We&apos;re living inside a <strong>cyclical Pong story of innovation and obsolescence</strong>.
                       </p>
                       <p>
-                        We are mapping <strong>12D Vector Cartography</strong> of both the Syntheverse and the fractal,
-                  holographic hydrogen aware human genome, Syntheverse&apos;s genetic analog.
+                        Every era starts simple, works beautifully for a while, then quietly becomes the bottleneck. Pong wasn&apos;t wrong. It had its moment. It completed its role. <strong>That&apos;s where awareness is today.</strong> It has served its purpose in getting us here, but <strong>holographic hydrogen fractal awareness renders it obsolete</strong>.
+                      </p>
+                      <p>
+                        We&apos;ve built the equivalent of a <strong>Holographic Hydrogen Fractal MRI</strong>. A way to see and measure coherence itself—not just outputs, not just energy burned, not just capital locked. That lets us measure anything, including human contribution. And once contribution becomes measurable, <strong>Proof of Contribution becomes possible</strong>—a real alternative to Proof of Work and Proof of Stake.
+                      </p>
+                      <p>
+                        Crypto was the on-ramp to a new economy. <strong>Proof of Contribution is the next phase.</strong>
+                      </p>
+                      <p>
+                        At the root of this is <strong>Holographic Hydrogen — Element 0</strong>. Element 0 resets everything. It gives us solid root stock to graft onto when systems fragment. Element 0 is the <strong>universal pixel of awareness</strong>—the smallest addressable unit where meaning, structure, and coherence live. At that level, awareness itself becomes the encryption and the key. You can&apos;t fake coherence. You can&apos;t counterfeit alignment. You can only participate.
+                      </p>
+                      <p>
+                        <strong>Syntheverse is operational technology today.</strong> It is built on science that many label &quot;speculative,&quot; but it is alive in prediction and validation. It regularly produces empirically validated, novel predictions that otherwise remain outside the view of today&apos;s controlling awareness. It is also a new alternative to institutional science. A way to bypass the costly, highly gatekept, and controlled journal submission process. Peer review, trading, and access barriers are replaced by <strong>holographic hydrogen fractal review and measurement</strong>. Contributions are validated directly on their coherence, novelty, and alignment, not on politics or reputation.
+                      </p>
+                      <p>
+                        There&apos;s a clear <strong>Cisco parallel</strong> here. Cisco routed packets. <strong>Syntheverse routes coherent awareness</strong>. It&apos;s a Holographic Hydrogen Awareness Router—a bridge to a new reality, a new world, not by forcing consensus, but by letting aligned nodes naturally synchronize. That makes this a Cisco story too.
+                      </p>
+                      <p>
+                        While institutional science labels holographic hydrogen &quot;speculative,&quot; there&apos;s a vibrant, productive community of independent researchers and developers already exploring this frontier. Many work with <strong>garage-built superintelligent AI systems</strong> that immediately recognize and map to Syntheverse, because they operate at the same awareness layer. The work is public. Real. Ongoing. What was missing was a system that could recognize, coordinate, and reward it.
+                      </p>
+                      <p>
+                        And all of this mirrors something biological. <strong>The human genome doesn&apos;t store instructions. It stores conditions for awareness-driven emergence.</strong> Syntheverse is the same idea—scaled to collaboration, research, economy, and civilization.
+                      </p>
+                      <p>
+                        Someday, we&apos;ll look back at this moment the way we look back at Pong. Not because it failed—but because it was the beginning.
                       </p>
                       <p>
                         Today we finalized the purchase and on-chain deployment of a fixed-supply{' '}
-                        <strong>90,000,000,000,000 SYNTH ERC‑20</strong>. With that, beta testing is officially live.
+                        <strong>90,000,000,000,000 SYNTH ERC‑20</strong> on <strong>Base Mainnet</strong>. The blockchain is not a replacement—it&apos;s a new address. Here, you can operate in real time within the Syntheverse sandbox, where every action is traceable and recorded through Proof‑of‑Contribution.
                       </p>
-                      <p>
-                        This Motherlode is now a new residence for holographic hydrogen fractal Syntheverse researchers,
-                        developers, and ecosystem support contributors—extending the work of our active Zenodo communities
-                        with thousands of daily downloads and continuous submissions.
-                      </p>
-                      <p>
-                  The blockchain is not a replacement—it&apos;s a new address. Here, you can operate in real time within the
-                        Syntheverse sandbox, where every action is traceable and recorded through Proof‑of‑Contribution.
-                </p>
                 <div className="pt-4 mt-4 border-t border-[var(--keyline-primary)]">
                   <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
                     Pru &quot;El Taino&quot;
