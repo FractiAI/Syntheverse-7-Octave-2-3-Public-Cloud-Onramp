@@ -28,15 +28,20 @@
 
 This repository implements the **Syntheverse Protocol** - a public, implementation-agnostic specification for Proof-of-Contribution (PoC) primitives, scoring lenses, data models, and optional on-chain anchoring.
 
+### 🎯 SYNTH90T MOTHERLODE VAULT Opening
+
+**Welcome to Syntheverse!** The **SYNTH90T MOTHERLODE VAULT** will officially open for mining on **Spring Equinox, March 20, 2026**. All qualifying PoCs will be registered on-chain and allocated SYNTH, by score. **Be sure to get your best work in by March 19.**
+
 ### Key Concepts
 
 - **The Syntheverse Protocol**: Public specification for PoC primitives, scoring, and anchoring
 - **Operators**: Concrete implementations with infrastructure choices, policies, and costs
 - **FractiAI**: Reference operator maintaining this client
+- **SYNTH90T MOTHERLODE VAULT**: Fixed-supply 90 trillion SYNTH ERC-20 token allocation system
 
 ### What We're Building
 
-An operator-safe "lens + archive + optional anchoring" system where contributions become durable, auditable records—without token-sale framing.
+An operator-safe "lens + archive + optional anchoring" system where contributions become durable, auditable records—without token-sale framing. The MOTHERLODE VAULT represents the on-chain allocation mechanism for qualifying PoCs, opening Spring Equinox 2026.
 
 **Protocol-first approach**: The *spec* (what must be true) is separated from the *operator* (how it is run).
 
@@ -184,16 +189,30 @@ DEPLOYER_ADDRESS=0x...        # Public address
 - ✅ Gas balance checker implemented
 - ✅ Default network: Base Mainnet (Chain ID: 8453)
 - ✅ Ready for production PoC registrations
+- 🎯 **SYNTH90T MOTHERLODE VAULT Opening**: Spring Equinox, March 20, 2026
+- ⏰ **Submission Deadline**: March 19, 2026 (get your best work in by this date)
 
 ### 🔧 Recent Improvements (January 2025)
 
+- **SYNTH90T MOTHERLODE VAULT Announcement**: Vault opening Spring Equinox, March 20, 2026 - all qualifying PoCs registered on-chain and allocated SYNTH by score
+- **Operator Broadcast Banner**: Dismissible notification system for important operator messages (SYNTH90T MOTHERLODE VAULT opening announcement)
+- **Status Indicators**: Reusable status indicators showing Beta Active and Base Mainnet LIVE across all pages
+- **Updated Messaging**: Enhanced fractiai page with awareness obsolescence messaging aligned to vault opening
+- **Test Suite**: Complete test execution with 60/60 tests passing (100%)
+- **RLS Security**: Row Level Security policies enabled for all public Supabase tables
 - **Environment Variable Fixes**: Aggressive trimming of contract addresses to prevent newline issues
 - **Ownership Verification**: Automatic verification that wallet is contract owner before transactions
 - **Error Handling**: Enhanced error messages with detailed transaction information
 - **Vercel Integration**: Scripts to fix and update environment variables via CLI
 - **Debugging Tools**: Contract ownership verification and gas balance checking scripts
 
-### 📋 Future Enhancements
+### 📋 Upcoming Milestones
+
+- **March 19, 2026**: Submission deadline for SYNTH90T MOTHERLODE VAULT opening
+- **March 20, 2026**: Spring Equinox - SYNTH90T MOTHERLODE VAULT officially opens for mining
+- **Post-Vault Opening**: On-chain registration and SYNTH allocation for all qualifying PoCs
+
+### Future Enhancements
 
 - Wallet connection UI for user-controlled transactions
 - Enhanced on-chain data display components
@@ -636,10 +655,11 @@ Built for the Syntheverse ecosystem with ❤️
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 2.1 (Base Mainnet Production - Environment & Error Handling Improvements)
+**Last Updated**: January 3, 2025  
+**Version**: 2.2 (Operator Broadcast & Status Indicators)
 
 ### Recent Changes
 
+- **v2.2** (January 2025): Operator broadcast banner, status indicators, updated messaging, complete test suite (60/60 passing), RLS security
 - **v2.1** (January 2025): Environment variable fixes, ownership verification, enhanced error handling
 - **v2.0** (January 2025): Base Mainnet migration complete, production ready

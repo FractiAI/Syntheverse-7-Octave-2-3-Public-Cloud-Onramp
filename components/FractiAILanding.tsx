@@ -127,6 +127,25 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               </div>
             </div>
 
+            {/* SYNTH90T MOTHERLODE VAULT Opening Announcement */}
+            <div className="cockpit-panel p-6 border-l-4 border-amber-500 bg-gradient-to-r from-orange-900/50 to-amber-900/50 shadow-[0_0_12px_rgba(255,165,0,0.7)]">
+              <div className="cockpit-label mb-4" style={{ color: '#ffb84d' }}>SYNTH90T MOTHERLODE VAULT OPENING</div>
+              <div className="cockpit-text space-y-4" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
+                <p className="text-amber-200 font-semibold text-lg">
+                  Welcome to Syntheverse! The <strong>SYNTH90T MOTHERLODE VAULT</strong> will officially open for mining on <strong>Spring Equinox, March 20, 2026</strong>.
+                </p>
+                <p className="text-amber-100">
+                  All qualifying PoCs will be registered on-chain and allocated <strong>SYNTH, by score</strong>. This represents the on-chain allocation mechanism for the fixed-supply 90 trillion SYNTH ERC-20 token system.
+                </p>
+                <p className="text-amber-200 font-semibold">
+                  ⏰ <strong>Be sure to get your best work in by March 19, 2026</strong> to qualify for the vault opening allocation.
+                </p>
+                <p className="text-amber-100 text-sm">
+                  The MOTHERLODE VAULT represents the culmination of the Syntheverse protocol—where contributions become measurable, verifiable, and permanently anchored on-chain. Every qualifying PoC submitted before the deadline will be evaluated, scored, and allocated SYNTH tokens based on their holographic hydrogen fractal lens evaluation.
+                </p>
+              </div>
+            </div>
+
             {/* Deployment status */}
             {variant === 'fractiai' ? (
               <div className="cockpit-panel p-5 border-l-2 border-green-500">
