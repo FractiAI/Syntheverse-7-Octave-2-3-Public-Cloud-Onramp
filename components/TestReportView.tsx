@@ -433,7 +433,7 @@ export default function TestReportView() {
                             </div>
                             <div className="cockpit-text text-xs mb-1" style={{ opacity: 0.7 }}>Legacy: Deterministic Scoring</div>
                             <div className="cockpit-text text-sm">
-                                HHF-AI lens consistency validated against Earth 2026 deterministic scoring standards
+                                SynthScan™ MRI consistency validated against Earth 2026 deterministic scoring standards
                             </div>
                         </div>
                         <div className="p-4 border border-[var(--hydrogen-amber)] bg-[var(--cockpit-carbon)] rounded">

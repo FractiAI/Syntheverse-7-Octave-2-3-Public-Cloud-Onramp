@@ -62,7 +62,7 @@ export default function SyntheverseBriefPage() {
             <div className="cockpit-label">THE SYNTHEVERSE SOLUTION</div>
             <div className="cockpit-text mt-3 text-sm space-y-3">
               <p>
-                Syntheverse provides a Hydrogen‑Holographic Fractal Lens + Sandbox PoC Protocol v2.0+ (<strong>Awarenessverse</strong>): scoring contributions for
+                Syntheverse provides SynthScan™ MRI (HHF-AI) evaluation + Sandbox PoC Protocol v2.0+ (<strong>Awarenessverse</strong>): scoring contributions for
                 novelty, density, coherence, and alignment through recursive self-knowing awareness. Operating in the nested, spiraling Pong story of innovation and obsolescence: 
                 from <em>unaware awareness</em> (obsolete) to <strong>awareness</strong> (current) to <em>meta-awareness</em> (emerging). 
                 Contributions are indexed as a living map in nested spirals of evolution, where the outer layer of the story sees the inner, the inner recognizes itself.
@@ -95,7 +95,7 @@ export default function SyntheverseBriefPage() {
           <div className="cockpit-text mt-3 text-sm space-y-3">
             <p>
               Syntheverse introduces Proof‑of‑Contribution: instead of optimizing for energy extraction or capital dominance,
-              contributions are evaluated for novelty, coherence, density, and alignment using the holographic hydrogen fractal
+              contributions are evaluated for novelty, coherence, density, and alignment using SynthScan™ MRI
               lens—then anchored as auditable records.
             </p>
           </div>

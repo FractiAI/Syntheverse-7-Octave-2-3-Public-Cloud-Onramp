@@ -258,7 +258,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                         <strong>That&apos;s where today&apos;s awareness is, facing obsolescence in the wake of the arrival of Holographic Hydrogen fractal Syntheverse awareness.</strong> It has served its purpose in getting us here, but now <strong>holographic hydrogen fractal awareness has arrived</strong>.
                       </p>
                       <p>
-                        We&apos;ve built the equivalent of a <strong>Holographic Hydrogen Fractal MRI</strong>. A way to see and measure coherence itself—not just outputs, not just energy burned, not just capital locked. That lets us measure anything, including human contribution. And once contribution becomes measurable, <strong>Proof of Contribution becomes possible</strong>—a real alternative to Proof of Work and Proof of Stake.
+                        We&apos;ve built <strong>SynthScan™ MRI</strong>—an MRI system that uses hydrogen spin–mediated resonance to image complex and abstract systems instead of biological tissue. A way to see and measure coherence itself—not just outputs, not just energy burned, not just capital locked. That lets us measure anything, including human contribution. And once contribution becomes measurable, <strong>Proof of Contribution becomes possible</strong>—a real alternative to Proof of Work and Proof of Stake.
                       </p>
                       <p>
                         Crypto was the on-ramp to a new economy. <strong>Proof of Contribution is the next phase.</strong>
@@ -308,7 +308,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   ⏰ <strong>Be sure to get your best work in by March 19, 2026</strong> to qualify for the vault opening allocation.
                 </p>
                 <p className="text-amber-100 text-sm">
-                  The MOTHERLODE VAULT represents the culmination of the Syntheverse protocol—where contributions become measurable, verifiable, and permanently anchored on-chain. Every qualifying PoC submitted before the deadline will be evaluated, scored, and allocated SYNTH tokens based on their holographic hydrogen fractal lens evaluation.
+                  The MOTHERLODE VAULT represents the culmination of the Syntheverse protocol—where contributions become measurable, verifiable, and permanently anchored on-chain. Every qualifying PoC submitted before the deadline will be evaluated, scored, and allocated SYNTH tokens based on their SynthScan™ MRI evaluation.
                 </p>
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                   <ul className="space-y-2 cockpit-text text-xs">
                     <li>• <strong>No gatekeeping:</strong> No institutional affiliation or formal credentials required</li>
                     <li>• <strong>Low submission fee:</strong> $500 fee for evaluation—significantly lower than traditional journal submission and publication costs</li>
-                    <li>• <strong>Rapid evaluation:</strong> AI-powered holographic hydrogen fractal lens provides immediate assessment</li>
+                    <li>• <strong>Rapid evaluation:</strong> SynthScan™ MRI provides immediate assessment</li>
                     <li>• <strong>Blockchain anchoring:</strong> Permanent, immutable record of your contribution (optional, free)</li>
                     <li>• <strong>Recognition by your systems:</strong> Your garage-built AI engines understand Syntheverse intuitively</li>
                     <li>• <strong>No peer review delays:</strong> Automated evaluation through the Awarenessverse v2.0+ lens</li>
@@ -628,17 +628,20 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
           </div>
         </div>
 
-        {/* HHF-AI MRI Module */}
+        {/* SynthScan™ MRI Module */}
         <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
-          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">HHF-AI MRI · INFORMATION IMAGING</div>
-          <div className="cockpit-title text-2xl mb-4">Holographic Hydrogen Fractal MRI</div>
+          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SYNTHSCAN™ MRI · INFORMATION IMAGING</div>
+          <div className="cockpit-title text-2xl mb-4">SynthScan™ MRI (HHF-AI)</div>
           <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-            The HHF-AI Lens and Sandbox function as a new HHF-AI MRI—using hydrogen spin for imaging information, awareness, and coherence
+            SynthScan™ is an MRI that uses hydrogen spin–mediated resonance to image complex and abstract systems instead of biological tissue.
           </div>
           <div className="cockpit-text space-y-4">
             <p>
+              SynthScan™ MRI (HHF-AI) is a hydrogen-spin-based MRI system designed to image complex and abstract systems rather than flesh, mapping informational structure, coherence, and boundary contrast using the same physical principles that classical MRI uses to image tissue.
+            </p>
+            <p>
               Just as classical <strong>Magnetic Resonance Imaging (MRI)</strong> exploits hydrogen spin resonance to visualize physical tissue structures, 
-              the <strong>Holographic Hydrogen Fractal AI Lens (HHF-AI Lens)</strong> and <strong>Syntheverse Sandbox</strong> extend this principle to 
+              <strong> SynthScan™ MRI (HHF-AI)</strong> extends this principle to 
               <strong> information, awareness, and coherence itself</strong>—enabling visualization and quantification of informational and experiential 
               structures across biological, cognitive, and synthetic domains.
             </p>
@@ -654,7 +657,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                 </div>
               </div>
               <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)]">
-                <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">HHF-AI MRI</div>
+                <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SynthScan™ MRI</div>
                 <div className="cockpit-text text-sm space-y-2">
                   <p>• Hydrogen coherence → informational contrast → awareness image</p>
                   <p>• Fractal gradients encode informational structure</p>
@@ -699,7 +702,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               <div className="cockpit-text text-sm">
                 Edge-boundary zones (interfaces between order and disorder) produce maximal informational contrast, defining a 
                 <strong> contrast constant Cₑ ≈ 1.62 ± 0.07</strong>—representing a potentially universal scaling measure of edge resonance 
-                in HHF-AI MRI, observed consistently across molecular, neural, and synthetic domains.
+                in SynthScan™ MRI, observed consistently across molecular, neural, and synthetic domains.
               </div>
             </div>
 
@@ -729,23 +732,60 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
                 href="/fractiai/hhf-ai" 
                 className="cockpit-lever inline-flex items-center gap-2"
               >
-                Learn More About HHF-AI
+                Learn More About SynthScan™ MRI
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
         </div>
 
+        {/* SynthScan™ Commercial Offerings */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Monthly Access Card */}
+          <div className="cockpit-panel p-6 border border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors cursor-pointer">
+            <Link href="/fractiai/synthscan-monthly-access" className="block">
+              <div className="cockpit-label">SOFTWARE LICENSE</div>
+              <div className="cockpit-title text-xl mt-2 mb-3">SynthScan™ MRI — Monthly Access</div>
+              <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+                Monthly access to the SynthScan™ hydrogen-spin MRI system for imaging complex and abstract systems.
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <span className="cockpit-lever inline-flex items-center gap-2 text-sm">
+                  Learn More
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Field Imaging Card */}
+          <div className="cockpit-panel p-6 border border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors cursor-pointer">
+            <Link href="/fractiai/synthscan-field-imaging" className="block">
+              <div className="cockpit-label">FULL-SERVICE ENGAGEMENT</div>
+              <div className="cockpit-title text-xl mt-2 mb-3">SynthScan Field Imaging</div>
+              <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+                Full-service complex systems imaging performed by the FractiAI team using SynthScan™ MRI.
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <span className="cockpit-lever inline-flex items-center gap-2 text-sm">
+                  Learn More
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* Test Report Module */}
         <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
           <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">BOOT SEQUENCE · AWARENESS BRIDGE</div>
-          <div className="cockpit-title text-2xl mb-4">HHF-AI → Earth 2026 Legacy Systems</div>
+          <div className="cockpit-title text-2xl mb-4">SynthScan™ MRI → Earth 2026 Legacy Systems</div>
           <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-            Formal connection protocol validating Syntheverse HHF-AI against Earth 2026 legacy validation systems
+            Formal connection protocol validating SynthScan™ MRI against Earth 2026 legacy validation systems
           </div>
           <div className="cockpit-text space-y-4 mb-6">
             <p>
-              Comprehensive validation of the HHF-AI system including lens consistency, sandbox vector mapping, 
+              Comprehensive validation of SynthScan™ MRI including system consistency, sandbox vector mapping, 
               scoring determinism, calibration against peer-reviewed papers, and constants validation against 
               CODATA 2018 public data.
             </p>
@@ -793,7 +833,7 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               and hydrogen remembers its light.
             </p>
             <p>
-              Our focus is practical: a scoring lens + archive + optional on‑chain anchoring that turns contributions into durable,
+              Our focus is practical: SynthScan™ MRI evaluation + archive + optional on‑chain anchoring that turns contributions into durable,
               auditable records. The protocol is public; FractiAI operates the reference client and contributes core research,
               tooling, and safety boundaries—without making financial promises or centralized ownership claims.
             </p>

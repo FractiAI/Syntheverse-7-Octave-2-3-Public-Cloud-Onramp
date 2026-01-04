@@ -68,7 +68,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
             </p>
             <ul style="margin: 0; padding-left: 25px; color: #e0e0e0; line-height: 1.8;">
                 <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Independent Collaboration:</strong> Work on your own timeline, in your own space, transcending traditional publication and institutional silos</li>
-                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Regenerative PoC System:</strong> Every contribution strengthens the ecosystem through our Holographic Hydrogen Fractal Syntheverse Lens and Sandbox evaluation</li>
+                <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Regenerative PoC System:</strong> Every contribution strengthens the ecosystem through SynthScan™ MRI evaluation</li>
                 <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Internal Coordination Marker:</strong> SYNTH is a fixed-supply ERC-20 coordination marker used within Syntheverse experiments—not an investment, not a sale, and not for external trading</li>
                 <li style="margin-bottom: 10px;"><strong style="color: #ffb84d;">Blockchain Legacy:</strong> Your work is permanently recorded, verifiable, and contributes to training the next generation of intelligent systems</li>
             </ul>
@@ -142,7 +142,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<{ succes
                     <li><strong style="color: #ffb84d;">Novelty:</strong> Originality and frontier contribution</li>
                     <li><strong style="color: #ffb84d;">Density:</strong> Information richness and depth</li>
                     <li><strong style="color: #ffb84d;">Coherence:</strong> Internal consistency and clarity</li>
-                    <li><strong style="color: #ffb84d;">Alignment:</strong> Fit with holographic hydrogen fractal principles</li>
+                    <li><strong style="color: #ffb84d;">Alignment:</strong> Fit with Syntheverse principles</li>
                 </ul>
                 <p style="font-size: 14px; color: #e0e0e0; line-height: 1.7; margin: 10px 0 0 0;">
                     Redundancy penalties are applied to prioritize unique contributions. Qualified PoCs (≥8,000 for Founder epoch) can be registered on-chain.

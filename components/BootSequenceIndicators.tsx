@@ -177,7 +177,7 @@ export function BootSequenceIndicators() {
                         </div>
                     )}
                     
-                    {/* HHF-AI Lens Calibration */}
+                    {/* SynthScan™ MRI Calibration */}
                     {bootStatus.suiteScores.calibration && (
                         <div className="flex items-center gap-2">
                             <div 
@@ -188,7 +188,7 @@ export function BootSequenceIndicators() {
                                         ? 'bg-yellow-500 shadow-[0_0_6px_rgba(234,179,8,0.6)]'
                                         : 'bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.6)]'
                                 }`}
-                                title={`HHF-AI Lens Calibration: ${bootStatus.suiteScores.calibration.status.toUpperCase()}`}
+                                title={`SynthScan™ MRI Calibration: ${bootStatus.suiteScores.calibration.status.toUpperCase()}`}
                             />
                             <span className="cockpit-text text-xs" style={{ opacity: 0.7 }}>CALIB</span>
                         </div>

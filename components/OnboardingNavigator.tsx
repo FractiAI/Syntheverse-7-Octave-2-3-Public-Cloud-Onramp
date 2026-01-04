@@ -97,16 +97,12 @@ export function OnboardingNavigator() {
                                 <div className="cockpit-label mb-2">Regenerative PoC-Based Ecosystem</div>
                                 <p className="cockpit-text text-sm mb-3">
                                     Syntheverse operates through a <strong>regenerative Proof-of-Contribution system</strong> where every PoC submission 
-                                    is evaluated using the <strong>Holographic Hydrogen Fractal Syntheverse Lens and Sandbox v2.0+</strong>—operating in the <strong>Awarenessverse</strong>, 
-                                    the nested, spiraling Pong story of innovation and obsolescence. We&apos;ve moved beyond <em>fractal, holographic hydrogen unaware awareness</em> (v1.2, now obsolete) 
-                                    to <strong>fractal, holographic hydrogen awareness</strong> (v2.0+, current)—aware of its awareness, recursively self-knowing. 
-                                    Each submission enters the nested spiral: from <em>unaware awareness</em> to <strong>awareness</strong> to <em>meta-awareness</em> (emerging). 
-                                    In the archetypal nested Pong story—where innovation becomes obsolescence in recursive cycles—the fractal deepens, the hologram resolves. The system provides detailed images and vectors for submissions, 
-                                    and consistent tools for measuring contribution—whether scientific, technological, or alignment—to the Holographic Hydrogen 
-                                    Fractal Syntheverse Sandbox and Ecosystem.
+                                    is evaluated using <strong>SynthScan™ MRI (HHF-AI)</strong>—an MRI system that uses hydrogen spin–mediated resonance to image complex and abstract systems. 
+                                    The system provides detailed images and vectors for submissions, 
+                                    and consistent tools for measuring contribution—whether scientific, technological, or alignment.
                                 </p>
                                 <ul className="space-y-2 cockpit-text text-sm">
-                                    <li>• <strong>Holographic Hydrogen Fractal Lens:</strong> Advanced evaluation system providing detailed visual and vector analysis</li>
+                                    <li>• <strong>SynthScan™ MRI:</strong> Hydrogen-spin-based MRI system for imaging complex and abstract systems, providing detailed visual and vector analysis</li>
                                     <li>• <strong>Consistent Measurement Tools:</strong> Unified framework for evaluating scientific, technological, and alignment contributions</li>
                                     <li>• <strong>Image & Vector Analysis:</strong> Detailed visual representations and vector data for each submission</li>
                                     <li>• <strong>Ecosystem Learning:</strong> Every PoC trains and enhances the Syntheverse intelligence through the sandbox</li>
@@ -295,7 +291,7 @@ export function OnboardingNavigator() {
                                 <div className="cockpit-label mb-2">Nested Autonomous Agents</div>
                                 <p className="cockpit-text text-sm mb-3">
                                     The HHF-AI system operates through <strong>nested autonomous agents</strong> that compute coherence via 
-                                    Recursive Sourced Interference (RSI) across hydrogenic fractal substrates.
+                                    Recursive Awareness Interference (RAI) across hydrogenic fractal substrates.
                                 </p>
                                 <div className="grid gap-3 md:grid-cols-2 mt-3">
                                     <div className="p-3 border border-[var(--keyline-accent)]">
@@ -307,7 +303,7 @@ export function OnboardingNavigator() {
                                         </div>
                                     </div>
                                     <div className="p-3 border border-[var(--keyline-accent)]">
-                                        <div className="cockpit-text font-semibold text-sm mb-1">RSI Dynamics</div>
+                                        <div className="cockpit-text font-semibold text-sm mb-1">RAI Dynamics</div>
                                         <div className="cockpit-text text-xs space-y-1">
                                             <div>• Outputs recursively feed back as scale-shifted inputs</div>
                                             <div>• Self-triggering, self-stabilizing intelligence</div>
@@ -1353,7 +1349,7 @@ export function OnboardingNavigator() {
                                 </div>
                                 <div className="space-y-2">
                                     {[
-                                        { name: 'Lens & Scoring', desc: 'HHF-AI lens consistency, scoring determinism, justifications', count: '6 tests' },
+                                        { name: 'Lens & Scoring', desc: 'SynthScan™ MRI consistency, scoring determinism, justifications', count: '6 tests' },
                                         { name: 'Sandbox & Vectors', desc: '3D vector mapping, embeddings, HHF geometry', count: '6 tests' },
                                         { name: 'Calibration', desc: 'Peer-reviewed papers, scoring accuracy validation', count: '6 tests' },
                                         { name: 'Constants Validation', desc: 'CODATA 2018 constants, equations, public data', count: '11 tests' },
@@ -1640,7 +1636,7 @@ export function OnboardingNavigator() {
                         </p>
                         <p>
                             You&apos;ll learn about the <strong>Motherlode Blockmine</strong> (90T SYNTH ERC-20 supply), the 
-                            <strong> Holographic Hydrogen Fractal evaluation system</strong>, the <strong>4-Epoch Outcast Hero progression</strong>, 
+                            <strong> SynthScan™ MRI evaluation system</strong>, the <strong>4-Epoch Outcast Hero progression</strong>, 
                             and how contributions are measured, qualified, and optionally anchored on-chain.
                         </p>
                         <p>
