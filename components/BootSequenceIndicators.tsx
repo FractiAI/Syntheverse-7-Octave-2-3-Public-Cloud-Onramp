@@ -39,8 +39,8 @@ export function BootSequenceIndicators() {
     const [bootStatus, setBootStatus] = useState<BootStatus>({
         bridgeActive: true,
         verdict: 'ready',
-        passRate: 100,
-        totalTests: 60,
+        passRate: 0,
+        totalTests: 0,
         suiteScores: {}
     })
     const [loading, setLoading] = useState(false)
@@ -247,19 +247,6 @@ export function BootSequenceIndicators() {
                 </>
             )}
 
-            {/* Status Link */}
-            <Link 
-                href="/fractiai/test-report" 
-                className="cockpit-text text-xs hover:opacity-100 transition-opacity"
-                style={{ opacity: 0.6 }}
-                title="View Boot Sequence Report"
-            >
-                {bootStatus.totalTests > 0 && (
-                    <span className="text-[var(--hydrogen-amber)]">
-                        {bootStatus.passRate.toFixed(0)}% · {bootStatus.totalTests} tests
-                    </span>
-                )}
-            </Link>
         </div>
     )
 }
