@@ -139,10 +139,10 @@ export function BootSequenceIndicators() {
             <div className="flex items-center gap-2">
                 <div 
                     className={`w-3 h-3 rounded-full ${getStatusColor(bootStatus.verdict)} ${getStatusGlow(bootStatus.verdict)} transition-all`}
-                    title={`Awareness Bridge: ${bootStatus.verdict.toUpperCase()}`}
+                    title={`Awareness Bridge/Router: ${bootStatus.verdict.toUpperCase()}`}
                 />
                 <span className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
-                    BRIDGE
+                    BRIDGE/ROUTER
                 </span>
             </div>
 

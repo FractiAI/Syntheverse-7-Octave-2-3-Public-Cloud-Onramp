@@ -88,7 +88,7 @@ export default function TestReportView() {
         return (
             <div className="cockpit-panel p-8 text-center border-2 border-[var(--hydrogen-amber)]">
                 <div className="cockpit-label text-[var(--hydrogen-amber)] mb-4">BOOT SEQUENCE INITIALIZING</div>
-                <div className="cockpit-text">Establishing Awareness Bridge connection...</div>
+                <div className="cockpit-text">Establishing Awareness Bridge/Router connection...</div>
                 <div className="cockpit-text text-xs mt-2" style={{ opacity: 0.7 }}>
                     Validating HHF-AI → Earth 2026 legacy systems handshake
                 </div>
@@ -100,14 +100,14 @@ export default function TestReportView() {
         return (
             <div className="cockpit-panel p-8 border-2 border-[var(--hydrogen-amber)]">
                 <div className="cockpit-label mb-4 text-[var(--hydrogen-amber)]">BOOT SEQUENCE · BRIDGE INITIALIZATION</div>
-                <div className="cockpit-title text-2xl mb-4">Awareness Bridge Not Initialized</div>
+                <div className="cockpit-title text-2xl mb-4">Awareness Bridge/Router Not Initialized</div>
                 <div className="cockpit-text mb-6">
-                    Boot sequence has not been executed. Run the validation suite to initialize the HHF-AI → Earth 2026 legacy systems bridge.
+                    Boot sequence has not been executed. Run the validation suite to initialize the HHF-AI → Earth 2026 legacy systems Bridge/Router.
                 </div>
                 <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] rounded mb-6">
-                    <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">Bridge Initialization Required</div>
+                    <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">Bridge/Router Initialization Required</div>
                     <div className="cockpit-text text-sm">
-                        The Awareness Bridge requires validation against Earth 2026 legacy systems before connection can be established.
+                        The Awareness Bridge/Router requires validation against Earth 2026 legacy systems before connection can be established.
                         Execute the test suite to begin boot sequence.
                     </div>
                 </div>
@@ -188,13 +188,13 @@ export default function TestReportView() {
 
             {/* Boot Sequence Status */}
             <div className="cockpit-panel p-6 bg-[rgba(255,184,77,0.05)] border border-[var(--hydrogen-amber)]">
-                <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">BRIDGE STATUS</div>
+                <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">BRIDGE/ROUTER STATUS</div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="p-4 border border-[var(--hydrogen-amber)] bg-black/20 rounded">
                         <div className="cockpit-text text-xs mb-2" style={{ opacity: 0.8 }}>SYNTHEVERSE → EARTH 2026</div>
-                        <div className="cockpit-title text-lg">Awareness Bridge Active</div>
+                        <div className="cockpit-title text-lg">Awareness Bridge/Router Active</div>
                         <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.7 }}>
-                            HHF-AI protocols validated against legacy validation frameworks
+                            HHF-AI protocols validated against legacy validation frameworks via Bridge/Router
                         </div>
                     </div>
                     <div className="p-4 border border-[var(--hydrogen-amber)] bg-black/20 rounded">
@@ -206,9 +206,9 @@ export default function TestReportView() {
                     </div>
                 </div>
                 
-                {/* Bridge Test Status */}
+                {/* Bridge/Router Test Status */}
                 <div className="mt-4 pt-4 border-t border-[var(--hydrogen-amber)]">
-                    <div className="cockpit-label mb-3 text-xs" style={{ opacity: 0.9 }}>BRIDGE TEST STATUS</div>
+                    <div className="cockpit-label mb-3 text-xs" style={{ opacity: 0.9 }}>BRIDGE/ROUTER TEST STATUS</div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {(() => {
                             const suiteMap: Record<string, { label: string; suiteId: string }> = {
@@ -252,7 +252,7 @@ export default function TestReportView() {
                 <CardHeader>
                     <CardTitle className="cockpit-title text-xl flex items-center gap-2 text-[var(--hydrogen-amber)]">
                         <BarChart3 className="h-5 w-5" />
-                        Boot Sequence Summary · Bridge Validation Report
+                        Boot Sequence Summary · Bridge/Router Validation Report
                     </CardTitle>
                     <div className="cockpit-text text-xs mt-2" style={{ opacity: 0.8 }}>
                         Formal validation connecting Syntheverse HHF-AI to Earth 2026 legacy validation systems
@@ -263,15 +263,15 @@ export default function TestReportView() {
                     <div className={`p-4 border-2 rounded ${getVerdictColor(report.readiness.verdict)}`}>
                         <div className="flex items-center gap-3 mb-2">
                             <Target className="h-6 w-6" />
-                            <div className="cockpit-title text-xl">Bridge Connection Status: {report.readiness.verdict.toUpperCase()}</div>
+                            <div className="cockpit-title text-xl">Bridge/Router Connection Status: {report.readiness.verdict.toUpperCase()}</div>
                         </div>
                         <div className="cockpit-text text-sm mt-2">
-                            {report.readiness.verdict === 'ready' && 'Awareness Bridge fully operational. Syntheverse HHF-AI successfully connected to Earth 2026 legacy validation systems. All protocols verified.'}
-                            {report.readiness.verdict === 'conditional' && 'Bridge connection established with minor protocol deviations. Legacy system compatibility confirmed with recommended updates.'}
-                            {report.readiness.verdict === 'not_ready' && 'Bridge initialization incomplete. Protocol validation required before Earth 2026 legacy system handshake.'}
+                            {report.readiness.verdict === 'ready' && 'Awareness Bridge/Router fully operational. Syntheverse HHF-AI successfully connected to Earth 2026 legacy validation systems. All protocols verified.'}
+                            {report.readiness.verdict === 'conditional' && 'Bridge/Router connection established with minor protocol deviations. Legacy system compatibility confirmed with recommended updates.'}
+                            {report.readiness.verdict === 'not_ready' && 'Bridge/Router initialization incomplete. Protocol validation required before Earth 2026 legacy system handshake.'}
                         </div>
                         <div className="cockpit-text text-xs mt-3 p-2 bg-black/20 rounded" style={{ opacity: 0.8 }}>
-                            <strong>Bridge Protocol:</strong> HHF-AI validation framework ↔ Earth 2026 standard test protocols (CODATA, peer-review, deterministic scoring)
+                            <strong>Bridge/Router Protocol:</strong> HHF-AI validation framework ↔ Earth 2026 standard test protocols (CODATA, peer-review, deterministic scoring)
                         </div>
                     </div>
 
