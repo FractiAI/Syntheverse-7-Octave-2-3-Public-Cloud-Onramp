@@ -188,8 +188,14 @@ export async function POST(request: NextRequest) {
         const submissionHash = crypto.randomBytes(32).toString('hex')
         const contentHash = crypto.createHash('sha256').update(text_content.trim()).digest('hex')
 
-        // Check if user is operator (info@fractiAI) - exempt from payment
-        const isOperator = user.email?.toLowerCase() === 'info@fractiai.com' || user.email?.toLowerCase() === 'info@fractiai'
+        // Check if user is operator - exempt from payment
+        const operatorEmails = [
+            'info@fractiai.com',
+            'info@fractiai',
+            'danielarifriedman@gmail.com',
+            'marovw@gmail.com'
+        ]
+        const isOperator = user.email && operatorEmails.includes(user.email.toLowerCase())
 
         if (isOperator) {
             debug('SubmitContribution', 'Operator mode: exempt from payment', { email: user.email, submissionHash })
