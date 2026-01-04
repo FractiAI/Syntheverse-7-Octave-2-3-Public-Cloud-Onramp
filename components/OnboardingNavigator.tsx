@@ -49,9 +49,13 @@ export function OnboardingNavigator() {
     const topRef = useRef<HTMLDivElement | null>(null)
     const lessonRef = useRef<HTMLDivElement | null>(null)
 
-    // Scroll to top of page when onboarding page is first loaded (when onboarding button is selected)
+    // Scroll to top of page (ONBOARDING NAVIGATOR section) when onboarding page is first loaded
     useEffect(() => {
-        topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // Small delay to ensure page is fully rendered
+        const timer = setTimeout(() => {
+            topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 100)
+        return () => clearTimeout(timer)
     }, [])
 
     // Scroll to the top of the lesson content (not the top of the page) when navigating modules.
