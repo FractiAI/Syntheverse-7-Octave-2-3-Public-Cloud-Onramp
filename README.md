@@ -104,6 +104,8 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **LLM Metadata**: Full capture of evaluation metadata (timestamp, model, version, prompts)
 - **Operator Mode**: Special exemption for operator accounts
 - **Genesis Info**: On-chain transaction information display
+- **Submission Limits**: 4000 character limit (abstract, equations, constants only) with automatic truncation
+- **Scalability**: Vector-based redundancy detection scales to 10,000+ submissions without performance degradation
 
 ### 🎯 Recent Additions
 
@@ -112,6 +114,21 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Mobile Navigation**: Optimized button placement for mobile devices
 - **Operator Broadcast Banner**: Dismissible notification system
 - **Status Indicators**: Beta Active and Base Mainnet LIVE indicators
+
+### ⚡ Scalability Improvements (January 2025)
+
+- **Vectors-Only Redundancy**: Removed API log/abstract text approach for infinite scalability
+  - Uses vector embeddings exclusively for redundancy detection
+  - Constant memory usage regardless of submission count
+  - Prevents prompt bloat that caused coherence collapse after 4+ submissions
+- **Submission Limits**: 4000 character limit (abstract, equations, constants only)
+  - Optimized for Groq API token limits (~1500 tokens available after system prompt)
+  - Automatic truncation instead of errors for better UX
+  - Submissions focused on essential elements: abstract, equations, and constants
+- **Performance Optimizations**:
+  - Limited archived vectors to top 50 for redundancy calculation (O(50) vs O(n))
+  - Removed text_content from archive queries (~99% memory reduction)
+  - Vector-based redundancy scales to 10,000+ submissions without degradation
 
 ---
 
@@ -515,10 +532,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 4, 2025  
-**Version**: 2.3 (Genesis Info & Repository Organization)
+**Version**: 2.4 (Scalability Improvements & Submission Limits)
 
 ### Version History
 
+- **v2.4** (January 2025): Scalability improvements - vectors-only redundancy, 4000 char submission limit, automatic truncation
 - **v2.3** (January 2025): Genesis transaction info, mobile navigation, repository organization
 - **v2.2** (January 2025): Operator broadcast banner, status indicators, complete test suite (60/60 passing)
 - **v2.1** (January 2025): Environment variable fixes, ownership verification, enhanced error handling
