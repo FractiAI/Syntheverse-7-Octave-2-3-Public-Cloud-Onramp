@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import StripePricingTable from '@/components/StripePricingTable'
+import SynthScanPricingTiers from '@/components/SynthScanPricingTiers'
 import '../dashboard-cockpit.css'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -14,17 +14,6 @@ export default async function SubscribePage({ searchParams }: { searchParams?: {
     // Redirect to login if not authenticated
     if (authError || !user || !user.email) {
         redirect('/login')
-    }
-
-    // Create customer session for Stripe Pricing Table
-    let customerSessionSecret = ''
-    try {
-        // Use createStripeCheckoutSession which handles customer session creation
-        const { createStripeCheckoutSession } = await import('@/utils/stripe/api')
-        customerSessionSecret = await createStripeCheckoutSession(user.email)
-    } catch (error) {
-        console.error('Error creating customer session:', error)
-        // Continue without customer session (pricing table will still work, just without pre-fill)
     }
 
     const redirectPath = searchParams?.redirect || '/dashboard'
@@ -48,7 +37,7 @@ export default async function SubscribePage({ searchParams }: { searchParams?: {
                 </div>
 
                 <div className="cockpit-panel p-6">
-                    <StripePricingTable checkoutSessionSecret={customerSessionSecret} />
+                    <SynthScanPricingTiers />
                 </div>
 
                 <div className="cockpit-panel p-6">
