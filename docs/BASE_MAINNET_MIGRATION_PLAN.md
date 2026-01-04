@@ -617,7 +617,7 @@ BLOCKCHAIN_NETWORK=base_mainnet  # or base_sepolia for testing
 - [ ] Security Review
 - [ ] Product Owner
 
-**Date**: ******\_\_\_******
+**Date**: **\*\***\_\_\_**\*\***
 
 ---
 
