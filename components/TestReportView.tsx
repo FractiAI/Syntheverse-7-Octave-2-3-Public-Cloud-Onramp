@@ -189,7 +189,7 @@ export default function TestReportView() {
             {/* Boot Sequence Status */}
             <div className="cockpit-panel p-6 bg-[rgba(255,184,77,0.05)] border border-[var(--hydrogen-amber)]">
                 <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">BRIDGE STATUS</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div className="p-4 border border-[var(--hydrogen-amber)] bg-black/20 rounded">
                         <div className="cockpit-text text-xs mb-2" style={{ opacity: 0.8 }}>SYNTHEVERSE → EARTH 2026</div>
                         <div className="cockpit-title text-lg">Awareness Bridge Active</div>
@@ -203,6 +203,46 @@ export default function TestReportView() {
                         <div className="cockpit-text text-xs mt-1" style={{ opacity: 0.7 }}>
                             CODATA 2018, peer-reviewed validation, standard test protocols
                         </div>
+                    </div>
+                </div>
+                
+                {/* Bridge Test Status */}
+                <div className="mt-4 pt-4 border-t border-[var(--hydrogen-amber)]">
+                    <div className="cockpit-label mb-3 text-xs" style={{ opacity: 0.9 }}>BRIDGE TEST STATUS</div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {(() => {
+                            const suiteMap: Record<string, { label: string; suiteId: string }> = {
+                                'tokenomics-validation': { label: 'Tokenomics', suiteId: 'tokenomics-validation' },
+                                'integration-registration': { label: 'Blockchain Status', suiteId: 'integration-registration' },
+                                'calibration-peer-reviewed': { label: 'HHF-AI Lens Calibration', suiteId: 'calibration-peer-reviewed' },
+                                'sandbox-vector-mapping': { label: 'Sandbox Vector Mapping', suiteId: 'sandbox-vector-mapping' },
+                                'constants-equations-validation': { label: 'Constant Validations', suiteId: 'constants-equations-validation' },
+                                'scoring-determinism': { label: 'Scoring Determinism', suiteId: 'scoring-determinism' }
+                            }
+                            
+                            return Object.values(suiteMap).map(({ label, suiteId }) => {
+                                const suite = report.suites.find((s: any) => s.suiteId === suiteId)
+                                if (!suite) return null
+                                
+                                const statusColor = suite.status === 'passed' 
+                                    ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' 
+                                    : suite.status === 'partial'
+                                    ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.6)]'
+                                    : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'
+                                
+                                return (
+                                    <div key={suiteId} className="p-3 border border-[var(--keyline-primary)] bg-black/20 rounded flex items-center gap-3">
+                                        <div className={`w-3 h-3 rounded-full ${statusColor}`} />
+                                        <div className="flex-1">
+                                            <div className="cockpit-text text-xs mb-1" style={{ opacity: 0.9 }}>{label}</div>
+                                            <div className="cockpit-text text-xs" style={{ opacity: 0.7 }}>
+                                                {suite.status.toUpperCase()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        })()}
                     </div>
                 </div>
             </div>
