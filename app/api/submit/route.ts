@@ -158,20 +158,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Character limit enforcement: 4000 characters max (abstract, equations, constants only)
-    // This matches Groq API token limits: ~1500 tokens available after system prompt
-    const MAX_CONTENT_LENGTH = 4000;
-    if (text_content.trim().length > MAX_CONTENT_LENGTH) {
-      const corsHeaders = createCorsHeaders(request);
-      corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value));
-      return NextResponse.json(
-        {
-          error: 'Submission exceeds character limit',
-          message: `Maximum length: ${MAX_CONTENT_LENGTH.toLocaleString()} characters. Your submission: ${text_content.trim().length.toLocaleString()} characters (${(text_content.trim().length - MAX_CONTENT_LENGTH).toLocaleString()} over limit). Please reduce your submission to abstract, equations, and constants only.`,
-        },
-        { status: 400, headers: rateLimitHeaders }
-      );
-    }
+    // Content will be truncated to 4000 characters during evaluation if needed
+    // (handled in evaluate.ts to prevent Groq API token limit errors)
 
     // Get base URL for Stripe redirects
     let baseUrl: string | undefined = (

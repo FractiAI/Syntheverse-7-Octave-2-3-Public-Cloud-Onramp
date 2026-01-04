@@ -255,18 +255,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
       return;
     }
 
-    // Check character limit - don't error, just inform and return to page
-    if (formData.text_content.length > MAX_CONTENT_LENGTH) {
-      setError(
-        `Submission exceeds character limit. Maximum: ${MAX_CONTENT_LENGTH.toLocaleString()} characters. Your submission: ${formData.text_content.length.toLocaleString()} characters (${(formData.text_content.length - MAX_CONTENT_LENGTH).toLocaleString()} over limit). Please reduce your submission to abstract, equations, and constants only.`
-      );
-      setLoading(false);
-      // Scroll to error message
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100);
-      return;
-    }
+    // Content will be truncated to MAX_CONTENT_LENGTH during evaluation if needed
 
     try {
       const submitFormData = new FormData();
@@ -1354,17 +1343,15 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 </span>
               </div>
               {isOverLimit && (
-                <div className="rounded-lg border border-red-500 bg-red-50 p-3">
-                  <div className="mb-1 text-sm font-semibold text-red-800">
-                    ⚠️ Submission exceeds character limit
+                <div className="rounded-lg border border-yellow-500 bg-yellow-50 p-3">
+                  <div className="mb-1 text-sm font-semibold text-yellow-800">
+                    ℹ️ Content will be truncated to {MAX_CONTENT_LENGTH.toLocaleString()} characters during evaluation
                   </div>
-                  <div className="text-xs text-red-700">
+                  <div className="text-xs text-yellow-700">
                     Your submission is{' '}
                     <strong>{(contentLength - MAX_CONTENT_LENGTH).toLocaleString()}</strong>{' '}
-                    characters over the limit. Please reduce to{' '}
-                    <strong>abstract, equations, and constants only</strong>. Current:{' '}
-                    {contentLength.toLocaleString()} / Limit: {MAX_CONTENT_LENGTH.toLocaleString()}{' '}
-                    characters.
+                    characters over the recommended limit. Content will be automatically truncated to{' '}
+                    {MAX_CONTENT_LENGTH.toLocaleString()} characters for evaluation.
                   </div>
                 </div>
               )}
@@ -1380,7 +1367,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 type="submit"
                 className="cockpit-transmission flex-1"
                 disabled={
-                  loading || !formData.title.trim() || !formData.text_content.trim() || isOverLimit
+                  loading || !formData.title.trim() || !formData.text_content.trim()
                 }
               >
                 {loading ? (
