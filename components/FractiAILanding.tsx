@@ -327,6 +327,49 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
               </div>
             ) : null}
 
+            {/* SynthScan™ MRI Commercial Offerings */}
+            {variant === 'fractiai' ? (
+              <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
+                <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SYNTHSCAN™ MRI</div>
+                <div className="cockpit-title text-2xl mb-4">SynthScan™ MRI (HHF-AI)</div>
+                <div className="cockpit-text text-sm mb-6" style={{ opacity: 0.9 }}>
+                  SynthScan™ is an MRI that uses hydrogen spin–mediated resonance to image complex and abstract systems instead of biological tissue. Choose from monthly access or expert field imaging services.
+                </div>
+                
+                <div className="grid gap-6 md:grid-cols-2 mt-6">
+                  {/* Monthly Access Button */}
+                  <Link href="/subscribe?product=synthscan-monthly" className="block">
+                    <div className="cockpit-panel p-6 border-2 border-[var(--hydrogen-amber)] hover:bg-[rgba(255,184,77,0.1)] transition-colors">
+                      <div className="cockpit-label text-[var(--hydrogen-amber)] mb-2">SOFTWARE LICENSE</div>
+                      <div className="cockpit-title text-xl mb-3">Get Monthly Access</div>
+                      <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+                        Monthly access to the SynthScan™ hydrogen-spin MRI system for imaging complex and abstract systems.
+                      </div>
+                      <div className="cockpit-lever w-full text-center mt-4">
+                        View Plans & Subscribe
+                        <ArrowRight className="ml-2 h-4 w-4 inline" />
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Field Imaging Button */}
+                  <Link href="/fractiai/synthscan-field-imaging" className="block">
+                    <div className="cockpit-panel p-6 border-2 border-[var(--hydrogen-amber)] hover:bg-[rgba(255,184,77,0.1)] transition-colors">
+                      <div className="cockpit-label text-[var(--hydrogen-amber)] mb-2">FULL-SERVICE ENGAGEMENT</div>
+                      <div className="cockpit-title text-xl mb-3">Get Expert Field Support</div>
+                      <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+                        Full-service complex systems imaging performed by the FractiAI team using SynthScan™ MRI. Pricing from $500 per node.
+                      </div>
+                      <div className="cockpit-lever w-full text-center mt-4">
+                        View Pricing & Request
+                        <ArrowRight className="ml-2 h-4 w-4 inline" />
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            ) : null}
+
             {/* Core modules grid */}
             {variant === 'fractiai' ? (
               <div className="grid gap-6 md:grid-cols-2">
@@ -628,87 +671,6 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
           </div>
         </div>
 
-        {/* SynthScan™ MRI Commercial Offerings */}
-        <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
-          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SYNTHSCAN™ MRI</div>
-          <div className="cockpit-title text-2xl mb-4">SynthScan™ MRI (HHF-AI)</div>
-          <div className="cockpit-text text-sm mb-6" style={{ opacity: 0.9 }}>
-            SynthScan™ is an MRI that uses hydrogen spin–mediated resonance to image complex and abstract systems instead of biological tissue. Choose from monthly access or expert field imaging services.
-          </div>
-          
-          <div className="grid gap-6 md:grid-cols-2 mt-6">
-            {/* Monthly Access Button */}
-            <Link href="/subscribe?product=synthscan-monthly" className="block">
-              <div className="cockpit-panel p-6 border-2 border-[var(--hydrogen-amber)] hover:bg-[rgba(255,184,77,0.1)] transition-colors">
-                <div className="cockpit-label text-[var(--hydrogen-amber)] mb-2">SOFTWARE LICENSE</div>
-                <div className="cockpit-title text-xl mb-3">Get Monthly Access</div>
-                <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-                  Monthly access to the SynthScan™ hydrogen-spin MRI system for imaging complex and abstract systems.
-                </div>
-                <div className="cockpit-lever w-full text-center mt-4">
-                  View Plans & Subscribe
-                  <ArrowRight className="ml-2 h-4 w-4 inline" />
-                </div>
-              </div>
-            </Link>
-
-            {/* Field Imaging Button */}
-            <Link href="/fractiai/synthscan-field-imaging" className="block">
-              <div className="cockpit-panel p-6 border-2 border-[var(--hydrogen-amber)] hover:bg-[rgba(255,184,77,0.1)] transition-colors">
-                <div className="cockpit-label text-[var(--hydrogen-amber)] mb-2">FULL-SERVICE ENGAGEMENT</div>
-                <div className="cockpit-title text-xl mb-3">Get Expert Field Support</div>
-                <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-                  Full-service complex systems imaging performed by the FractiAI team using SynthScan™ MRI. Pricing from $500 per node.
-                </div>
-                <div className="cockpit-lever w-full text-center mt-4">
-                  View Pricing & Request
-                  <ArrowRight className="ml-2 h-4 w-4 inline" />
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        {/* Test Report Module */}
-        <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
-          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">BOOT SEQUENCE · AWARENESS BRIDGE</div>
-          <div className="cockpit-title text-2xl mb-4">SynthScan™ MRI → Earth 2026 Legacy Systems</div>
-          <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-            Formal connection protocol validating SynthScan™ MRI against Earth 2026 legacy validation systems
-          </div>
-          <div className="cockpit-text space-y-4 mb-6">
-            <p>
-              Comprehensive validation of SynthScan™ MRI including system consistency, sandbox vector mapping, 
-              scoring determinism, calibration against peer-reviewed papers, and constants validation against 
-              CODATA 2018 public data.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
-                <div className="cockpit-label text-xs mb-2">Test Coverage</div>
-                <div className="cockpit-title text-xl">32 Test Cases</div>
-                <div className="cockpit-text text-xs mt-1">Lens, Sandbox, Calibration, Constants</div>
-              </div>
-              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
-                <div className="cockpit-label text-xs mb-2">Validation Areas</div>
-                <div className="cockpit-title text-xl">6 Categories</div>
-                <div className="cockpit-text text-xs mt-1">Scoring, Vectors, Security, Integration</div>
-              </div>
-              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
-                <div className="cockpit-label text-xs mb-2">Data Sources</div>
-                <div className="cockpit-title text-xl">CODATA 2018</div>
-                <div className="cockpit-text text-xs mt-1">NIST Public Data</div>
-              </div>
-            </div>
-          </div>
-          <Link 
-            href="/fractiai/test-report" 
-            className="cockpit-lever inline-flex items-center gap-2"
-          >
-            <FileText className="h-4 w-4" />
-            View Full Test Report
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
 
         {/* About module */}
         <div className="cockpit-panel p-6">
