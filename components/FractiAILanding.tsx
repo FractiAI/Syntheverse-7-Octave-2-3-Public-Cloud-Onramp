@@ -380,9 +380,7 @@ export default function FractiAILanding({
               <div className="cockpit-label mb-4" style={{ color: '#ffb84d' }}>
                 SYNTH90T MOTHERLODE VAULT OPENING
               </div>
-              <div
-                className="mb-4 border-l-2 border-amber-500 bg-amber-500/20 px-4 py-2 text-xs text-amber-300"
-              >
+              <div className="mb-4 border-l-2 border-amber-500 bg-amber-500/20 px-4 py-2 text-xs text-amber-300">
                 <strong>ERC-20 BOUNDARY:</strong> SYNTH tokens are ERC-20 internal coordination
                 units for protocol accounting only. Not an investment, security, or financial
                 instrument. No guaranteed value, no profit expectation.

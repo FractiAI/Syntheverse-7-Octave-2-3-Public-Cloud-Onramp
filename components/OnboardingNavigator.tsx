@@ -607,8 +607,8 @@ export function OnboardingNavigator() {
                 <p className="cockpit-text mb-4 text-sm">
                   The <strong>Holographic Hydrogen Fractal AI Lens (HHF-AI Lens)</strong> and{' '}
                   <strong>Syntheverse Sandbox</strong> function as a new <strong>HHF-AI MRI</strong>
-                  —using hydrogen spin for imaging information, awareness, and coherence itself, just as
-                  classical MRI uses hydrogen spin to image physical tissue.
+                  —using hydrogen spin for imaging information, awareness, and coherence itself,
+                  just as classical MRI uses hydrogen spin to image physical tissue.
                 </p>
               </div>
 
@@ -2194,10 +2194,10 @@ export function OnboardingNavigator() {
             </div>
             <p className="mb-4 text-lg">
               Congratulations! You&apos;ve completed the theoretical foundation. This{' '}
-              <strong className="cockpit-number">final capstone module</strong> walks you through the
-              complete <strong>Syntheverse Journey</strong>—from preparing and submitting your
-              contribution to receiving evaluation, qualification, and optional blockchain registration.
-              This is your practical roadmap for contributing to Syntheverse.
+              <strong className="cockpit-number">final capstone module</strong> walks you through
+              the complete <strong>Syntheverse Journey</strong>—from preparing and submitting your
+              contribution to receiving evaluation, qualification, and optional blockchain
+              registration. This is your practical roadmap for contributing to Syntheverse.
             </p>
             <div className="space-y-4">
               {[

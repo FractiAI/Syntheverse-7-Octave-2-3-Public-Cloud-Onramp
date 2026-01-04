@@ -39,9 +39,7 @@ export function SectionMotherlode() {
             🏛️ SYNTH90T MOTHERLODE VAULT
           </h2>
 
-          <div
-            className="mx-auto mb-3 max-w-2xl border-l-2 border-amber-500 bg-amber-500/10 px-4 py-2 text-xs text-amber-400"
-          >
+          <div className="mx-auto mb-3 max-w-2xl border-l-2 border-amber-500 bg-amber-500/10 px-4 py-2 text-xs text-amber-400">
             <strong>ERC-20 BOUNDARY:</strong> SYNTH tokens are ERC-20 internal coordination units
             for protocol accounting only. Not an investment, security, or financial instrument. No
             guaranteed value, no profit expectation.
