@@ -11,10 +11,9 @@ import Link from "next/link"
 
 interface SubmitContributionFormProps {
     userEmail: string
-    defaultCategory?: string
 }
 
-export default function SubmitContributionForm({ userEmail, defaultCategory = 'scientific' }: SubmitContributionFormProps) {
+export default function SubmitContributionForm({ userEmail }: SubmitContributionFormProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [loading, setLoading] = useState(false)
@@ -34,7 +33,6 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
     
     const [formData, setFormData] = useState({
         title: '',
-        category: defaultCategory,
         text_content: '' as string,
     })
     const [processingSupport, setProcessingSupport] = useState<string | null>(null)
@@ -255,7 +253,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
             submitFormData.append('title', formData.title)
             // Text-only submission (copy/paste)
             submitFormData.append('text_content', formData.text_content)
-            submitFormData.append('category', formData.category)
+            // Category is determined by evaluation, not user input
             submitFormData.append('contributor', userEmail)
 
             // Create an AbortController for timeout handling
@@ -586,7 +584,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                         setSuccess(false)
                                         setSubmissionHash(null)
                                         setError(null)
-                                            setFormData({ title: '', category: defaultCategory, text_content: '' })
+                                            setFormData({ title: '', text_content: '' })
                                     }}
                                     className="mt-2"
                                 >
@@ -1049,7 +1047,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                         setEvaluationStatus(null)
                                                         setSuccess(false)
                                                         setSubmissionHash(null)
-                                                        setFormData({ title: '', category: defaultCategory, text_content: '' })
+                                                        setFormData({ title: '', text_content: '' })
                                                         router.push('/dashboard')
                                                     }}
                                                     variant="outline"
@@ -1061,7 +1059,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                                         setEvaluationStatus(null)
                                                         setSuccess(false)
                                                         setSubmissionHash(null)
-                                                        setFormData({ title: '', category: defaultCategory, text_content: '' })
+                                                        setFormData({ title: '', text_content: '' })
                                                         router.push('/dashboard')
                                                     }}
                                                 >
@@ -1093,22 +1091,6 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                                 required
                                 disabled={loading}
                             />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="category" className="cockpit-label">Category *</Label>
-                            <select
-                                id="category"
-                                className="cockpit-select"
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                required
-                                disabled={loading}
-                            >
-                                <option value="scientific">Scientific Discovery</option>
-                                <option value="tech">Technological Innovation</option>
-                                <option value="alignment">Alignment Research</option>
-                            </select>
                         </div>
 
                         <div className="space-y-2">

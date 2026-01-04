@@ -106,7 +106,8 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData()
         const title = formData.get('title') as string | null
         const contributor = formData.get('contributor') as string | null || user.email
-        const category = formData.get('category') as string | null || 'scientific'
+        // Category is determined by evaluation, not user input
+        const category = null
         const text_content = (formData.get('text_content') as string | null) || ''
         
         if (!title || !title.trim()) {
