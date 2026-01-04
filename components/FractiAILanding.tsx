@@ -628,149 +628,42 @@ export default function FractiAILanding({ variant = 'home', isAuthenticated = fa
           </div>
         </div>
 
-        {/* SynthScan™ MRI Module */}
+        {/* SynthScan™ MRI Commercial Offerings */}
         <div className="cockpit-panel p-6 border border-[var(--hydrogen-amber)]">
-          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SYNTHSCAN™ MRI · INFORMATION IMAGING</div>
+          <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SYNTHSCAN™ MRI</div>
           <div className="cockpit-title text-2xl mb-4">SynthScan™ MRI (HHF-AI)</div>
-          <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-            SynthScan™ is an MRI that uses hydrogen spin–mediated resonance to image complex and abstract systems instead of biological tissue.
+          <div className="cockpit-text text-sm mb-6" style={{ opacity: 0.9 }}>
+            SynthScan™ is an MRI that uses hydrogen spin–mediated resonance to image complex and abstract systems instead of biological tissue. Choose from monthly access or expert field imaging services.
           </div>
-          <div className="cockpit-text space-y-4">
-            <p>
-              SynthScan™ MRI (HHF-AI) is a hydrogen-spin-based MRI system designed to image complex and abstract systems rather than flesh, mapping informational structure, coherence, and boundary contrast using the same physical principles that classical MRI uses to image tissue.
-            </p>
-            <p>
-              Just as classical <strong>Magnetic Resonance Imaging (MRI)</strong> exploits hydrogen spin resonance to visualize physical tissue structures, 
-              <strong> SynthScan™ MRI (HHF-AI)</strong> extends this principle to 
-              <strong> information, awareness, and coherence itself</strong>—enabling visualization and quantification of informational and experiential 
-              structures across biological, cognitive, and synthetic domains.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]">
-                <div className="cockpit-label mb-2">Classical MRI</div>
-                <div className="cockpit-text text-sm space-y-2">
-                  <p>• Hydrogen spin → tissue contrast → spatial image</p>
-                  <p>• Magnetic gradients encode spatial information</p>
-                  <p>• T1/T2 relaxation reveals tissue boundaries</p>
-                  <p>• Edge contrast emerges from differential hydrogen resonance</p>
+          
+          <div className="grid gap-6 md:grid-cols-2 mt-6">
+            {/* Monthly Access Button */}
+            <Link href="/subscribe?product=synthscan-monthly" className="block">
+              <div className="cockpit-panel p-6 border-2 border-[var(--hydrogen-amber)] hover:bg-[rgba(255,184,77,0.1)] transition-colors">
+                <div className="cockpit-label text-[var(--hydrogen-amber)] mb-2">SOFTWARE LICENSE</div>
+                <div className="cockpit-title text-xl mb-3">Get Monthly Access</div>
+                <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+                  Monthly access to the SynthScan™ hydrogen-spin MRI system for imaging complex and abstract systems.
                 </div>
-              </div>
-              <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)]">
-                <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">SynthScan™ MRI</div>
-                <div className="cockpit-text text-sm space-y-2">
-                  <p>• Hydrogen coherence → informational contrast → awareness image</p>
-                  <p>• Fractal gradients encode informational structure</p>
-                  <p>• Edge sweet spots reveal maximal resonance zones</p>
-                  <p>• Contrast constant Cₑ ≈ 1.62 ± 0.07 governs edge resonance</p>
+                <div className="cockpit-lever w-full text-center mt-4">
+                  View Plans & Subscribe
+                  <ArrowRight className="ml-2 h-4 w-4 inline" />
                 </div>
-              </div>
-            </div>
-
-            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] mt-4">
-              <div className="cockpit-label mb-3">Key Capabilities</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <div className="cockpit-text text-sm font-semibold mb-1">Nested Layer Resolution</div>
-                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
-                    Resolves multiple informational layers simultaneously, rather than sequentially—unavailable to linear approaches
-                  </div>
-                </div>
-                <div>
-                  <div className="cockpit-text text-sm font-semibold mb-1">Edge Sweet Spots</div>
-                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
-                    Identifies zones of maximal resonance at boundaries between order and disorder, measured by contrast constant Cₑ
-                  </div>
-                </div>
-                <div>
-                  <div className="cockpit-text text-sm font-semibold mb-1">Fractal Coherence Density</div>
-                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
-                    Measures information-rich systems via holographic hydrogen–mediated resonance gradients, not signal amplitude alone
-                  </div>
-                </div>
-                <div>
-                  <div className="cockpit-text text-sm font-semibold mb-1">Predictive Signatures</div>
-                  <div className="cockpit-text text-xs" style={{ opacity: 0.8 }}>
-                    Yields repeatable, predictive informational signatures where linear metrics fail or decohere
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] mt-4">
-              <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">Contrast Constant (Cₑ)</div>
-              <div className="cockpit-text text-sm">
-                Edge-boundary zones (interfaces between order and disorder) produce maximal informational contrast, defining a 
-                <strong> contrast constant Cₑ ≈ 1.62 ± 0.07</strong>—representing a potentially universal scaling measure of edge resonance 
-                in SynthScan™ MRI, observed consistently across molecular, neural, and synthetic domains.
-              </div>
-            </div>
-
-            <div className="p-4 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] mt-4">
-              <div className="cockpit-label mb-3">Validated Predictions</div>
-              <div className="cockpit-text text-sm space-y-2">
-                <p>
-                  <strong>Information-rich systems</strong> exhibit holographic hydrogen–mediated resonance gradients, measurable as 
-                  fractal coherence density rather than signal amplitude alone.
-                </p>
-                <p>
-                  <strong>Edge zones</strong> produce maximal informational contrast, with Cₑ providing quantifiable constant for 
-                  maximal edge resonance.
-                </p>
-                <p>
-                  <strong>Fractal-aware measurement</strong> yields repeatable, predictive informational signatures where linear metrics 
-                  fail or decohere.
-                </p>
-                <p>
-                  <strong>Holographic hydrogen scanning</strong> resolves nested informational layers simultaneously, rather than sequentially.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <Link 
-                href="/fractiai/hhf-ai" 
-                className="cockpit-lever inline-flex items-center gap-2"
-              >
-                Learn More About SynthScan™ MRI
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* SynthScan™ Commercial Offerings */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Monthly Access Card */}
-          <div className="cockpit-panel p-6 border border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors cursor-pointer">
-            <Link href="/fractiai/synthscan-monthly-access" className="block">
-              <div className="cockpit-label">SOFTWARE LICENSE</div>
-              <div className="cockpit-title text-xl mt-2 mb-3">SynthScan™ MRI — Monthly Access</div>
-              <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-                Monthly access to the SynthScan™ hydrogen-spin MRI system for imaging complex and abstract systems.
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <span className="cockpit-lever inline-flex items-center gap-2 text-sm">
-                  Learn More
-                  <ArrowRight className="h-4 w-4" />
-                </span>
               </div>
             </Link>
-          </div>
 
-          {/* Field Imaging Card */}
-          <div className="cockpit-panel p-6 border border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors cursor-pointer">
+            {/* Field Imaging Button */}
             <Link href="/fractiai/synthscan-field-imaging" className="block">
-              <div className="cockpit-label">FULL-SERVICE ENGAGEMENT</div>
-              <div className="cockpit-title text-xl mt-2 mb-3">SynthScan Field Imaging</div>
-              <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
-                Full-service complex systems imaging performed by the FractiAI team using SynthScan™ MRI.
-              </div>
-              <div className="flex items-center justify-between mt-4">
-                <span className="cockpit-lever inline-flex items-center gap-2 text-sm">
-                  Learn More
-                  <ArrowRight className="h-4 w-4" />
-                </span>
+              <div className="cockpit-panel p-6 border-2 border-[var(--hydrogen-amber)] hover:bg-[rgba(255,184,77,0.1)] transition-colors">
+                <div className="cockpit-label text-[var(--hydrogen-amber)] mb-2">FULL-SERVICE ENGAGEMENT</div>
+                <div className="cockpit-title text-xl mb-3">Get Expert Field Support</div>
+                <div className="cockpit-text text-sm mb-4" style={{ opacity: 0.9 }}>
+                  Full-service complex systems imaging performed by the FractiAI team using SynthScan™ MRI. Pricing from $500 per node.
+                </div>
+                <div className="cockpit-lever w-full text-center mt-4">
+                  View Pricing & Request
+                  <ArrowRight className="ml-2 h-4 w-4 inline" />
+                </div>
               </div>
             </Link>
           </div>
