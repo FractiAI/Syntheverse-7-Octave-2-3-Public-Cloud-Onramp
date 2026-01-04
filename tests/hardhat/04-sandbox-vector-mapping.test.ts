@@ -23,6 +23,7 @@ const reporter = new TestReporter()
 const HHF_CONSTANT = 1.12e22
 
 describe('Sandbox Vector Mapping', function () {
+    // NOTE: Tests backend vector mapping functionality (3D display UI is disabled, but backend works)
     this.timeout(300000) // 5 minutes
     
     before(() => {
@@ -177,7 +178,7 @@ describe('Sandbox Vector Mapping', function () {
             // Create test embeddings
             const embedding1 = Array(1536).fill(0.5)
             const embedding2 = Array(1536).fill(0.5) // Identical
-            const embedding3 = Array(1536).fill(0.0) // Different
+            const embedding3 = Array(1536).fill(0.1) // Different (not all zeros to avoid division issues)
             
             // Calculate cosine similarity (helper function)
             const cosineSimilarity = (a: number[], b: number[]): number => {
@@ -369,9 +370,9 @@ describe('Sandbox Vector Mapping', function () {
             const constantCorrect = Math.abs(hhfConstant - expectedConstant) < 1e15 // Allow for floating point precision
             
             // Verify scale factor calculation
-            // Scale factor = log10(HHF_CONSTANT) / 10 ≈ 2.05
+            // Scale factor = log10(HHF_CONSTANT) / 10 ≈ 2.20
             const scaleFactor = Math.log10(hhfConstant) / 10
-            const expectedScaleFactor = 2.05
+            const expectedScaleFactor = 2.20
             const scaleFactorCorrect = Math.abs(scaleFactor - expectedScaleFactor) < 0.1
             
             // Test coordinate mapping uses the constant
@@ -385,10 +386,13 @@ describe('Sandbox Vector Mapping', function () {
             const coordinates = mapTo3DCoordinates(testParams)
             
             // Coordinates should reflect HHF scaling
+            // With scale factor ~2.20, coordinates should be in reasonable range
+            // For scores 2000/1800/1900 out of 2500, scaled coordinates should be positive and reasonable
+            // Expected: x ~176, y ~158, z ~167
             const coordinatesReflectScaling = (
-                coordinates.x > 0 && coordinates.x < 2000 && // Scaled from 0-2500 range
-                coordinates.y > 0 && coordinates.y < 2000 &&
-                coordinates.z > 0 && coordinates.z < 2000
+                coordinates.x > 0 && coordinates.x < 300 && // Scaled coordinates should be reasonable
+                coordinates.y > 0 && coordinates.y < 300 &&
+                coordinates.z > 0 && coordinates.z < 300
             )
             
             const allValid = constantCorrect && scaleFactorCorrect && coordinatesReflectScaling

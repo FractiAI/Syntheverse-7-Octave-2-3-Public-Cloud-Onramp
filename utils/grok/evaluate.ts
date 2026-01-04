@@ -11,6 +11,9 @@ import {
 } from '@/utils/vectors'
 import { SYNTHEVERSE_SYSTEM_PROMPT } from '@/utils/grok/system-prompt'
 import crypto from 'crypto'
+// Import archive utilities statically to avoid dynamic import issues in tests
+import { extractArchiveData } from '@/utils/archive/extract'
+import { findTop3Matches } from '@/utils/archive/find-matches'
 
 interface ArchivedPoC {
     submission_hash: string
@@ -130,7 +133,7 @@ export async function evaluateWithGrok(
     })
     
     // Extract archive data from current submission for matching
-    const { extractArchiveData } = await import('@/utils/archive/extract')
+    // Using static import to avoid dynamic import path resolution issues
     const currentArchiveData = extractArchiveData(textContent, title)
     
     // Generate vector embedding and 3D coordinates for current submission
@@ -186,7 +189,7 @@ export async function evaluateWithGrok(
         } : null
         
         // Find top 3 matches using archive data (reduced from 9 to reduce token usage)
-        const { findTop3Matches } = await import('@/utils/archive/find-matches')
+        // Using static import to avoid dynamic import path resolution issues
         top3Matches = await findTop3Matches(
             currentArchiveData.abstract,
             currentArchiveData.formulas,

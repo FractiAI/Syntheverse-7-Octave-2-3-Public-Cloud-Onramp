@@ -522,12 +522,12 @@ describe('Constants and Equations Validation', function () {
             const hhfConstant = getHHFConstant()
             const calculatedScaleFactor = Math.log10(hhfConstant) / 10
             
-            // Expected value: ~2.05
-            const expectedScaleFactor = 2.05
+            // Expected value: log10(1.12e22) / 10 ≈ 2.2049
+            const expectedScaleFactor = 2.2049
             const tolerance = 0.01
             
             const valueMatches = Math.abs(calculatedScaleFactor - expectedScaleFactor) < tolerance
-            const inRange = calculatedScaleFactor > 2.04 && calculatedScaleFactor < 2.06
+            const inRange = calculatedScaleFactor > 2.19 && calculatedScaleFactor < 2.21
             
             const allValid = valueMatches && inRange
             const duration = Date.now() - startTime
