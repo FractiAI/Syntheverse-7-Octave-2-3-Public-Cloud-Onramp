@@ -115,7 +115,8 @@ export async function evaluateWithGrok(
   const MAX_CONTENT_LENGTH = 4000;
   const truncatedText =
     textContent.length > MAX_CONTENT_LENGTH
-      ? textContent.substring(0, MAX_CONTENT_LENGTH).trimEnd() + '\n\n[Content truncated for evaluation]'
+      ? textContent.substring(0, MAX_CONTENT_LENGTH).trimEnd() +
+        '\n\n[Content truncated for evaluation]'
       : textContent;
 
   debug('EvaluateWithGrok', 'Calling Grok API for evaluation', {

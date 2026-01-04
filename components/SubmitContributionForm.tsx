@@ -1345,13 +1345,14 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
               {isOverLimit && (
                 <div className="rounded-lg border border-yellow-500 bg-yellow-50 p-3">
                   <div className="mb-1 text-sm font-semibold text-yellow-800">
-                    ℹ️ Content will be truncated to {MAX_CONTENT_LENGTH.toLocaleString()} characters during evaluation
+                    ℹ️ Content will be truncated to {MAX_CONTENT_LENGTH.toLocaleString()} characters
+                    during evaluation
                   </div>
                   <div className="text-xs text-yellow-700">
                     Your submission is{' '}
                     <strong>{(contentLength - MAX_CONTENT_LENGTH).toLocaleString()}</strong>{' '}
-                    characters over the recommended limit. Content will be automatically truncated to{' '}
-                    {MAX_CONTENT_LENGTH.toLocaleString()} characters for evaluation.
+                    characters over the recommended limit. Content will be automatically truncated
+                    to {MAX_CONTENT_LENGTH.toLocaleString()} characters for evaluation.
                   </div>
                 </div>
               )}
@@ -1366,9 +1367,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
               <button
                 type="submit"
                 className="cockpit-transmission flex-1"
-                disabled={
-                  loading || !formData.title.trim() || !formData.text_content.trim()
-                }
+                disabled={loading || !formData.title.trim() || !formData.text_content.trim()}
               >
                 {loading ? (
                   <>
