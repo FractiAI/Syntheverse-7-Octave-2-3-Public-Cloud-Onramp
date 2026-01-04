@@ -302,7 +302,7 @@ export default function SubmitContributionForm({ userEmail, defaultCategory = 's
                 setSubmissionHash(result.submission_hash)
                 setSuccess(true)
                 setLoading(false)
-                setMessage('Operator submission accepted. Evaluation in progress.')
+                // Show success message via success state
                 return
             } else if (result.checkout_url && result.submission_hash) {
                 // Redirect to Stripe checkout for payment ($500 submission fee)
