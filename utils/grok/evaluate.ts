@@ -443,7 +443,8 @@ Notes:
         
         // Groq on-demand tier enforces strict per-request token budgets (TPM). To avoid 413/TPM errors,
         // cap max_tokens and retry with smaller budgets if needed.
-        const tokenBudgets = [1200, 800, 500]
+        // Increased initial budget to 2000 to allow complete JSON responses (Grok was hitting limit at 1200)
+        const tokenBudgets = [2000, 1500, 1200, 800, 500]
         let response: Response | null = null
         let lastErrorText: string | null = null
 
@@ -584,36 +585,77 @@ Notes:
                 return Number.isFinite(n) ? n : 0
             }
 
-            const extractScoreFromTable = (label: string): number => {
-                const re = new RegExp(`\\|\\s*${label}\\s*\\|\\s*([\\d,\\.]+)\\s*\\|`, 'i')
-                const m = text.match(re)
-                return m?.[1] ? normalizeNum(m[1]) : 0
+            // Extract score from multiple formats:
+            // 1. Table format: | Novelty | 2,400 |
+            // 2. Bullet list: * Novelty: 2,400
+            // 3. Line format: Novelty: 2,400
+            const extractScore = (label: string): number => {
+                // Try table format first
+                const tableRe = new RegExp(`\\|\\s*${label}\\s*\\|\\s*([\\d,\\.]+)\\s*\\|`, 'i')
+                const tableMatch = text.match(tableRe)
+                if (tableMatch?.[1]) return normalizeNum(tableMatch[1])
+                
+                // Try bullet list format: * Novelty: 2,400
+                const bulletRe = new RegExp(`[\\*\\-]\\s*${label}\\s*[:]\\s*([\\d,\\.]+)`, 'i')
+                const bulletMatch = text.match(bulletRe)
+                if (bulletMatch?.[1]) return normalizeNum(bulletMatch[1])
+                
+                // Try line format: Novelty: 2,400 (with optional parentheses)
+                const lineRe = new RegExp(`${label}\\s*[:]\\s*([\\d,\\.]+)`, 'i')
+                const lineMatch = text.match(lineRe)
+                if (lineMatch?.[1]) return normalizeNum(lineMatch[1])
+                
+                return 0
             }
 
-            const novelty = extractScoreFromTable('Novelty')
-            const density = extractScoreFromTable('Density')
-            const coherence = extractScoreFromTable('Coherence')
-            const alignment = extractScoreFromTable('Alignment')
-            const total = novelty + density + coherence + alignment
+            const novelty = extractScore('Novelty')
+            const density = extractScore('Density')
+            const coherence = extractScore('Coherence')
+            const alignment = extractScore('Alignment')
+            
+            // Also try to extract total score from text
+            const totalMatch = text.match(/total\s+score[:\s]+([\d,\.]+)/i) || 
+                             text.match(/score[:\s]+([\d,\.]+)\s*\(/i)
+            const totalFromText = totalMatch ? normalizeNum(totalMatch[1]) : 0
+            const total = totalFromText > 0 ? totalFromText : (novelty + density + coherence + alignment)
 
-            // Classification (best-effort)
+            // Classification (best-effort) - try multiple patterns
+            let classification: string[] = []
             const classificationMatch =
                 text.match(/PoC\s*Classification:\s*([^\n\r]+)/i) ||
-                text.match(/Classification:\s*([^\n\r]+)/i)
-            const classificationRaw = (classificationMatch?.[1] || '').trim()
-            const classification = classificationRaw
-                ? classificationRaw
-                      .split(/[,\|\/]/g)
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                : []
+                text.match(/Classification:\s*([^\n\r]+)/i) ||
+                text.match(/["']classification["']\s*:\s*\[([^\]]+)\]/i)
+            
+            if (classificationMatch?.[1]) {
+                const classificationRaw = classificationMatch[1].trim()
+                classification = classificationRaw
+                    .split(/[,\|\/\[\]"]/g)
+                    .map((s) => s.trim().replace(/"/g, ''))
+                    .filter(Boolean)
+            }
+            
+            // Also try to extract from JSON if present (even if truncated)
+            if (classification.length === 0) {
+                const jsonClassMatch = text.match(/"classification"\s*:\s*\["([^"]+)"\]/i)
+                if (jsonClassMatch?.[1]) {
+                    classification = [jsonClassMatch[1]]
+                }
+            }
 
-            // Metal alignment (best-effort)
+            // Metal alignment (best-effort) - try multiple patterns
+            let metal = ''
             const metalMatch =
                 text.match(/Metal\s*Alignment:\s*([A-Za-z]+)/i) ||
-                text.match(/Primary:\s*(Gold|Silver|Copper|Hybrid)/i)
-            const metal = (metalMatch?.[1] || '').trim()
+                text.match(/["']metal_alignment["']\s*:\s*"([^"]+)"/i) ||
+                text.match(/Primary:\s*(Gold|Silver|Copper|Hybrid)/i) ||
+                text.match(/metals["']\s*:\s*\["([^"]+)"/i)
+            
+            if (metalMatch?.[1]) {
+                metal = metalMatch[1].trim()
+            }
+            
             const metalAlignment = metal || 'Copper'
+            const metals = metal ? [metal] : [metalAlignment]
 
             const qualified_founder = total >= 8000
 
@@ -651,7 +693,7 @@ Notes:
                 pod_score: total,
                 qualified_founder,
                 metal_alignment: metalAlignment,
-                metals: [metalAlignment],
+                metals: metals,
                 metal_justification: '',
                 redundancy_analysis,
                 founder_certificate: '',
@@ -964,13 +1006,13 @@ ${answer}`
                 coherenceExtractionPath = 'evaluation.coherence (string parsed)'
             }
         } else if (evaluation.evaluation?.coherence) {
-            finalCoherenceScore = typeof evaluation.evaluation.coherence === 'number' ? evaluation.evaluation.coherence : 0
+                finalCoherenceScore = typeof evaluation.evaluation.coherence === 'number' ? evaluation.evaluation.coherence : 0
             coherenceExtractionPath = 'evaluation.evaluation.coherence'
-        } else if (evaluation.evaluation?.scoring?.coherence?.score) {
-            finalCoherenceScore = evaluation.evaluation.scoring.coherence.score
+            } else if (evaluation.evaluation?.scoring?.coherence?.score) {
+                finalCoherenceScore = evaluation.evaluation.scoring.coherence.score
             coherenceExtractionPath = 'evaluation.evaluation.scoring.coherence.score'
-        } else if (evaluation.evaluation?.scoring?.coherence?.final_score) {
-            finalCoherenceScore = evaluation.evaluation.scoring.coherence.final_score
+            } else if (evaluation.evaluation?.scoring?.coherence?.final_score) {
+                finalCoherenceScore = evaluation.evaluation.scoring.coherence.final_score
             coherenceExtractionPath = 'evaluation.evaluation.scoring.coherence.final_score'
         }
         
