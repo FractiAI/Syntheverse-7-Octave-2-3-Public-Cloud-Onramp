@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
+import FieldScanPricingTiers from '@/components/FieldScanPricingTiers'
 import '../../dashboard-cockpit.css'
 
 export const dynamic = 'force-dynamic'
