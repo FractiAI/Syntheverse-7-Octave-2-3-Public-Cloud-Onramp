@@ -512,12 +512,35 @@ Notes:
         const data = await response.json()
         const answer = data.choices[0]?.message?.content || ''
         
+        // Log FULL Grok API response for debugging (including metadata)
+        const fullGrokResponse = {
+            id: data.id,
+            object: data.object,
+            created: data.created,
+            model: data.model,
+            choices: data.choices,
+            usage: data.usage,
+            system_fingerprint: data.system_fingerprint,
+            raw_content: answer,
+            content_length: answer.length,
+            has_content: !!answer && answer.trim().length > 0
+        }
+        
         debug('EvaluateWithGrok', 'Grok API response received', { 
             responseLength: answer.length,
             preview: answer.substring(0, 500),
             fullResponse: answer, // Log full response for debugging
             hasAnswer: !!answer,
-            answerType: typeof answer
+            answerType: typeof answer,
+            fullGrokResponse: JSON.stringify(fullGrokResponse, null, 2), // Full API response structure
+            grokApiResponseKeys: Object.keys(data),
+            grokApiResponseStructure: {
+                hasChoices: !!data.choices,
+                choicesLength: data.choices?.length || 0,
+                firstChoiceKeys: data.choices?.[0] ? Object.keys(data.choices[0]) : [],
+                messageKeys: data.choices?.[0]?.message ? Object.keys(data.choices[0].message) : [],
+                usage: data.usage
+            }
         })
         
         // Ensure answer is stored - log if empty
@@ -526,7 +549,8 @@ Notes:
                 dataKeys: Object.keys(data),
                 choicesLength: data.choices?.length || 0,
                 firstChoice: data.choices?.[0],
-                fullResponse: JSON.stringify(data, null, 2).substring(0, 1000)
+                fullResponse: JSON.stringify(data, null, 2),
+                fullGrokResponse: JSON.stringify(fullGrokResponse, null, 2)
             })
         }
         
@@ -801,7 +825,25 @@ ${answer}`
             hasScoring: !!evaluation.scoring,
             hasDensity: !!evaluation.density,
             evaluationKeys: Object.keys(evaluation),
-            evaluationString: JSON.stringify(evaluation, null, 2).substring(0, 1000) // First 1000 chars for debugging
+            evaluationString: JSON.stringify(evaluation, null, 2), // FULL evaluation structure for debugging
+            evaluationStructure: {
+                topLevelKeys: Object.keys(evaluation),
+                hasScoring: !!evaluation.scoring,
+                scoringKeys: evaluation.scoring ? Object.keys(evaluation.scoring) : [],
+                scoringStructure: evaluation.scoring ? JSON.stringify(evaluation.scoring, null, 2) : null,
+                hasNovelty: 'novelty' in evaluation,
+                hasDensity: 'density' in evaluation,
+                hasCoherence: 'coherence' in evaluation,
+                hasAlignment: 'alignment' in evaluation,
+                noveltyType: typeof evaluation.novelty,
+                densityType: typeof evaluation.density,
+                coherenceType: typeof evaluation.coherence,
+                alignmentType: typeof evaluation.alignment,
+                noveltyValue: evaluation.novelty,
+                densityValue: evaluation.density,
+                coherenceValue: evaluation.coherence,
+                alignmentValue: evaluation.alignment
+            }
         })
         
         // Extract scoring from new format - try multiple structures
@@ -816,91 +858,180 @@ ${answer}`
         
         // Extract base scores with extensive fallback options
         // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
-        const baseNoveltyScore = 
-            (typeof noveltyRaw === 'number' ? noveltyRaw : 0) ||
-            (typeof noveltyRaw === 'object' && noveltyRaw !== null ? (noveltyRaw.base_score ?? noveltyRaw.final_score ?? noveltyRaw.score ?? 0) : 0) ||
-            (typeof evaluation.novelty === 'number' ? evaluation.novelty : 0) ||
-            (typeof evaluation.scoring?.novelty === 'number' ? evaluation.scoring.novelty : 0) ||
-            (typeof evaluation.scoring?.novelty === 'object' ? (evaluation.scoring.novelty.base_score ?? evaluation.scoring.novelty.final_score ?? evaluation.scoring.novelty.score ?? 0) : 0) ||
-            0
+        let baseNoveltyScore = 0
+        let noveltyExtractionPath = 'none'
         
-        const baseDensityScore = 
-            (typeof densityRaw === 'number' ? densityRaw : 0) ||
-            (typeof densityRaw === 'object' && densityRaw !== null ? (densityRaw.base_score ?? densityRaw.final_score ?? densityRaw.score ?? 0) : 0) ||
-            (typeof evaluation.density === 'number' ? evaluation.density : 0) ||
-            (typeof evaluation.scoring?.density === 'number' ? evaluation.scoring.density : 0) ||
-            (typeof evaluation.scoring?.density === 'object' ? (evaluation.scoring.density.base_score ?? evaluation.scoring.density.final_score ?? evaluation.scoring.density.score ?? 0) : 0) ||
-            0
+        if (typeof noveltyRaw === 'number' && noveltyRaw > 0) {
+            baseNoveltyScore = noveltyRaw
+            noveltyExtractionPath = 'noveltyRaw (number)'
+        } else if (typeof noveltyRaw === 'object' && noveltyRaw !== null) {
+            baseNoveltyScore = noveltyRaw.base_score ?? noveltyRaw.final_score ?? noveltyRaw.score ?? 0
+            noveltyExtractionPath = 'noveltyRaw (object)'
+        } else if (typeof evaluation.novelty === 'number' && evaluation.novelty > 0) {
+            baseNoveltyScore = evaluation.novelty
+            noveltyExtractionPath = 'evaluation.novelty (number)'
+        } else if (typeof evaluation.scoring?.novelty === 'number' && evaluation.scoring.novelty > 0) {
+            baseNoveltyScore = evaluation.scoring.novelty
+            noveltyExtractionPath = 'evaluation.scoring.novelty (number)'
+        } else if (typeof evaluation.scoring?.novelty === 'object') {
+            baseNoveltyScore = evaluation.scoring.novelty.base_score ?? evaluation.scoring.novelty.final_score ?? evaluation.scoring.novelty.score ?? 0
+            noveltyExtractionPath = 'evaluation.scoring.novelty (object)'
+        } else if (typeof evaluation.novelty === 'string') {
+            const parsed = parseFloat(evaluation.novelty)
+            if (!isNaN(parsed) && parsed > 0) {
+                baseNoveltyScore = parsed
+                noveltyExtractionPath = 'evaluation.novelty (string parsed)'
+            }
+        } else if (evaluation.scores?.novelty) {
+            baseNoveltyScore = typeof evaluation.scores.novelty === 'number' ? evaluation.scores.novelty : 0
+            noveltyExtractionPath = 'evaluation.scores.novelty'
+        } else if (evaluation.evaluation?.novelty) {
+            baseNoveltyScore = typeof evaluation.evaluation.novelty === 'number' ? evaluation.evaluation.novelty : 0
+            noveltyExtractionPath = 'evaluation.evaluation.novelty'
+        }
+        
+        let baseDensityScore = 0
+        let densityExtractionPath = 'none'
+        
+        if (typeof densityRaw === 'number' && densityRaw > 0) {
+            baseDensityScore = densityRaw
+            densityExtractionPath = 'densityRaw (number)'
+        } else if (typeof densityRaw === 'object' && densityRaw !== null) {
+            baseDensityScore = densityRaw.base_score ?? densityRaw.final_score ?? densityRaw.score ?? 0
+            densityExtractionPath = 'densityRaw (object)'
+        } else if (typeof evaluation.density === 'number' && evaluation.density > 0) {
+            baseDensityScore = evaluation.density
+            densityExtractionPath = 'evaluation.density (number)'
+        } else if (typeof evaluation.scoring?.density === 'number' && evaluation.scoring.density > 0) {
+            baseDensityScore = evaluation.scoring.density
+            densityExtractionPath = 'evaluation.scoring.density (number)'
+        } else if (typeof evaluation.scoring?.density === 'object') {
+            baseDensityScore = evaluation.scoring.density.base_score ?? evaluation.scoring.density.final_score ?? evaluation.scoring.density.score ?? 0
+            densityExtractionPath = 'evaluation.scoring.density (object)'
+        } else if (typeof evaluation.density === 'string') {
+            const parsed = parseFloat(evaluation.density)
+            if (!isNaN(parsed) && parsed > 0) {
+                baseDensityScore = parsed
+                densityExtractionPath = 'evaluation.density (string parsed)'
+            }
+        } else if (evaluation.scores?.density) {
+            baseDensityScore = typeof evaluation.scores.density === 'number' ? evaluation.scores.density : 0
+            densityExtractionPath = 'evaluation.scores.density'
+        } else if (evaluation.evaluation?.density) {
+            baseDensityScore = typeof evaluation.evaluation.density === 'number' ? evaluation.evaluation.density : 0
+            densityExtractionPath = 'evaluation.evaluation.density'
+        }
         
         // Extract coherence score with extensive fallback (same as density)
         // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
-        let finalCoherenceScore = 
-            (typeof coherenceRaw === 'number' ? coherenceRaw : 0) ||
-            (typeof coherenceRaw === 'object' && coherenceRaw !== null ? (coherenceRaw.score ?? coherenceRaw.final_score ?? coherenceRaw.base_score ?? 0) : 0) ||
-            (typeof evaluation.coherence === 'number' ? evaluation.coherence : 0) ||
-            (typeof evaluation.scoring?.coherence === 'number' ? evaluation.scoring.coherence : 0) ||
-            (typeof evaluation.scoring?.coherence === 'object' ? (evaluation.scoring.coherence.score ?? evaluation.scoring.coherence.final_score ?? evaluation.scoring.coherence.base_score ?? 0) : 0) ||
-            0
+        let finalCoherenceScore = 0
+        let coherenceExtractionPath = 'none'
         
-        // If still 0, try more locations for coherence
-        if (finalCoherenceScore === 0) {
-            finalCoherenceScore = evaluation.scoring?.coherence?.score ?? 
-                                 evaluation.scoring?.coherence?.final_score ?? 
-                                 evaluation.scoring?.coherence?.base_score ??
-                                 evaluation.scoring?.coherence?.value ??
-                                 evaluation.coherence_score ??
-                                 evaluation.scores?.coherence ??
-                                 0
-        }
-        
-        // If still 0, try parsing as number from string
-        if (finalCoherenceScore === 0 && typeof evaluation.coherence === 'string') {
+        if (typeof coherenceRaw === 'number' && coherenceRaw > 0) {
+            finalCoherenceScore = coherenceRaw
+            coherenceExtractionPath = 'coherenceRaw (number)'
+        } else if (typeof coherenceRaw === 'object' && coherenceRaw !== null) {
+            finalCoherenceScore = coherenceRaw.score ?? coherenceRaw.final_score ?? coherenceRaw.base_score ?? 0
+            coherenceExtractionPath = 'coherenceRaw (object)'
+        } else if (typeof evaluation.coherence === 'number' && evaluation.coherence > 0) {
+            finalCoherenceScore = evaluation.coherence
+            coherenceExtractionPath = 'evaluation.coherence (number)'
+        } else if (typeof evaluation.scoring?.coherence === 'number' && evaluation.scoring.coherence > 0) {
+            finalCoherenceScore = evaluation.scoring.coherence
+            coherenceExtractionPath = 'evaluation.scoring.coherence (number)'
+        } else if (typeof evaluation.scoring?.coherence === 'object') {
+            finalCoherenceScore = evaluation.scoring.coherence.score ?? evaluation.scoring.coherence.final_score ?? evaluation.scoring.coherence.base_score ?? 0
+            coherenceExtractionPath = 'evaluation.scoring.coherence (object)'
+        } else if (evaluation.scoring?.coherence?.score) {
+            finalCoherenceScore = evaluation.scoring.coherence.score
+            coherenceExtractionPath = 'evaluation.scoring.coherence.score'
+        } else if (evaluation.scoring?.coherence?.final_score) {
+            finalCoherenceScore = evaluation.scoring.coherence.final_score
+            coherenceExtractionPath = 'evaluation.scoring.coherence.final_score'
+        } else if (evaluation.scoring?.coherence?.value) {
+            finalCoherenceScore = evaluation.scoring.coherence.value
+            coherenceExtractionPath = 'evaluation.scoring.coherence.value'
+        } else if (evaluation.coherence_score) {
+            finalCoherenceScore = typeof evaluation.coherence_score === 'number' ? evaluation.coherence_score : 0
+            coherenceExtractionPath = 'evaluation.coherence_score'
+        } else if (evaluation.scores?.coherence) {
+            finalCoherenceScore = typeof evaluation.scores.coherence === 'number' ? evaluation.scores.coherence : 0
+            coherenceExtractionPath = 'evaluation.scores.coherence'
+        } else if (typeof evaluation.coherence === 'string') {
             const parsed = parseFloat(evaluation.coherence)
-            if (!isNaN(parsed)) {
+            if (!isNaN(parsed) && parsed > 0) {
                 finalCoherenceScore = parsed
+                coherenceExtractionPath = 'evaluation.coherence (string parsed)'
             }
-        }
-        
-        // If still 0, try nested structures
-        if (finalCoherenceScore === 0) {
-            if (evaluation.evaluation?.coherence) {
-                finalCoherenceScore = typeof evaluation.evaluation.coherence === 'number' ? evaluation.evaluation.coherence : 0
-            } else if (evaluation.evaluation?.scoring?.coherence?.score) {
-                finalCoherenceScore = evaluation.evaluation.scoring.coherence.score
-            } else if (evaluation.evaluation?.scoring?.coherence?.final_score) {
-                finalCoherenceScore = evaluation.evaluation.scoring.coherence.final_score
-            }
+        } else if (evaluation.evaluation?.coherence) {
+            finalCoherenceScore = typeof evaluation.evaluation.coherence === 'number' ? evaluation.evaluation.coherence : 0
+            coherenceExtractionPath = 'evaluation.evaluation.coherence'
+        } else if (evaluation.evaluation?.scoring?.coherence?.score) {
+            finalCoherenceScore = evaluation.evaluation.scoring.coherence.score
+            coherenceExtractionPath = 'evaluation.evaluation.scoring.coherence.score'
+        } else if (evaluation.evaluation?.scoring?.coherence?.final_score) {
+            finalCoherenceScore = evaluation.evaluation.scoring.coherence.final_score
+            coherenceExtractionPath = 'evaluation.evaluation.scoring.coherence.final_score'
         }
         
         let coherenceScore = finalCoherenceScore
         
+        debug('EvaluateWithGrok', 'Score extraction paths (novelty/density)', {
+            novelty: { score: baseNoveltyScore, path: noveltyExtractionPath },
+            density: { score: baseDensityScore, path: densityExtractionPath },
+            coherence: { score: coherenceScore, path: coherenceExtractionPath }
+        })
+        
         // Extract alignment score with extensive fallback (same as density)
         // Priority: 1) Direct number, 2) Object with score fields, 3) Top-level number, 4) Scoring object
-        let finalAlignmentScore = 
-            (typeof alignmentRaw === 'number' ? alignmentRaw : 0) ||
-            (typeof alignmentRaw === 'object' && alignmentRaw !== null ? (alignmentRaw.score ?? alignmentRaw.final_score ?? alignmentRaw.base_score ?? 0) : 0) ||
-            (typeof evaluation.alignment === 'number' ? evaluation.alignment : 0) ||
-            (typeof evaluation.scoring?.alignment === 'number' ? evaluation.scoring.alignment : 0) ||
-            (typeof evaluation.scoring?.alignment === 'object' ? (evaluation.scoring.alignment.score ?? evaluation.scoring.alignment.final_score ?? evaluation.scoring.alignment.base_score ?? 0) : 0) ||
-            0
+        let finalAlignmentScore = 0
+        let alignmentExtractionPath = 'none'
         
-        // If still 0, try more locations for alignment
-        if (finalAlignmentScore === 0) {
-            finalAlignmentScore = evaluation.scoring?.alignment?.score ?? 
-                                 evaluation.scoring?.alignment?.final_score ?? 
-                                 evaluation.scoring?.alignment?.base_score ??
-                                 evaluation.scoring?.alignment?.value ??
-                                 evaluation.alignment_score ??
-                                 evaluation.scores?.alignment ??
-                                 0
-        }
-        
-        // If still 0, try parsing as number from string
-        if (finalAlignmentScore === 0 && typeof evaluation.alignment === 'string') {
+        if (typeof alignmentRaw === 'number' && alignmentRaw > 0) {
+            finalAlignmentScore = alignmentRaw
+            alignmentExtractionPath = 'alignmentRaw (number)'
+        } else if (typeof alignmentRaw === 'object' && alignmentRaw !== null) {
+            finalAlignmentScore = alignmentRaw.score ?? alignmentRaw.final_score ?? alignmentRaw.base_score ?? 0
+            alignmentExtractionPath = 'alignmentRaw (object)'
+        } else if (typeof evaluation.alignment === 'number' && evaluation.alignment > 0) {
+            finalAlignmentScore = evaluation.alignment
+            alignmentExtractionPath = 'evaluation.alignment (number)'
+        } else if (typeof evaluation.scoring?.alignment === 'number' && evaluation.scoring.alignment > 0) {
+            finalAlignmentScore = evaluation.scoring.alignment
+            alignmentExtractionPath = 'evaluation.scoring.alignment (number)'
+        } else if (typeof evaluation.scoring?.alignment === 'object') {
+            finalAlignmentScore = evaluation.scoring.alignment.score ?? evaluation.scoring.alignment.final_score ?? evaluation.scoring.alignment.base_score ?? 0
+            alignmentExtractionPath = 'evaluation.scoring.alignment (object)'
+        } else if (evaluation.scoring?.alignment?.score) {
+            finalAlignmentScore = evaluation.scoring.alignment.score
+            alignmentExtractionPath = 'evaluation.scoring.alignment.score'
+        } else if (evaluation.scoring?.alignment?.final_score) {
+            finalAlignmentScore = evaluation.scoring.alignment.final_score
+            alignmentExtractionPath = 'evaluation.scoring.alignment.final_score'
+        } else if (evaluation.scoring?.alignment?.value) {
+            finalAlignmentScore = evaluation.scoring.alignment.value
+            alignmentExtractionPath = 'evaluation.scoring.alignment.value'
+        } else if (evaluation.alignment_score) {
+            finalAlignmentScore = typeof evaluation.alignment_score === 'number' ? evaluation.alignment_score : 0
+            alignmentExtractionPath = 'evaluation.alignment_score'
+        } else if (evaluation.scores?.alignment) {
+            finalAlignmentScore = typeof evaluation.scores.alignment === 'number' ? evaluation.scores.alignment : 0
+            alignmentExtractionPath = 'evaluation.scores.alignment'
+        } else if (typeof evaluation.alignment === 'string') {
             const parsed = parseFloat(evaluation.alignment)
-            if (!isNaN(parsed)) {
+            if (!isNaN(parsed) && parsed > 0) {
                 finalAlignmentScore = parsed
+                alignmentExtractionPath = 'evaluation.alignment (string parsed)'
             }
+        } else if (evaluation.evaluation?.alignment) {
+            finalAlignmentScore = typeof evaluation.evaluation.alignment === 'number' ? evaluation.evaluation.alignment : 0
+            alignmentExtractionPath = 'evaluation.evaluation.alignment'
+        } else if (evaluation.evaluation?.scoring?.alignment?.score) {
+            finalAlignmentScore = evaluation.evaluation.scoring.alignment.score
+            alignmentExtractionPath = 'evaluation.evaluation.scoring.alignment.score'
+        } else if (evaluation.evaluation?.scoring?.alignment?.final_score) {
+            finalAlignmentScore = evaluation.evaluation.scoring.alignment.final_score
+            alignmentExtractionPath = 'evaluation.evaluation.scoring.alignment.final_score'
         }
         
         // If still 0, try nested structures
@@ -915,6 +1046,14 @@ ${answer}`
         }
         
         let alignmentScore = finalAlignmentScore
+        
+        // Debug logging for score extraction - comprehensive with extraction paths
+        debug('EvaluateWithGrok', 'Score extraction paths - all scores', {
+            novelty: { score: baseNoveltyScore, path: noveltyExtractionPath },
+            density: { score: baseDensityScore, path: densityExtractionPath },
+            coherence: { score: coherenceScore, path: coherenceExtractionPath },
+            alignment: { score: alignmentScore, path: alignmentExtractionPath }
+        })
         
         // Debug logging for score extraction - comprehensive
         debug('EvaluateWithGrok', 'Score extraction - initial values', {
@@ -1103,22 +1242,60 @@ ${answer}`
         // Final validation: If all scores are 0, this indicates a problem with Grok's response
         const allScoresZero = finalNoveltyScore === 0 && densityFinal === 0 && coherenceScore === 0 && alignmentScore === 0
         if (allScoresZero) {
-            // Always log this critical error, even if debug is disabled
+            // Always log this critical error with COMPREHENSIVE debugging information
             const errorDetails = {
+                // Full evaluation object
                 evaluationFull: JSON.stringify(evaluation, null, 2),
-                rawAnswer: answer.substring(0, 3000),
+                // Raw Grok API response (full)
+                rawAnswer: answer,
+                rawAnswerLength: answer.length,
+                // Full Grok API response structure
+                fullGrokApiResponse: JSON.stringify(fullGrokResponse, null, 2),
+                // Scoring object structure
                 scoring: scoring,
+                scoringString: JSON.stringify(scoring, null, 2),
+                // Raw values before extraction
                 noveltyRaw: noveltyRaw,
+                noveltyRawType: typeof noveltyRaw,
                 densityRaw: densityRaw,
+                densityRawType: typeof densityRaw,
                 coherenceRaw: coherenceRaw,
+                coherenceRawType: typeof coherenceRaw,
                 alignmentRaw: alignmentRaw,
+                alignmentRawType: typeof alignmentRaw,
+                // Extracted scores
                 baseNoveltyScore,
                 baseDensityScore,
                 coherenceScore,
-                alignmentScore
+                alignmentScore,
+                // Extraction paths used
+                extractionPaths: {
+                    novelty: noveltyExtractionPath,
+                    density: densityExtractionPath,
+                    coherence: coherenceExtractionPath,
+                    alignment: alignmentExtractionPath
+                },
+                // Evaluation structure analysis
+                evaluationKeys: Object.keys(evaluation),
+                evaluationStructure: {
+                    hasScoring: !!evaluation.scoring,
+                    scoringKeys: evaluation.scoring ? Object.keys(evaluation.scoring) : [],
+                    hasNovelty: 'novelty' in evaluation,
+                    hasDensity: 'density' in evaluation,
+                    hasCoherence: 'coherence' in evaluation,
+                    hasAlignment: 'alignment' in evaluation,
+                    noveltyType: typeof evaluation.novelty,
+                    densityType: typeof evaluation.density,
+                    coherenceType: typeof evaluation.coherence,
+                    alignmentType: typeof evaluation.alignment
+                },
+                // JSON parsing candidates that were tried
+                jsonCandidates: extractJsonCandidates(answer),
+                // Timestamp for correlation
+                timestamp: new Date().toISOString()
             }
-            console.error('[EvaluateWithGrok] CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', errorDetails)
-            debugError('EvaluateWithGrok', 'CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', new Error(JSON.stringify(errorDetails)))
+            console.error('[EvaluateWithGrok] CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', JSON.stringify(errorDetails, null, 2))
+            debugError('EvaluateWithGrok', 'CRITICAL ERROR: All scores are 0 - Grok may not have returned scores properly', new Error(JSON.stringify(errorDetails, null, 2)))
             // Throw error to prevent saving invalid evaluation
             throw new Error('Evaluation failed: All scores are 0. This indicates the AI evaluation did not return valid scores. Please try submitting again.')
         }
