@@ -1,11 +1,20 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import FieldScanPricingTiers from '@/components/FieldScanPricingTiers'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 import '../../dashboard-cockpit.css'
 
 export const dynamic = 'force-dynamic'
 
-export default function SynthScanFieldImagingPage() {
+export default async function SynthScanFieldImagingPage() {
+  // Check authentication
+  const supabase = createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user || !user.email) {
+    redirect('/login?redirect=/fractiai/synthscan-field-imaging')
+  }
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto px-6 py-10 space-y-8">
