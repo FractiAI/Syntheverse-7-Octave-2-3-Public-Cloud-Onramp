@@ -42,6 +42,13 @@ export default async function Dashboard() {
     return (
         <div className="cockpit-bg min-h-screen">
             <div className="container mx-auto px-6 py-8 space-y-8">
+                {/* Operator Broadcast Banner */}
+                <OperatorBroadcastBanner
+                    message="Welcome to Syntheverse! SYNTH90T MOTHERLODE VAULT will officially open for mining Spring Equinox, March 20, 2026. All qualifying PoCs will be registered on-chain and allocated SYNTH, by score. Be sure to get your best work in by March 19."
+                    urgency="high"
+                    storageKey="motherlode_vault_opening_banner"
+                />
+                
                 {/* Command Zone - Welcome & Action Control */}
                 <div className="cockpit-panel p-6">
                     <div className="flex items-center justify-between">
