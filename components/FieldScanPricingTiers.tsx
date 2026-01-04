@@ -128,7 +128,7 @@ export default function FieldScanPricingTiers() {
                 'Processing...'
               ) : (
                 <>
-                  Request Engagement
+                  Engage
                   <ArrowRight className="ml-2 h-4 w-4 inline" />
                 </>
               )}
