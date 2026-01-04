@@ -11,9 +11,7 @@ import {
 } from '@/utils/vectors';
 import { SYNTHEVERSE_SYSTEM_PROMPT } from '@/utils/grok/system-prompt';
 import crypto from 'crypto';
-// Import archive utilities statically to avoid dynamic import issues in tests
-import { extractArchiveData } from '@/utils/archive/extract';
-import { findTop3Matches } from '@/utils/archive/find-matches';
+// SCALABILITY FIX: Removed archive utilities - using vectors-only approach for infinite scalability
 
 interface TokenomicsInfo {
   current_epoch: string;
@@ -117,11 +115,9 @@ export async function evaluateWithGrok(
     excludeHash,
   });
 
-  // Extract archive data from current submission for matching
-  // Using static import to avoid dynamic import path resolution issues
-  const currentArchiveData = extractArchiveData(textContent, title);
-
   // Generate vector embedding and 3D coordinates for current submission
+  // SCALABILITY FIX: Using vectors-only approach - removed archive data extraction and top3Matches
+  // Vector-based redundancy is sufficient and scales infinitely without bloating the prompt
   let currentVectorization: { embedding: number[]; vector: Vector3D } | null = null;
   try {
     debug('EvaluateWithGrok', 'Generating vector embedding and 3D coordinates');
@@ -137,21 +133,8 @@ export async function evaluateWithGrok(
     });
   } catch (error) {
     debugError('EvaluateWithGrok', 'Failed to generate vectorization', error);
-    // Continue without vectorization - will use text-based redundancy
+    // Continue without vectorization - redundancy calculation will handle gracefully
   }
-
-  // Find top 3 matching archived PoCs using abstract, formulas, constants, and vectors
-  let top3Matches: Array<{
-    submission_hash: string;
-    title: string;
-    abstract: string | null;
-    formulas: string[] | null;
-    constants: string[] | null;
-    similarity_score: number;
-    vector_x?: number | null;
-    vector_y?: number | null;
-    vector_z?: number | null;
-  }> = [];
 
   // Fetch archived vectors for redundancy checking and context
   // SCALABILITY: Only load vectors/metadata, not full text_content
@@ -166,30 +149,6 @@ export async function evaluateWithGrok(
   }> = [];
 
   try {
-    // First, generate vector for current submission if not already done
-    const currentVector = currentVectorization
-      ? {
-          x: currentVectorization.vector.x,
-          y: currentVectorization.vector.y,
-          z: currentVectorization.vector.z,
-        }
-      : null;
-
-    // Find top 3 matches using archive data (reduced from 9 to reduce token usage)
-    // Using static import to avoid dynamic import path resolution issues
-    top3Matches = await findTop3Matches(
-      currentArchiveData.abstract,
-      currentArchiveData.formulas,
-      currentArchiveData.constants,
-      currentVector,
-      excludeHash
-    );
-
-    debug('EvaluateWithGrok', 'Found top 3 matches', {
-      matchCount: top3Matches.length,
-      topScore: top3Matches[0]?.similarity_score || 0,
-    });
-
     // Fetch ONLY vector/metadata data for redundancy calculation (SCALABILITY FIX: removed text_content)
     // This reduces memory usage by ~99% and improves query performance significantly
     const archivedContributions = await db
@@ -354,21 +313,11 @@ export async function evaluateWithGrok(
   // Token-budget control is handled by shrinking user payload and truncating content when needed.
   const systemPrompt = SYNTHEVERSE_SYSTEM_PROMPT;
 
-  // Keep match context compact to avoid provider token budget errors.
-  const archivedPoCsContext =
-    top3Matches.length > 0
-      ? `Top ${top3Matches.length} matching archived PoCs (redundancy context):
-${top3Matches
-  .map((match, idx) => {
-    const abstract = (match.abstract || '').replace(/\s+/g, ' ').trim();
-    const abstractPreview =
-      abstract.length > 420 ? `${abstract.slice(0, 420)}…` : abstract || 'N/A';
-    return `${idx + 1}) ${match.title} [${match.submission_hash.substring(0, 8)}…] similarity=${(match.similarity_score * 100).toFixed(1)}% abstract="${abstractPreview}"`;
-  })
-  .join('\n')}`
-      : 'No prior archived PoCs found.';
+  // SCALABILITY FIX: Using vectors-only approach - removed archivedPoCsContext (abstract text)
+  // Vector-based redundancy (calculatedRedundancyContext) is sufficient and scales infinitely
+  // This prevents prompt bloat that causes coherence collapse after multiple submissions
 
-  // Add calculated redundancy information if available (compact).
+  // Add calculated redundancy information if available (compact, vector-based).
   const calculatedRedundancyContext = calculatedRedundancy
     ? `Vector redundancy (HHF 3D):
 - overlap_percent=${calculatedRedundancy.overlap_percent.toFixed(1)}%
@@ -385,6 +334,7 @@ ${top3Matches
 
   // Evaluation query with contribution details + minimal extra instructions.
   // IMPORTANT: We want a detailed narrative review AND parseable JSON (embedded).
+  // SCALABILITY FIX: Using vectors-only approach - removed archivedPoCsContext to prevent prompt bloat
   const evaluationQuery = `Evaluate this Proof-of-Contribution (PoC) using the system prompt rules.
 
 Title: ${title}
@@ -394,11 +344,10 @@ ${tokenomicsContext ? `\n${tokenomicsContext}` : ''}
 Submission Content:
 ${textContent}
 
-${archivedPoCsContext ? `\n${archivedPoCsContext}` : ''}
 ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
 
 Notes:
-- ${isSeedSubmission ? 'This is the FIRST submission defining the Syntheverse sandbox. Redundancy penalty MUST be 0%.' : `This is NOT the first submission. Compare against the sandbox + archived PoCs (archived count: ${archivedVectors.length}).`}
+- ${isSeedSubmission ? 'This is the FIRST submission defining the Syntheverse sandbox. Redundancy penalty MUST be 0%.' : 'This is NOT the first submission. Use the vector-based redundancy information above to determine overlap and redundancy penalties.'}
 - Apply redundancy penalty ONLY to the composite/total score (as specified in the system prompt).
 - Output: Provide a detailed narrative review (clear + specific), AND include the REQUIRED JSON structure from the system prompt.
 - The JSON may be placed in a markdown code block, but it MUST be valid parseable JSON.
