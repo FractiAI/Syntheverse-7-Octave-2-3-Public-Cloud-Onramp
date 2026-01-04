@@ -9,14 +9,18 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 
+type MessageNature = 'announcement' | 'warning' | 'info' | 'success' | 'milestone' | 'alert' | 'update'
+
 interface OperatorBroadcastBannerProps {
     message: string
-    urgency?: 'low' | 'medium' | 'high' | 'critical'
+    nature?: MessageNature
+    urgency?: 'low' | 'medium' | 'high' | 'critical' // Fallback if nature not provided
     storageKey?: string
 }
 
 export function OperatorBroadcastBanner({ 
     message, 
+    nature,
     urgency = 'medium',
     storageKey = 'operator_broadcast_dismissed'
 }: OperatorBroadcastBannerProps) {
@@ -43,8 +47,90 @@ export function OperatorBroadcastBanner({
         return null
     }
 
-    // Get color scheme based on urgency
-    const getUrgencyStyles = () => {
+    // Get color scheme based on message nature (primary) or urgency (fallback)
+    const getMessageStyles = () => {
+        // If nature is provided, use it; otherwise fall back to urgency
+        const styleKey = nature || urgency
+        
+        if (nature) {
+            // Color coding based on message nature
+            switch (nature) {
+                case 'announcement':
+                    return {
+                        bg: 'bg-gradient-to-r from-amber-900/30 to-orange-900/30',
+                        border: 'border-amber-500',
+                        text: 'text-amber-200',
+                        icon: 'text-amber-400',
+                        glow: 'shadow-[0_0_20px_rgba(245,158,11,0.4)]',
+                        pulse: 'animate-pulse'
+                    }
+                case 'milestone':
+                    return {
+                        bg: 'bg-gradient-to-r from-yellow-900/30 to-amber-900/30',
+                        border: 'border-yellow-500',
+                        text: 'text-yellow-200',
+                        icon: 'text-yellow-400',
+                        glow: 'shadow-[0_0_20px_rgba(234,179,8,0.4)]',
+                        pulse: 'animate-pulse'
+                    }
+                case 'warning':
+                    return {
+                        bg: 'bg-gradient-to-r from-orange-900/30 to-red-900/30',
+                        border: 'border-orange-500',
+                        text: 'text-orange-200',
+                        icon: 'text-orange-400',
+                        glow: 'shadow-[0_0_20px_rgba(249,115,22,0.4)]',
+                        pulse: ''
+                    }
+                case 'alert':
+                    return {
+                        bg: 'bg-gradient-to-r from-red-900/40 to-red-800/40',
+                        border: 'border-red-500',
+                        text: 'text-red-200',
+                        icon: 'text-red-400',
+                        glow: 'shadow-[0_0_20px_rgba(239,68,68,0.5)]',
+                        pulse: 'animate-pulse'
+                    }
+                case 'success':
+                    return {
+                        bg: 'bg-gradient-to-r from-green-900/30 to-emerald-900/30',
+                        border: 'border-green-500',
+                        text: 'text-green-200',
+                        icon: 'text-green-400',
+                        glow: 'shadow-[0_0_20px_rgba(34,197,94,0.3)]',
+                        pulse: ''
+                    }
+                case 'info':
+                    return {
+                        bg: 'bg-gradient-to-r from-blue-900/30 to-cyan-900/30',
+                        border: 'border-blue-500',
+                        text: 'text-blue-200',
+                        icon: 'text-blue-400',
+                        glow: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+                        pulse: ''
+                    }
+                case 'update':
+                    return {
+                        bg: 'bg-gradient-to-r from-cyan-900/30 to-blue-900/30',
+                        border: 'border-cyan-500',
+                        text: 'text-cyan-200',
+                        icon: 'text-cyan-400',
+                        glow: 'shadow-[0_0_20px_rgba(6,182,212,0.3)]',
+                        pulse: ''
+                    }
+                default:
+                    return {
+                        bg: 'bg-[var(--hydrogen-amber)]/10',
+                        border: 'border-[var(--hydrogen-amber)]/50',
+                        text: 'text-[var(--hydrogen-amber)]',
+                        icon: 'text-[var(--hydrogen-amber)]',
+                        glow: 'shadow-[0_0_20px_rgba(255,184,77,0.2)]',
+                        pulse: ''
+                    }
+            }
+        }
+        
+        // Fallback to urgency-based styling
         switch (urgency) {
             case 'critical':
                 return {
@@ -52,7 +138,8 @@ export function OperatorBroadcastBanner({
                     border: 'border-red-500/50',
                     text: 'text-red-100',
                     icon: 'text-red-400',
-                    glow: 'shadow-[0_0_20px_rgba(239,68,68,0.3)]'
+                    glow: 'shadow-[0_0_20px_rgba(239,68,68,0.3)]',
+                    pulse: 'animate-pulse'
                 }
             case 'high':
                 return {
@@ -60,7 +147,8 @@ export function OperatorBroadcastBanner({
                     border: 'border-orange-500/50',
                     text: 'text-orange-100',
                     icon: 'text-orange-400',
-                    glow: 'shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                    glow: 'shadow-[0_0_20px_rgba(249,115,22,0.3)]',
+                    pulse: ''
                 }
             case 'medium':
                 return {
@@ -68,7 +156,8 @@ export function OperatorBroadcastBanner({
                     border: 'border-[var(--hydrogen-amber)]/50',
                     text: 'text-[var(--hydrogen-amber)]',
                     icon: 'text-[var(--hydrogen-amber)]',
-                    glow: 'shadow-[0_0_20px_rgba(255,184,77,0.2)]'
+                    glow: 'shadow-[0_0_20px_rgba(255,184,77,0.2)]',
+                    pulse: ''
                 }
             case 'low':
                 return {
@@ -76,7 +165,8 @@ export function OperatorBroadcastBanner({
                     border: 'border-blue-500/50',
                     text: 'text-blue-100',
                     icon: 'text-blue-400',
-                    glow: 'shadow-[0_0_20px_rgba(59,130,246,0.2)]'
+                    glow: 'shadow-[0_0_20px_rgba(59,130,246,0.2)]',
+                    pulse: ''
                 }
             default:
                 return {
@@ -84,16 +174,17 @@ export function OperatorBroadcastBanner({
                     border: 'border-[var(--hydrogen-amber)]/50',
                     text: 'text-[var(--hydrogen-amber)]',
                     icon: 'text-[var(--hydrogen-amber)]',
-                    glow: 'shadow-[0_0_20px_rgba(255,184,77,0.2)]'
+                    glow: 'shadow-[0_0_20px_rgba(255,184,77,0.2)]',
+                    pulse: ''
                 }
         }
     }
 
-    const styles = getUrgencyStyles()
+    const styles = getMessageStyles()
 
     return (
         <div 
-            className={`${styles.bg} ${styles.border} border-l-4 ${styles.glow} cockpit-panel p-4 mb-6 relative transition-all duration-300 ${
+            className={`${styles.bg} ${styles.border} border-l-4 ${styles.glow} ${styles.pulse} cockpit-panel p-4 mb-6 relative transition-all duration-300 ${
                 isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
         >

@@ -45,7 +45,7 @@ export default async function Dashboard() {
                 {/* Operator Broadcast Banner */}
                 <OperatorBroadcastBanner
                     message="Welcome to Syntheverse! SYNTH90T MOTHERLODE VAULT will officially open for mining Spring Equinox, March 20, 2026. All qualifying PoCs will be registered on-chain and allocated SYNTH, by score. Be sure to get your best work in by March 19."
-                    urgency="high"
+                    nature="milestone"
                     storageKey="motherlode_vault_opening_banner"
                 />
                 
