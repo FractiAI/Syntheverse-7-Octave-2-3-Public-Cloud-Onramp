@@ -57,21 +57,21 @@ export function OperatorBroadcastBanner({
             switch (nature) {
                 case 'announcement':
                     return {
-                        bg: 'bg-gradient-to-r from-amber-900/30 to-orange-900/30',
+                        bg: 'bg-gradient-to-r from-amber-900/40 to-orange-900/40',
                         border: 'border-amber-500',
                         text: 'text-amber-200',
                         icon: 'text-amber-400',
                         glow: 'shadow-[0_0_20px_rgba(245,158,11,0.4)]',
-                        pulse: 'animate-pulse'
+                        pulse: ''
                     }
                 case 'milestone':
                     return {
-                        bg: 'bg-gradient-to-r from-yellow-900/30 to-amber-900/30',
+                        bg: 'bg-gradient-to-r from-yellow-900/40 to-amber-900/40',
                         border: 'border-yellow-500',
                         text: 'text-yellow-200',
                         icon: 'text-yellow-400',
                         glow: 'shadow-[0_0_20px_rgba(234,179,8,0.4)]',
-                        pulse: 'animate-pulse'
+                        pulse: ''
                     }
                 case 'warning':
                     return {
@@ -84,12 +84,12 @@ export function OperatorBroadcastBanner({
                     }
                 case 'alert':
                     return {
-                        bg: 'bg-gradient-to-r from-red-900/40 to-red-800/40',
+                        bg: 'bg-gradient-to-r from-red-900/50 to-red-800/50',
                         border: 'border-red-500',
                         text: 'text-red-200',
                         icon: 'text-red-400',
                         glow: 'shadow-[0_0_20px_rgba(239,68,68,0.5)]',
-                        pulse: 'animate-pulse'
+                        pulse: ''
                     }
                 case 'success':
                     return {
@@ -134,12 +134,12 @@ export function OperatorBroadcastBanner({
         switch (urgency) {
             case 'critical':
                 return {
-                    bg: 'bg-red-900/20',
+                    bg: 'bg-red-900/50',
                     border: 'border-red-500/50',
                     text: 'text-red-100',
                     icon: 'text-red-400',
                     glow: 'shadow-[0_0_20px_rgba(239,68,68,0.3)]',
-                    pulse: 'animate-pulse'
+                    pulse: ''
                 }
             case 'high':
                 return {
@@ -205,7 +205,7 @@ export function OperatorBroadcastBanner({
                         <div className="cockpit-label text-xs uppercase tracking-wider">
                             OPERATOR BROADCAST
                         </div>
-                        <div className={`w-2 h-2 rounded-full ${styles.icon.replace('text-', 'bg-')} animate-pulse`}></div>
+                        <div className={`w-2 h-2 rounded-full ${styles.icon.replace('text-', 'bg-')}`}></div>
                     </div>
                     <div className={`${styles.text} cockpit-text text-sm leading-relaxed`}>
                         {message}
