@@ -138,6 +138,7 @@ console.log('Auth token:', data.session?.access_token);
    - May skip: Valid registration (needs hash and token)
 
 3. **Run Vercel Test (Full)**
+
    ```bash
    npx tsx scripts/test-registration-vercel.ts \
      https://syntheverse-poc.vercel.app \

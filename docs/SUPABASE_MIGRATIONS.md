@@ -37,6 +37,7 @@ To apply the PoC database migrations, you have **two options**:
    ```
 
 3. **Push migrations**
+
    ```bash
    supabase db push
    ```
