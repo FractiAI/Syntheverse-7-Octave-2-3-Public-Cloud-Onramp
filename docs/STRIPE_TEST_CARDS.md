@@ -73,23 +73,19 @@ When testing PoC registration in Stripe test mode, use these test card numbers. 
 ## Testing Registration Flow
 
 1. **Navigate to Dashboard**
-
    - Log in as PoC contributor
    - Find qualified PoC in "My Submissions"
 
 2. **Click "Anchor PoC on-chain - $500"**
-
    - Should redirect to Stripe checkout
 
 3. **Use Test Card**
-
    - Enter: `4242 4242 4242 4242`
    - Expiry: `12/34`
    - CVC: `123`
    - ZIP: `12345`
 
 4. **Complete Payment**
-
    - Click "Pay $500.00"
    - Should process successfully in test mode
 

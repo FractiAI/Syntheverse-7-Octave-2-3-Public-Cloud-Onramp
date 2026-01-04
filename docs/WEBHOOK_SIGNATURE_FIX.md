@@ -27,22 +27,18 @@ The webhook handler now automatically sanitizes the webhook secret by:
 ### Check Vercel Environment Variable
 
 1. **Go to Vercel Dashboard**
-
    - Navigate to: https://vercel.com/dashboard/fractiais-projects/syntheverse-poc/settings/environment-variables
 
 2. **Find `STRIPE_WEBHOOK_SECRET`**
-
    - Check the value for Production, Preview, and Development environments
 
 3. **Get the Correct Secret from Stripe**
-
    - Go to: https://dashboard.stripe.com/test/webhooks
    - Click on your webhook endpoint
    - Click "Reveal" next to "Signing secret"
    - **Copy the secret carefully** - it should start with `whsec_`
 
 4. **Update in Vercel**
-
    - Edit the `STRIPE_WEBHOOK_SECRET` value
    - **Paste the secret directly** - don't add any spaces or newlines
    - Make sure there are no leading/trailing spaces
@@ -56,7 +52,6 @@ The webhook handler now automatically sanitizes the webhook secret by:
 After updating the secret:
 
 1. **Test Webhook in Stripe Dashboard**
-
    - Go to your webhook in Stripe
    - Click "Send test webhook"
    - Select `checkout.session.completed`
@@ -64,7 +59,6 @@ After updating the secret:
    - Should see 200 response in Stripe
 
 2. **Check Vercel Logs**
-
    - Go to Vercel Dashboard → Functions → `/webhook/stripe`
    - Should see successful webhook processing logs
    - Should NOT see "Signature verification failed" errors

@@ -44,17 +44,14 @@
 ### Next Steps
 
 1. **Monitor Vercel Deployment**
-
    - Check: https://vercel.com/dashboard/fractiais-projects/syntheverse-poc/deployments
    - Latest deployment should show the new commit
 
 2. **Run Database Migration**
-
    - Execute: `supabase/migrations/add_registration_fields.sql`
    - In Supabase Dashboard → SQL Editor
 
 3. **Test New Features**
-
    - Visit: https://syntheverse-poc.vercel.app
    - Test 3D map visualization
    - Test token allocation

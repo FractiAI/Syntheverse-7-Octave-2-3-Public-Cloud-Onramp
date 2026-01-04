@@ -190,19 +190,16 @@ Example visualization libraries:
 ## Future Enhancements
 
 1. **Vector embeddings upgrade:**
-
    - Use sentence-transformers for free, high-quality embeddings
    - Support multiple embedding models
    - Fine-tune embeddings on Syntheverse corpus
 
 2. **Advanced HHF mapping:**
-
    - Use actual HHF geometric transformations
    - Implement fractal dimension calculations
    - Add time dimension (4D space)
 
 3. **Vector database:**
-
    - Use pgvector extension for efficient similarity search
    - Implement approximate nearest neighbor (ANN) search
    - Support semantic search across archive

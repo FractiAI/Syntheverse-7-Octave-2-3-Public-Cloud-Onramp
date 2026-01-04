@@ -111,27 +111,22 @@ A production-ready Next.js 14 web application for the Syntheverse Proof of Contr
 ### Next Steps
 
 1. **Connect Repository**
-
    - Import Git repository to Vercel
    - Auto-detect Next.js configuration
 
 2. **Configure Environment Variables**
-
    - Add all required env vars in Vercel dashboard
    - Set for Production, Preview, and Development environments
 
 3. **Update Supabase Configuration**
-
    - Update Site URL to Vercel deployment URL
    - Update OAuth redirect URLs
 
 4. **Configure Stripe Webhooks**
-
    - Create production webhook endpoint
    - Update webhook secret in environment variables
 
 5. **Run Database Migrations**
-
    - Execute migrations on production database
    - Verify schema matches local development
 

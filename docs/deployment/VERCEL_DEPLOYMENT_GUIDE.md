@@ -14,18 +14,15 @@
 ## Step 1: Connect Repository to Vercel
 
 1. **Go to Vercel Dashboard**
-
    - Visit https://vercel.com/dashboard
    - Click **"New Project"** or **"Add New..." → Project**
 
 2. **Import Git Repository**
-
    - If your code is on GitHub/GitLab/Bitbucket, connect your Git provider
    - Select your repository: `Syntheverse_PoC_Contributer_UI_Vercel_Stripe`
    - Vercel will auto-detect Next.js framework
 
 3. **Configure Project Settings**
-
    - **Framework Preset**: Next.js (auto-detected)
    - **Root Directory**: `./` (root of repository)
    - **Build Command**: `npm run build` (default)
@@ -120,11 +117,9 @@ For each variable, select which environments it applies to:
 ### Update Site URL in Supabase
 
 1. **Go to Supabase Dashboard**
-
    - Your project → Authentication → URL Configuration
 
 2. **Update Site URL**
-
    - Change from `http://localhost:3000` to your Vercel URL: `https://your-app.vercel.app`
 
 3. **Update Redirect URLs** (if using OAuth)
@@ -160,17 +155,14 @@ For each variable, select which environments it applies to:
 ## Step 4: Configure Stripe Webhooks for Production
 
 1. **Go to Stripe Dashboard**
-
    - Developers → Webhooks
 
 2. **Add Endpoint**
-
    - Click **"Add endpoint"**
    - Endpoint URL: `https://your-app.vercel.app/webhook/stripe`
    - Description: "Production webhook for Syntheverse PoC"
 
 3. **Select Events to Listen To**
-
    - `checkout.session.completed`
    - `customer.subscription.created`
    - `customer.subscription.updated`
@@ -223,7 +215,6 @@ npm run db:migrate
 ## Step 6: Redeploy with Updated Configuration
 
 1. **Trigger a new deployment**
-
    - Go to Vercel Dashboard → Your Project
    - Click **"Redeploy"** on the latest deployment
    - Or push a new commit to trigger automatic deployment
@@ -279,11 +270,9 @@ npm run db:migrate
 ## Step 8: Set Up Custom Domain (Optional)
 
 1. **Go to Vercel Project Settings**
-
    - Settings → Domains
 
 2. **Add Domain**
-
    - Enter your custom domain (e.g., `app.yourdomain.com`)
    - Follow Vercel's DNS configuration instructions
 

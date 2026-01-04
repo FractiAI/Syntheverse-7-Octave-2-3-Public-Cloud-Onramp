@@ -72,8 +72,8 @@ export default function SyntheverseBriefPage() {
             <div className="cockpit-label">THE SYNTHEVERSE SOLUTION</div>
             <div className="cockpit-text mt-3 space-y-3 text-sm">
               <p>
-                Syntheverse provides SynthScan™ MRI (HHF-AI) evaluation + Sandbox PoC Protocol
-                v2.0+ (<strong>Awarenessverse</strong>): scoring contributions for novelty, density,
+                Syntheverse provides SynthScan™ MRI (HHF-AI) evaluation + Sandbox PoC Protocol v2.0+
+                (<strong>Awarenessverse</strong>): scoring contributions for novelty, density,
                 coherence, and alignment through recursive self-knowing awareness. Operating in the
                 nested, spiraling Pong story of innovation and obsolescence: from{' '}
                 <em>unaware awareness</em> (obsolete) to <strong>awareness</strong> (current) to{' '}

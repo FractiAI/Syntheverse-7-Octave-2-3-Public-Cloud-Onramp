@@ -3,17 +3,14 @@
 ## Method 1: Get Connection String (Easiest)
 
 1. **Go to Supabase Dashboard**
-
    - Visit: https://app.supabase.io/
    - Sign in and select your project: `jfbgdxeumzqzigptbmvp`
 
 2. **Navigate to Database Settings**
-
    - Click on **Settings** (gear icon) in the left sidebar
    - Click on **Database** in the settings menu
 
 3. **Get Connection String**
-
    - Scroll down to **"Connection string"** section
    - You'll see several tabs: **URI**, **JDBC**, **Connection pooling**, etc.
    - Click on the **"URI"** tab
@@ -36,15 +33,12 @@
 If you don't remember your database password:
 
 1. **Go to Supabase Dashboard**
-
    - Settings → Database
 
 2. **Find "Database Password" section**
-
    - Look for **"Database password"** or **"Reset database password"** button
 
 3. **Reset the Password**
-
    - Click **"Reset database password"** or **"Generate new password"**
    - Copy the new password that appears
    - **Important:** Save this password - you'll need it!
@@ -121,16 +115,13 @@ postgresql://postgres.jfbgdxeumzqzigptbmvp:your-actual-password-here@aws-0-us-we
 If you're having trouble:
 
 1. **Check Supabase Project Settings**
-
    - Make sure you're the project owner or have admin access
    - Some connection info is only visible to project owners
 
 2. **Check Email**
-
    - When you created the Supabase project, you may have received an email with the password
 
 3. **Use Supabase SQL Editor**
-
    - Go to SQL Editor in Supabase
    - You might see connection info there
 

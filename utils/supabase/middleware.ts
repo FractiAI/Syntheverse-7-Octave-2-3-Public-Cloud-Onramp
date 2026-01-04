@@ -20,18 +20,20 @@ export async function updateSession(request: NextRequest) {
             request,
           });
           // Set cookies on the response (request.cookies is read-only, so we skip that)
-          cookiesToSet.forEach(({ name, value, options }: { name: string; value: string; options: CookieOptions }) => {
-            // Merge with defaults to ensure proper cookie settings
-            const mergedOptions = {
-              path: '/',
-              sameSite: 'lax' as const,
-              secure: process.env.NODE_ENV === 'production',
-              httpOnly: true,
-              // Preserve Supabase's expiration settings
-              ...(options || {}),
-            };
-            supabaseResponse.cookies.set(name, value, mergedOptions);
-          });
+          cookiesToSet.forEach(
+            ({ name, value, options }: { name: string; value: string; options: CookieOptions }) => {
+              // Merge with defaults to ensure proper cookie settings
+              const mergedOptions = {
+                path: '/',
+                sameSite: 'lax' as const,
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
+                // Preserve Supabase's expiration settings
+                ...(options || {}),
+              };
+              supabaseResponse.cookies.set(name, value, mergedOptions);
+            }
+          );
         },
       },
     }

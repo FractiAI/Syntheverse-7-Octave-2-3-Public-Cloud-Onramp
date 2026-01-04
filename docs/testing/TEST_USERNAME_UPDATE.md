@@ -134,17 +134,14 @@ The test endpoint performs several checks and returns detailed results:
 When testing on Vercel production/preview:
 
 1. **Check Vercel Logs**:
-
    - Go to Vercel Dashboard → Your Project → Functions → View Function Logs
    - Look for error messages from the test endpoint or username update action
 
 2. **Check Supabase Logs**:
-
    - Go to Supabase Dashboard → Logs → Database Logs
    - Look for query errors or connection issues
 
 3. **Check Stripe Dashboard**:
-
    - Go to Stripe Dashboard → Developers → Logs
    - Look for API errors when creating customers
 

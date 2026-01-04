@@ -18,7 +18,6 @@ Test execution attempted but blocked due to missing environment variables and Ha
 ### ✅ Test Files Ready
 
 - **Hardhat Tests**: 6 test files (HHF-AI Lens Scoring)
-
   - `01-scoring-determinism.test.ts` ✅
   - `02-tokenomics-validation.test.ts` ✅
   - `03-lens-consistency.test.ts` ✅
@@ -27,13 +26,11 @@ Test execution attempted but blocked due to missing environment variables and Ha
   - `06-constants-equations-validation.test.ts` ✅
 
 - **Integration Tests**: 3 test files
-
   - `01-poc-submission-flow.test.ts` ✅
   - `02-evaluation-flow.test.ts` ✅
   - `03-registration-flow.test.ts` ✅
 
 - **Security Tests**: 2 test files
-
   - `01-auth-security.test.ts` ✅
   - `02-api-security.test.ts` ✅
 
@@ -49,22 +46,18 @@ Test execution attempted but blocked due to missing environment variables and Ha
 The following required environment variables are **NOT SET**:
 
 1. **DATABASE_URL** - PostgreSQL connection string
-
    - Required for: Database operations, test data storage
    - Status: ❌ Missing
 
 2. **NEXT_PUBLIC_GROK_API_KEY** - Grok API key
-
    - Required for: HHF-AI Lens scoring evaluation tests
    - Status: ❌ Missing
 
 3. **NEXT_PUBLIC_SUPABASE_URL** - Supabase project URL
-
    - Required for: Authentication and database operations
    - Status: ❌ Missing
 
 4. **SUPABASE_SERVICE_ROLE_KEY** - Supabase service role key
-
    - Required for: Admin operations
    - Status: ❌ Missing
 
@@ -181,13 +174,11 @@ npm run test:load
 The test suite **DOES** include comprehensive HHF-AI Lens scoring tests:
 
 1. **Scoring Determinism** (`01-scoring-determinism.test.ts`)
-
    - Tests identical inputs produce identical scores
    - Validates boundary conditions
    - Ensures ordering stability
 
 2. **Lens Consistency** (`03-lens-consistency.test.ts`)
-
    - Score justifications (novelty, density, coherence, alignment)
    - LLM metadata capture
    - Edge sweet-spot overlap handling

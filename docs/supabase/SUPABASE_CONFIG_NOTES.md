@@ -42,7 +42,6 @@ Update the Site URL in Supabase to match your actual Vercel deployment:
 ## Next Steps
 
 1. **Update Site URL in Supabase Dashboard:**
-
    - Go to: Authentication → URL Configuration
    - Set Site URL to: `https://syntheverse-poc.vercel.app`
    - Add redirect URL: `https://syntheverse-poc.vercel.app/auth/callback`

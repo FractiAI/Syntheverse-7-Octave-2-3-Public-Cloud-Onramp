@@ -7,17 +7,14 @@ To apply the PoC database migrations, you have **two options**:
 ### Option 1: Supabase Dashboard (Recommended - Easiest)
 
 1. **Open Supabase SQL Editor**
-
    - Go to: https://supabase.com/dashboard/project/jfbgdxeumzqzigptbmvp/sql/new
    - Or: Dashboard → SQL Editor → New Query
 
 2. **Copy the migration SQL**
-
    - Open: `supabase/migrations/combined_poc_migrations.sql`
    - Copy all contents
 
 3. **Paste and Run**
-
    - Paste into the SQL Editor
    - Click **"Run"** button (or press Cmd/Ctrl + Enter)
 
@@ -43,6 +40,7 @@ To apply the PoC database migrations, you have **two options**:
    ```bash
    supabase db push
    ```
+
    - You'll be prompted for your database password
    - Get password from: Dashboard → Settings → Database → Database password
 

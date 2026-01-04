@@ -1179,8 +1179,8 @@ export function OnboardingNavigator() {
                     the language
                   </li>
                   <li>
-                    • <strong>Atomic symbols</strong> (✦, ◇, ⊙, ⚛, etc.) act as vocabulary—the
-                    words of the language
+                    • <strong>Atomic symbols</strong> (✦, ◇, ⊙, ⚛, etc.) act as vocabulary—the words
+                    of the language
                   </li>
                   <li>
                     • <strong>Empirical validation</strong> shows HFG predicts real patterns in

@@ -47,7 +47,6 @@
 ### Step 6: Look for Tabs
 
 1. Above the connection string box, you should see **tabs** like:
-
    - **URI** (this is what we need!)
    - JDBC
    - **Connection pooling** (alternative option)
@@ -125,12 +124,10 @@ Try this direct link to go straight to Database settings:
 If you don't see a "Connection string" section:
 
 1. **Look for "Database Password"** section
-
    - You can reset your password here
    - Then build the connection string manually
 
 2. **Check "Connection Pooling"** section
-
    - Might be a separate section
    - Has its own connection string
 

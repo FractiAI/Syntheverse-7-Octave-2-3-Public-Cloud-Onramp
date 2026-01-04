@@ -5,7 +5,6 @@
 1. **Go to:** https://app.supabase.io/project/jfbgdxeumzqzigptbmvp/authentication/providers
 
 2. **Verify Google OAuth:**
-
    - ✅ Toggle "Enable sign in with Google" is ON
    - ✅ Client ID is filled in
    - ✅ Client Secret is filled in

@@ -123,7 +123,6 @@ Reports include:
 ## Prerequisites
 
 1. **Environment Variables**: Ensure all required environment variables are set
-
    - Database connection (`DATABASE_URL`)
    - Grok API key (`NEXT_PUBLIC_GROK_API_KEY`)
    - Blockchain configuration (Base mainnet/testnet)

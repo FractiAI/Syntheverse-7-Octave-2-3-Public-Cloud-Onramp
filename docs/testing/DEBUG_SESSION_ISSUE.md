@@ -20,17 +20,14 @@
 1. **Open DevTools** (use one of the methods above)
 
 2. **Go to Application tab** (Chrome/Edge) or **Storage tab** (Firefox)
-
    - If you don't see tabs, click the `>>` icon to see more
 
 3. **In the left sidebar, expand "Cookies"**
-
    - Click on your domain: `syntheverse-poc.vercel.app`
 
 4. **Sign in with Google/OAuth**
 
 5. **Look for cookies starting with:**
-
    - `sb-jfbgdxeumzqzigptbmvp-auth-token`
    - `sb-jfbgdxeumzqzigptbmvp-auth-token-code-verifier`
    - Any other cookies starting with `sb-`
@@ -51,11 +48,9 @@
 Please tell me:
 
 1. **Do you see any cookies starting with `sb-` after signing in?**
-
    - Yes / No
 
 2. **If yes, what is the "Expires" value?**
-
    - A date/time in the future
    - "Session" (expires when browser closes)
    - Other: **\_\_\_\_**

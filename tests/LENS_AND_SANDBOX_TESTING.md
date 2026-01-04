@@ -267,7 +267,6 @@ npx mocha --require tsx/cjs tests/hardhat/01-scoring-determinism.test.ts
 ### Expected Outcomes
 
 1. **Lens Consistency**: All 6 tests pass
-
    - Score justifications complete
    - LLM metadata captured
    - Edge sweet-spot handled correctly
@@ -276,7 +275,6 @@ npx mocha --require tsx/cjs tests/hardhat/01-scoring-determinism.test.ts
    - No dimension score penalty
 
 2. **Sandbox Mapping**: All 6 tests pass
-
    - Embeddings generated correctly
    - 3D coordinates mapped accurately
    - Vector similarity calculated correctly
@@ -285,13 +283,11 @@ npx mocha --require tsx/cjs tests/hardhat/01-scoring-determinism.test.ts
    - Coordinates consistent
 
 3. **Scoring Determinism**: All 3 tests pass
-
    - Identical inputs → identical scores
    - Boundary conditions handled
    - Ordering stability maintained
 
 4. **Calibration**: All 6 tests pass
-
    - Peer-reviewed papers score within expected ranges
    - Similar quality papers consistent
    - All papers qualified

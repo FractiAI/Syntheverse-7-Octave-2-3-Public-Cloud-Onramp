@@ -59,25 +59,21 @@ Layer 3+: Operational layers
 Each PoC node is a 3D object with:
 
 1. **Position (x, y, z)**:
-
    - Based on current vector_x, vector_y, vector_z coordinates
    - Adjusted to reflect fractal layer hierarchy
    - Clustering within appropriate layer
 
 2. **Size (Scale)**:
-
    - Proportional to `density` score
    - Formula: `scale = min(max(density / 2500, 0.3), 3.0)`
    - Range: 30% to 300% of base size
 
 3. **Color**:
-
    - Represents `novelty` score
    - Gradient: Low (blue) → Medium (green) → High (red/orange)
    - Formula: `hue = (novelty / 2500) * 360` (HSV color space)
 
 4. **Shape**:
-
    - **Gold**: Icosahedron (20-sided)
    - **Silver**: Octahedron (8-sided)
    - **Copper**: Tetrahedron (4-sided)
@@ -135,7 +131,6 @@ When a PoC node is clicked, open a detail panel showing:
 **Contributor-Specific Actions** (if current user is contributor):
 
 1. **Projected SYNTH Allocation**:
-
    - Display: "Projected: {amount} SYNTH"
    - Calculated dynamically based on:
      - Current pod_score
@@ -144,7 +139,6 @@ When a PoC node is clicked, open a detail panel showing:
      - Tier multipliers
 
 2. **Allocate SYNTH Button**:
-
    - Enabled only if:
      - PoC is qualified
      - PoC is not yet allocated

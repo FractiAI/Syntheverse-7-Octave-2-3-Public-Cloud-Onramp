@@ -360,7 +360,6 @@ After setting up environment variables, verify:
 ## Security Best Practices
 
 1. **Private Key Security**:
-
    - Never commit private keys to git
    - Use Vercel environment variables for production
    - Use separate wallets for testnet/mainnet
@@ -368,7 +367,6 @@ After setting up environment variables, verify:
    - Rotate keys periodically
 
 2. **Network Security**:
-
    - Always test on testnet first
    - Use reputable RPC providers for production
    - Monitor gas costs and wallet balance

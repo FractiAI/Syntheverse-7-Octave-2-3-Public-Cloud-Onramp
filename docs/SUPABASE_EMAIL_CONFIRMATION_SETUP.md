@@ -13,24 +13,20 @@ Supabase sends confirmation emails, not Resend. The email service needs to be co
 ### Option 1: Configure Supabase Email Service (Recommended for Production)
 
 1. **Go to Supabase Dashboard**
-
    - Visit: https://app.supabase.io/project/jfbgdxeumzqzigptbmvp/settings/auth
 
 2. **Check Email Settings**
-
    - Scroll to "Email Auth" section
    - Verify "Enable email confirmations" is ON
    - Check "SMTP Settings" section
 
 3. **Configure SMTP (If not using Supabase default)**
-
    - If you want to use your own SMTP server:
      - Go to: Settings → Auth → SMTP Settings
      - Enter your SMTP credentials
    - **OR** use Supabase's built-in email service (default)
 
 4. **Verify Email Templates**
-
    - Go to: Authentication → Email Templates
    - Check "Confirm signup" template
    - Ensure it includes the confirmation link
@@ -56,12 +52,10 @@ Supabase sends confirmation emails, not Resend. The email service needs to be co
 If you want to use Resend for confirmation emails:
 
 1. **Set up Resend Domain**
-
    - Go to: https://resend.com/domains
    - Add and verify your domain (e.g., `syntheverse.ai`)
 
 2. **Get SMTP Credentials from Resend**
-
    - Go to: Resend Dashboard → SMTP
    - Copy SMTP settings
 
@@ -79,21 +73,17 @@ If you want to use Resend for confirmation emails:
 ### Email Not Received
 
 1. **Check Spam Folder**
-
    - Confirmation emails often go to spam
 
 2. **Check Supabase Logs**
-
    - Go to: Supabase Dashboard → Logs → Auth Logs
    - Look for email sending errors
 
 3. **Verify Email Address**
-
    - Make sure the email address is valid
    - Try a different email provider (Gmail, Outlook, etc.)
 
 4. **Check Rate Limits**
-
    - Supabase has rate limits on emails
    - Wait a few minutes and try again
 
@@ -104,12 +94,10 @@ If you want to use Resend for confirmation emails:
 ### Email Link Not Working
 
 1. **Check Redirect URL**
-
    - Verify `NEXT_PUBLIC_WEBSITE_URL` is set correctly
    - Should be: `https://syntheverse-poc.vercel.app` (no trailing slash, no newline)
 
 2. **Check Callback Route**
-
    - Verify `/auth/callback` route is working
    - Check Vercel function logs for errors
 

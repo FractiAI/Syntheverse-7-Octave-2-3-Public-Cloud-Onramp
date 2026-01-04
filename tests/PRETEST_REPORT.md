@@ -199,33 +199,28 @@ hardhat: {
 **Location**: `tests/hardhat/`
 
 1. ✅ **Scoring Determinism** (`01-scoring-determinism.test.ts`)
-
    - Identical inputs → identical scores
    - Boundary conditions
    - Ordering stability
 
 2. ✅ **Tokenomics Validation** (`02-tokenomics-validation.test.ts`)
-
    - Initial supply (90T SYNTH)
    - Epoch balances
    - Allocation calculations
 
 3. ✅ **Lens Consistency** (`03-lens-consistency.test.ts`)
-
    - Score justifications
    - LLM metadata capture
    - Edge sweet-spot overlap
    - Redundancy application
 
 4. ✅ **Sandbox Vector Mapping** (`04-sandbox-vector-mapping.test.ts`)
-
    - Embedding generation
    - 3D coordinate mapping
    - Vector similarity
    - Redundancy detection
 
 5. ✅ **Calibration** (`05-calibration-peer-reviewed.test.ts`)
-
    - Peer-reviewed paper scoring
    - Similar quality consistency
    - Qualification recognition
@@ -240,13 +235,11 @@ hardhat: {
 **Location**: `tests/integration/`
 
 1. 📋 **PoC Submission Flow** (`01-poc-submission-flow.test.ts`)
-
    - Hash generation
    - Database storage
    - Validation
 
 2. 📋 **Evaluation Flow** (`02-evaluation-flow.test.ts`)
-
    - Grok API integration
    - Score calculation
    - Qualification logic
@@ -261,7 +254,6 @@ hardhat: {
 **Location**: `tests/security/`
 
 1. 📋 **Authentication Security** (`01-auth-security.test.ts`)
-
    - Password strength
    - SQL injection prevention
    - XSS prevention

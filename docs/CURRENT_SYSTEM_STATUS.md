@@ -50,13 +50,11 @@ The Syntheverse Contributor Dashboard is a **production-ready Next.js 14 applica
 The vector system is **fully implemented and working**:
 
 - **Embeddings** (`embeddings.ts`):
-
   - Uses OpenAI `text-embedding-3-small` (1536 dimensions)
   - Fallback to hash-based embeddings if no API key
   - Functions: `generateEmbedding()`, `cosineSimilarity()`, `euclideanDistance()`
 
 - **3D Mapping** (`hhf-3d-mapping.ts`):
-
   - Maps embeddings to 3D coordinates using HHF constant (Λᴴᴴ ≈ 1.12 × 10²²)
   - X-axis: Novelty, Y-axis: Density, Z-axis: Coherence
   - Functions: `mapTo3DCoordinates()`, `distance3D()`, `similarityFromDistance()`
@@ -165,7 +163,6 @@ The vector system is **fully implemented and working**:
 ### Phase 1: Fix Critical Issues (Immediate)
 
 1. **Fix node selection**
-
    - Implement proper 3D-to-2D picking algorithm
    - Calculate closest node to click position in screen space
    - Update `handleClick()` in `SandboxMap3D.tsx`
@@ -178,7 +175,6 @@ The vector system is **fully implemented and working**:
 ### Phase 2: Enhanced Canvas Implementation (Short-term)
 
 1. **Performance optimization**
-
    - Optimize edge calculation (spatial indexing if needed)
    - View frustum culling for large datasets
    - Implement node/edge LOD (level of detail)
@@ -191,7 +187,6 @@ The vector system is **fully implemented and working**:
 ### Phase 3: WebGL/Three.js Migration (Medium-term)
 
 1. **Migrate to Three.js**
-
    - Replace canvas 2D with WebGL rendering
    - True 3D interaction (orbit controls)
    - Hardware acceleration
@@ -206,7 +201,6 @@ The vector system is **fully implemented and working**:
 ### Phase 4: Advanced Visualization (Long-term)
 
 1. **Multi-dimensional views**
-
    - Switch axis mappings
    - 4D visualization (time dimension)
    - Dimension filtering

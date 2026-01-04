@@ -55,13 +55,11 @@
 2. **Two scenarios:**
 
    **Scenario A: Password is shown**
-
    - The connection string will have your actual password
    - Example: `postgresql://postgres:MyPassword123@db.jfbgdxeumzqzigptbmvp.supabase.co:5432/postgres`
    - ✅ Just copy this entire string - it's ready to use!
 
    **Scenario B: Shows `[YOUR-PASSWORD]` placeholder**
-
    - The connection string shows: `postgresql://postgres:[YOUR-PASSWORD]@db.jfbgdxeumzqzigptbmvp.supabase.co:5432/postgres`
    - You need to get/reset your database password first (see Step 7)
 

@@ -127,22 +127,18 @@ Check **Settings → Environment Variables** for:
 #### Common Issues:
 
 1. **Missing Environment Variables**
-
    - Check all required variables are set
    - Verify values are correct (not placeholders)
 
 2. **Placeholder URLs**
-
    - `NEXT_PUBLIC_SITE_URL` should NOT be `https://YOUR-APP-NAME.vercel.app`
    - Should be your actual Vercel URL (e.g., `https://syntheverse-poc-xyz.vercel.app`)
 
 3. **DATABASE_URL Missing**
-
    - Ensure `DATABASE_URL` is set with actual password
    - Format: `postgresql://postgres:[PASSWORD]@db.jfbgdxeumzqzigptbmvp.supabase.co:5432/postgres`
 
 4. **STRIPE_WEBHOOK_SECRET Missing**
-
    - If using Stripe webhooks, this must be set
    - Get from Stripe Dashboard → Webhooks → Your endpoint → Signing secret
 
@@ -208,7 +204,6 @@ vercel link
 **To complete this review**, you have two options:
 
 1. **Option 1: Use Vercel Dashboard (Recommended)**
-
    - Go to https://vercel.com/dashboard
    - Find your project
    - Review all sections mentioned above

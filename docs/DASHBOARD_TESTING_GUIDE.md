@@ -179,13 +179,11 @@ This is a **Next.js 14** application for the Syntheverse Proof of Contribution (
 ### Phase 1: Fix Current Implementation
 
 1. **Fix Node Selection**
-
    - Implement proper 3D-to-2D picking
    - Calculate closest node to click position in screen space
    - Update `handleClick()` function in `SandboxMap3D.tsx`
 
 2. **Improve Visual Feedback**
-
    - Add hover states
    - Better node highlighting
    - Tooltips with submission details
@@ -198,14 +196,12 @@ This is a **Next.js 14** application for the Syntheverse Proof of Contribution (
 ### Phase 2: Enhanced Features
 
 1. **WebGL/Three.js Migration**
-
    - Replace canvas 2D with Three.js for true 3D
    - Better rendering quality
    - Hardware acceleration
    - Smooth animations
 
 2. **Interactive Features**
-
    - Node filtering by status/category/metal
    - Search functionality
    - Time-based filtering (show submissions by date range)
@@ -220,13 +216,11 @@ This is a **Next.js 14** application for the Syntheverse Proof of Contribution (
 ### Phase 3: Advanced Features
 
 1. **Multi-dimensional Views**
-
    - Switch between different axis mappings
    - Add 4D visualization (time dimension)
    - Dimension filtering
 
 2. **Comparison Tools**
-
    - Compare two submissions side-by-side
    - Path tracing between related submissions
    - Similarity heatmap overlay
@@ -293,19 +287,16 @@ npm run db:studio
 ## Next Steps
 
 1. **Immediate**: Test current 3D map functionality
-
    - Identify all bugs and limitations
    - Document performance issues
    - Test with real data
 
 2. **Short-term**: Fix critical issues
-
    - Fix node selection
    - Improve rendering performance
    - Add better visual feedback
 
 3. **Medium-term**: Upgrade to WebGL/Three.js
-
    - Migrate from canvas 2D to Three.js
    - Implement proper 3D interactions
    - Add advanced features

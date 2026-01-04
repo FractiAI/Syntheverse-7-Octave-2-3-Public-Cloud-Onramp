@@ -238,19 +238,16 @@ Add to Vercel Dashboard → Settings → Environment Variables:
 ## 🔄 Future Enhancements
 
 1. **Request Validation**:
-
    - Add Zod schemas for all API endpoints
    - Validate request bodies, query parameters, path parameters
    - Type-safe request/response handling
 
 2. **Advanced Rate Limiting**:
-
    - Per-user rate limiting (using user ID instead of IP)
    - Different limits for authenticated vs anonymous users
    - Tiered rate limits based on user plan
 
 3. **CORS Improvements**:
-
    - Dynamic origin validation
    - Separate CORS config per endpoint
    - CORS logging/monitoring

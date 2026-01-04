@@ -3,18 +3,15 @@
 ## Method 1: Generate Access Token via Supabase Dashboard (Recommended)
 
 1. **Go to Supabase Dashboard**
-
    - Visit: https://app.supabase.io/
    - Sign in to your account
 
 2. **Go to Account Settings**
-
    - Click on your profile/avatar (usually top right corner)
    - Click on "Account Settings" or "Preferences"
    - OR go directly to: https://app.supabase.io/account/tokens
 
 3. **Create Access Token**
-
    - Look for "Access Tokens" section
    - Click "Generate New Token" or "Create Token"
    - Give it a name (e.g., "CLI Access Token")

@@ -8,7 +8,6 @@
 ## ✅ Completed Steps
 
 1. ✅ **Environment Variables Added** (via CLI)
-
    - NEXT_PUBLIC_SUPABASE_URL → Production, Preview, Development
    - NEXT_PUBLIC_SUPABASE_ANON_KEY → Production, Preview, Development
    - SUPABASE_SERVICE_ROLE_KEY → Production, Preview
@@ -73,7 +72,6 @@ Found usage in these files:
 **How to add DATABASE_URL:**
 
 1. **Get connection string from Supabase Dashboard:**
-
    - Go to: https://app.supabase.io/project/jfbgdxeumzqzigptbmvp/settings/database
    - Scroll to **"Connection string"** section
    - Click on **"URI"** tab
@@ -135,19 +133,16 @@ Found usage in these files:
 **After redeploy completes, test these endpoints:**
 
 1. **Homepage** (Should load)
-
    - Visit: https://syntheverse-poc.vercel.app
    - ✅ Should load without errors
    - ❌ Check browser console for errors
 
 2. **Login Page** (Should render)
-
    - Visit: https://syntheverse-poc.vercel.app/login
    - ✅ Should show login form
    - ✅ Should not show environment variable errors
 
 3. **Signup Page** (Should render)
-
    - Visit: https://syntheverse-poc.vercel.app/signup
    - ✅ Should show signup form
 
@@ -187,7 +182,6 @@ Found usage in these files:
 **Only needed if you want webhook functionality:**
 
 1. **Create Webhook in Stripe:**
-
    - Go to: https://dashboard.stripe.com/test/webhooks
    - Click **"Add endpoint"**
    - Endpoint URL: `https://syntheverse-poc.vercel.app/webhook/stripe`
@@ -195,7 +189,6 @@ Found usage in these files:
    - Click **"Add endpoint"**
 
 2. **Get Webhook Signing Secret:**
-
    - After creating, click on the webhook endpoint
    - Copy the **"Signing secret"** (starts with `whsec_`)
 

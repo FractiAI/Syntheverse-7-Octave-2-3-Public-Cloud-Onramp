@@ -52,13 +52,11 @@ Should show 4 epochs: founder, pioneer, community, ecosystem
 ## Next Steps
 
 1. **Test PoC Submission**
-
    - Go to your deployed app
    - Try submitting a PoC contribution
    - Check that it appears in the `contributions` table
 
 2. **Test Evaluation**
-
    - Submit a contribution for evaluation
    - Check the `poc_log` table for evaluation events
 

@@ -129,7 +129,6 @@ The integration will automatically:
 ## How It Works
 
 1. **PoC Registration Flow**:
-
    - User pays $500 fee via Stripe
    - Stripe webhook triggers `registerPoCOnBlockchain()`
    - Function connects to Hardhat network
@@ -138,7 +137,6 @@ The integration will automatically:
    - Returns transaction hash for database storage
 
 2. **Contract Parameters**:
-
    - `submissionHash`: bytes32 (converted from hex string)
    - `contributor`: address (derived from email hash - see note below)
    - `metal`: string (first metal from array: "gold", "silver", or "copper")
@@ -187,14 +185,12 @@ The integration will automatically:
 ## Security Considerations
 
 1. **Private Key Security**:
-
    - Store `BLOCKCHAIN_PRIVATE_KEY` only in environment variables
    - Never commit to git
    - Use separate wallets for testnet/mainnet
    - Consider using a hardware wallet for production
 
 2. **Contract Ownership**:
-
    - The wallet used must be the contract owner
    - Consider multi-sig for production deployments
    - Document ownership transfers

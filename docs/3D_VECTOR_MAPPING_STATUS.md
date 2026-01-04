@@ -9,7 +9,6 @@ The 3D vectors are **NOT actually mapped** to a holographic hydrogen sandbox. Th
 1. **Textual Framing Only**: The system prompts and evaluation queries describe submissions as "3D vectors" in the "holographic hydrogen fractal sandbox," but this is purely linguistic/instructional.
 
 2. **No Geometric Computation**: There is no code that:
-
    - Computes actual 3D coordinates (x, y, z) for submissions
    - Calculates vector embeddings or vector representations
    - Performs geometric distance/similarity calculations

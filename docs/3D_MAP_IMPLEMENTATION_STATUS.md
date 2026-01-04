@@ -45,19 +45,16 @@
 ### High Priority
 
 1. **Test Three.js Integration**
-
    - Verify components render correctly
    - Test node clicking and panel interactions
    - Check performance with multiple nodes
 
 2. **Nested Fractal Layers** (Phase 3)
-
    - Implement hierarchical layer structure
    - Add layer navigation controls
    - Position nodes within appropriate layers
 
 3. **Edge Rendering**
-
    - Render similarity connections between nodes
    - Style edges based on similarity type
 
@@ -68,13 +65,11 @@
 ### Medium Priority
 
 5. **Enhanced Interactivity**
-
    - Hover tooltips for nodes
    - Better node selection feedback
    - Smooth camera transitions
 
 6. **Performance Optimization**
-
    - Implement LOD (Level of Detail) for large datasets
    - Optimize rendering for 100+ nodes
    - Add loading states
@@ -121,14 +116,12 @@ import { SandboxMap3DUpgraded } from '@/components/SandboxMap3DUpgraded';
 ### 3. Test the Implementation
 
 1. **Visual Encoding**:
-
    - Check nodes render with correct sizes (density)
    - Verify colors match novelty scores
    - Confirm shapes match metal types
    - Check opacity reflects coherence
 
 2. **Interactivity**:
-
    - Click nodes to open detail panel
    - Verify projected allocation displays correctly
    - Test "Allocate SYNTH" button (for qualified, registered PoCs)
@@ -145,17 +138,14 @@ import { SandboxMap3DUpgraded } from '@/components/SandboxMap3DUpgraded';
 ## 🐛 Known Issues / TODOs
 
 1. **Detail Panel API Integration**:
-
    - Currently fetches full sandbox-map data
    - Could optimize with dedicated PoC detail endpoint
 
 2. **Fractal Layers**:
-
    - Not yet implemented - nodes render in flat space
    - Need to add hierarchical structure
 
 3. **Edge Rendering**:
-
    - Edges calculated but not rendered in Three.js scene
    - Need to add edge visualization component
 

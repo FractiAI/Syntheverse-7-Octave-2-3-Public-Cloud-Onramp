@@ -163,7 +163,6 @@ This document confirms that token allocations, epoch balances, and open epochs a
 All tables are created via SQL migrations:
 
 1. **Primary Migration:** `supabase/migrations/20240101000001_create_poc_tables.sql`
-
    - Creates `allocations` table
    - Creates `epoch_balances` table
    - Creates `tokenomics` table

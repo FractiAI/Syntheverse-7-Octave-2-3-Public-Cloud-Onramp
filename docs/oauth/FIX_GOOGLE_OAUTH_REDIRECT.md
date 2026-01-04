@@ -13,17 +13,14 @@ When using Supabase for OAuth, Google needs to redirect to **Supabase's callback
 ### Update Google Cloud Console
 
 1. **Go to Google Cloud Console**
-
    - Visit: https://console.cloud.google.com/apis/credentials
    - Sign in with your Google account
 
 2. **Find Your OAuth 2.0 Client ID**
-
    - Look for the OAuth 2.0 Client ID you created for this app
    - Click on it to edit
 
 3. **Update Authorized redirect URIs**
-
    - In the "Authorized redirect URIs" section
    - **Remove** any URLs like:
      - `https://syntheverse-poc.vercel.app/auth/callback`
@@ -35,7 +32,6 @@ When using Supabase for OAuth, Google needs to redirect to **Supabase's callback
    - **Important**: Replace `jfbgdxeumzqzigptbmvp` with your Supabase project ID if different
 
 4. **Save Changes**
-
    - Click "Save" at the bottom
 
 5. **Wait a Few Minutes**

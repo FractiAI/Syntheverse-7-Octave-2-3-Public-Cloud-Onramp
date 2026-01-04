@@ -144,6 +144,7 @@ console.log('Auth token:', data.session?.access_token);
      <your-poc-hash> \
      <your-auth-token>
    ```
+
    - Should pass: All tests including valid registration
 
 ### Expected Results
@@ -214,23 +215,19 @@ console.log('Auth token:', data.session?.access_token);
 After script tests pass:
 
 1. **Log in to Dashboard**
-
    - Navigate to `/dashboard`
    - Ensure you're authenticated
 
 2. **Find Qualified PoC**
-
    - Check "My Submissions" table
    - Look for PoC with "Qualified" status
    - Ensure it's not already registered
 
 3. **Click Register Button**
-
    - Click "Anchor PoC on-chain - $500" button
    - Should redirect to Stripe checkout
 
 4. **Verify Stripe Checkout**
-
    - Checkout page should show $500.00
    - Product name should show PoC title
    - Description should mention "Hard Hat L1 blockchain"

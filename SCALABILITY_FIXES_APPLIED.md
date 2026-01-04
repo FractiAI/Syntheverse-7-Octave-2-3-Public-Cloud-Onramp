@@ -155,17 +155,14 @@ const totalCoherenceDensity = 0;
 ## ✅ Testing Recommendations
 
 1. **Test with 3 submissions** (current state)
-
    - Verify evaluations still work correctly
    - Check scores are not zero
 
 2. **Test with 10+ submissions**
-
    - Verify performance remains constant
    - Check memory usage stays low
 
 3. **Load test with 100+ submissions**
-
    - Verify system handles scale
    - Monitor database query times
 
@@ -198,14 +195,12 @@ const totalCoherenceDensity = 0;
 1. **Top 3 Matches**: The system already efficiently uses `top3Matches` for context (no changes needed)
 
 2. **Total Coherence Density**: Set to 0 because:
-
    - Not used in evaluation prompt
    - Not critical for evaluation
    - Was causing O(n) performance issues
    - Can be cached in tokenomics table if needed in future
 
 3. **Archived Vectors Limit (50)**: This is sufficient because:
-
    - Redundancy calculation only needs closest matches
    - Top 50 covers all relevant similarities
    - The calculation sorts and takes top 3 anyway

@@ -64,13 +64,11 @@ The app will be available at: **http://localhost:3000**
 1. **Create a new project** at [Supabase](https://app.supabase.io/)
 
 2. **Get your project credentials**:
-
    - Go to Settings → API
    - Copy the Project URL and anon/public key
    - Copy the service_role key (keep this secret!)
 
 3. **Configure Site URL**:
-
    - Go to Authentication → URL Configuration
    - Set Site URL to: `http://localhost:3000`
 
@@ -85,7 +83,6 @@ The app will be available at: **http://localhost:3000**
 2. **Enable test mode** (stay in test mode for development)
 
 3. **Get your API keys**:
-
    - Go to Developers → API keys
    - Copy the "Publishable key" (starts with `pk_test_`)
    - Copy the "Secret key" (starts with `sk_test_`)

@@ -139,12 +139,10 @@ You can verify your environment variables are set correctly by checking the test
 ## Security Best Practices
 
 1. **Separate Wallets**:
-
    - Use different wallets for testnet (Preview/Dev) and mainnet (Production)
    - Never use production wallet private keys in test environments
 
 2. **Private Key Security**:
-
    - Never commit private keys to git
    - Only store in Vercel environment variables
    - Use test wallets with minimal funds for testing

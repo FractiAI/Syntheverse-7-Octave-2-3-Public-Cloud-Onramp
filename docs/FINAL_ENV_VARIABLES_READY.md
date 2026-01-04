@@ -78,12 +78,10 @@ Great! You now have all the values you need. Here's your complete list:
 ## 🚀 How to Add These to Vercel
 
 1. **Go to Vercel Dashboard**
-
    - https://vercel.com/dashboard
    - Select your project
 
 2. **Navigate to Environment Variables**
-
    - Click **Settings** → **Environment Variables**
 
 3. **Add Each Variable**

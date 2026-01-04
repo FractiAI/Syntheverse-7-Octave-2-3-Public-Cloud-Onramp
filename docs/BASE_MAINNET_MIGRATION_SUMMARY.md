@@ -161,14 +161,12 @@ const result = await emitLensEvent('extensionType', 'eventData');
 ## 🔐 Security Considerations
 
 1. **Private Key Management**
-
    - Never commit private keys to git
    - Use Vercel environment variables
    - Separate wallets for testnet/mainnet
    - Consider hardware wallet for production
 
 2. **Gas Management**
-
    - Base has very low gas costs (~0.1 gwei)
    - Monitor wallet balance
    - Implement gas estimation

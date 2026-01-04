@@ -15,7 +15,6 @@
 ### Code Changes
 
 1. ✅ Updated key validation in `app/api/poc/[hash]/register/route.ts` to accept:
-
    - `sk_test_` / `sk_live_` (standard keys)
    - `ssk_test_` / `ssk_live_` (restricted keys)
    - `rk_test_` / `rk_live_` (restricted keys)
@@ -46,7 +45,6 @@
 2. Find `STRIPE_SECRET_KEY` for **Production** environment
 
 3. Edit the value and ensure:
-
    - ✅ Starts with `sk_test_` (not `ssk_test_`)
    - ✅ No extra spaces or newlines
    - ✅ Copy the exact key from Stripe Dashboard → Developers → API keys → Secret key

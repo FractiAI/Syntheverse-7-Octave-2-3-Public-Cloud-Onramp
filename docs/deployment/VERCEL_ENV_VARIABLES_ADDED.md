@@ -71,22 +71,18 @@
 ### Next Steps
 
 1. **Add DATABASE_URL** (Required)
-
    - Get from Supabase Dashboard
    - Add to Production and Preview
 
 2. **Add STRIPE_WEBHOOK_SECRET** (Required for webhooks)
-
    - Create webhook first
    - Add signing secret to Production and Preview
 
 3. **Redeploy Application**
-
    - After adding missing variables, redeploy to apply changes
    - Go to Vercel Dashboard → Deployments → Redeploy
 
 4. **Update Supabase Site URL**
-
    - Go to Supabase Dashboard → Authentication → URL Configuration
    - Update Site URL to: `https://syntheverse-poc.vercel.app`
    - Add redirect URL: `https://syntheverse-poc.vercel.app/auth/callback`

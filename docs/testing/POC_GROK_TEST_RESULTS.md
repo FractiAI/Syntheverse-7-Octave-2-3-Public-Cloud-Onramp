@@ -67,22 +67,18 @@ Redundancy Analysis: No redundant information found
 To test the full PoC submission flow with Grok evaluation:
 
 1. **Navigate to Submit Page**
-
    - Go to: https://syntheverse-poc.vercel.app/submit
 
 2. **Authenticate**
-
    - Log in with your Supabase account
 
 3. **Submit a Test Contribution**
-
    - Enter a title (e.g., "Test PoC - Hydrogen Holographic Framework")
    - Add content describing a research contribution
    - Select category: "Scientific"
    - Click "Submit Contribution"
 
 4. **Verify Evaluation Results**
-
    - ✅ Submission should succeed
    - ✅ Grok API evaluation should complete automatically
    - ✅ Evaluation results should include:

@@ -9,17 +9,14 @@ The registration fields migration has been successfully applied to the `contribu
 The following columns have been added to the `contributions` table:
 
 1. **`registered`** (boolean, default: false)
-
    - Indicates if the PoC has been registered on the blockchain
    - Default: `false`
 
 2. **`registration_date`** (timestamp, nullable)
-
    - Timestamp when the PoC was registered
    - Nullable (only set when registered)
 
 3. **`registration_tx_hash`** (text, nullable)
-
    - Blockchain transaction hash for the registration
    - Nullable (only set when registered)
 
@@ -30,7 +27,6 @@ The following columns have been added to the `contributions` table:
 ## Created Indexes
 
 1. **`contributions_registered_idx`**
-
    - Index on `registered` column
    - Partial index (WHERE registered = true)
    - Optimizes queries for registered PoCs

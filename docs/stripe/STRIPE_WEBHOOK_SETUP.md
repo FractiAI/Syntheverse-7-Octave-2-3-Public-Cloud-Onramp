@@ -15,7 +15,6 @@ https://your-app-name.vercel.app/webhook/stripe
 ### Step 1: Get Your Vercel URL
 
 1. **Go to Vercel Dashboard**
-
    - https://vercel.com/dashboard
    - Click on your project
    - Go to **Deployments** tab
@@ -33,21 +32,17 @@ https://your-app-name.vercel.app/webhook/stripe
 ### Step 2: Create Webhook Endpoint in Stripe
 
 1. **Go to Stripe Dashboard**
-
    - Visit: https://dashboard.stripe.com/
    - Make sure you're in **Test mode** (toggle switch in top right should say "Test mode")
 
 2. **Navigate to Webhooks**
-
    - Click **"Developers"** in the left sidebar
    - Click **"Webhooks"** (or go directly: https://dashboard.stripe.com/test/webhooks)
 
 3. **Add New Endpoint**
-
    - Click the **"+ Add endpoint"** button (top right)
 
 4. **Configure Endpoint**
-
    - **Endpoint URL**: Enter your webhook URL
      ```
      https://your-app-name.vercel.app/webhook/stripe
@@ -62,27 +57,21 @@ https://your-app-name.vercel.app/webhook/stripe
    Click **"Select events"** or **"Add events"** and select these events:
 
    ✅ **checkout.session.completed**
-
    - Triggered when a customer successfully completes a checkout session
 
    ✅ **customer.subscription.created**
-
    - Triggered when a new subscription is created
 
    ✅ **customer.subscription.updated**
-
    - Triggered when a subscription is updated (plan change, status change, etc.)
 
    ✅ **customer.subscription.deleted**
-
    - Triggered when a subscription is canceled or deleted
 
    ✅ **invoice.payment_succeeded**
-
    - Triggered when an invoice payment succeeds
 
    ✅ **invoice.payment_failed**
-
    - Triggered when an invoice payment fails
 
 6. **Add Events**
@@ -94,12 +83,10 @@ https://your-app-name.vercel.app/webhook/stripe
 ### Step 3: Get Webhook Signing Secret
 
 1. **Click on Your Webhook Endpoint**
-
    - After creating, you'll see it in the webhooks list
    - Click on the endpoint you just created
 
 2. **Find Signing Secret**
-
    - Scroll down to the **"Signing secret"** section
    - You'll see something like: `whsec_...` (starts with `whsec_`)
    - Click **"Reveal"** or **"Click to reveal"** button
@@ -115,16 +102,13 @@ https://your-app-name.vercel.app/webhook/stripe
 ### Step 4: Add Secret to Vercel Environment Variables
 
 1. **Go to Vercel Dashboard**
-
    - https://vercel.com/dashboard
    - Click on your project
 
 2. **Navigate to Environment Variables**
-
    - Go to **Settings** → **Environment Variables**
 
 3. **Add or Update STRIPE_WEBHOOK_SECRET**
-
    - If you already added it as a placeholder:
      - Find `STRIPE_WEBHOOK_SECRET` in the list
      - Click **Edit**
@@ -145,7 +129,6 @@ https://your-app-name.vercel.app/webhook/stripe
 ### Step 5: Redeploy Your Application
 
 1. **Trigger a New Deployment**
-
    - Go to **Deployments** tab in Vercel
    - Click **"Redeploy"** on the latest deployment
    - Or push a new commit to trigger automatic deployment
@@ -159,7 +142,6 @@ https://your-app-name.vercel.app/webhook/stripe
 ### Step 6: Test the Webhook (Optional)
 
 1. **Test in Stripe Dashboard**
-
    - Go back to Stripe Dashboard → Developers → Webhooks
    - Click on your webhook endpoint
    - Click **"Send test webhook"** button
@@ -167,7 +149,6 @@ https://your-app-name.vercel.app/webhook/stripe
    - Click **"Send test webhook"**
 
 2. **Check Vercel Logs**
-
    - Go to Vercel Dashboard → Your Project → Functions
    - Check the logs for `/webhook/stripe` function
    - You should see the webhook being processed
@@ -234,13 +215,11 @@ https://your-app-name.vercel.app/webhook/stripe
 ## Important Notes
 
 1. **Test vs Production**
-
    - In **Test mode**, webhook secrets start with `whsec_test_...`
    - In **Live mode**, webhook secrets start with `whsec_live_...`
    - Make sure you're using the correct mode
 
 2. **Multiple Environments**
-
    - You can create separate webhooks for production and test
    - Use different Vercel environment variables if needed
    - Or use the same webhook secret for all environments (if using test mode)

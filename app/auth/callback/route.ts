@@ -60,25 +60,27 @@ export async function GET(request: NextRequest) {
           // Set cookies directly on the redirect response
           // Preserve Supabase's options (especially maxAge/expires) and merge with defaults
           console.log('OAuth callback: Setting cookies', { count: cookiesToSet.length });
-          cookiesToSet.forEach(({ name, value, options }: { name: string; value: string; options: CookieOptions }) => {
-            // Merge Supabase options with our defaults, preserving expiration settings
-            const mergedOptions = {
-              path: '/',
-              sameSite: 'lax' as const,
-              secure: process.env.NODE_ENV === 'production',
-              httpOnly: true,
-              // Preserve Supabase's expiration settings (maxAge or expires)
-              ...(options || {}),
-            };
-            redirectResponse.cookies.set(name, value, mergedOptions);
-            console.log('OAuth callback: Set cookie', {
-              name,
-              hasValue: !!value,
-              valueLength: value?.length,
-              maxAge: options?.maxAge,
-              expires: options?.expires,
-            });
-          });
+          cookiesToSet.forEach(
+            ({ name, value, options }: { name: string; value: string; options: CookieOptions }) => {
+              // Merge Supabase options with our defaults, preserving expiration settings
+              const mergedOptions = {
+                path: '/',
+                sameSite: 'lax' as const,
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
+                // Preserve Supabase's expiration settings (maxAge or expires)
+                ...(options || {}),
+              };
+              redirectResponse.cookies.set(name, value, mergedOptions);
+              console.log('OAuth callback: Set cookie', {
+                name,
+                hasValue: !!value,
+                valueLength: value?.length,
+                maxAge: options?.maxAge,
+                expires: options?.expires,
+              });
+            }
+          );
         },
       },
     }

@@ -60,18 +60,15 @@ If you want to create a Payment Link as an alternative option:
 2. **Configure the Payment Link:**
 
    **Select Product/Price:**
-
    - Choose an existing product and price
    - Or create a new product/price on the spot
 
    **Payment Settings:**
-
    - **One-time payment** or **Subscription** (choose based on your product)
    - Set the price amount
    - Add description
 
    **Checkout Settings:**
-
    - **Redirect after payment**: Set where customers go after payment
      - You can use: `https://your-vercel-app.vercel.app/subscribe/success`
    - **Collect customer email**: Usually yes ✅

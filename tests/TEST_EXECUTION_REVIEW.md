@@ -240,13 +240,11 @@ npx mocha --require tsx/cjs --timeout 300000 tests/hardhat/01-scoring-determinis
 ### Phase 3: Post-Execution Review
 
 1. **Review Test Reports**
-
    - Location: `tests/reports/`
    - Formats: JSON and HTML
    - Includes: Summary, pass/fail counts, duration, readiness verdict
 
 2. **Analyze Results**
-
    - Pass rate percentage
    - Failed tests and error messages
    - Performance metrics
@@ -361,7 +359,6 @@ npx mocha --require tsx/cjs --timeout 300000 tests/hardhat/01-scoring-determinis
 ### Report Formats
 
 1. **JSON Report**: `test-report-{timestamp}.json`
-
    - Machine-readable
    - Complete test data
    - Suitable for CI/CD integration
