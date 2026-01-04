@@ -187,6 +187,84 @@ export async function POST(request: NextRequest) {
         const submissionHash = crypto.randomBytes(32).toString('hex')
         const contentHash = crypto.createHash('sha256').update(text_content.trim()).digest('hex')
 
+        // Check if user is operator (info@fractiAI) - exempt from payment
+        const isOperator = user.email?.toLowerCase() === 'info@fractiai.com' || user.email?.toLowerCase() === 'info@fractiai'
+
+        if (isOperator) {
+            debug('SubmitContribution', 'Operator mode: exempt from payment', { email: user.email, submissionHash })
+
+            // Save submission directly with evaluating status (operator exempt)
+            try {
+                await db.insert(contributionsTable).values({
+                    submission_hash: submissionHash,
+                    title: title.trim(),
+                    contributor: contributor,
+                    content_hash: contentHash,
+                    category: category,
+                    metals: [], // Will be determined during evaluation
+                    status: 'evaluating', // Direct to evaluation for operator
+                    text_content: text_content.trim(),
+                    metadata: {
+                        payment_status: 'operator_exempt',
+                        user_email: user.email,
+                        submission_timestamp: new Date().toISOString(),
+                        operator_mode: true
+                    },
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+
+                // Log the submission
+                await db.insert(pocLogTable).values({
+                    id: crypto.randomUUID(),
+                    submission_hash: submissionHash,
+                    contributor: contributor,
+                    event_type: 'submission',
+                    event_status: 'evaluating',
+                    title: title.trim(),
+                    category: category,
+                    request_data: {
+                        title: title.trim(),
+                        category: category,
+                        content_hash: contentHash,
+                        text_content_length: text_content.length,
+                        user_email: user.email,
+                        operator_mode: true
+                    },
+                    created_at: new Date(),
+                })
+
+                // Trigger evaluation directly (async, don't await)
+                const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_WEBSITE_URL || 'http://localhost:3000'
+                const evaluateUrl = `${baseUrl}/api/evaluate/${submissionHash}`
+                
+                fetch(evaluateUrl, { method: 'POST' }).catch(err => {
+                    debugError('SubmitContribution', 'Failed to trigger operator evaluation', err)
+                })
+
+                debug('SubmitContribution', 'Operator submission saved, evaluation triggered', { submissionHash })
+
+                const corsHeaders = createCorsHeaders(request)
+                corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value))
+                return NextResponse.json({
+                    success: true,
+                    submission_hash: submissionHash,
+                    message: 'Operator submission accepted. Evaluation in progress.',
+                    operator_mode: true
+                }, { headers: rateLimitHeaders })
+
+            } catch (dbError) {
+                debugError('SubmitContribution', 'Failed to save operator submission', dbError)
+                return NextResponse.json(
+                    {
+                        error: 'Database error',
+                        message: 'Failed to save operator submission'
+                    },
+                    { status: 500 }
+                )
+            }
+        }
+
         debug('SubmitContribution', 'Creating Stripe checkout session for PoC submission fee', { submissionHash })
 
         // Save submission data temporarily with payment_pending status
