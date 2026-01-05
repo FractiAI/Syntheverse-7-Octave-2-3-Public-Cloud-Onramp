@@ -27,7 +27,7 @@ export function SectionHow() {
         'Add constants/parameters',
         'Max 4000 characters (~1 page)',
       ],
-      cta: { label: 'See Example PoC', href: '/archive' },
+      cta: { label: 'See Example PoC', href: '/examples' },
     },
     {
       number: 2,
@@ -51,7 +51,7 @@ export function SectionHow() {
         'Redundancy analysis vs archive',
         'Detailed breakdown with justification',
       ],
-      cta: { label: 'See Example Evaluation', href: '/archive' },
+      cta: { label: 'See Example Evaluation', href: '/examples' },
     },
     {
       number: 4,
