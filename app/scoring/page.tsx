@@ -180,21 +180,103 @@ export default function ScoringCriteriaPage() {
             <p className="cockpit-text mb-3 text-sm opacity-80">
               SynthScan™ MRI compares your submission against the archive to detect overlap with
               prior work. This helps maintain diversity and prevents near-duplicate submissions.
+              <strong className="block mt-2">
+                Important: Individual dimension scores (Novelty, Density, Coherence, Alignment) are
+                never directly penalized. Redundancy affects only the total/composite score.
+              </strong>
             </p>
-            <div className="space-y-2 text-xs">
-              <div className="rounded-lg bg-[var(--cockpit-carbon)] p-3">
-                <strong>Edge Sweet Spot:</strong> Some overlap (≈13%) is beneficial and can receive
-                a bonus multiplier, as it connects nodes in the knowledge graph.
+
+            <div className="mb-4 space-y-3">
+              <div className="rounded-lg border-2 border-green-500/50 bg-green-500/5 p-4">
+                <h4 className="cockpit-title mb-2 text-sm">Edge Sweet Spot (Bonus Zone)</h4>
+                <p className="cockpit-text mb-2 text-xs opacity-90">
+                  Some overlap is beneficial—it connects nodes in the knowledge graph. When your
+                  overlap falls in the sweet spot range (9.2% to 19.2%, centered at 14.2%), you
+                  receive a bonus multiplier on your composite score.
+                </p>
+                <div className="mt-3 space-y-1 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="cockpit-badge text-xs">Sweet Spot Range:</span>
+                    <span>9.2% - 19.2% overlap</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="cockpit-badge text-xs">Ideal Center:</span>
+                    <span>14.2% overlap (Λ_edge ≈ 1.42)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="cockpit-badge text-xs">Bonus Example:</span>
+                    <span>13% overlap → ×1.13 multiplier on composite score</span>
+                  </div>
+                </div>
+                <p className="cockpit-text mt-2 text-xs opacity-75">
+                  The multiplier is calculated as: 1 + (overlap% / 100), tapered by distance from
+                  the center. This rewards work that builds on prior contributions while maintaining
+                  originality.
+                </p>
               </div>
-              <div className="rounded-lg bg-[var(--cockpit-carbon)] p-3">
-                <strong>Excessive Overlap:</strong> Near-duplicate work receives a penalty applied
-                to the total score. Individual dimension scores (Novelty, Density, etc.) are not
-                directly penalized.
+
+              <div className="rounded-lg border-2 border-yellow-500/50 bg-yellow-500/5 p-4">
+                <h4 className="cockpit-title mb-2 text-sm">Neutral Zone (No Penalty)</h4>
+                <p className="cockpit-text mb-2 text-xs opacity-90">
+                  Overlap below 30% (but outside the sweet spot) receives no penalty or bonus. Your
+                  composite score remains unchanged.
+                </p>
+                <div className="mt-2 text-xs">
+                  <span className="cockpit-badge text-xs">Range:</span>
+                  <span className="ml-2">0% - 30% overlap (outside sweet spot)</span>
+                </div>
               </div>
-              <div className="rounded-lg bg-[var(--cockpit-carbon)] p-3">
-                <strong>Feedback:</strong> You&apos;ll receive detailed redundancy analysis showing which
-                prior submissions overlap and how to refine your work.
+
+              <div className="rounded-lg border-2 border-red-500/50 bg-red-500/5 p-4">
+                <h4 className="cockpit-title mb-2 text-sm">Excessive Overlap (Penalty Zone)</h4>
+                <p className="cockpit-text mb-2 text-xs opacity-90">
+                  When overlap exceeds 30%, penalties begin. Near-duplicate work (98%+ overlap)
+                  receives maximum penalty. Penalties are applied only to the total score, never to
+                  individual dimension scores.
+                </p>
+                <div className="mt-3 space-y-1 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="cockpit-badge text-xs">Penalty Starts:</span>
+                    <span>30% overlap</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="cockpit-badge text-xs">Maximum Penalty:</span>
+                    <span>98%+ overlap (near-duplicate)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="cockpit-badge text-xs">Penalty Formula:</span>
+                    <span>Non-linear ramp: gentle early, steep for near-duplicates</span>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <div className="rounded-lg bg-[var(--cockpit-carbon)] p-4">
+              <h4 className="cockpit-title mb-2 text-sm">Score Calculation Formula</h4>
+              <div className="space-y-2 text-xs">
+                <div>
+                  <strong>Step 1:</strong> Calculate composite score
+                  <div className="ml-4 mt-1 font-mono opacity-80">
+                    Composite = Novelty + Density + Coherence + Alignment
+                  </div>
+                </div>
+                <div>
+                  <strong>Step 2:</strong> Apply redundancy effects
+                  <div className="ml-4 mt-1 font-mono opacity-80">
+                    Final Score = (Composite × (1 - penalty% / 100)) × bonus_multiplier
+                  </div>
+                </div>
+                <div className="mt-3 text-xs opacity-75">
+                  <strong>Note:</strong> Individual dimension scores are never modified. Only the
+                  composite/total score receives redundancy adjustments.
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-lg bg-[var(--cockpit-carbon)] p-3">
+              <strong>Feedback:</strong> You&apos;ll receive detailed redundancy analysis showing
+              which prior submissions overlap, your measured overlap percentage, and specific
+              guidance on how to refine your work to improve scores.
             </div>
           </Card>
 
