@@ -1,14 +1,16 @@
 /**
- * Creator Dashboard - Destructive controls for PoC lifecycle and user administration
+ * Creator Dashboard - Syntheverse Cockpit
+ * Creator-controlled command center for PoC lifecycle and system administration
  * Only accessible to Creator (info@fractiai.com)
  */
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
-import { CreatorArchiveManagement } from '@/components/creator/CreatorArchiveManagement';
-import { CreatorUserManagement } from '@/components/creator/CreatorUserManagement';
-import { CreatorAuditLog } from '@/components/creator/CreatorAuditLog';
+import { CreatorCockpitStats } from '@/components/creator/CreatorCockpitStats';
+import { CreatorCockpitNavigation } from '@/components/creator/CreatorCockpitNavigation';
+import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
+import { Shield, Activity } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,25 +30,37 @@ export default async function CreatorDashboard() {
 
   return (
     <div className="cockpit-bg min-h-screen">
-      <div className="container mx-auto space-y-8 px-6 py-8">
-        {/* Header */}
+      <div className="container mx-auto space-y-6 px-6 py-8">
+        {/* Cockpit Header */}
         <div className="cockpit-panel p-6 border-l-4 border-red-500">
-          <div className="cockpit-label mb-2">CREATOR DASHBOARD</div>
-          <h1 className="cockpit-title text-3xl mb-2">Destructive Controls</h1>
-          <p className="cockpit-text opacity-80">
-            Creator-only controls for PoC archive management and user administration. All actions are
-            logged and irreversible.
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex-1">
+              <div className="cockpit-label mb-2 flex items-center gap-2">
+                <Shield className="h-4 w-4 text-red-400" />
+                CREATOR COCKPIT
+              </div>
+              <h1 className="cockpit-title text-3xl mb-2">Syntheverse Command Center</h1>
+              <p className="cockpit-text opacity-80">
+                Awareness Bridge/Router control interface. Creator-only access to PoC archive, user
+                administration, Base Mainnet contents, and database operations. All actions are logged
+                and auditable.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-green-500 animate-pulse" />
+              <BootSequenceIndicators />
+            </div>
+          </div>
+          <div className="cockpit-text text-xs opacity-60 border-t border-[var(--keyline-primary)] pt-3 mt-3">
+            FRACTIAI RESEARCH TEAM · PROTOCOL OPERATOR REFERENCE CLIENT
+          </div>
         </div>
 
-        {/* PoC Archive Management */}
-        <CreatorArchiveManagement />
+        {/* Cockpit Statistics */}
+        <CreatorCockpitStats />
 
-        {/* User Management */}
-        <CreatorUserManagement />
-
-        {/* Audit Log */}
-        <CreatorAuditLog />
+        {/* Navigation Window */}
+        <CreatorCockpitNavigation />
       </div>
     </div>
   );
