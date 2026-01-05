@@ -72,9 +72,9 @@ async function getStripeClient(): Promise<Stripe | null> {
 
 export async function GET(request: NextRequest) {
   try {
-    const { user, isCreator, isOperatorOrCreator } = await getAuthenticatedUserWithRole();
+    const { user, isCreator, isOperator } = await getAuthenticatedUserWithRole();
 
-    if (!isOperatorOrCreator) {
+    if (!isOperator && !isCreator) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
