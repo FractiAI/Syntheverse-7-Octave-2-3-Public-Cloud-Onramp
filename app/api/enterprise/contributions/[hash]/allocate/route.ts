@@ -40,10 +40,11 @@ async function allocateEnterpriseTokens(
     contributor: string;
     metal: string;
     epoch: string;
-    reward: number;
-    tier_multiplier: number;
-    epoch_balance_before: number;
-    epoch_balance_after: number;
+    tier: string | null;
+    reward: string; // numeric as string for database
+    tier_multiplier: string; // numeric as string for database
+    epoch_balance_before: string; // numeric as string for database
+    epoch_balance_after: string; // numeric as string for database
   }> = [];
 
   for (const metal of Object.keys(assay) as MetalType[]) {
@@ -60,10 +61,11 @@ async function allocateEnterpriseTokens(
       contributor,
       metal,
       epoch: qualifiedEpoch,
-      reward: metalAllocation,
-      tier_multiplier: 1.0,
-      epoch_balance_before: 0, // TODO: Track sandbox epoch balances
-      epoch_balance_after: 0,
+      tier: null,
+      reward: metalAllocation.toString(),
+      tier_multiplier: '1.0',
+      epoch_balance_before: '0', // TODO: Track sandbox epoch balances
+      epoch_balance_after: '0',
     });
   }
 
@@ -160,7 +162,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       allocations,
-      total_allocated: allocations.reduce((sum, a) => sum + a.reward, 0),
+      total_allocated: allocations.reduce((sum, a) => sum + Number(a.reward), 0),
     });
   } catch (error) {
     debugError('EnterpriseAllocate', 'Allocation error', error);

@@ -3,7 +3,7 @@ import { db } from '@/utils/db/db';
 import { enterpriseContributionsTable, enterpriseSandboxesTable } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
 import { evaluateWithGrok } from '@/utils/grok/evaluate';
-import { createVectorEmbedding } from '@/utils/vectors/embeddings';
+import { vectorizeSubmission } from '@/utils/vectors';
 import { debug, debugError } from '@/utils/debug';
 
 export const dynamic = 'force-dynamic';
@@ -77,8 +77,24 @@ export async function POST(
     const qualificationThreshold = scoringConfig.qualification_threshold || 4000;
     const qualified = podScore >= qualificationThreshold;
 
-    // Create vector embedding
-    const vectorizationResult = await createVectorEmbedding(contrib.text_content);
+    // Create vector embedding and 3D coordinates
+    let vectorizationResult: {
+      embedding: number[];
+      vector: { x: number; y: number; z: number };
+      embeddingModel: string;
+    } | null = null;
+    try {
+      vectorizationResult = await vectorizeSubmission(contrib.text_content, {
+        novelty: finalNovelty,
+        density: finalDensity,
+        coherence: finalCoherence,
+        alignment: finalAlignment,
+        pod_score: podScore,
+      });
+    } catch (vectorError) {
+      debugError('EnterpriseEvaluate', 'Failed to generate vectorization', vectorError);
+      // Continue without vectorization
+    }
 
     // Update contribution with evaluation results
     await db
@@ -101,8 +117,7 @@ export async function POST(
           grok_evaluation_details: {
             base_novelty: evaluation.base_novelty,
             base_density: evaluation.base_density,
-            redundancy_penalty_percent: evaluation.redundancy_penalty_percent,
-            density_penalty_percent: evaluation.density_penalty_percent,
+            redundancy_overlap_percent: evaluation.redundancy_overlap_percent,
             full_evaluation: evaluation,
             raw_grok_response: (evaluation as any).raw_grok_response || null,
           },
@@ -112,7 +127,7 @@ export async function POST(
         vector_x: vectorizationResult ? vectorizationResult.vector.x.toString() : undefined,
         vector_y: vectorizationResult ? vectorizationResult.vector.y.toString() : undefined,
         vector_z: vectorizationResult ? vectorizationResult.vector.z.toString() : undefined,
-        embedding_model: vectorizationResult ? vectorizationResult.model : undefined,
+        embedding_model: vectorizationResult ? vectorizationResult.embeddingModel : undefined,
         vector_generated_at: vectorizationResult ? new Date() : undefined,
         updated_at: new Date(),
       })

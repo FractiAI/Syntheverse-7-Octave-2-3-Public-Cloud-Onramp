@@ -185,9 +185,10 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 <div className="border-l-4 border-purple-500/50 bg-purple-500/5 p-4">
                   <div className="cockpit-title mb-2 text-base">PoC Enterprise Dashboard</div>
                   <div className="cockpit-text text-sm opacity-90">
-                    Operators can spin up their own PoC environment inside Syntheverse — self-similar,
-                    tokenized, and scalable. Create nested enterprise sandboxes with independent vault
-                    management and SynthScan™ MRI evaluation.
+                    Create a <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within 
+                    Syntheverse. Broadcast to your contributor channels with <strong>clear, transparent 
+                    scoring</strong> and tokenomics aligned with the <strong>SYNTH90T ERC-20 MOTHERLODE 
+                    VAULT</strong>. Self-similar, tokenized, and scalable.
                   </div>
                   <div className="cockpit-text mt-2 text-xs opacity-75">
                     <strong>Pricing:</strong> Pioneer (5 nodes @ $500/node), Trading Post (20 nodes @
@@ -197,7 +198,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                     href="/fractiai/enterprise-dashboard"
                     className="cockpit-lever mt-3 inline-flex items-center text-xs"
                   >
-                    Learn More & Create Sandbox
+                    Get Enterprise Dashboard
                     <ArrowRight className="ml-2 h-3 w-3" />
                   </Link>
                 </div>
@@ -758,7 +759,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   href="/fractiai/enterprise-dashboard"
                   className="cockpit-lever inline-flex items-center justify-center bg-transparent text-sm"
                 >
-                  PoC Enterprise Dashboard
+                  Get PoC Enterprise Dashboard
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>

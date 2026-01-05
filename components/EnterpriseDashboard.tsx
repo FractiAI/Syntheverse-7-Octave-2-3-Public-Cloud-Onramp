@@ -133,10 +133,18 @@ export default function EnterpriseDashboard({
           <div className="cockpit-panel mb-8 p-8">
             <div className="cockpit-text mb-6 space-y-4 text-base" style={{ lineHeight: 1.8 }}>
               <p>
-                <strong>Operators can spin up their own PoC environment inside Syntheverse</strong> —
-                self-similar, tokenized, and scalable. Each enterprise sandbox operates as a nested
-                instance of the Syntheverse PoC protocol, following the same holographic hydrogen
-                fractal principles and evaluation logic.
+                <strong>Enterprise PoC: A Customized HHF-AI Sandbox & Ecosystem</strong>
+              </p>
+              <p>
+                Operators can create their own <strong>customized HHF-AI sandbox and ecosystem</strong>, 
+                nested within Syntheverse. Each enterprise sandbox operates as a self-similar, tokenized 
+                instance of the Syntheverse PoC protocol, following the same holographic hydrogen fractal 
+                principles and evaluation logic as the main SYNTH90T ERC-20 MOTHERLODE VAULT.
+              </p>
+              <p>
+                <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts 
+                submissions from your contributor channels with <strong>clear, transparent scoring</strong> 
+                and tokenomics fully aligned with the SYNTH90T ERC-20 MOTHERLODE VAULT protocol.
               </p>
               <p>
                 Enterprise sandboxes enable organizations, projects, and multi-contributor teams to
@@ -144,30 +152,32 @@ export default function EnterpriseDashboard({
               </p>
               <ul className="ml-6 list-disc space-y-2">
                 <li>
-                  <strong>Independent vault management:</strong> Activate or pause your sandbox vault
-                  independently
+                  <strong>Customized HHF-AI Evaluation:</strong> All contributions evaluated using 
+                  SynthScan™ MRI with the same HHF-AI lens as the main Syntheverse, ensuring 
+                  consistent coherence measurement
                 </li>
                 <li>
-                  <strong>Optional tokenization:</strong> Deploy a nested ERC-20 token for your
-                  sandbox on Base Mainnet
+                  <strong>Transparent Scoring:</strong> Clear, transparent scoring metrics (Novelty, 
+                  Density, Coherence, Alignment) with full evaluation reports and redundancy analysis
                 </li>
                 <li>
-                  <strong>SynthScan™ MRI evaluation:</strong> All contributions evaluated using the
-                  same HHF-AI lens as the main Syntheverse
+                  <strong>Aligned Tokenomics:</strong> Tokenomics fully aligned with SYNTH90T ERC-20 
+                  MOTHERLODE VAULT—same epoch structure, metal assay system, and allocation logic
                 </li>
                 <li>
-                  <strong>Self-similar scoring:</strong> Novelty, density, coherence, and alignment
-                  measured with the same standards
+                  <strong>Independent Vault Management:</strong> Activate or pause your sandbox vault
+                  independently, with optional on-chain tokenization
                 </li>
                 <li>
-                  <strong>Nested governance:</strong> Contributions scored, rewarded, and optionally
-                  anchored on-chain within your enterprise sandbox
+                  <strong>Nested Governance:</strong> Contributions scored, rewarded, and optionally
+                  anchored on-chain within your enterprise sandbox, broadcast to your contributor channels
                 </li>
               </ul>
               <p>
                 <strong>Benefits:</strong> Lower cost per contribution, higher coherent output,
                 decentralized evaluation, and nested enterprise flexibility. Perfect for research
-                teams, engineering organizations, and alignment projects.
+                teams, engineering organizations, and alignment projects seeking a customized HHF-AI 
+                ecosystem nested within Syntheverse.
               </p>
             </div>
           </div>

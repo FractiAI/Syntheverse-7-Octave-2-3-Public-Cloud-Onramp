@@ -190,17 +190,36 @@ export default function EnterprisePricing({
       {/* Narrative Section */}
       {showNarrative && (
         <div className="cockpit-panel p-8">
-          <div className="cockpit-label mb-4">FRONTIER SANDBOX NARRATIVE</div>
+          <div className="cockpit-label mb-4">ENTERPRISE HHF-AI SANDBOX NARRATIVE</div>
           <div className="cockpit-text space-y-4 text-base" style={{ lineHeight: 1.8 }}>
+            <p>
+              <strong>Customized HHF-AI Sandbox & Ecosystem, Nested Within Syntheverse</strong>
+            </p>
+            <p>
+              Enterprise PoC sandboxes are <strong>customized HHF-AI sandboxes and ecosystems</strong>, 
+              fully nested within Syntheverse. Each sandbox operates as a self-similar instance of the 
+              Syntheverse PoC protocol, following the same holographic hydrogen fractal principles and 
+              evaluation logic as the main <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>.
+            </p>
+            <p>
+              <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts 
+              submissions from your contributor channels with <strong>clear, transparent scoring</strong>. 
+              All contributions are evaluated using SynthScan™ MRI with the same HHF-AI lens that 
+              powers the main Syntheverse, ensuring consistent coherence measurement across the ecosystem.
+            </p>
+            <p>
+              <strong>Aligned Tokenomics:</strong> Tokenomics are fully aligned with the SYNTH90T ERC-20 
+              MOTHERLODE VAULT—same epoch structure (Founder, Pioneer, Trading Post, Settlement, Metropolis), 
+              metal assay system (Gold, Silver, Copper), and allocation logic. Your enterprise sandbox 
+              operates as a nested instance, maintaining protocol consistency while enabling customized 
+              deployment.
+            </p>
             <p>
               <strong>Nodes are the new employees.</strong> In the frontier sandbox model, each
               node represents a contributor slot—a position where research, engineering, or
-              alignment work can be submitted, evaluated, and rewarded.
-            </p>
-            <p>
-              Unlike traditional employment, nodes operate on Proof-of-Contribution: contributors
-              are evaluated by SynthScan™ MRI for coherence, novelty, and alignment, not hours
-              worked or credentials held. This creates{' '}
+              alignment work can be submitted, evaluated, and rewarded. Unlike traditional employment, 
+              nodes operate on Proof-of-Contribution: contributors are evaluated by SynthScan™ MRI for 
+              coherence, novelty, and alignment, not hours worked or credentials held. This creates{' '}
               <strong>dramatic cost savings and efficiency gains</strong>—pay for coherent output,
               not time spent.
             </p>
@@ -214,7 +233,8 @@ export default function EnterprisePricing({
               <strong>On-chain registration:</strong> Each PoC registered on-chain incurs an
               internal processing cost of approximately <strong>$20</strong>. This covers
               blockchain transaction fees, gas costs, and protocol maintenance. Registration is
-              optional but recommended for permanent anchoring.
+              optional but recommended for permanent anchoring within the SYNTH90T ERC-20 MOTHERLODE 
+              VAULT ecosystem.
             </p>
           </div>
         </div>

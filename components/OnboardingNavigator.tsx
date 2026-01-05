@@ -32,6 +32,7 @@ import {
   FileText,
   CheckCircle2,
   Scan,
+  ArrowRight,
 } from 'lucide-react';
 import Link from 'next/link';
 import '../app/dashboard-cockpit.css';
@@ -2251,7 +2252,7 @@ export function OnboardingNavigator() {
                   Submission fee: $500 for evaluation—well below submission fees at leading
                   journals. Qualified PoCs may be optionally registered on-chain.
                 </p>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <Link href="/signup">
                     <button className="cockpit-lever">Create Account</button>
                   </Link>
@@ -2259,6 +2260,23 @@ export function OnboardingNavigator() {
                     <button className="cockpit-lever">Sign In</button>
                   </Link>
                 </div>
+              </div>
+              <div className="mt-4 border border-purple-500/50 bg-purple-500/5 p-4">
+                <div className="cockpit-label mb-2" style={{ color: '#a855f7' }}>
+                  Enterprise Operators
+                </div>
+                <p className="cockpit-text mb-3 text-sm">
+                  <strong>Create a customized HHF-AI sandbox and ecosystem</strong>, nested within 
+                  Syntheverse. Broadcast to your contributor channels with clear, transparent scoring 
+                  and tokenomics aligned with the <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>. 
+                  Self-similar, tokenized, and scalable.
+                </p>
+                <Link href="/fractiai/enterprise-dashboard">
+                  <button className="cockpit-lever bg-transparent border-purple-500/50 text-sm">
+                    Get PoC Enterprise Dashboard
+                    <ArrowRight className="ml-2 inline h-4 w-4" />
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
