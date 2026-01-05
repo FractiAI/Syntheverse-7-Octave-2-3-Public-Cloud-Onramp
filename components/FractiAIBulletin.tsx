@@ -711,15 +711,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                       Log In
                     </Link>
                   </>
-                ) : (
-                  <Link
-                    href="/dashboard"
-                    className="cockpit-lever inline-flex items-center justify-center text-sm"
-                  >
-                    Go to Dashboard
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                )}
+                ) : null}
                 <Link
                   href="/dashboard"
                   className="cockpit-lever inline-flex items-center justify-center bg-transparent text-sm"
