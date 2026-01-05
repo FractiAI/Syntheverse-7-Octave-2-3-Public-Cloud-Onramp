@@ -164,4 +164,96 @@ export const pocLogTable = pgTable('poc_log', {
 });
 
 export type InsertPocLog = typeof pocLogTable.$inferInsert;
+
+// Enterprise Sandbox Table
+export const enterpriseSandboxesTable = pgTable('enterprise_sandboxes', {
+  id: text('id').primaryKey(), // Unique sandbox identifier
+  operator: text('operator').notNull(), // Email of the operator who created it
+  name: text('name').notNull(), // Sandbox name
+  description: text('description'), // Optional description
+  vault_status: text('vault_status').notNull().default('paused'), // active, paused
+  tokenized: boolean('tokenized').default(false), // Whether sandbox has its own ERC-20 token
+  token_address: text('token_address'), // On-chain token contract address (if tokenized)
+  token_name: text('token_name'), // Token name
+  token_symbol: text('token_symbol'), // Token symbol
+  token_supply: numeric('token_supply', { precision: 20, scale: 0 }), // Total token supply
+  current_epoch: text('current_epoch').notNull().default('founder'), // Same epoch structure as main
+  // Scoring lens configuration (can override main Syntheverse settings)
+  scoring_config: jsonb('scoring_config').$type<{
+    novelty_weight?: number;
+    density_weight?: number;
+    coherence_weight?: number;
+    alignment_weight?: number;
+    qualification_threshold?: number; // Minimum score to qualify
+    [key: string]: any;
+  }>(),
+  // Subscription and pricing information
+  subscription_tier: text('subscription_tier'), // Pioneer, Trading Post, Settlement, Metropolis
+  node_count: integer('node_count').default(0), // Number of nodes purchased
+  stripe_subscription_id: text('stripe_subscription_id'), // Stripe subscription ID
+  stripe_customer_id: text('stripe_customer_id'), // Stripe customer ID
+  metadata: jsonb('metadata').$type<{
+    [key: string]: any;
+  }>(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Enterprise Sandbox Contributions Table
+export const enterpriseContributionsTable = pgTable('enterprise_contributions', {
+  submission_hash: text('submission_hash').primaryKey(),
+  sandbox_id: text('sandbox_id').notNull(), // References enterprise_sandboxes.id
+  title: text('title').notNull(),
+  contributor: text('contributor').notNull(),
+  content_hash: text('content_hash').notNull(),
+  text_content: text('text_content'),
+  pdf_path: text('pdf_path'),
+  status: text('status').notNull().default('evaluating'), // evaluating, qualified, unqualified
+  category: text('category'),
+  metals: jsonb('metals').$type<string[]>(),
+  metadata: jsonb('metadata').$type<{
+    coherence?: number;
+    density?: number;
+    redundancy?: number;
+    pod_score?: number;
+    novelty?: number;
+    alignment?: number;
+    qualified_founder?: boolean;
+    qualified_epoch?: string | null;
+    [key: string]: any;
+  }>(),
+  embedding: jsonb('embedding').$type<number[]>(),
+  vector_x: numeric('vector_x', { precision: 20, scale: 10 }),
+  vector_y: numeric('vector_y', { precision: 20, scale: 10 }),
+  vector_z: numeric('vector_z', { precision: 20, scale: 10 }),
+  embedding_model: text('embedding_model'),
+  vector_generated_at: timestamp('vector_generated_at'),
+  registered: boolean('registered').default(false),
+  registration_date: timestamp('registration_date'),
+  registration_tx_hash: text('registration_tx_hash'),
+  stripe_payment_id: text('stripe_payment_id'),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Enterprise Sandbox Allocations Table
+export const enterpriseAllocationsTable = pgTable('enterprise_allocations', {
+  id: text('id').primaryKey(),
+  sandbox_id: text('sandbox_id').notNull(), // References enterprise_sandboxes.id
+  submission_hash: text('submission_hash').notNull(),
+  contributor: text('contributor').notNull(),
+  metal: text('metal').notNull(),
+  epoch: text('epoch').notNull(),
+  tier: text('tier'),
+  reward: numeric('reward', { precision: 20, scale: 0 }).notNull(),
+  tier_multiplier: numeric('tier_multiplier', { precision: 10, scale: 4 })
+    .notNull()
+    .default('1.0'),
+  epoch_balance_before: numeric('epoch_balance_before', { precision: 20, scale: 0 }).notNull(),
+  epoch_balance_after: numeric('epoch_balance_after', { precision: 20, scale: 0 }).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type InsertEnterpriseSandbox = typeof enterpriseSandboxesTable.$inferInsert;
+export type SelectEnterpriseSandbox = typeof enterpriseSandboxesTable.$inferSelect;
 export type SelectPocLog = typeof pocLogTable.$inferSelect;

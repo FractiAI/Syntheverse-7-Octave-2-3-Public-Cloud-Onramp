@@ -98,7 +98,7 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Scoring Lens**: Novelty, density, coherence, alignment with overlap-aware redundancy
 - **3D Vectorized Sandbox**: Three.js + R3F visualization of PoCs
 - **Authentication**: Supabase Auth (OAuth + email/password)
-- **Payments**: Stripe Checkout + Billing Portal
+- **Payments**: Stripe Checkout + Billing Portal (Live mode - Production)
 - **Database**: PostgreSQL via Supabase with Drizzle ORM
 - **Blockchain**: ✅ **Base Mainnet Production** - Lens event emission, token allocation ready
 - **LLM Metadata**: Full capture of evaluation metadata (timestamp, model, version, prompts)
@@ -107,8 +107,34 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Submission Limits**: 4000 character limit (abstract, equations, constants only) with automatic truncation
 - **Scalability**: Vector-based redundancy detection scales to 10,000+ submissions without performance degradation
 
+### 🏢 Enterprise Frontier Sandbox
+
+- **Nested PoC Environments**: Create self-similar enterprise sandboxes within Syntheverse
+- **Tiered Pricing**: Monthly subscriptions with volume discounts
+  - Pioneer: 5 nodes @ $500/node/month
+  - Trading Post: 20 nodes @ $400/node/month
+  - Settlement: 100 nodes @ $300/node/month
+  - Metropolis: 100+ nodes @ $250/node/month
+- **Submission Fees**: Lower than main Syntheverse ($500)
+  - Pioneer: $50 per submission
+  - Trading Post: $40 per submission
+  - Settlement: $30 per submission
+  - Metropolis: $25 per submission
+- **Vault Management**: Independent activate/pause controls per sandbox
+- **SynthScan™ MRI Integration**: Full evaluation system with custom scoring weights
+- **Analytics Dashboard**: Contribution metrics, cost tracking, score distribution
+- **Tokenized Rewards**: Allocate tokens for qualified contributions
+- **On-Chain Registration**: Optional $20 per registration for permanent anchoring
+
 ### 🎯 Recent Additions
 
+- **Enterprise Frontier Sandbox**: Complete enterprise dashboard for nested PoC environments
+  - Create and manage enterprise sandboxes with independent vault control
+  - Tiered pricing: Pioneer ($500/node), Trading Post ($400/node), Settlement ($300/node), Metropolis ($250/node)
+  - Submission fees: Pioneer ($50), Trading Post ($40), Settlement ($30), Metropolis ($25)
+  - Full SynthScan™ MRI evaluation integration
+  - Operator analytics dashboard with contribution metrics
+  - Tokenized reward allocation system
 - **Genesis Transaction Info**: View Base Mainnet contract addresses and transaction details
 - **Motherlode Vault Status**: Live epoch and SYNTH availability display
 - **Mobile Navigation**: Optimized button placement for mobile devices
@@ -178,14 +204,30 @@ See [Testing](#testing) section for details.
 │   │   ├── poc/                     # PoC operations
 │   │   ├── evaluate/                # Evaluation endpoints
 │   │   ├── tokenomics/              # Token allocation
+│   │   ├── enterprise/               # Enterprise sandbox APIs
+│   │   │   ├── sandboxes/           # Sandbox management
+│   │   │   ├── submit/              # Contribution submission
+│   │   │   ├── evaluate/            # Enterprise evaluation
+│   │   │   ├── contributions/       # Contribution management
+│   │   │   └── checkout/            # Stripe checkout
 │   │   └── ...
 │   ├── dashboard/                   # Protected dashboard
 │   ├── fractiai/                    # FractiAI landing pages
+│   │   └── enterprise-dashboard/     # Enterprise dashboard page
+│   ├── enterprise/                  # Enterprise sandbox pages
+│   │   ├── sandbox/[id]/           # Sandbox detail page
+│   │   └── contribution/[hash]/     # Contribution detail page
 │   └── ...
 │
 ├── 📁 components/                    # React components
 │   ├── ui/                          # shadcn/ui components
 │   ├── 3d/                          # 3D visualization
+│   ├── EnterpriseDashboard.tsx      # Enterprise dashboard UI
+│   ├── EnterprisePricing.tsx         # Pricing tiers component
+│   ├── EnterpriseSubmitForm.tsx      # Contribution submission form
+│   ├── EnterpriseSandboxDetail.tsx   # Sandbox management page
+│   ├── EnterpriseContributionDetail.tsx # Contribution details
+│   ├── EnterpriseAnalytics.tsx       # Analytics dashboard
 │   └── ...
 │
 ├── 📁 utils/                         # Shared utilities
@@ -216,6 +258,7 @@ See [Testing](#testing) section for details.
 │
 ├── 📁 supabase/                      # Database migrations
 │   └── migrations/                  # SQL migration files
+│       └── 20250105000001_create_enterprise_tables.sql # Enterprise tables
 │
 ├── 📁 .github/                       # GitHub templates & workflows
 │   ├── ISSUE_TEMPLATE/              # Issue templates
@@ -235,7 +278,10 @@ See [Testing](#testing) section for details.
 ### Key Directories
 
 - **`app/`**: Next.js 14 App Router pages and API routes
+  - **`app/api/enterprise/`**: Enterprise sandbox API endpoints
+  - **`app/enterprise/`**: Enterprise sandbox pages
 - **`components/`**: React components (UI + business logic)
+  - **Enterprise components**: Dashboard, pricing, submission, analytics
 - **`utils/`**: Shared utilities organized by domain
 - **`syntheverse-ui/src/blockchain/`**: Hardhat contracts and deployment scripts
 - **`docs/`**: Comprehensive documentation
@@ -535,11 +581,12 @@ Built for the Syntheverse ecosystem with ❤️
 
 ---
 
-**Last Updated**: January 4, 2025  
-**Version**: 2.4 (Scalability Improvements & Submission Limits)
+**Last Updated**: January 5, 2025  
+**Version**: 2.5 (Enterprise Frontier Sandbox Dashboard)
 
 ### Version History
 
+- **v2.5** (January 2025): Enterprise Frontier Sandbox Dashboard - Complete enterprise sandbox system with tiered pricing, contribution management, analytics, and tokenized rewards
 - **v2.4** (January 2025): Scalability improvements - vectors-only redundancy, 4000 char submission limit, automatic truncation
 - **v2.3** (January 2025): Genesis transaction info, mobile navigation, repository organization
 - **v2.2** (January 2025): Operator broadcast banner, status indicators, complete test suite (60/60 passing)

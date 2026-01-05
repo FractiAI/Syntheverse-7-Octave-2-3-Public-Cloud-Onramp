@@ -6,6 +6,8 @@ import {
   allocationsTable,
   epochMetalBalancesTable,
   tokenomicsTable,
+  enterpriseSandboxesTable,
+  enterpriseContributionsTable,
 } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
@@ -98,17 +100,32 @@ export async function POST(req: Request) {
     // Handle the event
     switch (event.type) {
       case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        debug('StripeWebhook', `${event.type}`, { id: event.data.object.id });
-        await db
-          .update(usersTable)
-          .set({ plan: event.data.object.id })
-          .where(eq(usersTable.stripe_id, (event.data.object as any).customer));
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription;
+        debug('StripeWebhook', `${event.type}`, { id: subscription.id });
+        
+        // Handle enterprise sandbox subscriptions
+        if (subscription.metadata?.product_type === 'enterprise_sandbox') {
+          await handleEnterpriseSubscription(subscription);
+        } else {
+          // Legacy user plan update
+          await db
+            .update(usersTable)
+            .set({ plan: subscription.id })
+            .where(eq(usersTable.stripe_id, subscription.customer as string));
+        }
         break;
-      case 'customer.subscription.deleted':
-        debug('StripeWebhook', 'Subscription deleted', { id: event.data.object.id });
-        // Optionally handle subscription cancellation
+      }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+        debug('StripeWebhook', 'Subscription deleted', { id: subscription.id });
+        
+        // Handle enterprise sandbox subscription deletion
+        if (subscription.metadata?.product_type === 'enterprise_sandbox') {
+          await handleEnterpriseSubscriptionDeleted(subscription);
+        }
         break;
+      }
       case 'checkout.session.completed':
         await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
         break;
@@ -137,6 +154,18 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     session.metadata?.type === 'financial_alignment_poc'
   ) {
     await handleFinancialAlignmentPayment(session);
+    return;
+  }
+
+  // Check if this is an enterprise sandbox subscription
+  if (session.metadata?.product_type === 'enterprise_sandbox') {
+    await handleEnterpriseCheckoutCompleted(session);
+    return;
+  }
+
+  // Check if this is an enterprise PoC submission payment
+  if (session.metadata?.submission_type === 'enterprise_poc_submission') {
+    await handleEnterpriseSubmissionPayment(session);
     return;
   }
 
@@ -706,5 +735,213 @@ async function handleFinancialAlignmentPayment(session: Stripe.Checkout.Session)
   } catch (error) {
     debugError('StripeWebhook', 'Error processing Financial Alignment payment', error);
     // Don't throw - payment is complete, we don't want to retry the webhook
+  }
+}
+
+// Handle enterprise sandbox subscription events
+// Handle enterprise sandbox checkout completion
+async function handleEnterpriseCheckoutCompleted(session: Stripe.Checkout.Session) {
+  try {
+    const metadata = session.metadata || {};
+    const sandboxId = metadata.sandbox_id;
+    const tier = metadata.tier;
+    const nodeCount = parseInt(metadata.node_count || '0', 10);
+
+    if (!sandboxId) {
+      debug('StripeWebhook', 'Enterprise checkout missing sandbox_id', {
+        sessionId: session.id,
+        metadata,
+      });
+      return;
+    }
+
+    // Get subscription from session
+    if (session.subscription && typeof session.subscription === 'string') {
+      const stripe = getStripeClient();
+      if (stripe) {
+        const subscription = await stripe.subscriptions.retrieve(session.subscription);
+        await handleEnterpriseSubscription(subscription);
+      }
+    } else {
+      // If no subscription yet, update sandbox with checkout info
+      await db
+        .update(enterpriseSandboxesTable)
+        .set({
+          subscription_tier: tier || null,
+          node_count: nodeCount || 0,
+          stripe_customer_id: session.customer as string,
+          updated_at: new Date(),
+        })
+        .where(eq(enterpriseSandboxesTable.id, sandboxId));
+    }
+
+    debug('StripeWebhook', 'Enterprise sandbox checkout completed', {
+      sandboxId,
+      sessionId: session.id,
+      tier,
+      nodeCount,
+    });
+  } catch (error) {
+    debugError('StripeWebhook', 'Error handling enterprise checkout', error);
+  }
+}
+
+// Handle enterprise sandbox subscription events
+async function handleEnterpriseSubscription(subscription: Stripe.Subscription) {
+  try {
+    const metadata = subscription.metadata || {};
+    const sandboxId = metadata.sandbox_id;
+    const tier = metadata.tier;
+    const nodeCount = parseInt(metadata.node_count || '0', 10);
+
+    if (!sandboxId) {
+      debug('StripeWebhook', 'Enterprise subscription missing sandbox_id', {
+        subscriptionId: subscription.id,
+        metadata,
+      });
+      return;
+    }
+
+    // Update sandbox with subscription info
+    await db
+      .update(enterpriseSandboxesTable)
+      .set({
+        subscription_tier: tier || null,
+        node_count: nodeCount || 0,
+        stripe_subscription_id: subscription.id,
+        stripe_customer_id: subscription.customer as string,
+        updated_at: new Date(),
+      })
+      .where(eq(enterpriseSandboxesTable.id, sandboxId));
+
+    debug('StripeWebhook', 'Enterprise sandbox subscription updated', {
+      sandboxId,
+      subscriptionId: subscription.id,
+      tier,
+      nodeCount,
+    });
+  } catch (error) {
+    debugError('StripeWebhook', 'Error handling enterprise subscription', error);
+  }
+}
+
+// Handle enterprise submission payment
+async function handleEnterpriseSubmissionPayment(session: Stripe.Checkout.Session) {
+  try {
+    const submissionHash = session.metadata?.submission_hash;
+    const sandboxId = session.metadata?.sandbox_id;
+
+    if (!submissionHash || !sandboxId) {
+      debugError('StripeWebhook', 'Missing submission_hash or sandbox_id in metadata', {
+        metadata: session.metadata,
+      });
+      return;
+    }
+
+    // Get contribution
+    const contributions = await db
+      .select()
+      .from(enterpriseContributionsTable)
+      .where(eq(enterpriseContributionsTable.submission_hash, submissionHash))
+      .limit(1);
+
+    if (!contributions || contributions.length === 0) {
+      debugError('StripeWebhook', 'Enterprise contribution not found for submission payment', {
+        submissionHash,
+      });
+      return;
+    }
+
+    const contrib = contributions[0];
+
+    // Update contribution: mark payment as complete and change status to evaluating
+    await db
+      .update(enterpriseContributionsTable)
+      .set({
+        status: 'evaluating',
+        metadata: {
+          ...((contrib.metadata as any) || {}),
+          payment_status: 'completed',
+          payment_completed_at: new Date().toISOString(),
+          stripe_payment_id: session.payment_intent as string,
+          stripe_session_id: session.id,
+        } as any,
+        updated_at: new Date(),
+      })
+      .where(eq(enterpriseContributionsTable.submission_hash, submissionHash));
+
+    debug('StripeWebhook', 'Enterprise submission payment completed, triggering evaluation', {
+      submissionHash,
+      sandboxId,
+      sessionId: session.id,
+    });
+
+    // Trigger evaluation by calling the evaluation endpoint
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.NEXT_PUBLIC_WEBSITE_URL ||
+      'http://localhost:3000';
+    const evaluateUrl = `${baseUrl}/api/enterprise/evaluate/${submissionHash}`;
+
+    try {
+      const evaluateRes = await fetch(evaluateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!evaluateRes.ok) {
+        const errorText = await evaluateRes.text();
+        debugError('StripeWebhook', 'Failed to trigger enterprise evaluation', {
+          status: evaluateRes.status,
+          error: errorText,
+        });
+      } else {
+        debug('StripeWebhook', 'Enterprise evaluation triggered successfully', {
+          submissionHash,
+        });
+      }
+    } catch (fetchError) {
+      debugError('StripeWebhook', 'Error calling enterprise evaluation endpoint', fetchError);
+      // Don't throw - payment is complete, evaluation can be retried manually
+    }
+  } catch (error) {
+    debugError('StripeWebhook', 'Error processing enterprise submission payment', error);
+  }
+}
+
+// Handle enterprise sandbox subscription deletion
+async function handleEnterpriseSubscriptionDeleted(subscription: Stripe.Subscription) {
+  try {
+    const metadata = subscription.metadata || {};
+    const sandboxId = metadata.sandbox_id;
+
+    if (!sandboxId) {
+      debug('StripeWebhook', 'Enterprise subscription deletion missing sandbox_id', {
+        subscriptionId: subscription.id,
+        metadata,
+      });
+      return;
+    }
+
+    // Clear subscription info but keep sandbox (vault can be paused)
+    await db
+      .update(enterpriseSandboxesTable)
+      .set({
+        subscription_tier: null,
+        node_count: 0,
+        stripe_subscription_id: null,
+        vault_status: 'paused', // Auto-pause when subscription deleted
+        updated_at: new Date(),
+      })
+      .where(eq(enterpriseSandboxesTable.id, sandboxId));
+
+    debug('StripeWebhook', 'Enterprise sandbox subscription deleted', {
+      sandboxId,
+      subscriptionId: subscription.id,
+    });
+  } catch (error) {
+    debugError('StripeWebhook', 'Error handling enterprise subscription deletion', error);
   }
 }
