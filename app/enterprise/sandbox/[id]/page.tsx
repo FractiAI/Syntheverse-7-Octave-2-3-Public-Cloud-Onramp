@@ -1,6 +1,6 @@
 import EnterpriseSandboxDetail from '@/components/EnterpriseSandboxDetail';
 import { createClient } from '@/utils/supabase/server';
-import '../../dashboard-cockpit.css';
+import '../../../dashboard-cockpit.css';
 
 export const dynamic = 'force-dynamic';
 
