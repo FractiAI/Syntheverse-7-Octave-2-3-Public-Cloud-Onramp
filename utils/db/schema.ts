@@ -6,6 +6,8 @@ export const usersTable = pgTable('users_table', {
   email: text('email').notNull().unique(),
   plan: text('plan').notNull(),
   stripe_id: text('stripe_id').notNull(),
+  role: text('role').notNull().default('user'), // 'creator', 'operator', 'user'
+  deleted_at: timestamp('deleted_at'), // Soft delete timestamp
 });
 
 export type InsertUser = typeof usersTable.$inferInsert;
@@ -45,6 +47,7 @@ export const contributionsTable = pgTable('contributions', {
   registration_date: timestamp('registration_date'), // When PoC was registered
   registration_tx_hash: text('registration_tx_hash'), // Blockchain transaction hash
   stripe_payment_id: text('stripe_payment_id'), // Stripe payment ID for registration
+  archived_at: timestamp('archived_at'), // Timestamp when archived (for reset tracking)
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -257,3 +260,25 @@ export const enterpriseAllocationsTable = pgTable('enterprise_allocations', {
 export type InsertEnterpriseSandbox = typeof enterpriseSandboxesTable.$inferInsert;
 export type SelectEnterpriseSandbox = typeof enterpriseSandboxesTable.$inferSelect;
 export type SelectPocLog = typeof pocLogTable.$inferSelect;
+
+// Audit Log Table (for tracking destructive actions)
+export const auditLogTable = pgTable('audit_log', {
+  id: text('id').primaryKey(),
+  actor_email: text('actor_email').notNull(),
+  actor_role: text('actor_role').notNull(),
+  action_type: text('action_type').notNull(), // 'archive_reset', 'user_delete', 'user_soft_delete', 'role_grant', 'role_revoke'
+  action_mode: text('action_mode'), // 'soft', 'hard' for resets/deletes
+  target_type: text('target_type'), // 'archive', 'user', 'role'
+  target_identifier: text('target_identifier'), // email, submission_hash, etc.
+  affected_count: integer('affected_count'), // Number of records affected
+  metadata: jsonb('metadata').$type<{
+    confirmation_phrase?: string;
+    ip_address?: string;
+    user_agent?: string;
+    [key: string]: any;
+  }>(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type InsertAuditLog = typeof auditLogTable.$inferInsert;
+export type SelectAuditLog = typeof auditLogTable.$inferSelect;

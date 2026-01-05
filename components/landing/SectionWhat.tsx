@@ -42,6 +42,15 @@ export function SectionWhat() {
         contributions — replacing peer review gatekeeping with measurable coherence.
       </p>
 
+      <div className="cockpit-panel mb-8 border-l-4 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/5 p-6">
+        <p className="cockpit-text text-sm opacity-90">
+          <strong>Liberating Contributions:</strong> Through our hydrogen spin MRI-based PoC protocol
+          on the blockchain, contributions are no longer gatekept. Every submission becomes{' '}
+          <strong>visible and demonstrable to all</strong> via HHF-AI MRI science and technology,
+          creating transparent verification accessible to everyone.
+        </p>
+      </div>
+
       <div className="mb-8 grid gap-6 md:grid-cols-2">
         {features.map((feature, idx) => (
           <Card key={idx} hover={true}>

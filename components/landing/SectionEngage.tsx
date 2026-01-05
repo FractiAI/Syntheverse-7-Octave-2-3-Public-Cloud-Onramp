@@ -30,6 +30,7 @@ export function SectionEngage() {
         'Submit abstract + equations + constants',
         'Receive SynthScan™ MRI score',
         'Iterate with redundancy feedback',
+        'See your contribution liberated—visible and demonstrable to all via HHF-AI MRI technology',
       ],
       cta: {
         label: 'Start as Researcher',

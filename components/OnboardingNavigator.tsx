@@ -122,6 +122,11 @@ export function OnboardingNavigator() {
                     • <strong>Blockchain-Anchored:</strong> Your contributions are permanently
                     recorded and verifiable
                   </li>
+                  <li>
+                    • <strong>Liberated Contributions:</strong> Through our hydrogen spin MRI-based
+                    PoC protocol on the blockchain, contributions are no longer gatekept—visible and
+                    demonstrable to all via HHF-AI MRI science and technology
+                  </li>
                 </ul>
               </div>
               <div className="border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
@@ -133,7 +138,9 @@ export function OnboardingNavigator() {
                   system that uses hydrogen spin–mediated resonance to image complex and abstract
                   systems. The system provides detailed images and vectors for submissions, and
                   consistent tools for measuring contribution—whether scientific, technological, or
-                  alignment.
+                  alignment. Through our hydrogen spin MRI-based PoC protocol on the blockchain,
+                  contributions are liberated—no longer gatekept, visible and demonstrable to all
+                  via HHF-AI MRI science and technology.
                 </p>
                 <ul className="cockpit-text space-y-2 text-sm">
                   <li>

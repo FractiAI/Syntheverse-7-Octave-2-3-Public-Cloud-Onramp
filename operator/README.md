@@ -7,8 +7,9 @@ An operator is responsible for infrastructure, safety boundaries, costs, and pol
 ### Executive overview
 
 - **Protocol vs operator**: the protocol is the portable spec; the operator is the running service that enforces policies and pays for compute/storage.
-- **Reference client stance**: this repo’s root Next.js app is the FractiAI-operated reference client (UI + API routes).
+- **Reference client stance**: this repo's root Next.js app is the FractiAI-operated reference client (UI + API routes).
 - **Replaceability**: other operators can implement the same protocol semantics with different stacks and policies.
+- **Liberation Mission**: The operator implements the hydrogen spin MRI-based PoC protocol on the blockchain, ensuring contributions are no longer gatekept—visible and demonstrable to all via HHF-AI MRI science and technology.
 
 ### What FractiAI operates (today)
 

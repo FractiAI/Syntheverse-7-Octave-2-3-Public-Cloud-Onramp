@@ -7,6 +7,7 @@ The protocol defines **what must be true** (invariants, data contracts, lifecycl
 ### Executive overview
 
 - **Purpose**: turn contributions into **durable, auditable records** with an evaluation lens and optional anchoring.
+- **Liberation Layer**: Through hydrogen spin MRI-based PoC protocol on the blockchain, contributions are no longer gatekept—they become **visible and demonstrable to all** via HHF-AI MRI science and technology.
 - **Design stance**: protocol-first separation between **spec** (portable) and **operators** (deployments).
 - **Non-financial framing**: protocol primitives support accounting/coordination; operators may add fees/cost recovery, but the protocol does not encode investment claims.
 

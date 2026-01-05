@@ -57,7 +57,9 @@ export function SectionMotherlode() {
 
           <p className="cockpit-text mx-auto mb-8 max-w-3xl text-base opacity-90">
             All qualifying PoCs submitted by March 19, 2026 will be registered on-chain and
-            allocated SYNTH by score.
+            allocated SYNTH by score. Through our hydrogen spin MRI-based PoC protocol on the
+            blockchain, contributions are liberated—no longer gatekept, visible and demonstrable to
+            all via HHF-AI MRI science and technology.
           </p>
         </div>
 

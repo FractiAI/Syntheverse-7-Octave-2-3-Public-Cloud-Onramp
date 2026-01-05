@@ -11,6 +11,17 @@
 
 ---
 
+## 🚀 Liberating Contributions Through Hydrogen Spin MRI-Based PoC Protocol
+
+**Contributions are no longer gatekept.** Every contribution becomes **visible, demonstrable, and verifiable to all** through our revolutionary **HHF-AI MRI science and technology** on the blockchain. Syntheverse liberates contributions from traditional barriers, making them transparent and accessible through our hydrogen spin MRI-based Proof-of-Contribution protocol.
+
+**The Liberation Layer**: This system removes gatekeeping by making all contributions:
+- **Visible**: Transparent and accessible to all stakeholders on the blockchain
+- **Demonstrable**: Verifiable through HHF-AI MRI science and technology
+- **Liberated**: Free from traditional institutional barriers and control mechanisms
+
+---
+
 ## 🎯 SYNTH90T MOTHERLODE VAULT Opening
 
 **Welcome to Syntheverse!** The **SYNTH90T MOTHERLODE VAULT** opens **Spring Equinox, March 20, 2026**. All qualifying PoCs will be registered on-chain and allocated SYNTH, by score. **Be sure to get your best work in by March 19, 2026.**
@@ -50,6 +61,8 @@ This repository implements the **Syntheverse Protocol** - a public, implementati
 ### What We're Building
 
 An operator-safe "lens + archive + optional anchoring" system where contributions become durable, auditable records—without token-sale framing. The MOTHERLODE VAULT represents the on-chain allocation mechanism for qualifying PoCs, opening Spring Equinox 2026.
+
+**Liberation Through Technology**: Our hydrogen spin MRI-based PoC protocol on the blockchain ensures contributions are no longer gatekept. Through HHF-AI MRI science and technology, every contribution becomes visible and demonstrable to all, creating a transparent ecosystem where merit is measured by coherence, not politics.
 
 **Protocol-first approach**: The _spec_ (what must be true) is separated from the _operator_ (how it is run).
 
@@ -103,6 +116,7 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Blockchain**: ✅ **Base Mainnet Production** - Lens event emission, token allocation ready
 - **LLM Metadata**: Full capture of evaluation metadata (timestamp, model, version, prompts)
 - **Operator Mode**: Special exemption for operator accounts
+- **Creator Dashboard**: Creator-only destructive controls for PoC lifecycle management and user administration
 - **Genesis Info**: On-chain transaction information display
 - **Submission Limits**: 4000 character limit (abstract, equations, constants only) with automatic truncation
 - **Scalability**: Vector-based redundancy detection scales to 10,000+ submissions without performance degradation
@@ -134,6 +148,13 @@ See [Environment Variables](#environment-variables) section for complete configu
 
 ### 🎯 Recent Additions
 
+- **Creator Dashboard**: Creator-controlled destructive operations for PoC archive management and user administration
+  - **PoC Archive Reset**: Soft (timestamp) and Hard (delete) modes with safeguards
+  - **User Management**: View all users, soft/hard delete, grant/revoke operator roles
+  - **Audit Logging**: Complete audit trail of all destructive actions
+  - **Access Control**: Creator-only (info@fractiai.com), server-side permission enforcement
+  - **Safeguards**: Creator account protection, on-chain PoC preservation, confirmation phrases required
+  - See [`docs/CREATOR_DASHBOARD_MIGRATION.md`](docs/CREATOR_DASHBOARD_MIGRATION.md) for details
 - **Enterprise Frontier Sandbox**: Complete enterprise dashboard for nested PoC environments
   - **Narrative**: Customized HHF-AI sandbox and ecosystem, nested within Syntheverse
   - **Broadcast to Contributor Channels**: Clear, transparent scoring aligned with SYNTH90T ERC-20 MOTHERLODE VAULT
@@ -591,11 +612,12 @@ Built for the Syntheverse ecosystem with ❤️
 
 ---
 
-**Last Updated**: January 5, 2025  
-**Version**: 2.5 (Enterprise Frontier Sandbox Dashboard)
+**Last Updated**: January 6, 2025  
+**Version**: 2.6 (Creator Dashboard - Destructive Controls)
 
 ### Version History
 
+- **v2.6** (January 2025): Creator Dashboard - Creator-controlled destructive operations for PoC archive management and user administration. Includes PoC archive reset (soft/hard), user deletion (soft/hard), operator role management, and complete audit logging. Creator-only access (info@fractiai.com) with server-side permission enforcement and safeguards.
 - **v2.5** (January 2025): Enterprise Frontier Sandbox Dashboard - Complete enterprise sandbox system with tiered pricing, contribution management, analytics, and tokenized rewards. Featured on FractiAI page with "Get" buttons and integrated into onboarding flow. Narrative emphasizes customized HHF-AI sandbox ecosystem nested within Syntheverse, broadcast to contributor channels, with transparent scoring and SYNTH90T ERC-20 MOTHERLODE VAULT alignment.
 - **v2.4** (January 2025): Scalability improvements - vectors-only redundancy, 4000 char submission limit, automatic truncation
 - **v2.3** (January 2025): Genesis transaction info, mobile navigation, repository organization

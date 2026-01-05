@@ -307,6 +307,15 @@ export default function FractiAILanding({
                   Proof of Work and Proof of Stake.
                 </p>
                 <p>
+                  <strong>
+                    Contributions are no longer gatekept. Through our hydrogen spin MRI-based PoC
+                    protocol on the blockchain, every contribution becomes visible and demonstrable
+                    to all via HHF-AI MRI science and technology.
+                  </strong>{' '}
+                  This liberation layer ensures transparency, accessibility, and verifiability—free
+                  from traditional institutional barriers.
+                </p>
+                <p>
                   Crypto was the on-ramp to a new economy.{' '}
                   <strong>Proof of Contribution is the next phase.</strong>
                 </p>
@@ -328,7 +337,9 @@ export default function FractiAILanding({
                   and access barriers are replaced by{' '}
                   <strong>holographic hydrogen fractal review and measurement</strong>.
                   Contributions are validated directly on their coherence, novelty, and alignment,
-                  not on politics or reputation.
+                  not on politics or reputation. Through our hydrogen spin MRI-based PoC protocol on
+                  the blockchain, contributions are liberated—visible and demonstrable to all via
+                  HHF-AI MRI science and technology, ensuring no gatekeeping can hide valuable work.
                 </p>
                 <p>
                   There&apos;s a clear <strong>Cisco parallel</strong> here. Cisco routed packets.{' '}

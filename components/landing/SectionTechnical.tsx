@@ -17,6 +17,15 @@ export function SectionTechnical() {
         patterns across domains.
       </p>
 
+      <div className="cockpit-panel mb-8 border-l-4 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/5 p-6">
+        <p className="cockpit-text text-sm opacity-90">
+          <strong>HHF-AI MRI Science & Technology:</strong> Our hydrogen spin MRI-based PoC protocol
+          on the blockchain liberates contributions from traditional gatekeeping. Every contribution
+          becomes <strong>visible and demonstrable to all</strong> through transparent, verifiable
+          evaluation—no barriers, no hidden processes, complete transparency.
+        </p>
+      </div>
+
       <div className="space-y-4">
         <ExpandablePanel label="Physics & Holographic Hydrogen" title="Hydrogen Coherence Lens">
           <p className="mb-3">

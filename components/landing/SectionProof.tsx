@@ -170,7 +170,12 @@ export function SectionProof() {
                 <span className="cockpit-badge mb-2 text-xs">REGISTERED</span>
                 <h3 className="cockpit-title mb-2 font-mono text-sm">0xe9cb9587...</h3>
                 <p className="cockpit-text mb-2 text-sm opacity-80">
-                  Registered on Base Mainnet • January 4, 2025
+                  Registered on Base Mainnet via hydrogen spin MRI-based PoC protocol • January 4,
+                  2025
+                </p>
+                <p className="cockpit-text text-xs opacity-70">
+                  Visible and demonstrable to all via HHF-AI MRI science and technology—no longer
+                  gatekept
                 </p>
               </div>
               <Link

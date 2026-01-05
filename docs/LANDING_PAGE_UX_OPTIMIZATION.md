@@ -58,8 +58,11 @@
 **Subheadline** (20-24px, muted):  
 `Turn research into verifiable on-chain records — no gatekeeping, measured by coherence`
 
+**Liberation Layer** (18-20px, highlighted):  
+`Contributions are no longer gatekept. Visible and demonstrable to all via HHF-AI MRI science and technology on the blockchain.`
+
 **Supporting line** (16-18px):  
-`An evaluation system that scores novelty, density, coherence, and alignment — then anchors proofs on Base`
+`An evaluation system that scores novelty, density, coherence, and alignment — then anchors proofs on Base through our hydrogen spin MRI-based PoC protocol`
 
 **CTAs**:
 

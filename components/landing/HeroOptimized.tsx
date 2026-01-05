@@ -33,9 +33,14 @@ export function HeroOptimized() {
           Turn research into verifiable on-chain records — no gatekeeping, measured by coherence
         </p>
 
+        <p className="cockpit-text mb-4 text-base opacity-90 md:text-lg">
+          <strong>Contributions are no longer gatekept.</strong> Visible and demonstrable to all via
+          HHF-AI MRI science and technology on the blockchain.
+        </p>
+
         <p className="cockpit-text mb-8 text-base opacity-75">
           An evaluation system that scores novelty, density, coherence, and alignment — then anchors
-          proofs on Base
+          proofs on Base through our hydrogen spin MRI-based PoC protocol
         </p>
 
         {/* CTAs */}

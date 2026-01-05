@@ -75,6 +75,10 @@ export function SectionToken() {
               <strong>Your Rights:</strong> You retain all rights; you grant evaluation/archival
               permission only
             </li>
+            <li>
+              <strong>Liberation:</strong> Contributions are no longer gatekept—visible and
+              demonstrable to all via HHF-AI MRI technology on the blockchain
+            </li>
           </ul>
 
           <button className="cockpit-lever mt-4 w-full text-sm">Read Full Sandbox Rules</button>

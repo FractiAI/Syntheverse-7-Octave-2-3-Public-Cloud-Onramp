@@ -15,7 +15,8 @@ export function SectionWhy() {
               <h3 className="cockpit-title mb-2 text-base">The Problem</h3>
               <p className="cockpit-text text-sm opacity-80">
                 Frontier research lacks fast, neutral evaluation and provenance. Institutional
-                gatekeeping delays or blocks non-mainstream work.
+                gatekeeping delays or blocks non-mainstream work. Contributions remain hidden,
+                unverifiable, and controlled by traditional barriers.
               </p>
             </div>
           </div>
@@ -45,7 +46,12 @@ export function SectionWhy() {
             <p className="cockpit-text text-sm opacity-80">
               SynthScan™ MRI scores contributions objectively (novelty, density, coherence,
               alignment). Redundancy detection prevents overlap. On-chain anchoring provides
-              permanent provenance.
+              permanent provenance.{' '}
+              <strong>
+                Through our hydrogen spin MRI-based PoC protocol on the blockchain, contributions
+                are liberated—no longer gatekept, visible and demonstrable to all via HHF-AI MRI
+                science and technology.
+              </strong>
             </p>
           </div>
         </div>

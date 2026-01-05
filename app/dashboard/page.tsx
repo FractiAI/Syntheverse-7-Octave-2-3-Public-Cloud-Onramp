@@ -9,9 +9,10 @@ import { ReactorCore } from '@/components/ReactorCore';
 import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
 import { OperatorBroadcastBanner } from '@/components/OperatorBroadcastBanner';
 import { GenesisButton } from '@/components/GenesisButton';
+import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 // Optional ecosystem support is intentionally not placed in the primary beta cockpit.
 // The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Shield } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,6 +41,9 @@ export default async function Dashboard() {
   // Get display name: prefer database name, fallback to email username, then full email
   const displayName = dbUser?.name || user.email?.split('@')[0] || user.email || 'User';
 
+  // Check if user is Creator - direct email check (hard-coded)
+  const isCreator = user.email?.toLowerCase() === 'info@fractiai.com';
+
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto space-y-8 px-6 py-8">
@@ -67,6 +71,12 @@ export default async function Dashboard() {
                 protocol. Records are verifiable and permanent; this UI does not represent protocol
                 ownership, centralized governance, or financial promises.
               </div>
+              <div className="cockpit-text mt-3 border-l-4 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/5 px-4 py-2 text-sm">
+                <strong>Liberating Contributions:</strong> Through our hydrogen spin MRI-based PoC
+                protocol on the blockchain, your contributions are no longer gatekept—they become{' '}
+                <strong>visible and demonstrable to all</strong> via HHF-AI MRI science and
+                technology.
+              </div>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/fractiai" className="cockpit-lever inline-block">
@@ -81,6 +91,12 @@ export default async function Dashboard() {
                 <span className="mr-2">✎</span>
                 Submit Contribution
               </Link>
+              {isCreator && (
+                <Link href="/creator/dashboard" className="cockpit-lever inline-block">
+                  <Shield className="mr-2 inline h-4 w-4" />
+                  Creator Dashboard
+                </Link>
+              )}
             </div>
           </div>
         </div>
