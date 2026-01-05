@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, X, Send, Users, ChevronDown, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -71,26 +71,7 @@ export function SynthChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchRooms();
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (currentRoom) {
-      fetchMessages();
-      // Poll for new messages every 3 seconds
-      const interval = setInterval(fetchMessages, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [currentRoom]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/synthchat/rooms');
@@ -109,21 +90,9 @@ export function SynthChat() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentRoom]);
 
-  const joinRoom = async (roomId: string) => {
-    try {
-      await fetch('/api/synthchat/rooms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room_id: roomId }),
-      });
-    } catch (error) {
-      console.error('Failed to join room:', error);
-    }
-  };
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     if (!currentRoom) return;
 
     try {
@@ -136,7 +105,38 @@ export function SynthChat() {
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     }
-  };
+  }, [currentRoom]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchRooms();
+    }
+  }, [isOpen, fetchRooms]);
+
+  useEffect(() => {
+    if (currentRoom) {
+      fetchMessages();
+      // Poll for new messages every 3 seconds
+      const interval = setInterval(fetchMessages, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [currentRoom, fetchMessages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const joinRoom = useCallback(async (roomId: string) => {
+    try {
+      await fetch('/api/synthchat/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room_id: roomId }),
+      });
+    } catch (error) {
+      console.error('Failed to join room:', error);
+    }
+  }, []);
 
   const handleRoomChange = async (room: ChatRoom) => {
     setCurrentRoom(room);
