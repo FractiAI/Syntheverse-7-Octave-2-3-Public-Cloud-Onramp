@@ -120,7 +120,7 @@ export default async function ExamplesPage() {
                       </div>
                     </div>
                     <Link
-                      href="/signup"
+                      href={`/examples/${example.submission_hash}`}
                       className="inline-flex items-center gap-2 text-sm text-[var(--hydrogen-amber)] hover:underline"
                     >
                       View Full Evaluation
