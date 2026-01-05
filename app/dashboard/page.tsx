@@ -14,6 +14,7 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 // The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
 import { BookOpen, Shield } from 'lucide-react';
 import { SalesTracking } from '@/components/SalesTracking';
+import { SynthChat } from '@/components/SynthChat';
 
 export const dynamic = 'force-dynamic';
 
@@ -93,6 +94,7 @@ export default async function Dashboard() {
                 <span className="mr-2">✎</span>
                 Submit Contribution
               </Link>
+              <SynthChat />
               {isCreator && (
                 <Link href="/creator/dashboard" className="cockpit-lever inline-block">
                   <Shield className="mr-2 inline h-4 w-4" />

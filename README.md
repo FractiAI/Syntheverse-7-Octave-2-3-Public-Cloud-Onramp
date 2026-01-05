@@ -166,6 +166,19 @@ See [Environment Variables](#environment-variables) section for complete configu
   - **Problems Reported**: Error and issue tracking with type categorization (errors, evaluation_errors, payment_errors, other)
   - **Auto-refresh**: Updates every 30 seconds
   - **Access Control**: Operator and Creator only, server-side permission enforcement
+- **SynthChat - Collaborative Sandbox Chat System**: Multi-user chat platform for sandbox collaboration
+  - **Sandbox-Based Rooms**: Chat rooms organized by sandbox (Syntheverse default + enterprise + user-defined)
+  - **Multi-User Participation**: Multiple users can participate in the same chat room
+  - **Role-Based Display**: Shows Creator/Operator/Contributor badges for each message
+  - **Real-Time Updates**: Auto-refreshes messages every 3 seconds
+  - **User-Defined Sandboxes**: Users can create custom chat sandboxes for projects/teams
+  - **Available on Both Dashboards**: SynthChat accessible from contributor and creator/operator dashboards
+  - **Participant Tracking**: Shows who's in each room with participant counts
+  - **Auto-Join**: Syntheverse room auto-joins users on first access
+- **Creator Dashboard Enhancements**:
+  - **PoC Archive Integration**: Full PoC Archive view (same as contributor dashboard) showing all submissions
+  - **Archive Management**: View and manage PoC entries with detailed statistics
+  - **SynthChat Integration**: Collaborative chat system for creator coordination
 - **Creator Dashboard**: Creator-controlled destructive operations for PoC archive management and user administration
   - **PoC Archive Reset**: Hard reset mode with safeguards and confirmation phrases
   - **User Management**: View all users, hard delete, grant/revoke operator roles

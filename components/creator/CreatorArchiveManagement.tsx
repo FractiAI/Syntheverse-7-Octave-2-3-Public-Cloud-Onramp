@@ -20,9 +20,22 @@ interface ArchiveStats {
   archived_resettable: number;
 }
 
+interface PoCEntry {
+  submission_hash: string;
+  title: string;
+  contributor: string;
+  status: string;
+  pod_score: number | null;
+  registered: boolean;
+  created_at: string;
+}
+
 export function CreatorArchiveManagement() {
   const [stats, setStats] = useState<ArchiveStats | null>(null);
+  const [pocs, setPocs] = useState<PoCEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pocsLoading, setPocsLoading] = useState(false);
+  const [showEntries, setShowEntries] = useState(false);
   const [resetMode, setResetMode] = useState<'hard' | null>(null);
   const [safetyConfirmed, setSafetyConfirmed] = useState(false);
   const [confirmationPhrase, setConfirmationPhrase] = useState('');
@@ -46,6 +59,27 @@ export function CreatorArchiveManagement() {
       setLoading(false);
     }
   };
+
+  const loadPoCs = async () => {
+    setPocsLoading(true);
+    try {
+      const response = await fetch('/api/archive/contributions?limit=100');
+      if (response.ok) {
+        const data = await response.json();
+        setPocs(data.contributions || []);
+      }
+    } catch (err) {
+      console.error('Failed to load PoCs:', err);
+    } finally {
+      setPocsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showEntries) {
+      loadPoCs();
+    }
+  }, [showEntries]);
 
   const handleReset = () => {
     setResetMode('hard');
@@ -140,7 +174,20 @@ export function CreatorArchiveManagement() {
           </div>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
+          <Button
+            onClick={() => {
+              setShowEntries(!showEntries);
+              if (!showEntries) {
+                loadPoCs();
+              }
+            }}
+            variant="outline"
+            className="cockpit-lever"
+          >
+            <Database className="mr-2 h-4 w-4" />
+            {showEntries ? 'Hide' : 'Show'} Entries
+          </Button>
           <Button
             onClick={handleReset}
             variant="destructive"
@@ -151,6 +198,57 @@ export function CreatorArchiveManagement() {
             Reset Archive
           </Button>
         </div>
+
+        {/* PoC Entries List */}
+        {showEntries && (
+          <div className="mt-6 border-t border-[var(--keyline-primary)] pt-6">
+            <div className="cockpit-label mb-4">PoC ENTRIES</div>
+            {pocsLoading ? (
+              <div className="cockpit-text py-8 text-center opacity-60">Loading entries...</div>
+            ) : pocs.length === 0 ? (
+              <div className="cockpit-text py-8 text-center opacity-60">No PoC entries found</div>
+            ) : (
+              <div className="space-y-2">
+                {pocs.map((poc) => (
+                  <div
+                    key={poc.submission_hash}
+                    className="cockpit-panel bg-[var(--cockpit-carbon)] p-4"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="cockpit-title mb-1 truncate text-sm">{poc.title}</div>
+                        <div className="cockpit-text mb-2 text-xs opacity-75">
+                          {poc.contributor}
+                        </div>
+                        <div className="flex flex-wrap gap-3 text-xs">
+                          <span className="cockpit-text opacity-60">
+                            Status: <span className="opacity-100">{poc.status}</span>
+                          </span>
+                          {poc.pod_score !== null && (
+                            <span className="cockpit-text opacity-60">
+                              Score: <span className="opacity-100">{poc.pod_score}</span>
+                            </span>
+                          )}
+                          {poc.registered && (
+                            <span className="cockpit-text text-green-400">On-Chain</span>
+                          )}
+                          <span className="cockpit-text opacity-60">
+                            {new Date(poc.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <span className="cockpit-text font-mono text-xs opacity-50">
+                          {poc.submission_hash.slice(0, 8)}...
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Confirmation Dialog */}

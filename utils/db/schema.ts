@@ -280,3 +280,43 @@ export const auditLogTable = pgTable('audit_log', {
 
 export type InsertAuditLog = typeof auditLogTable.$inferInsert;
 export type SelectAuditLog = typeof auditLogTable.$inferSelect;
+
+// SynthChat: Collaborative Sandbox Chat System
+// Chat Rooms Table (one per sandbox)
+export const chatRoomsTable = pgTable('chat_rooms', {
+  id: text('id').primaryKey(),
+  sandbox_id: text('sandbox_id'), // null = syntheverse (default), otherwise enterprise_sandboxes.id
+  name: text('name').notNull(), // Room name (e.g., "Syntheverse", "Enterprise Sandbox Name")
+  description: text('description'), // Optional description
+  created_by: text('created_by').notNull(), // Email of creator
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Chat Messages Table (sandbox-based collaborative chat)
+export const chatMessagesTable = pgTable('chat_messages', {
+  id: text('id').primaryKey(),
+  room_id: text('room_id').notNull(), // References chat_rooms.id
+  sender_email: text('sender_email').notNull(), // Email of the sender
+  sender_role: text('sender_role').notNull(), // 'contributor', 'operator', 'creator'
+  message: text('message').notNull(),
+  read: boolean('read').default(false), // Whether the message has been read (for notifications)
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Chat Participants Table (tracks who's in which room)
+export const chatParticipantsTable = pgTable('chat_participants', {
+  id: text('id').primaryKey(),
+  room_id: text('room_id').notNull(), // References chat_rooms.id
+  user_email: text('user_email').notNull(), // Email of participant
+  role: text('role').notNull(), // 'contributor', 'operator', 'creator'
+  joined_at: timestamp('joined_at').defaultNow().notNull(),
+  last_read_at: timestamp('last_read_at'), // Last time user read messages in this room
+});
+
+export type InsertChatRoom = typeof chatRoomsTable.$inferInsert;
+export type SelectChatRoom = typeof chatRoomsTable.$inferSelect;
+export type InsertChatMessage = typeof chatMessagesTable.$inferInsert;
+export type SelectChatMessage = typeof chatMessagesTable.$inferSelect;
+export type InsertChatParticipant = typeof chatParticipantsTable.$inferInsert;
+export type SelectChatParticipant = typeof chatParticipantsTable.$inferSelect;

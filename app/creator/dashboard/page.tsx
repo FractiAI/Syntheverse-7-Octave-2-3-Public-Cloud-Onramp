@@ -11,6 +11,8 @@ import { CreatorCockpitStats } from '@/components/creator/CreatorCockpitStats';
 import { CreatorCockpitNavigation } from '@/components/creator/CreatorCockpitNavigation';
 import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
 import { SalesTracking } from '@/components/SalesTracking';
+import { SynthChat } from '@/components/SynthChat';
+import { FrontierModule } from '@/components/FrontierModule';
 import { Shield, Activity } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -61,6 +63,17 @@ export default async function CreatorDashboard() {
 
         {/* Control Panels */}
         <CreatorCockpitNavigation />
+
+        {/* SynthChat - Collaborative Sandbox Chat */}
+        <div className="cockpit-panel p-4">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="cockpit-label">SYNTHCHAT</div>
+            <SynthChat />
+          </div>
+        </div>
+
+        {/* PoC Archive - Same as Contributor Dashboard */}
+        <FrontierModule userEmail={user.email!} />
       </div>
     </div>
   );
