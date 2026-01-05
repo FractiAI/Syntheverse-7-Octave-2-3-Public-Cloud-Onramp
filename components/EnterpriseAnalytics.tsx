@@ -34,9 +34,9 @@ export default function EnterpriseAnalytics({ sandboxId }: EnterpriseAnalyticsPr
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchAnalytics();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sandboxId]);
 
   async function fetchAnalytics() {

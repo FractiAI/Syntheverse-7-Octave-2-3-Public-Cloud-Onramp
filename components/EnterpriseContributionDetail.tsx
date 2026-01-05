@@ -53,9 +53,9 @@ export default function EnterpriseContributionDetail({
   const [sandbox, setSandbox] = useState<Sandbox | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchContribution();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submissionHash]);
 
   async function fetchContribution() {
