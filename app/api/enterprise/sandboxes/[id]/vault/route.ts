@@ -7,10 +7,7 @@ import { eq, and } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 // PATCH: Update vault status
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -32,7 +29,12 @@ export async function PATCH(
     const sandbox = await db
       .select()
       .from(enterpriseSandboxesTable)
-      .where(and(eq(enterpriseSandboxesTable.id, params.id), eq(enterpriseSandboxesTable.operator, user.email)))
+      .where(
+        and(
+          eq(enterpriseSandboxesTable.id, params.id),
+          eq(enterpriseSandboxesTable.operator, user.email)
+        )
+      )
       .limit(1);
 
     if (!sandbox || sandbox.length === 0) {
@@ -54,4 +56,3 @@ export async function PATCH(
     return NextResponse.json({ error: 'Failed to update vault status' }, { status: 500 });
   }
 }
-

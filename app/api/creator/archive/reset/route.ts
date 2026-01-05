@@ -1,9 +1,9 @@
 /**
  * Creator-only endpoint to reset PoC archive
- * 
+ *
  * POST /api/creator/archive/reset
  * Body: { mode: 'soft' | 'hard', confirmation_phrase: string }
- * 
+ *
  * Soft Reset: Clears archived PoC records, preserves on-chain registrations, audit logs, aggregate metrics
  * Hard Reset: Deletes archived PoC data, requires explicit confirmation
  */
@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get IP and user agent for audit
-    const ip_address = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const ip_address =
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const user_agent = request.headers.get('user-agent') || 'unknown';
 
     // Count affected records (only archived PoCs, not active or on-chain)
@@ -179,4 +180,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

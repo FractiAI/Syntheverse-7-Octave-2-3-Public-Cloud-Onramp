@@ -1,6 +1,6 @@
 /**
  * Creator-only endpoint for user management
- * 
+ *
  * GET /api/creator/users - List all users
  * POST /api/creator/users/[email]/delete - Delete user (soft/hard)
  * POST /api/creator/users/[email]/role - Grant/revoke operator privileges
@@ -118,4 +118,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

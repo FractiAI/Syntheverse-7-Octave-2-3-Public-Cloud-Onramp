@@ -49,7 +49,10 @@ export function CreatorUserManagement() {
   const [confirmationPhrase, setConfirmationPhrase] = useState('');
   const [safetyConfirmed, setSafetyConfirmed] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [roleAction, setRoleAction] = useState<{ email: string; action: 'grant' | 'revoke' | null }>({
+  const [roleAction, setRoleAction] = useState<{
+    email: string;
+    action: 'grant' | 'revoke' | null;
+  }>({
     email: '',
     action: null,
   });
@@ -94,14 +97,17 @@ export function CreatorUserManagement() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/creator/users/${encodeURIComponent(deleteMode.email)}/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mode: 'hard',
-          confirmation_phrase: confirmationPhrase,
-        }),
-      });
+      const response = await fetch(
+        `/api/creator/users/${encodeURIComponent(deleteMode.email)}/delete`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mode: 'hard',
+            confirmation_phrase: confirmationPhrase,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -170,12 +176,12 @@ export function CreatorUserManagement() {
 
   return (
     <>
-      <div className="cockpit-panel p-6 border-l-4 border-red-500">
-        <div className="flex items-start gap-3 mb-4">
+      <div className="cockpit-panel border-l-4 border-red-500 p-6">
+        <div className="mb-4 flex items-start gap-3">
           <Users className="h-6 w-6 text-red-500" />
           <div className="flex-1">
             <div className="cockpit-label mb-2">USER MANAGEMENT</div>
-            <h2 className="cockpit-title text-xl mb-2">User Administration</h2>
+            <h2 className="cockpit-title mb-2 text-xl">User Administration</h2>
             <p className="cockpit-text text-sm opacity-80">
               Manage users, delete accounts, and grant/revoke operator privileges. All actions are
               logged.
@@ -185,7 +191,7 @@ export function CreatorUserManagement() {
 
         <div className="mb-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 opacity-50" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform opacity-50" />
             <Input
               placeholder="Search users by email or name..."
               value={searchTerm}
@@ -195,14 +201,14 @@ export function CreatorUserManagement() {
           </div>
         </div>
 
-        <div className="space-y-2 max-h-96 overflow-y-auto">
+        <div className="max-h-96 space-y-2 overflow-y-auto">
           {filteredUsers.map((user) => (
             <div
               key={user.id}
-              className="cockpit-panel p-4 bg-[var(--cockpit-carbon)] flex items-center justify-between"
+              className="cockpit-panel flex items-center justify-between bg-[var(--cockpit-carbon)] p-4"
             >
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="mb-1 flex items-center gap-2">
                   <span className="cockpit-title">{user.name}</span>
                   <Badge
                     variant={
@@ -223,9 +229,10 @@ export function CreatorUserManagement() {
                   )}
                 </div>
                 <div className="cockpit-text text-sm opacity-80">{user.email}</div>
-                <div className="cockpit-text text-xs opacity-60 mt-1">
+                <div className="cockpit-text mt-1 text-xs opacity-60">
                   {user.contribution_count} contributions • {user.sandbox_count} sandboxes •{' '}
-                  {user.on_chain_count} on-chain • Last: {user.last_activity ? new Date(user.last_activity).toLocaleDateString() : 'Never'}
+                  {user.on_chain_count} on-chain • Last:{' '}
+                  {user.last_activity ? new Date(user.last_activity).toLocaleDateString() : 'Never'}
                 </div>
               </div>
               <div className="flex gap-2">
@@ -239,7 +246,7 @@ export function CreatorUserManagement() {
                         disabled={managingRole}
                         className="cockpit-lever"
                       >
-                        <ShieldOff className="h-3 w-3 mr-1" />
+                        <ShieldOff className="mr-1 h-3 w-3" />
                         Revoke Operator
                       </Button>
                     ) : (
@@ -250,7 +257,7 @@ export function CreatorUserManagement() {
                         disabled={managingRole}
                         className="cockpit-lever"
                       >
-                        <Shield className="h-3 w-3 mr-1" />
+                        <Shield className="mr-1 h-3 w-3" />
                         Grant Operator
                       </Button>
                     )}
@@ -261,7 +268,7 @@ export function CreatorUserManagement() {
                       disabled={deleting}
                       className="cockpit-lever bg-red-600 hover:bg-red-700"
                     >
-                      <Trash2 className="h-3 w-3 mr-1" />
+                      <Trash2 className="mr-1 h-3 w-3" />
                       Delete User
                     </Button>
                   </>
@@ -273,7 +280,10 @@ export function CreatorUserManagement() {
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteMode.mode !== null} onOpenChange={() => setDeleteMode({ email: '', mode: null })}>
+      <Dialog
+        open={deleteMode.mode !== null}
+        onOpenChange={() => setDeleteMode({ email: '', mode: null })}
+      >
         <DialogContent className="cockpit-panel border-red-500">
           <DialogHeader>
             <DialogTitle className="cockpit-title flex items-center gap-2">
@@ -287,8 +297,8 @@ export function CreatorUserManagement() {
                     <strong>User:</strong> {targetUser.name} ({targetUser.email})
                   </div>
                   {targetUser.on_chain_count > 0 && (
-                    <div className="text-amber-500 mb-2">
-                      <AlertTriangle className="h-4 w-4 inline mr-1" />
+                    <div className="mb-2 text-amber-500">
+                      <AlertTriangle className="mr-1 inline h-4 w-4" />
                       This user has {targetUser.on_chain_count} on-chain PoC(s). On-chain records
                       will be preserved.
                     </div>
@@ -302,8 +312,8 @@ export function CreatorUserManagement() {
 
           <div className="space-y-4">
             {/* Safety Confirmation Button */}
-            <div className="p-4 bg-red-500/10 border-2 border-red-500/50 rounded">
-              <Label className="cockpit-label text-sm mb-2 block">
+            <div className="rounded border-2 border-red-500/50 bg-red-500/10 p-4">
+              <Label className="cockpit-label mb-2 block text-sm">
                 Step 1: Confirm Safety Acknowledgment
               </Label>
               <Button
@@ -311,18 +321,18 @@ export function CreatorUserManagement() {
                 variant={safetyConfirmed ? 'default' : 'outline'}
                 className={`w-full ${
                   safetyConfirmed
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
                     : 'border-red-500 text-red-400'
                 }`}
               >
                 {safetyConfirmed ? (
                   <>
-                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <AlertTriangle className="mr-2 h-4 w-4" />
                     Safety Acknowledged
                   </>
                 ) : (
                   <>
-                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <AlertTriangle className="mr-2 h-4 w-4" />
                     Click to Acknowledge Safety Warning
                   </>
                 )}
@@ -343,7 +353,7 @@ export function CreatorUserManagement() {
                   className="cockpit-input mt-2"
                   autoFocus
                 />
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
               </div>
             )}
           </div>
@@ -375,4 +385,3 @@ export function CreatorUserManagement() {
     </>
   );
 }
-

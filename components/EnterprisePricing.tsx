@@ -20,7 +20,7 @@ type PricingTier = {
 const pricingTiers: PricingTier[] = [
   {
     name: 'Pioneer',
-    subtitle: 'For Solo Operators & Small Teams',
+    subtitle: 'For Early Adopting Solo Operators & Small Teams',
     nodeRange: '1-5 nodes',
     pricePerNode: 500,
     minNodes: 1,
@@ -32,16 +32,13 @@ const pricingTiers: PricingTier[] = [
       'On-chain registration support',
       'Basic analytics dashboard',
     ],
-    useCase: 'Perfect for independent researchers, solo operators, and small research teams launching their first frontier sandbox.',
-    benefits: [
-      'Low barrier to entry',
-      'Full protocol access',
-      'Scalable foundation',
-    ],
+    useCase:
+      'Perfect for early adopting pioneers—independent researchers, solo operators, and small research teams interested in trialing their first frontier sandbox.',
+    benefits: ['Low barrier to entry', 'Full protocol access', 'Scalable foundation'],
   },
   {
     name: 'Trading Post',
-    subtitle: 'Growing Research Organizations',
+    subtitle: 'Early Adopting Growing Research Organizations',
     nodeRange: '6-25 nodes',
     pricePerNode: 400,
     minNodes: 6,
@@ -53,16 +50,13 @@ const pricingTiers: PricingTier[] = [
       'Multi-contributor management',
       'Custom scoring lens options',
     ],
-    useCase: 'Ideal for growing research organizations, engineering teams, and multi-contributor projects.',
-    benefits: [
-      'Volume discount',
-      'Enhanced collaboration tools',
-      'Priority support',
-    ],
+    useCase:
+      'Ideal for early adopting pioneers—growing research organizations, engineering teams, and multi-contributor projects interested in trialing advanced PoC evaluation.',
+    benefits: ['Volume discount', 'Enhanced collaboration tools', 'Priority support'],
   },
   {
     name: 'Settlement',
-    subtitle: 'Established Enterprises',
+    subtitle: 'Early Adopting Established Enterprises',
     nodeRange: '26-125 nodes',
     pricePerNode: 300,
     minNodes: 26,
@@ -74,16 +68,13 @@ const pricingTiers: PricingTier[] = [
       'Advanced vault management',
       'Enterprise analytics suite',
     ],
-    useCase: 'Designed for established enterprises, large research institutions, and organizations managing multiple projects.',
-    benefits: [
-      'Significant cost savings',
-      'Enterprise-grade features',
-      'Custom integrations',
-    ],
+    useCase:
+      'Designed for early adopting pioneers—established enterprises, large research institutions, and organizations interested in trialing enterprise-scale PoC evaluation systems.',
+    benefits: ['Significant cost savings', 'Enterprise-grade features', 'Custom integrations'],
   },
   {
     name: 'Metropolis',
-    subtitle: 'Large-Scale Operations',
+    subtitle: 'Early Adopting Large-Scale Operations',
     nodeRange: '126+ nodes',
     pricePerNode: 250,
     minNodes: 126,
@@ -95,12 +86,9 @@ const pricingTiers: PricingTier[] = [
       'Dedicated infrastructure',
       'Priority blockchain integration',
     ],
-    useCase: 'For large-scale operations, multi-organization networks, and enterprises requiring maximum scale and customization.',
-    benefits: [
-      'Maximum efficiency',
-      'Custom solutions',
-      'Dedicated support team',
-    ],
+    useCase:
+      'For early adopting pioneers—large-scale operations, multi-organization networks, and enterprises interested in trialing maximum-scale PoC evaluation with full customization.',
+    benefits: ['Maximum efficiency', 'Custom solutions', 'Dedicated support team'],
   },
 ];
 
@@ -190,51 +178,61 @@ export default function EnterprisePricing({
       {/* Narrative Section */}
       {showNarrative && (
         <div className="cockpit-panel p-8">
-          <div className="cockpit-label mb-4">ENTERPRISE HHF-AI SANDBOX NARRATIVE</div>
+          <div className="cockpit-label mb-4">INVITING EARLY ADOPTING PIONEERS</div>
           <div className="cockpit-text space-y-4 text-base" style={{ lineHeight: 1.8 }}>
+            <p>
+              <strong>
+                We're inviting early adopting pioneers interested in trialing Enterprise HHF-AI
+                Sandbox technology.
+              </strong>{' '}
+              Join us as we pioneer the future of contribution assessment through hydrogen spin
+              MRI-based PoC protocol on the blockchain.
+            </p>
             <p>
               <strong>Customized HHF-AI Sandbox & Ecosystem, Nested Within Syntheverse</strong>
             </p>
             <p>
-              Enterprise PoC sandboxes are <strong>customized HHF-AI sandboxes and ecosystems</strong>, 
-              fully nested within Syntheverse. Each sandbox operates as a self-similar instance of the 
-              Syntheverse PoC protocol, following the same holographic hydrogen fractal principles and 
-              evaluation logic as the main <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>.
+              Enterprise PoC sandboxes are{' '}
+              <strong>customized HHF-AI sandboxes and ecosystems</strong>, fully nested within
+              Syntheverse. Each sandbox operates as a self-similar instance of the Syntheverse PoC
+              protocol, following the same holographic hydrogen fractal principles and evaluation
+              logic as the main <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>.
             </p>
             <p>
-              <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts 
-              submissions from your contributor channels with <strong>clear, transparent scoring</strong>. 
-              All contributions are evaluated using SynthScan™ MRI with the same HHF-AI lens that 
-              powers the main Syntheverse, ensuring consistent coherence measurement across the ecosystem.
+              <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts
+              submissions from your contributor channels with{' '}
+              <strong>clear, transparent scoring</strong>. All contributions are evaluated using
+              SynthScan™ MRI with the same HHF-AI lens that powers the main Syntheverse, ensuring
+              consistent coherence measurement across the ecosystem.
             </p>
             <p>
-              <strong>Aligned Tokenomics:</strong> Tokenomics are fully aligned with the SYNTH90T ERC-20 
-              MOTHERLODE VAULT—same epoch structure (Founder, Pioneer, Trading Post, Settlement, Metropolis), 
-              metal assay system (Gold, Silver, Copper), and allocation logic. Your enterprise sandbox 
-              operates as a nested instance, maintaining protocol consistency while enabling customized 
-              deployment.
+              <strong>Aligned Tokenomics:</strong> Tokenomics are fully aligned with the SYNTH90T
+              ERC-20 MOTHERLODE VAULT—same epoch structure (Founder, Pioneer, Trading Post,
+              Settlement, Metropolis), metal assay system (Gold, Silver, Copper), and allocation
+              logic. Your enterprise sandbox operates as a nested instance, maintaining protocol
+              consistency while enabling customized deployment.
             </p>
             <p>
-              <strong>Nodes are the new employees.</strong> In the frontier sandbox model, each
-              node represents a contributor slot—a position where research, engineering, or
-              alignment work can be submitted, evaluated, and rewarded. Unlike traditional employment, 
-              nodes operate on Proof-of-Contribution: contributors are evaluated by SynthScan™ MRI for 
+              <strong>Nodes are the new employees.</strong> In the frontier sandbox model, each node
+              represents a contributor slot—a position where research, engineering, or alignment
+              work can be submitted, evaluated, and rewarded. Unlike traditional employment, nodes
+              operate on Proof-of-Contribution: contributors are evaluated by SynthScan™ MRI for
               coherence, novelty, and alignment, not hours worked or credentials held. This creates{' '}
               <strong>dramatic cost savings and efficiency gains</strong>—pay for coherent output,
               not time spent.
             </p>
             <p>
-              <strong>Scale without limits.</strong> Add nodes as your organization grows. Each
-              node can process unlimited contributions, evaluated in real-time by the same HHF-AI
-              lens that powers the main Syntheverse. Start with 5 nodes, scale to 500, or beyond.
-              The protocol adapts.
+              <strong>Scale without limits.</strong> Add nodes as your organization grows. Each node
+              can process unlimited contributions, evaluated in real-time by the same HHF-AI lens
+              that powers the main Syntheverse. Start with 5 nodes, scale to 500, or beyond. The
+              protocol adapts.
             </p>
             <p>
               <strong>On-chain registration:</strong> Each PoC registered on-chain incurs an
-              internal processing cost of approximately <strong>$20</strong>. This covers
-              blockchain transaction fees, gas costs, and protocol maintenance. Registration is
-              optional but recommended for permanent anchoring within the SYNTH90T ERC-20 MOTHERLODE 
-              VAULT ecosystem.
+              internal processing cost of approximately <strong>$20</strong>. This covers blockchain
+              transaction fees, gas costs, and protocol maintenance. Registration is optional but
+              recommended for permanent anchoring within the SYNTH90T ERC-20 MOTHERLODE VAULT
+              ecosystem.
             </p>
           </div>
         </div>
@@ -267,7 +265,9 @@ export default function EnterprisePricing({
                 <div className="cockpit-label mb-4 text-xs opacity-75">{tier.subtitle}</div>
 
                 <div className="mb-4">
-                  <div className="cockpit-title text-2xl">${tier.pricePerNode.toLocaleString()}</div>
+                  <div className="cockpit-title text-2xl">
+                    ${tier.pricePerNode.toLocaleString()}
+                  </div>
                   <div className="cockpit-text text-xs opacity-75">per node / month</div>
                   <div className="cockpit-text mt-2 text-xs opacity-60">{tier.nodeRange}</div>
                   {expandedTier === tier.name && (
@@ -280,7 +280,7 @@ export default function EnterprisePricing({
                 <div className="mb-4 space-y-2">
                   {tier.features.slice(0, 3).map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2">
-                      <Check className="h-3 w-3 flex-shrink-0 mt-0.5 text-[var(--hydrogen-amber)]" />
+                      <Check className="mt-0.5 h-3 w-3 flex-shrink-0 text-[var(--hydrogen-amber)]" />
                       <span className="cockpit-text text-xs">{feature}</span>
                     </div>
                   ))}
@@ -323,7 +323,10 @@ export default function EnterprisePricing({
                       value={nodeCount}
                       onChange={(e) => {
                         const count = parseInt(e.target.value) || tier.minNodes;
-                        const clamped = Math.max(tier.minNodes, Math.min(count, tier.maxNodes === Infinity ? 1000 : tier.maxNodes));
+                        const clamped = Math.max(
+                          tier.minNodes,
+                          Math.min(count, tier.maxNodes === Infinity ? 1000 : tier.maxNodes)
+                        );
                         setNodeCount(clamped);
                         onNodeCountChange?.(clamped);
                       }}
@@ -336,10 +339,19 @@ export default function EnterprisePricing({
                 )}
 
                 <button
-                  onClick={() => handlePurchase(tier, expandedTier === tier.name ? nodeCount : (tier.maxNodes === Infinity ? 126 : tier.maxNodes))}
+                  onClick={() =>
+                    handlePurchase(
+                      tier,
+                      expandedTier === tier.name
+                        ? nodeCount
+                        : tier.maxNodes === Infinity
+                          ? 126
+                          : tier.maxNodes
+                    )
+                  }
                   className="cockpit-lever w-full text-center text-sm"
                 >
-                  {isCurrentTier ? 'Manage Plan' : 'Get Started'}
+                  {isCurrentTier ? 'Manage Plan' : 'Start Trial'}
                   <ArrowRight className="ml-2 inline h-4 w-4" />
                 </button>
               </Card>
@@ -349,7 +361,7 @@ export default function EnterprisePricing({
 
         {/* Transaction Fee Note */}
         <div className="cockpit-panel mt-6 border-l-4 border-amber-500/50 bg-amber-500/5 p-4">
-          <div className="cockpit-text text-xs opacity-90 space-y-2">
+          <div className="cockpit-text space-y-2 text-xs opacity-90">
             <div>
               <strong>Submission Fees:</strong> Each contribution submission requires a separate
               evaluation fee (separate from monthly subscription). Fees vary by tier:{' '}
@@ -370,4 +382,3 @@ export default function EnterprisePricing({
     </div>
   );
 }
-

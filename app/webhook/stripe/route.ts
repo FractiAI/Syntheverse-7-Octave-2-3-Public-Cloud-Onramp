@@ -103,7 +103,7 @@ export async function POST(req: Request) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
         debug('StripeWebhook', `${event.type}`, { id: subscription.id });
-        
+
         // Handle enterprise sandbox subscriptions
         if (subscription.metadata?.product_type === 'enterprise_sandbox') {
           await handleEnterpriseSubscription(subscription);
@@ -119,7 +119,7 @@ export async function POST(req: Request) {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
         debug('StripeWebhook', 'Subscription deleted', { id: subscription.id });
-        
+
         // Handle enterprise sandbox subscription deletion
         if (subscription.metadata?.product_type === 'enterprise_sandbox') {
           await handleEnterpriseSubscriptionDeleted(subscription);

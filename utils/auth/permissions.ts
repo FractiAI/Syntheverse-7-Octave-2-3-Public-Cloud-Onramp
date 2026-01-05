@@ -1,6 +1,6 @@
 /**
  * Permission utilities for Creator/Operator/User role checking
- * 
+ *
  * Roles:
  * - Creator: info@fractiai.com (hard-coded)
  * - Operator: Users with role='operator' in database
@@ -127,4 +127,3 @@ export async function requireOperatorOrCreator(email?: string): Promise<void> {
     throw new Error('Unauthorized: Operator or Creator access required');
   }
 }
-

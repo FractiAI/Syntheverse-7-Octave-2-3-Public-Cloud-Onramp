@@ -249,9 +249,7 @@ export const enterpriseAllocationsTable = pgTable('enterprise_allocations', {
   epoch: text('epoch').notNull(),
   tier: text('tier'),
   reward: numeric('reward', { precision: 20, scale: 0 }).notNull(),
-  tier_multiplier: numeric('tier_multiplier', { precision: 10, scale: 4 })
-    .notNull()
-    .default('1.0'),
+  tier_multiplier: numeric('tier_multiplier', { precision: 10, scale: 4 }).notNull().default('1.0'),
   epoch_balance_before: numeric('epoch_balance_before', { precision: 20, scale: 0 }).notNull(),
   epoch_balance_after: numeric('epoch_balance_after', { precision: 20, scale: 0 }).notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),

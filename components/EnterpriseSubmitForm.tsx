@@ -101,8 +101,8 @@ export default function EnterpriseSubmitForm({
       </div>
       <div className="cockpit-panel mb-6 border-l-4 border-amber-500/50 bg-amber-500/5 p-3">
         <div className="cockpit-text text-xs opacity-90">
-          <strong>Submission Fee:</strong> Enterprise submission fees are lower than main Syntheverse
-          ($500). Fees vary by subscription tier: <strong>Pioneer ($50)</strong>,{' '}
+          <strong>Submission Fee:</strong> Enterprise submission fees are lower than main
+          Syntheverse ($500). Fees vary by subscription tier: <strong>Pioneer ($50)</strong>,{' '}
           <strong>Trading Post ($40)</strong>, <strong>Settlement ($30)</strong>,{' '}
           <strong>Metropolis ($25)</strong>. This fee is separate from your monthly sandbox
           subscription.
@@ -162,7 +162,7 @@ export default function EnterpriseSubmitForm({
         <button
           type="submit"
           disabled={loading || !title.trim() || !textContent.trim()}
-          className="cockpit-lever inline-flex items-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="cockpit-lever inline-flex items-center text-sm disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? (
             <>
@@ -180,4 +180,3 @@ export default function EnterpriseSubmitForm({
     </Card>
   );
 }
-

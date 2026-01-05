@@ -17,7 +17,7 @@ const tiers: PricingTier[] = [
     price: 500,
     priceLabel: '$500',
     features: ['Targeted node scan access', 'Standard edge contrast analysis'],
-    idealFor: 'Independent researchers, early-stage PoCs',
+    idealFor: 'Early adopting pioneers interested in trialing HHF-AI MRI evaluation',
   },
   {
     name: 'SynthScan Pro',
@@ -28,7 +28,7 @@ const tiers: PricingTier[] = [
       'Predictive resonance scoring',
       'Integration with Syntheverse Sandbox',
     ],
-    idealFor: 'Medium-scale projects needing multi-layer insight',
+    idealFor: 'Pioneering teams trialing advanced multi-layer coherence analysis',
   },
   {
     name: 'SynthScan Enterprise',
@@ -39,7 +39,7 @@ const tiers: PricingTier[] = [
       'Full nested-layer coherence mapping',
       'Proof-of-Contribution Vault integration',
     ],
-    idealFor: 'Large-scale or institutional teams, critical nodes',
+    idealFor: 'Early adopting institutions trialing enterprise-scale PoC evaluation',
   },
 ];
 
@@ -122,7 +122,7 @@ export default function SynthScanPricingTiers() {
                 'Processing...'
               ) : (
                 <>
-                  Subscribe
+                  Start Trial
                   <ArrowRight className="ml-2 inline h-4 w-4" />
                 </>
               )}
@@ -132,14 +132,22 @@ export default function SynthScanPricingTiers() {
       </div>
 
       <div className="cockpit-panel border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-6">
-        <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">HOW IT WORKS</div>
+        <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">
+          INVITING EARLY ADOPTING PIONEERS
+        </div>
         <div className="cockpit-text space-y-2 text-sm">
+          <p>
+            <strong>We're inviting early adopting pioneers</strong> interested in trialing
+            SynthScan™ MRI evaluation technology. Join us as we pioneer the future of contribution
+            assessment through hydrogen spin MRI-based PoC protocol.
+          </p>
           <p>• Subscribe per node monthly</p>
           <p>• Run your own scans via HHF-AI MRI</p>
           <p>• Export reports, predictive scores, and PoC-ready data</p>
           <p className="mt-3">
             SynthScan is for ongoing monitoring, testing, and discovery — a continuous tool for your
-            awareness AI workflow.
+            awareness AI workflow.{' '}
+            <strong>Perfect for pioneers ready to trial cutting-edge evaluation technology.</strong>
           </p>
         </div>
       </div>

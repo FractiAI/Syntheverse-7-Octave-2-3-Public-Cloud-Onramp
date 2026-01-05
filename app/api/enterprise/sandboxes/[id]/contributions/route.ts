@@ -7,10 +7,7 @@ import { eq, and, desc } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 // GET: Get contributions for a sandbox
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -25,7 +22,12 @@ export async function GET(
     const sandbox = await db
       .select()
       .from(enterpriseSandboxesTable)
-      .where(and(eq(enterpriseSandboxesTable.id, params.id), eq(enterpriseSandboxesTable.operator, user.email)))
+      .where(
+        and(
+          eq(enterpriseSandboxesTable.id, params.id),
+          eq(enterpriseSandboxesTable.operator, user.email)
+        )
+      )
       .limit(1);
 
     if (!sandbox || sandbox.length === 0) {
@@ -52,4 +54,3 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch contributions' }, { status: 500 });
   }
 }
-

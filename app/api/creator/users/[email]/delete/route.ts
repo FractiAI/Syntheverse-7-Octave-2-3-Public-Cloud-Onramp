@@ -1,6 +1,6 @@
 /**
  * Creator-only endpoint to delete users
- * 
+ *
  * POST /api/creator/users/[email]/delete
  * Body: { mode: 'soft' | 'hard', confirmation_phrase: string }
  */
@@ -14,10 +14,7 @@ import { logAuditEvent } from '@/utils/audit/audit-logger';
 
 const CONFIRMATION_PHRASE = 'DELETE USER';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { email: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { email: string } }) {
   try {
     const { user, isCreator } = await getAuthenticatedUserWithRole();
 
@@ -29,10 +26,7 @@ export async function POST(
 
     // Prevent deleting Creator account
     if (targetEmail === CREATOR_EMAIL.toLowerCase()) {
-      return NextResponse.json(
-        { error: 'Cannot delete Creator account' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Cannot delete Creator account' }, { status: 400 });
     }
 
     const body = await request.json();
@@ -79,7 +73,8 @@ export async function POST(
     }
 
     // Get IP and user agent for audit
-    const ip_address = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const ip_address =
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const user_agent = request.headers.get('user-agent') || 'unknown';
 
     if (mode === 'soft') {
@@ -91,19 +86,12 @@ export async function POST(
         })
         .where(eq(usersTable.email, targetEmail));
 
-      await logAuditEvent(
-        user.email,
-        'user_delete_soft',
-        'user',
-        targetEmail,
-        1,
-        {
-          confirmation_phrase,
-          ip_address,
-          user_agent,
-          on_chain_pocs: onChainPoCs,
-        }
-      );
+      await logAuditEvent(user.email, 'user_delete_soft', 'user', targetEmail, 1, {
+        confirmation_phrase,
+        ip_address,
+        user_agent,
+        on_chain_pocs: onChainPoCs,
+      });
 
       return NextResponse.json({
         success: true,
@@ -115,7 +103,7 @@ export async function POST(
       // Hard delete: Anonymize contributions, then delete user
       // Anonymize contributions (set contributor to deleted-{hash})
       const anonymizedContributor = `deleted-${targetEmail.split('@')[0]}-${Date.now()}`;
-      
+
       await db
         .update(contributionsTable)
         .set({
@@ -126,20 +114,13 @@ export async function POST(
       // Delete user record
       await db.delete(usersTable).where(eq(usersTable.email, targetEmail));
 
-      await logAuditEvent(
-        user.email,
-        'user_delete_hard',
-        'user',
-        targetEmail,
-        1,
-        {
-          confirmation_phrase,
-          ip_address,
-          user_agent,
-          on_chain_pocs: onChainPoCs,
-          anonymized_contributor: anonymizedContributor,
-        }
-      );
+      await logAuditEvent(user.email, 'user_delete_hard', 'user', targetEmail, 1, {
+        confirmation_phrase,
+        ip_address,
+        user_agent,
+        on_chain_pocs: onChainPoCs,
+        anonymized_contributor: anonymizedContributor,
+      });
 
       return NextResponse.json({
         success: true,
@@ -159,4 +140,3 @@ export async function POST(
     );
   }
 }
-

@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Settings, Play, Pause, Plus, Activity, Users, Coins, TrendingUp } from 'lucide-react';
+import {
+  ArrowLeft,
+  Settings,
+  Play,
+  Pause,
+  Plus,
+  Activity,
+  Users,
+  Coins,
+  TrendingUp,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
@@ -91,12 +101,16 @@ export default function EnterpriseSandboxDetail({
 
         // Calculate stats
         const total = data.contributions?.length || 0;
-        const qualified = data.contributions?.filter((c: Contribution) => c.status === 'qualified').length || 0;
-        const evaluating = data.contributions?.filter((c: Contribution) => c.status === 'evaluating').length || 0;
-        const scores = data.contributions
-          ?.filter((c: Contribution) => c.metadata?.pod_score)
-          .map((c: Contribution) => c.metadata.pod_score) || [];
-        const averageScore = scores.length > 0 ? scores.reduce((a: number, b: number) => a + b, 0) / scores.length : 0;
+        const qualified =
+          data.contributions?.filter((c: Contribution) => c.status === 'qualified').length || 0;
+        const evaluating =
+          data.contributions?.filter((c: Contribution) => c.status === 'evaluating').length || 0;
+        const scores =
+          data.contributions
+            ?.filter((c: Contribution) => c.metadata?.pod_score)
+            .map((c: Contribution) => c.metadata.pod_score) || [];
+        const averageScore =
+          scores.length > 0 ? scores.reduce((a: number, b: number) => a + b, 0) / scores.length : 0;
 
         setStats({ total, qualified, evaluating, averageScore });
       }
@@ -193,12 +207,16 @@ export default function EnterpriseSandboxDetail({
                           sandbox.vault_status === 'active' ? 'bg-green-500' : 'bg-gray-500'
                         }`}
                       />
-                      <span className="cockpit-title text-lg">{sandbox.vault_status.toUpperCase()}</span>
+                      <span className="cockpit-title text-lg">
+                        {sandbox.vault_status.toUpperCase()}
+                      </span>
                     </div>
                   </div>
                   <div>
                     <div className="cockpit-label mb-1 text-xs">EPOCH</div>
-                    <div className="cockpit-title text-lg">{sandbox.current_epoch.toUpperCase()}</div>
+                    <div className="cockpit-title text-lg">
+                      {sandbox.current_epoch.toUpperCase()}
+                    </div>
                   </div>
                   {sandbox.subscription_tier && (
                     <div>
@@ -239,7 +257,7 @@ export default function EnterpriseSandboxDetail({
           </div>
 
           {/* Stats */}
-          <div className="grid gap-6 mb-8 md:grid-cols-4">
+          <div className="mb-8 grid gap-6 md:grid-cols-4">
             <Card hover={false} className="border-l-4 border-blue-500/50">
               <div className="cockpit-label mb-1 text-xs">TOTAL CONTRIBUTIONS</div>
               <div className="cockpit-title text-2xl">{stats.total}</div>
@@ -307,7 +325,8 @@ export default function EnterpriseSandboxDetail({
                       <div className="flex-1">
                         <div className="cockpit-title mb-2 text-lg">{contrib.title}</div>
                         <div className="cockpit-label mb-2 text-xs">
-                          {contrib.contributor} · {new Date(contrib.created_at).toLocaleDateString()}
+                          {contrib.contributor} ·{' '}
+                          {new Date(contrib.created_at).toLocaleDateString()}
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="cockpit-label text-xs">
@@ -341,4 +360,3 @@ export default function EnterpriseSandboxDetail({
     </div>
   );
 }
-

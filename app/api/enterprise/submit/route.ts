@@ -59,10 +59,7 @@ export async function POST(request: NextRequest) {
 
     // Check if Stripe is configured
     if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json(
-        { error: 'Payment service not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Payment service not configured' }, { status: 500 });
     }
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -204,11 +201,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     debugError('EnterpriseSubmit', 'Submission error', error);
-    return NextResponse.json(
-      { error: 'Failed to submit contribution' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to submit contribution' }, { status: 500 });
   }
 }
-
-

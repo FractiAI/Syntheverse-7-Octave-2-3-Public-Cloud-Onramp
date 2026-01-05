@@ -102,7 +102,9 @@ export default function EnterpriseAnalytics({ sandboxId }: EnterpriseAnalyticsPr
             <div>
               <div className="cockpit-label mb-1 text-xs">AVG SCORE</div>
               <div className="cockpit-title text-2xl">
-                {analytics.averageScore > 0 ? Math.round(analytics.averageScore).toLocaleString() : 'N/A'}
+                {analytics.averageScore > 0
+                  ? Math.round(analytics.averageScore).toLocaleString()
+                  : 'N/A'}
               </div>
             </div>
           </div>
@@ -115,7 +117,8 @@ export default function EnterpriseAnalytics({ sandboxId }: EnterpriseAnalyticsPr
               <div className="cockpit-label mb-1 text-xs">TOTAL COST</div>
               <div className="cockpit-title text-2xl">${analytics.totalCost.toLocaleString()}</div>
               <div className="cockpit-text text-xs opacity-75">
-                ${analytics.totalContributions > 0
+                $
+                {analytics.totalContributions > 0
                   ? (analytics.totalCost / analytics.totalContributions).toFixed(0)
                   : '0'}{' '}
                 per contribution
@@ -158,7 +161,10 @@ export default function EnterpriseAnalytics({ sandboxId }: EnterpriseAnalyticsPr
           <div className="cockpit-label mb-4">TOP CONTRIBUTORS</div>
           <div className="space-y-3">
             {analytics.topContributors.map((contributor, idx) => (
-              <div key={idx} className="flex items-center justify-between border-b border-[var(--keyline-primary)] pb-3">
+              <div
+                key={idx}
+                className="flex items-center justify-between border-b border-[var(--keyline-primary)] pb-3"
+              >
                 <div>
                   <div className="cockpit-title text-base">
                     {contributor.contributor.substring(0, 20)}...
@@ -170,7 +176,9 @@ export default function EnterpriseAnalytics({ sandboxId }: EnterpriseAnalyticsPr
                 <div className="text-right">
                   <div className="cockpit-label text-xs">Avg Score</div>
                   <div className="cockpit-title text-lg">
-                    {contributor.avgScore > 0 ? Math.round(contributor.avgScore).toLocaleString() : 'N/A'}
+                    {contributor.avgScore > 0
+                      ? Math.round(contributor.avgScore).toLocaleString()
+                      : 'N/A'}
                   </div>
                 </div>
               </div>
@@ -181,4 +189,3 @@ export default function EnterpriseAnalytics({ sandboxId }: EnterpriseAnalyticsPr
     </div>
   );
 }
-

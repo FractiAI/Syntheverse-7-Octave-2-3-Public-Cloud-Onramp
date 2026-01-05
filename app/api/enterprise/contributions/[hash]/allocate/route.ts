@@ -77,10 +77,7 @@ async function allocateEnterpriseTokens(
   return allocations;
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { hash: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { hash: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -124,7 +121,10 @@ export async function POST(
       .where(eq(enterpriseAllocationsTable.submission_hash, submissionHash));
 
     if (existingAllocations.length > 0) {
-      return NextResponse.json({ error: 'Tokens already allocated for this contribution' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Tokens already allocated for this contribution' },
+        { status: 400 }
+      );
     }
 
     // Get metadata
@@ -169,4 +169,3 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to allocate tokens' }, { status: 500 });
   }
 }
-

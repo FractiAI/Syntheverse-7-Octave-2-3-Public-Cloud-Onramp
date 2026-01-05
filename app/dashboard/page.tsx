@@ -71,7 +71,7 @@ export default async function Dashboard() {
                 protocol. Records are verifiable and permanent; this UI does not represent protocol
                 ownership, centralized governance, or financial promises.
               </div>
-              <div className="cockpit-text mt-3 border-l-4 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/5 px-4 py-2 text-sm">
+              <div className="cockpit-text bg-[var(--hydrogen-amber)]/5 mt-3 border-l-4 border-[var(--hydrogen-amber)] px-4 py-2 text-sm">
                 <strong>Liberating Contributions:</strong> Through our hydrogen spin MRI-based PoC
                 protocol on the blockchain, your contributions are no longer gatekept—they become{' '}
                 <strong>visible and demonstrable to all</strong> via HHF-AI MRI science and

@@ -7,10 +7,7 @@ import { eq, and } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 // GET: Get single contribution
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { hash: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { hash: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -48,4 +45,3 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch contribution' }, { status: 500 });
   }
 }
-

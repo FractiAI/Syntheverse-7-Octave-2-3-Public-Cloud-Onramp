@@ -8,10 +8,7 @@ import { debug, debugError } from '@/utils/debug';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { hash: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { hash: string } }) {
   try {
     const submissionHash = params.hash;
 
@@ -168,9 +165,11 @@ export async function POST(
       .where(eq(enterpriseContributionsTable.submission_hash, params.hash));
 
     return NextResponse.json(
-      { error: 'Evaluation failed', message: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Evaluation failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }
 }
-

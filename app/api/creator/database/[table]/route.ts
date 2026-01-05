@@ -1,6 +1,6 @@
 /**
  * Creator-only endpoint to view database table contents
- * 
+ *
  * GET /api/creator/database/[table]
  */
 
@@ -26,10 +26,7 @@ const TABLE_MAP: Record<string, any> = {
   enterprise_contributions: enterpriseContributionsTable,
 };
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { table: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { table: string } }) {
   try {
     const { user, isCreator } = await getAuthenticatedUserWithRole();
 
@@ -64,9 +61,7 @@ export async function GET(
     const rows = await query;
 
     // Get total count
-    const countResult = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(table);
+    const countResult = await db.select({ count: sql<number>`count(*)` }).from(table);
 
     return NextResponse.json({
       table: tableName,
@@ -101,4 +96,3 @@ export async function GET(
     );
   }
 }
-

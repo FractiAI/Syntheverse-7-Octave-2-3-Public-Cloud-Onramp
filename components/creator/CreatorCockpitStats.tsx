@@ -116,7 +116,10 @@ export function CreatorCockpitStats() {
           },
         },
         archive: {
-          total: Object.values(archiveStats.by_status || {}).reduce((sum: number, s: any) => sum + (s.count || 0), 0),
+          total: Object.values(archiveStats.by_status || {}).reduce(
+            (sum: number, s: any) => sum + (s.count || 0),
+            0
+          ),
           active: archiveStats.by_status?.find((s: any) => s.status === 'evaluating')?.count || 0,
           archived: archiveStats.archived_resettable || 0,
           qualified: archiveStats.by_status?.find((s: any) => s.status === 'qualified')?.count || 0,
@@ -129,7 +132,11 @@ export function CreatorCockpitStats() {
           deleted,
         },
         database: {
-          contributions: Object.values(archiveStats.by_status || {}).reduce((sum: number, s: any) => sum + (s.count || 0), 0) || 0,
+          contributions:
+            Object.values(archiveStats.by_status || {}).reduce(
+              (sum: number, s: any) => sum + (s.count || 0),
+              0
+            ) || 0,
           allocations: allocationsCount,
           auditLogs: auditLogsCount,
           enterpriseSandboxes: sandboxesCount,
@@ -153,18 +160,20 @@ export function CreatorCockpitStats() {
   if (!stats) return null;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+    <div className="mb-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {/* Blockchain Stats */}
-      <div className="cockpit-panel p-4 border-l-4 border-blue-500">
-        <div className="flex items-center justify-between mb-2">
-          <div className="cockpit-label text-xs flex items-center gap-2">
+      <div className="cockpit-panel border-l-4 border-blue-500 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="cockpit-label flex items-center gap-2 text-xs">
             <LinkIcon className="h-4 w-4" />
             BLOCKCHAIN
           </div>
-          <Activity className="h-4 w-4 text-green-500 animate-pulse" />
+          <Activity className="h-4 w-4 animate-pulse text-green-500" />
         </div>
-        <div className="cockpit-title text-lg mb-1">{stats.blockchain.network}</div>
-        <div className="cockpit-text text-xs opacity-75 mb-2">Chain ID: {stats.blockchain.chainId}</div>
+        <div className="cockpit-title mb-1 text-lg">{stats.blockchain.network}</div>
+        <div className="cockpit-text mb-2 text-xs opacity-75">
+          Chain ID: {stats.blockchain.chainId}
+        </div>
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="cockpit-text opacity-60">Registered PoCs:</span>
@@ -178,15 +187,15 @@ export function CreatorCockpitStats() {
       </div>
 
       {/* Archive Stats */}
-      <div className="cockpit-panel p-4 border-l-4 border-amber-500">
-        <div className="flex items-center justify-between mb-2">
-          <div className="cockpit-label text-xs flex items-center gap-2">
+      <div className="cockpit-panel border-l-4 border-amber-500 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="cockpit-label flex items-center gap-2 text-xs">
             <FileText className="h-4 w-4" />
             ARCHIVE
           </div>
         </div>
-        <div className="cockpit-title text-lg mb-1">{stats.archive.total}</div>
-        <div className="cockpit-text text-xs opacity-75 mb-2">Total Contributions</div>
+        <div className="cockpit-title mb-1 text-lg">{stats.archive.total}</div>
+        <div className="cockpit-text mb-2 text-xs opacity-75">Total Contributions</div>
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="cockpit-text opacity-60">Registered:</span>
@@ -204,15 +213,15 @@ export function CreatorCockpitStats() {
       </div>
 
       {/* Users Stats */}
-      <div className="cockpit-panel p-4 border-l-4 border-purple-500">
-        <div className="flex items-center justify-between mb-2">
-          <div className="cockpit-label text-xs flex items-center gap-2">
+      <div className="cockpit-panel border-l-4 border-purple-500 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="cockpit-label flex items-center gap-2 text-xs">
             <Users className="h-4 w-4" />
             AUTHORIZED USERS
           </div>
         </div>
-        <div className="cockpit-title text-lg mb-1">{stats.users.total}</div>
-        <div className="cockpit-text text-xs opacity-75 mb-2">Total Accounts</div>
+        <div className="cockpit-title mb-1 text-lg">{stats.users.total}</div>
+        <div className="cockpit-text mb-2 text-xs opacity-75">Total Accounts</div>
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="cockpit-text opacity-60">Active:</span>
@@ -230,15 +239,15 @@ export function CreatorCockpitStats() {
       </div>
 
       {/* Database Stats */}
-      <div className="cockpit-panel p-4 border-l-4 border-green-500">
-        <div className="flex items-center justify-between mb-2">
-          <div className="cockpit-label text-xs flex items-center gap-2">
+      <div className="cockpit-panel border-l-4 border-green-500 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="cockpit-label flex items-center gap-2 text-xs">
             <Database className="h-4 w-4" />
             DATABASE
           </div>
         </div>
-        <div className="cockpit-title text-lg mb-1">{stats.database.contributions}</div>
-        <div className="cockpit-text text-xs opacity-75 mb-2">Contributions Table</div>
+        <div className="cockpit-title mb-1 text-lg">{stats.database.contributions}</div>
+        <div className="cockpit-text mb-2 text-xs opacity-75">Contributions Table</div>
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="cockpit-text opacity-60">Allocations:</span>
@@ -257,4 +266,3 @@ export function CreatorCockpitStats() {
     </div>
   );
 }
-

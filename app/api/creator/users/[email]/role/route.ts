@@ -1,6 +1,6 @@
 /**
  * Creator-only endpoint to grant/revoke operator privileges
- * 
+ *
  * POST /api/creator/users/[email]/role
  * Body: { action: 'grant' | 'revoke', role: 'operator' }
  */
@@ -12,10 +12,7 @@ import { usersTable } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
 import { logAuditEvent } from '@/utils/audit/audit-logger';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { email: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { email: string } }) {
   try {
     const { user, isCreator } = await getAuthenticatedUserWithRole();
 
@@ -27,10 +24,7 @@ export async function POST(
 
     // Prevent modifying Creator role
     if (targetEmail === CREATOR_EMAIL.toLowerCase()) {
-      return NextResponse.json(
-        { error: 'Cannot modify Creator role' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Cannot modify Creator role' }, { status: 400 });
     }
 
     const body = await request.json();
@@ -73,7 +67,8 @@ export async function POST(
       .where(eq(usersTable.email, targetEmail));
 
     // Get IP and user agent for audit
-    const ip_address = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const ip_address =
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const user_agent = request.headers.get('user-agent') || 'unknown';
 
     await logAuditEvent(
@@ -110,4 +105,3 @@ export async function POST(
     );
   }
 }
-

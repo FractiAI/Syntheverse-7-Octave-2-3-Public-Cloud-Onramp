@@ -16,6 +16,7 @@
 **Contributions are no longer gatekept.** Every contribution becomes **visible, demonstrable, and verifiable to all** through our revolutionary **HHF-AI MRI science and technology** on the blockchain. Syntheverse liberates contributions from traditional barriers, making them transparent and accessible through our hydrogen spin MRI-based Proof-of-Contribution protocol.
 
 **The Liberation Layer**: This system removes gatekeeping by making all contributions:
+
 - **Visible**: Transparent and accessible to all stakeholders on the blockchain
 - **Demonstrable**: Verifiable through HHF-AI MRI science and technology
 - **Liberated**: Free from traditional institutional barriers and control mechanisms

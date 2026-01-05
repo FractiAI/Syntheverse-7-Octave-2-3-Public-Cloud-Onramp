@@ -1,10 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  FileText, Users, Link as LinkIcon, Database, 
-  Archive, Settings, Eye, Edit, Trash2, Shield,
-  RefreshCw, Search, Filter, ExternalLink
+import {
+  FileText,
+  Users,
+  Link as LinkIcon,
+  Database,
+  Archive,
+  Settings,
+  Eye,
+  Edit,
+  Trash2,
+  Shield,
+  RefreshCw,
+  Search,
+  Filter,
+  ExternalLink,
 } from 'lucide-react';
 import { CreatorArchiveManagement } from './CreatorArchiveManagement';
 import { CreatorUserManagement } from './CreatorUserManagement';
@@ -30,7 +41,7 @@ export function CreatorCockpitNavigation() {
       {/* Navigation Header */}
       <div className="mb-6 border-b border-[var(--keyline-primary)] pb-4">
         <div className="cockpit-label mb-2">NAVIGATION WINDOW</div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -64,7 +75,7 @@ export function CreatorCockpitNavigation() {
       {/* Search Bar */}
       <div className="mb-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 opacity-50" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform opacity-50" />
           <Input
             placeholder={`Search ${activeTab === 'archive' ? 'contributions' : activeTab === 'users' ? 'users' : activeTab === 'blockchain' ? 'on-chain records' : 'database tables'}...`}
             value={searchTerm}
@@ -155,10 +166,10 @@ function BlockchainContentPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="cockpit-panel p-4 bg-[var(--cockpit-carbon)]">
+      <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
         <div className="cockpit-label mb-3 text-xs">CONTRACT ADDRESSES</div>
         <div className="space-y-3 text-sm">
-          <div className="flex items-center justify-between p-2 bg-[var(--cockpit-bg)] rounded">
+          <div className="flex items-center justify-between rounded bg-[var(--cockpit-bg)] p-2">
             <span className="cockpit-text opacity-60">Lens Kernel:</span>
             <div className="flex items-center gap-2">
               <code className="cockpit-text font-mono text-xs">
@@ -174,7 +185,7 @@ function BlockchainContentPanel() {
               </a>
             </div>
           </div>
-          <div className="flex items-center justify-between p-2 bg-[var(--cockpit-bg)] rounded">
+          <div className="flex items-center justify-between rounded bg-[var(--cockpit-bg)] p-2">
             <span className="cockpit-text opacity-60">SYNTH90T:</span>
             <div className="flex items-center gap-2">
               <code className="cockpit-text font-mono text-xs">
@@ -190,7 +201,7 @@ function BlockchainContentPanel() {
               </a>
             </div>
           </div>
-          <div className="flex items-center justify-between p-2 bg-[var(--cockpit-bg)] rounded">
+          <div className="flex items-center justify-between rounded bg-[var(--cockpit-bg)] p-2">
             <span className="cockpit-text opacity-60">MOTHERLODE VAULT:</span>
             <div className="flex items-center gap-2">
               <code className="cockpit-text font-mono text-xs">
@@ -209,21 +220,22 @@ function BlockchainContentPanel() {
         </div>
       </div>
 
-      <div className="cockpit-panel p-4 bg-[var(--cockpit-carbon)]">
+      <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
         <div className="cockpit-label mb-3 text-xs">ON-CHAIN PoCs</div>
-        <div className="cockpit-text text-sm opacity-75 mb-4">
-          Registered contributions on Base Mainnet. All on-chain PoCs are permanent and cannot be deleted.
+        <div className="cockpit-text mb-4 text-sm opacity-75">
+          Registered contributions on Base Mainnet. All on-chain PoCs are permanent and cannot be
+          deleted.
         </div>
         {onChainPocs.length > 0 ? (
           <div className="space-y-2">
             {onChainPocs.map((poc: any) => (
               <div
                 key={poc.submission_hash}
-                className="p-3 bg-[var(--cockpit-bg)] rounded flex items-center justify-between"
+                className="flex items-center justify-between rounded bg-[var(--cockpit-bg)] p-3"
               >
                 <div>
                   <div className="cockpit-text text-sm">{poc.title}</div>
-                  <div className="cockpit-text text-xs opacity-60 font-mono">
+                  <div className="cockpit-text font-mono text-xs opacity-60">
                     {poc.registration_tx_hash?.slice(0, 16)}...
                   </div>
                 </div>
@@ -239,7 +251,7 @@ function BlockchainContentPanel() {
             ))}
           </div>
         ) : (
-          <div className="cockpit-text text-sm opacity-60 text-center py-4">
+          <div className="cockpit-text py-4 text-center text-sm opacity-60">
             No on-chain PoCs yet. PoCs will appear here after registration.
           </div>
         )}
@@ -281,18 +293,18 @@ function DatabaseNavigationPanel() {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="cockpit-panel p-4 bg-[var(--cockpit-carbon)]">
+        <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
           <div className="cockpit-label mb-3 text-xs">DATABASE TABLES</div>
           <div className="space-y-2 text-sm">
             {tables.map((table) => (
               <div
                 key={table.name}
-                className="flex items-center justify-between p-2 bg-[var(--cockpit-bg)] rounded hover:bg-[var(--cockpit-carbon)] transition-colors"
+                className="flex items-center justify-between rounded bg-[var(--cockpit-bg)] p-2 transition-colors hover:bg-[var(--cockpit-carbon)]"
               >
                 <div className="flex items-center gap-2">
                   <Database className="h-3 w-3 opacity-50" />
                   <span className="cockpit-text">{table.label}</span>
-                  <span className="cockpit-text text-xs opacity-40 font-mono">({table.name})</span>
+                  <span className="cockpit-text font-mono text-xs opacity-40">({table.name})</span>
                 </div>
                 <Button
                   size="sm"
@@ -301,7 +313,7 @@ function DatabaseNavigationPanel() {
                   onClick={() => loadTableData(table.name)}
                   disabled={loading}
                 >
-                  <Eye className="h-3 w-3 mr-1" />
+                  <Eye className="mr-1 h-3 w-3" />
                   View
                 </Button>
               </div>
@@ -309,7 +321,7 @@ function DatabaseNavigationPanel() {
           </div>
         </div>
 
-        <div className="cockpit-panel p-4 bg-[var(--cockpit-carbon)] border-l-4 border-red-500">
+        <div className="cockpit-panel border-l-4 border-red-500 bg-[var(--cockpit-carbon)] p-4">
           <div className="cockpit-label mb-3 text-xs text-red-400">DATABASE OPERATIONS</div>
           <div className="space-y-2">
             <Button
@@ -320,10 +332,10 @@ function DatabaseNavigationPanel() {
                 window.location.hash = 'archive-reset';
               }}
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className="mr-2 h-4 w-4" />
               Reset Archive
             </Button>
-            <div className="cockpit-text text-xs opacity-60 mt-4 p-2 bg-[var(--cockpit-bg)] rounded">
+            <div className="cockpit-text mt-4 rounded bg-[var(--cockpit-bg)] p-2 text-xs opacity-60">
               <strong>Note:</strong> All destructive operations require confirmation phrases and are
               logged in the audit_log table. Use the Archive tab for archive resets.
             </div>
@@ -334,7 +346,7 @@ function DatabaseNavigationPanel() {
       {/* Table Data Viewer */}
       {selectedTable && (
         <div className="cockpit-panel p-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="cockpit-label text-xs">
               TABLE: {selectedTable.toUpperCase()} ({tableData.length} rows)
             </div>
@@ -351,14 +363,14 @@ function DatabaseNavigationPanel() {
             </Button>
           </div>
           {loading ? (
-            <div className="cockpit-text text-center py-8">Loading table data...</div>
+            <div className="cockpit-text py-8 text-center">Loading table data...</div>
           ) : tableData.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-[var(--keyline-primary)]">
                     {Object.keys(tableData[0]).map((key) => (
-                      <th key={key} className="cockpit-label text-left p-2">
+                      <th key={key} className="cockpit-label p-2 text-left">
                         {key}
                       </th>
                     ))}
@@ -368,7 +380,7 @@ function DatabaseNavigationPanel() {
                   {tableData.slice(0, 50).map((row, idx) => (
                     <tr
                       key={idx}
-                      className="border-b border-[var(--keyline-primary)]/50 hover:bg-[var(--cockpit-carbon)]"
+                      className="border-[var(--keyline-primary)]/50 border-b hover:bg-[var(--cockpit-carbon)]"
                     >
                       {Object.values(row).map((value: any, colIdx) => (
                         <td key={colIdx} className="cockpit-text p-2">
@@ -386,13 +398,13 @@ function DatabaseNavigationPanel() {
                 </tbody>
               </table>
               {tableData.length > 50 && (
-                <div className="cockpit-text text-xs opacity-60 mt-2 text-center">
+                <div className="cockpit-text mt-2 text-center text-xs opacity-60">
                   Showing first 50 of {tableData.length} rows
                 </div>
               )}
             </div>
           ) : (
-            <div className="cockpit-text text-center py-8 opacity-60">No data available</div>
+            <div className="cockpit-text py-8 text-center opacity-60">No data available</div>
           )}
         </div>
       )}
@@ -405,4 +417,3 @@ function DatabaseNavigationPanel() {
     </div>
   );
 }
-

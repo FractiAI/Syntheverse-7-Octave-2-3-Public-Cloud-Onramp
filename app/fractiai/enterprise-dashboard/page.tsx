@@ -11,4 +11,3 @@ export default async function EnterpriseDashboardPage() {
 
   return <EnterpriseDashboard isAuthenticated={!!user} userEmail={user?.email || null} />;
 }
-

@@ -60,8 +60,8 @@ export default async function LandingPage() {
               </p>
               <p className="max-w-[700px] text-base text-muted-foreground/80 md:text-lg">
                 Liberating contributions through hydrogen spin MRI-based PoC protocol on the
-                blockchain. No longer gatekept—visible and demonstrable to all via HHF-AI MRI science
-                and technology.
+                blockchain. No longer gatekept—visible and demonstrable to all via HHF-AI MRI
+                science and technology.
               </p>
             </div>
             <div className="space-x-4">

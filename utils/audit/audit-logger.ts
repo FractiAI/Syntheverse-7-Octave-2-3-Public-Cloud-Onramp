@@ -38,7 +38,11 @@ export async function logAuditEvent(
 ): Promise<void> {
   try {
     const actorRole = await getUserRole(actorEmail);
-    const actionMode = actionType.includes('soft') ? 'soft' : actionType.includes('hard') ? 'hard' : null;
+    const actionMode = actionType.includes('soft')
+      ? 'soft'
+      : actionType.includes('hard')
+        ? 'hard'
+        : null;
 
     await db.insert(auditLogTable).values({
       id: crypto.randomUUID(),
@@ -79,4 +83,3 @@ export async function getAuditLogs(
 
   return query.limit(limit).offset(offset);
 }
-

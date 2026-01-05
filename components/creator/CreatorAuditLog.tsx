@@ -55,12 +55,12 @@ export function CreatorAuditLog() {
   }
 
   return (
-    <div className="cockpit-panel p-6 border-l-4 border-blue-500">
-      <div className="flex items-start gap-3 mb-4">
+    <div className="cockpit-panel border-l-4 border-blue-500 p-6">
+      <div className="mb-4 flex items-start gap-3">
         <FileText className="h-6 w-6 text-blue-500" />
         <div className="flex-1">
           <div className="cockpit-label mb-2">AUDIT LOG</div>
-          <h2 className="cockpit-title text-xl mb-2">Action History</h2>
+          <h2 className="cockpit-title mb-2 text-xl">Action History</h2>
           <p className="cockpit-text text-sm opacity-80">
             Complete audit trail of all Creator actions. All destructive operations are logged with
             timestamps and metadata.
@@ -68,19 +68,21 @@ export function CreatorAuditLog() {
         </div>
       </div>
 
-      <div className="space-y-2 max-h-96 overflow-y-auto">
+      <div className="max-h-96 space-y-2 overflow-y-auto">
         {logs.length === 0 ? (
-          <div className="cockpit-text text-center py-8 opacity-60">No audit logs yet</div>
+          <div className="cockpit-text py-8 text-center opacity-60">No audit logs yet</div>
         ) : (
           logs.map((log) => (
             <div
               key={log.id}
-              className="cockpit-panel p-4 bg-[var(--cockpit-carbon)] border-l-2 border-blue-500/50"
+              className="cockpit-panel border-l-2 border-blue-500/50 bg-[var(--cockpit-carbon)] p-4"
             >
-              <div className="flex items-start justify-between mb-2">
+              <div className="mb-2 flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="cockpit-title text-sm">{formatActionType(log.action_type)}</span>
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="cockpit-title text-sm">
+                      {formatActionType(log.action_type)}
+                    </span>
                     {log.action_mode && (
                       <Badge variant="outline" className="text-xs">
                         {log.action_mode}
@@ -109,10 +111,10 @@ export function CreatorAuditLog() {
               </div>
               {log.metadata && Object.keys(log.metadata).length > 0 && (
                 <details className="mt-2">
-                  <summary className="cockpit-text text-xs cursor-pointer opacity-60">
+                  <summary className="cockpit-text cursor-pointer text-xs opacity-60">
                     View metadata
                   </summary>
-                  <pre className="cockpit-text text-xs mt-2 p-2 bg-[var(--cockpit-bg)] rounded overflow-auto">
+                  <pre className="cockpit-text mt-2 overflow-auto rounded bg-[var(--cockpit-bg)] p-2 text-xs">
                     {JSON.stringify(log.metadata, null, 2)}
                   </pre>
                 </details>
@@ -124,4 +126,3 @@ export function CreatorAuditLog() {
     </div>
   );
 }
-

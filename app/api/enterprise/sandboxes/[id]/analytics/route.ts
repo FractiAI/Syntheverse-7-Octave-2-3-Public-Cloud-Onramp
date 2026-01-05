@@ -7,10 +7,7 @@ import { eq, and, sql } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 // GET: Get analytics for a sandbox
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -25,7 +22,12 @@ export async function GET(
     const sandbox = await db
       .select()
       .from(enterpriseSandboxesTable)
-      .where(and(eq(enterpriseSandboxesTable.id, params.id), eq(enterpriseSandboxesTable.operator, user.email)))
+      .where(
+        and(
+          eq(enterpriseSandboxesTable.id, params.id),
+          eq(enterpriseSandboxesTable.operator, user.email)
+        )
+      )
       .limit(1);
 
     if (!sandbox || sandbox.length === 0) {
@@ -66,9 +68,16 @@ export async function GET(
     };
 
     // Top contributors
-    const contributorMap = new Map<string, { count: number; qualified: number; totalScore: number }>();
+    const contributorMap = new Map<
+      string,
+      { count: number; qualified: number; totalScore: number }
+    >();
     contributions.forEach((c) => {
-      const existing = contributorMap.get(c.contributor) || { count: 0, qualified: 0, totalScore: 0 };
+      const existing = contributorMap.get(c.contributor) || {
+        count: 0,
+        qualified: 0,
+        totalScore: 0,
+      };
       existing.count++;
       if (c.status === 'qualified') existing.qualified++;
       const score = (c.metadata as any)?.pod_score;
@@ -94,7 +103,8 @@ export async function GET(
       evaluatingContributions,
       averageScore,
       totalCost,
-      qualifiedRate: totalContributions > 0 ? (qualifiedContributions / totalContributions) * 100 : 0,
+      qualifiedRate:
+        totalContributions > 0 ? (qualifiedContributions / totalContributions) * 100 : 0,
       topContributors,
       scoreDistribution,
     };
@@ -105,4 +115,3 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
   }
 }
-

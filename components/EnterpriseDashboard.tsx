@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, ArrowLeft, Plus, Settings, Activity, Users, Coins, Play, Pause } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowLeft,
+  Plus,
+  Settings,
+  Activity,
+  Users,
+  Coins,
+  Play,
+  Pause,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
@@ -136,14 +146,16 @@ export default function EnterpriseDashboard({
                 <strong>Enterprise PoC: A Customized HHF-AI Sandbox & Ecosystem</strong>
               </p>
               <p>
-                Operators can create their own <strong>customized HHF-AI sandbox and ecosystem</strong>, 
-                nested within Syntheverse. Each enterprise sandbox operates as a self-similar, tokenized 
-                instance of the Syntheverse PoC protocol, following the same holographic hydrogen fractal 
-                principles and evaluation logic as the main SYNTH90T ERC-20 MOTHERLODE VAULT.
+                Operators can create their own{' '}
+                <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within Syntheverse.
+                Each enterprise sandbox operates as a self-similar, tokenized instance of the
+                Syntheverse PoC protocol, following the same holographic hydrogen fractal principles
+                and evaluation logic as the main SYNTH90T ERC-20 MOTHERLODE VAULT.
               </p>
               <p>
-                <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts 
-                submissions from your contributor channels with <strong>clear, transparent scoring</strong> 
+                <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts
+                submissions from your contributor channels with{' '}
+                <strong>clear, transparent scoring</strong>
                 and tokenomics fully aligned with the SYNTH90T ERC-20 MOTHERLODE VAULT protocol.
               </p>
               <p>
@@ -152,31 +164,33 @@ export default function EnterpriseDashboard({
               </p>
               <ul className="ml-6 list-disc space-y-2">
                 <li>
-                  <strong>Customized HHF-AI Evaluation:</strong> All contributions evaluated using 
-                  SynthScan™ MRI with the same HHF-AI lens as the main Syntheverse, ensuring 
+                  <strong>Customized HHF-AI Evaluation:</strong> All contributions evaluated using
+                  SynthScan™ MRI with the same HHF-AI lens as the main Syntheverse, ensuring
                   consistent coherence measurement
                 </li>
                 <li>
-                  <strong>Transparent Scoring:</strong> Clear, transparent scoring metrics (Novelty, 
-                  Density, Coherence, Alignment) with full evaluation reports and redundancy analysis
+                  <strong>Transparent Scoring:</strong> Clear, transparent scoring metrics (Novelty,
+                  Density, Coherence, Alignment) with full evaluation reports and redundancy
+                  analysis
                 </li>
                 <li>
-                  <strong>Aligned Tokenomics:</strong> Tokenomics fully aligned with SYNTH90T ERC-20 
+                  <strong>Aligned Tokenomics:</strong> Tokenomics fully aligned with SYNTH90T ERC-20
                   MOTHERLODE VAULT—same epoch structure, metal assay system, and allocation logic
                 </li>
                 <li>
-                  <strong>Independent Vault Management:</strong> Activate or pause your sandbox vault
-                  independently, with optional on-chain tokenization
+                  <strong>Independent Vault Management:</strong> Activate or pause your sandbox
+                  vault independently, with optional on-chain tokenization
                 </li>
                 <li>
                   <strong>Nested Governance:</strong> Contributions scored, rewarded, and optionally
-                  anchored on-chain within your enterprise sandbox, broadcast to your contributor channels
+                  anchored on-chain within your enterprise sandbox, broadcast to your contributor
+                  channels
                 </li>
               </ul>
               <p>
                 <strong>Benefits:</strong> Lower cost per contribution, higher coherent output,
                 decentralized evaluation, and nested enterprise flexibility. Perfect for research
-                teams, engineering organizations, and alignment projects seeking a customized HHF-AI 
+                teams, engineering organizations, and alignment projects seeking a customized HHF-AI
                 ecosystem nested within Syntheverse.
               </p>
             </div>
@@ -286,7 +300,11 @@ export default function EnterpriseDashboard({
               ) : (
                 <div className="grid gap-6 md:grid-cols-2">
                   {sandboxes.map((sandbox) => (
-                    <Card key={sandbox.id} hover={true} className="border-l-4 border-[var(--hydrogen-amber)]">
+                    <Card
+                      key={sandbox.id}
+                      hover={true}
+                      className="border-l-4 border-[var(--hydrogen-amber)]"
+                    >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="cockpit-title mb-2 text-lg">{sandbox.name}</div>
@@ -365,7 +383,9 @@ export default function EnterpriseDashboard({
                           <button
                             onClick={() => {
                               // Scroll to pricing section
-                              document.getElementById('enterprise-pricing')?.scrollIntoView({ behavior: 'smooth' });
+                              document
+                                .getElementById('enterprise-pricing')
+                                ?.scrollIntoView({ behavior: 'smooth' });
                             }}
                             className="cockpit-lever inline-flex items-center bg-transparent text-xs"
                           >
@@ -393,9 +413,9 @@ export default function EnterpriseDashboard({
               <Card hover={false}>
                 <div className="cockpit-title mb-2 text-base">Enterprise Research Teams</div>
                 <div className="cockpit-text text-sm opacity-90">
-                  Create a sandbox for your research organization. Contributors submit work,
-                  receive SynthScan™ MRI evaluation, and earn tokenized rewards based on coherence
-                  and alignment.
+                  Create a sandbox for your research organization. Contributors submit work, receive
+                  SynthScan™ MRI evaluation, and earn tokenized rewards based on coherence and
+                  alignment.
                 </div>
               </Card>
               <Card hover={false}>
@@ -419,4 +439,3 @@ export default function EnterpriseDashboard({
     </div>
   );
 }
-

@@ -104,12 +104,12 @@ export function CreatorArchiveManagement() {
 
   return (
     <>
-      <div className="cockpit-panel p-6 border-l-4 border-amber-500">
-        <div className="flex items-start gap-3 mb-4">
+      <div className="cockpit-panel border-l-4 border-amber-500 p-6">
+        <div className="mb-4 flex items-start gap-3">
           <Database className="h-6 w-6 text-amber-500" />
           <div className="flex-1">
             <div className="cockpit-label mb-2">PoC ARCHIVE MANAGEMENT</div>
-            <h2 className="cockpit-title text-xl mb-2">Archive Reset Controls</h2>
+            <h2 className="cockpit-title mb-2 text-xl">Archive Reset Controls</h2>
             <p className="cockpit-text text-sm opacity-80">
               Hard reset permanently deletes archived PoC records. On-chain registrations are always
               preserved. This action cannot be undone.
@@ -118,22 +118,22 @@ export function CreatorArchiveManagement() {
         </div>
 
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="cockpit-panel p-4 bg-[var(--cockpit-carbon)]">
-              <div className="cockpit-label text-xs mb-1">Registered</div>
+          <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
+              <div className="cockpit-label mb-1 text-xs">Registered</div>
               <div className="cockpit-number text-2xl">{stats.registered}</div>
               <div className="cockpit-text text-xs opacity-60">On-chain (preserved)</div>
             </div>
-            <div className="cockpit-panel p-4 bg-[var(--cockpit-carbon)]">
-              <div className="cockpit-label text-xs mb-1">Resettable</div>
+            <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
+              <div className="cockpit-label mb-1 text-xs">Resettable</div>
               <div className="cockpit-number text-2xl">{stats.archived_resettable}</div>
               <div className="cockpit-text text-xs opacity-60">Archived (not on-chain)</div>
             </div>
             {stats.by_status
               .filter((s) => s.status === 'qualified' || s.status === 'unqualified')
               .map((s) => (
-                <div key={s.status} className="cockpit-panel p-4 bg-[var(--cockpit-carbon)]">
-                  <div className="cockpit-label text-xs mb-1">{s.status}</div>
+                <div key={s.status} className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-1 text-xs">{s.status}</div>
                   <div className="cockpit-number text-2xl">{s.count}</div>
                 </div>
               ))}
@@ -147,7 +147,7 @@ export function CreatorArchiveManagement() {
             className="cockpit-lever bg-red-600 hover:bg-red-700"
             disabled={resetting}
           >
-            <Trash2 className="h-4 w-4 mr-2" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Reset Archive
           </Button>
         </div>
@@ -170,8 +170,8 @@ export function CreatorArchiveManagement() {
 
           <div className="space-y-4">
             {/* Safety Confirmation Button */}
-            <div className="p-4 bg-red-500/10 border-2 border-red-500/50 rounded">
-              <Label className="cockpit-label text-sm mb-2 block">
+            <div className="rounded border-2 border-red-500/50 bg-red-500/10 p-4">
+              <Label className="cockpit-label mb-2 block text-sm">
                 Step 1: Confirm Safety Acknowledgment
               </Label>
               <Button
@@ -179,18 +179,18 @@ export function CreatorArchiveManagement() {
                 variant={safetyConfirmed ? 'default' : 'outline'}
                 className={`w-full ${
                   safetyConfirmed
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
                     : 'border-red-500 text-red-400'
                 }`}
               >
                 {safetyConfirmed ? (
                   <>
-                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <AlertTriangle className="mr-2 h-4 w-4" />
                     Safety Acknowledged
                   </>
                 ) : (
                   <>
-                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    <AlertTriangle className="mr-2 h-4 w-4" />
                     Click to Acknowledge Safety Warning
                   </>
                 )}
@@ -211,7 +211,7 @@ export function CreatorArchiveManagement() {
                   className="cockpit-input mt-2"
                   autoFocus
                 />
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
               </div>
             )}
           </div>
@@ -243,4 +243,3 @@ export function CreatorArchiveManagement() {
     </>
   );
 }
-

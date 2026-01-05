@@ -11,26 +11,26 @@ Run these queries in Supabase SQL Editor to verify:
 ```sql
 -- Check users_table has new columns
 SELECT column_name, data_type, column_default
-FROM information_schema.columns 
-WHERE table_name = 'users_table' 
+FROM information_schema.columns
+WHERE table_name = 'users_table'
 AND column_name IN ('role', 'deleted_at')
 ORDER BY column_name;
 
 -- Check contributions has archived_at
 SELECT column_name, data_type
-FROM information_schema.columns 
-WHERE table_name = 'contributions' 
+FROM information_schema.columns
+WHERE table_name = 'contributions'
 AND column_name = 'archived_at';
 
 -- Check audit_log table exists
-SELECT table_name 
-FROM information_schema.tables 
+SELECT table_name
+FROM information_schema.tables
 WHERE table_schema = 'public'
 AND table_name = 'audit_log';
 
 -- Verify Creator role is set
 SELECT email, role, deleted_at
-FROM users_table 
+FROM users_table
 WHERE email = 'info@fractiai.com';
 
 -- Check indexes were created
@@ -42,6 +42,7 @@ ORDER BY tablename, indexname;
 ```
 
 **Expected Results:**
+
 - `users_table` should have `role` (text, default 'user') and `deleted_at` (timestamp, nullable)
 - `contributions` should have `archived_at` (timestamp, nullable)
 - `audit_log` table should exist with all columns
@@ -70,6 +71,7 @@ ORDER BY policyname;
 ```
 
 **Expected Results:**
+
 - `audit_log` should have `rowsecurity = true`
 - Should have 2 policies: "Service role can write audit logs" (INSERT) and "Creator and service role can read audit logs" (SELECT)
 - `users_table` should have updated policies respecting `deleted_at`
@@ -90,6 +92,7 @@ ORDER BY policyname;
 ## 4. Test API Endpoints
 
 ### Test Archive Statistics
+
 ```bash
 # Should return archive statistics
 curl -X GET https://your-domain.vercel.app/api/creator/archive/reset \
@@ -97,6 +100,7 @@ curl -X GET https://your-domain.vercel.app/api/creator/archive/reset \
 ```
 
 ### Test User List
+
 ```bash
 # Should return list of users
 curl -X GET https://your-domain.vercel.app/api/creator/users \
@@ -104,6 +108,7 @@ curl -X GET https://your-domain.vercel.app/api/creator/users \
 ```
 
 ### Test Audit Logs
+
 ```bash
 # Should return audit logs (empty initially)
 curl -X GET https://your-domain.vercel.app/api/creator/audit-logs \
@@ -142,12 +147,14 @@ Once verified, you can test:
 ### Creator Dashboard Not Accessible
 
 **Check:**
+
 ```sql
 -- Verify Creator role
 SELECT email, role FROM users_table WHERE email = 'info@fractiai.com';
 ```
 
 **Fix if needed:**
+
 ```sql
 UPDATE users_table SET role = 'creator' WHERE email = 'info@fractiai.com';
 ```
@@ -180,8 +187,8 @@ After verification:
 ## Support
 
 If you encounter issues:
+
 1. Check audit logs for error details
 2. Review API route error responses
 3. Verify Creator email matches exactly
 4. Check Supabase logs for RLS policy violations
-

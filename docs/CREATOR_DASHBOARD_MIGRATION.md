@@ -34,6 +34,7 @@ This document describes the migration and setup for the Creator-controlled Opera
 4. Click **Run** to execute
 
 This migration:
+
 - Adds `role` and `deleted_at` columns to `users_table`
 - Sets Creator role for `info@fractiai.com`
 - Adds `archived_at` column to `contributions` table
@@ -46,25 +47,25 @@ Run this query to verify:
 
 ```sql
 -- Check users_table has new columns
-SELECT column_name, data_type 
-FROM information_schema.columns 
-WHERE table_name = 'users_table' 
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'users_table'
 AND column_name IN ('role', 'deleted_at');
 
 -- Check contributions has archived_at
-SELECT column_name, data_type 
-FROM information_schema.columns 
-WHERE table_name = 'contributions' 
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'contributions'
 AND column_name = 'archived_at';
 
 -- Check audit_log table exists
-SELECT table_name 
-FROM information_schema.tables 
+SELECT table_name
+FROM information_schema.tables
 WHERE table_name = 'audit_log';
 
 -- Verify Creator role is set
-SELECT email, role 
-FROM users_table 
+SELECT email, role
+FROM users_table
 WHERE email = 'info@fractiai.com';
 ```
 
@@ -75,6 +76,7 @@ WHERE email = 'info@fractiai.com';
 **Location**: `/creator/dashboard` → PoC Archive Management section
 
 **Soft Reset**:
+
 - Clears archived PoC records by setting `archived_at` timestamp
 - Preserves:
   - On-chain registrations
@@ -83,6 +85,7 @@ WHERE email = 'info@fractiai.com';
 - Requires confirmation phrase: `RESET ARCHIVE`
 
 **Hard Reset**:
+
 - Deletes archived PoC data (only non-registered archived PoCs)
 - Preserves:
   - On-chain registrations (always preserved)
@@ -97,6 +100,7 @@ WHERE email = 'info@fractiai.com';
 **Location**: `/creator/dashboard` → User Management section
 
 **User List Shows**:
+
 - Email
 - Role
 - Account status
@@ -106,18 +110,21 @@ WHERE email = 'info@fractiai.com';
 - Last activity timestamp
 
 **Soft Delete**:
+
 - Deactivates user account (sets `deleted_at` timestamp)
 - Revokes access
 - Preserves historical contributions
 - Requires confirmation phrase: `DELETE USER`
 
 **Hard Delete**:
+
 - Fully removes user account
 - Anonymizes contribution records (sets contributor to `deleted-{hash}`)
 - Requires confirmation phrase: `DELETE USER`
 - Warning shown if user has on-chain PoCs (but allows with confirmation)
 
 **Restrictions**:
+
 - Creator account cannot be deleted
 - Operators cannot delete users
 - Cannot delete users with active on-chain PoCs without explicit override (confirmation phrase serves as override)
@@ -127,10 +134,12 @@ WHERE email = 'info@fractiai.com';
 **Location**: `/creator/dashboard` → User Management section
 
 **Actions**:
+
 - Grant Operator role: Click "Grant Operator" button
 - Revoke Operator role: Click "Revoke Operator" button
 
 **Restrictions**:
+
 - Cannot modify Creator role
 - All role changes logged in audit log
 
@@ -139,11 +148,13 @@ WHERE email = 'info@fractiai.com';
 **Location**: `/creator/dashboard` → Audit Log section
 
 **Logged Actions**:
+
 - Archive resets (soft/hard)
 - User deletions (soft/hard)
 - Operator role changes (grant/revoke)
 
 **Log Includes**:
+
 - Actor ID (email)
 - Action type
 - Timestamp
@@ -215,7 +226,7 @@ If needed, rollback steps:
 ## Support
 
 For issues or questions:
+
 - Check audit logs for action history
 - Review API route error responses
 - Verify Creator email matches `info@fractiai.com` exactly (case-insensitive)
-

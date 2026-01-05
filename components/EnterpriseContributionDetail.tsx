@@ -132,7 +132,11 @@ export default function EnterpriseContributionDetail({
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto px-6 py-12">
         <Link
-          href={sandbox ? `/enterprise/sandbox/${contribution.sandbox_id}` : '/fractiai/enterprise-dashboard'}
+          href={
+            sandbox
+              ? `/enterprise/sandbox/${contribution.sandbox_id}`
+              : '/fractiai/enterprise-dashboard'
+          }
           className="mb-8 inline-flex items-center gap-2 text-sm text-[var(--hydrogen-amber)] hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -158,7 +162,11 @@ export default function EnterpriseContributionDetail({
                 )}
                 <div>
                   <div className="cockpit-title text-xl">
-                    {qualified ? 'QUALIFIED' : contribution.status === 'evaluating' ? 'EVALUATING' : 'NOT QUALIFIED'}
+                    {qualified
+                      ? 'QUALIFIED'
+                      : contribution.status === 'evaluating'
+                        ? 'EVALUATING'
+                        : 'NOT QUALIFIED'}
                   </div>
                   <div className="cockpit-label mt-1 text-xs">
                     {sandbox?.name || 'Enterprise Sandbox'} · {contribution.category || 'Research'}
@@ -168,7 +176,9 @@ export default function EnterpriseContributionDetail({
               {score > 0 && (
                 <div className="text-right">
                   <div className="cockpit-label mb-1 text-xs">TOTAL SCORE</div>
-                  <div className="cockpit-title text-2xl">{Math.round(score).toLocaleString()} / 10,000</div>
+                  <div className="cockpit-title text-2xl">
+                    {Math.round(score).toLocaleString()} / 10,000
+                  </div>
                 </div>
               )}
             </div>
@@ -176,33 +186,41 @@ export default function EnterpriseContributionDetail({
 
           {/* Score Breakdown */}
           {score > 0 && (
-            <Card hover={false} className="mb-8 border-2 border-[var(--hydrogen-amber)]/30">
+            <Card hover={false} className="border-[var(--hydrogen-amber)]/30 mb-8 border-2">
               <h3 className="cockpit-title mb-4 text-lg">Score Breakdown</h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <div className="cockpit-label mb-1 text-xs">Novelty</div>
-                  <div className="cockpit-title text-xl">{Math.round(novelty).toLocaleString()} / 2,500</div>
+                  <div className="cockpit-title text-xl">
+                    {Math.round(novelty).toLocaleString()} / 2,500
+                  </div>
                   <div className="cockpit-text mt-1 text-xs opacity-75">
                     {((novelty / 2500) * 100).toFixed(0)}%
                   </div>
                 </div>
                 <div>
                   <div className="cockpit-label mb-1 text-xs">Density</div>
-                  <div className="cockpit-title text-xl">{Math.round(density).toLocaleString()} / 2,500</div>
+                  <div className="cockpit-title text-xl">
+                    {Math.round(density).toLocaleString()} / 2,500
+                  </div>
                   <div className="cockpit-text mt-1 text-xs opacity-75">
                     {((density / 2500) * 100).toFixed(0)}%
                   </div>
                 </div>
                 <div>
                   <div className="cockpit-label mb-1 text-xs">Coherence</div>
-                  <div className="cockpit-title text-xl">{Math.round(coherence).toLocaleString()} / 2,500</div>
+                  <div className="cockpit-title text-xl">
+                    {Math.round(coherence).toLocaleString()} / 2,500
+                  </div>
                   <div className="cockpit-text mt-1 text-xs opacity-75">
                     {((coherence / 2500) * 100).toFixed(0)}%
                   </div>
                 </div>
                 <div>
                   <div className="cockpit-label mb-1 text-xs">Alignment</div>
-                  <div className="cockpit-title text-xl">{Math.round(alignment).toLocaleString()} / 2,500</div>
+                  <div className="cockpit-title text-xl">
+                    {Math.round(alignment).toLocaleString()} / 2,500
+                  </div>
                   <div className="cockpit-text mt-1 text-xs opacity-75">
                     {((alignment / 2500) * 100).toFixed(0)}%
                   </div>
@@ -223,7 +241,7 @@ export default function EnterpriseContributionDetail({
                 ))}
               </div>
               {contribution.metadata?.metal_justification && (
-                <div className="cockpit-text mt-4 text-sm opacity-90 whitespace-pre-wrap">
+                <div className="cockpit-text mt-4 whitespace-pre-wrap text-sm opacity-90">
                   {contribution.metadata.metal_justification}
                 </div>
               )}
@@ -242,7 +260,9 @@ export default function EnterpriseContributionDetail({
                     </span>
                   ))
                 ) : (
-                  <span className="cockpit-badge text-xs">{contribution.metadata.classification}</span>
+                  <span className="cockpit-badge text-xs">
+                    {contribution.metadata.classification}
+                  </span>
                 )}
               </div>
             </Card>
@@ -252,7 +272,7 @@ export default function EnterpriseContributionDetail({
           {contribution.metadata?.redundancy_analysis && (
             <Card hover={false} className="mb-8 border-l-4 border-amber-500/50">
               <h3 className="cockpit-title mb-2 text-lg">Redundancy Analysis</h3>
-              <p className="cockpit-text text-sm opacity-90 whitespace-pre-wrap">
+              <p className="cockpit-text whitespace-pre-wrap text-sm opacity-90">
                 {contribution.metadata.redundancy_analysis}
               </p>
             </Card>
@@ -275,7 +295,7 @@ export default function EnterpriseContributionDetail({
             <Card hover={false} className="mb-8 border-l-4 border-green-500/50">
               <h3 className="cockpit-title mb-2 text-lg">Full Evaluation Response</h3>
               <div className="cockpit-panel max-h-96 overflow-y-auto p-4">
-                <pre className="cockpit-text whitespace-pre-wrap text-xs opacity-90 font-mono">
+                <pre className="cockpit-text whitespace-pre-wrap font-mono text-xs opacity-90">
                   {contribution.metadata.raw_grok_response}
                 </pre>
               </div>
@@ -286,4 +306,3 @@ export default function EnterpriseContributionDetail({
     </div>
   );
 }
-

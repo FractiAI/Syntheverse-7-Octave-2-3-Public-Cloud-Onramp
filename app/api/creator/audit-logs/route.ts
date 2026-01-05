@@ -1,6 +1,6 @@
 /**
  * Creator-only endpoint to view audit logs
- * 
+ *
  * GET /api/creator/audit-logs
  */
 
@@ -34,9 +34,7 @@ export async function GET(request: NextRequest) {
 
     // Get total count
     const { count } = await import('drizzle-orm');
-    const totalCount = await db
-      .select({ count: count() })
-      .from(auditLogTable);
+    const totalCount = await db.select({ count: count() }).from(auditLogTable);
 
     return NextResponse.json({
       logs,
@@ -57,4 +55,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

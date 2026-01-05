@@ -32,26 +32,26 @@ export default async function CreatorDashboard() {
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto space-y-6 px-6 py-8">
         {/* Cockpit Header */}
-        <div className="cockpit-panel p-6 border-l-4 border-red-500">
-          <div className="flex items-center justify-between mb-4">
+        <div className="cockpit-panel border-l-4 border-red-500 p-6">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex-1">
               <div className="cockpit-label mb-2 flex items-center gap-2">
                 <Shield className="h-4 w-4 text-red-400" />
                 CREATOR COCKPIT
               </div>
-              <h1 className="cockpit-title text-3xl mb-2">Syntheverse Command Center</h1>
+              <h1 className="cockpit-title mb-2 text-3xl">Syntheverse Command Center</h1>
               <p className="cockpit-text opacity-80">
                 Awareness Bridge/Router control interface. Creator-only access to PoC archive, user
-                administration, Base Mainnet contents, and database operations. All actions are logged
-                and auditable.
+                administration, Base Mainnet contents, and database operations. All actions are
+                logged and auditable.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-green-500 animate-pulse" />
+              <Activity className="h-5 w-5 animate-pulse text-green-500" />
               <BootSequenceIndicators />
             </div>
           </div>
-          <div className="cockpit-text text-xs opacity-60 border-t border-[var(--keyline-primary)] pt-3 mt-3">
+          <div className="cockpit-text mt-3 border-t border-[var(--keyline-primary)] pt-3 text-xs opacity-60">
             FRACTIAI RESEARCH TEAM · PROTOCOL OPERATOR REFERENCE CLIENT
           </div>
         </div>
@@ -65,4 +65,3 @@ export default async function CreatorDashboard() {
     </div>
   );
 }
-

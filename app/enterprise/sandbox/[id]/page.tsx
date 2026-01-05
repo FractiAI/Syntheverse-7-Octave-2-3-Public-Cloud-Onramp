@@ -4,11 +4,7 @@ import '../../../dashboard-cockpit.css';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EnterpriseSandboxDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EnterpriseSandboxDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
   const { data } = await supabase.auth.getUser();
   const user = data?.user;
@@ -21,4 +17,3 @@ export default async function EnterpriseSandboxDetailPage({
     />
   );
 }
-

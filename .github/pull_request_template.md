@@ -85,6 +85,7 @@ Closes #
 ## 🎯 Product Marketing Context
 
 **Value Proposition**: This change supports our core mission of liberating contributions from traditional gatekeeping mechanisms. Through our hydrogen spin MRI-based PoC protocol on the blockchain, contributions are now:
+
 - **Visible**: Transparent and accessible to all stakeholders
 - **Demonstrable**: Verifiable through HHF-AI MRI science and technology
 - **Liberated**: Free from traditional barriers and gatekeeping
