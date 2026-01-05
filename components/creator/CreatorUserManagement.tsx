@@ -42,11 +42,12 @@ export function CreatorUserManagement() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteMode, setDeleteMode] = useState<{ email: string; mode: 'soft' | 'hard' | null }>({
+  const [deleteMode, setDeleteMode] = useState<{ email: string; mode: 'hard' | null }>({
     email: '',
     mode: null,
   });
   const [confirmationPhrase, setConfirmationPhrase] = useState('');
+  const [safetyConfirmed, setSafetyConfirmed] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [roleAction, setRoleAction] = useState<{ email: string; action: 'grant' | 'revoke' | null }>({
     email: '',
@@ -73,14 +74,15 @@ export function CreatorUserManagement() {
     }
   };
 
-  const handleDelete = (email: string, mode: 'soft' | 'hard') => {
-    setDeleteMode({ email, mode });
+  const handleDelete = (email: string) => {
+    setDeleteMode({ email, mode: 'hard' });
     setConfirmationPhrase('');
+    setSafetyConfirmed(false);
     setError(null);
   };
 
   const confirmDelete = async () => {
-    if (!deleteMode.email || !deleteMode.mode) return;
+    if (!deleteMode.email || !deleteMode.mode || !safetyConfirmed) return;
 
     const requiredPhrase = 'DELETE USER';
     if (confirmationPhrase !== requiredPhrase) {
@@ -96,7 +98,7 @@ export function CreatorUserManagement() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mode: deleteMode.mode,
+          mode: 'hard',
           confirmation_phrase: confirmationPhrase,
         }),
       });
@@ -106,8 +108,9 @@ export function CreatorUserManagement() {
       if (response.ok) {
         setDeleteMode({ email: '', mode: null });
         setConfirmationPhrase('');
+        setSafetyConfirmed(false);
         await loadUsers();
-        alert(`User ${deleteMode.mode === 'hard' ? 'hard deleted' : 'soft deleted'} successfully.`);
+        alert(`User deleted successfully.`);
       } else {
         setError(data.error || 'Failed to delete user');
       }
@@ -253,22 +256,13 @@ export function CreatorUserManagement() {
                     )}
                     <Button
                       size="sm"
-                      variant="outline"
-                      onClick={() => handleDelete(user.email, 'soft')}
-                      disabled={deleting}
-                      className="cockpit-lever"
-                    >
-                      Soft Delete
-                    </Button>
-                    <Button
-                      size="sm"
                       variant="destructive"
-                      onClick={() => handleDelete(user.email, 'hard')}
+                      onClick={() => handleDelete(user.email)}
                       disabled={deleting}
                       className="cockpit-lever bg-red-600 hover:bg-red-700"
                     >
                       <Trash2 className="h-3 w-3 mr-1" />
-                      Hard Delete
+                      Delete User
                     </Button>
                   </>
                 )}
@@ -284,7 +278,7 @@ export function CreatorUserManagement() {
           <DialogHeader>
             <DialogTitle className="cockpit-title flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500" />
-              Confirm User {deleteMode.mode === 'hard' ? 'Hard' : 'Soft'} Delete
+              Confirm User Delete
             </DialogTitle>
             <DialogDescription className="cockpit-text">
               {targetUser && (
@@ -301,33 +295,57 @@ export function CreatorUserManagement() {
                   )}
                 </>
               )}
-              {deleteMode.mode === 'soft' ? (
-                <>Soft delete will deactivate the user account. Historical contributions are preserved.</>
-              ) : (
-                <>
-                  <strong className="text-red-500">WARNING:</strong> Hard delete will permanently
-                  remove the user account and anonymize their contributions. This action cannot be
-                  undone.
-                </>
-              )}
+              <strong className="text-red-500">WARNING:</strong> This will permanently remove the
+              user account and anonymize their contributions. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="delete-confirmation" className="cockpit-label">
-                Type &quot;DELETE USER&quot; to confirm:
+            {/* Safety Confirmation Button */}
+            <div className="p-4 bg-red-500/10 border-2 border-red-500/50 rounded">
+              <Label className="cockpit-label text-sm mb-2 block">
+                Step 1: Confirm Safety Acknowledgment
               </Label>
-              <Input
-                id="delete-confirmation"
-                value={confirmationPhrase}
-                onChange={(e) => setConfirmationPhrase(e.target.value)}
-                placeholder="DELETE USER"
-                className="cockpit-input mt-2"
-                autoFocus
-              />
-              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+              <Button
+                onClick={() => setSafetyConfirmed(!safetyConfirmed)}
+                variant={safetyConfirmed ? 'default' : 'outline'}
+                className={`w-full ${
+                  safetyConfirmed
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'border-red-500 text-red-400'
+                }`}
+              >
+                {safetyConfirmed ? (
+                  <>
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Safety Acknowledged
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Click to Acknowledge Safety Warning
+                  </>
+                )}
+              </Button>
             </div>
+
+            {/* Confirmation Phrase */}
+            {safetyConfirmed && (
+              <div>
+                <Label htmlFor="delete-confirmation" className="cockpit-label">
+                  Step 2: Type &quot;DELETE USER&quot; to confirm:
+                </Label>
+                <Input
+                  id="delete-confirmation"
+                  value={confirmationPhrase}
+                  onChange={(e) => setConfirmationPhrase(e.target.value)}
+                  placeholder="DELETE USER"
+                  className="cockpit-input mt-2"
+                  autoFocus
+                />
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+              </div>
+            )}
           </div>
 
           <DialogFooter>
@@ -336,6 +354,7 @@ export function CreatorUserManagement() {
               onClick={() => {
                 setDeleteMode({ email: '', mode: null });
                 setConfirmationPhrase('');
+                setSafetyConfirmed(false);
                 setError(null);
               }}
               disabled={deleting}
@@ -345,10 +364,10 @@ export function CreatorUserManagement() {
             <Button
               onClick={confirmDelete}
               variant="destructive"
-              disabled={deleting || confirmationPhrase !== 'DELETE USER'}
+              disabled={deleting || !safetyConfirmed || confirmationPhrase !== 'DELETE USER'}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleting ? 'Deleting...' : `Confirm ${deleteMode.mode === 'hard' ? 'Hard' : 'Soft'} Delete`}
+              {deleting ? 'Deleting...' : 'Confirm Delete User'}
             </Button>
           </DialogFooter>
         </DialogContent>

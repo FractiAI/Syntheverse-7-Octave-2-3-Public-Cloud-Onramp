@@ -23,7 +23,8 @@ interface ArchiveStats {
 export function CreatorArchiveManagement() {
   const [stats, setStats] = useState<ArchiveStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [resetMode, setResetMode] = useState<'soft' | 'hard' | null>(null);
+  const [resetMode, setResetMode] = useState<'hard' | null>(null);
+  const [safetyConfirmed, setSafetyConfirmed] = useState(false);
   const [confirmationPhrase, setConfirmationPhrase] = useState('');
   const [resetting, setResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,14 +47,15 @@ export function CreatorArchiveManagement() {
     }
   };
 
-  const handleReset = async (mode: 'soft' | 'hard') => {
-    setResetMode(mode);
+  const handleReset = () => {
+    setResetMode('hard');
     setConfirmationPhrase('');
+    setSafetyConfirmed(false);
     setError(null);
   };
 
   const confirmReset = async () => {
-    if (!resetMode) return;
+    if (!resetMode || !safetyConfirmed) return;
 
     const requiredPhrase = 'RESET ARCHIVE';
     if (confirmationPhrase !== requiredPhrase) {
@@ -69,7 +71,7 @@ export function CreatorArchiveManagement() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mode: resetMode,
+          mode: 'hard',
           confirmation_phrase: confirmationPhrase,
         }),
       });
@@ -79,8 +81,9 @@ export function CreatorArchiveManagement() {
       if (response.ok) {
         setResetMode(null);
         setConfirmationPhrase('');
+        setSafetyConfirmed(false);
         await loadStats();
-        alert(`Archive ${resetMode} reset completed. ${data.affected_count} records affected.`);
+        alert(`Archive reset completed. ${data.affected_count} records affected.`);
       } else {
         setError(data.error || 'Failed to reset archive');
       }
@@ -108,8 +111,8 @@ export function CreatorArchiveManagement() {
             <div className="cockpit-label mb-2">PoC ARCHIVE MANAGEMENT</div>
             <h2 className="cockpit-title text-xl mb-2">Archive Reset Controls</h2>
             <p className="cockpit-text text-sm opacity-80">
-              Reset archived PoC records. Soft reset preserves data with timestamp, hard reset
-              deletes archived records (on-chain registrations are always preserved).
+              Hard reset permanently deletes archived PoC records. On-chain registrations are always
+              preserved. This action cannot be undone.
             </p>
           </div>
         </div>
@@ -137,22 +140,13 @@ export function CreatorArchiveManagement() {
 
         <div className="flex gap-4">
           <Button
-            onClick={() => handleReset('soft')}
-            variant="outline"
-            className="cockpit-lever"
-            disabled={resetting}
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Soft Reset
-          </Button>
-          <Button
-            onClick={() => handleReset('hard')}
+            onClick={handleReset}
             variant="destructive"
             className="cockpit-lever bg-red-600 hover:bg-red-700"
             disabled={resetting}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Hard Reset
+            Reset Archive
           </Button>
         </div>
       </div>
@@ -163,39 +157,61 @@ export function CreatorArchiveManagement() {
           <DialogHeader>
             <DialogTitle className="cockpit-title flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500" />
-              Confirm Archive {resetMode === 'hard' ? 'Hard' : 'Soft'} Reset
+              Confirm Archive Reset
             </DialogTitle>
             <DialogDescription className="cockpit-text">
-              {resetMode === 'soft' ? (
-                <>
-                  Soft reset will mark archived PoCs with a timestamp. Data is preserved but
-                  marked as reset. On-chain registrations and audit logs are unaffected.
-                </>
-              ) : (
-                <>
-                  <strong className="text-red-500">WARNING:</strong> Hard reset will permanently
-                  delete archived PoC records. On-chain registrations, audit logs, and aggregate
-                  metrics are preserved. This action cannot be undone.
-                </>
-              )}
+              <strong className="text-red-500">WARNING:</strong> This will permanently delete
+              archived PoC records. On-chain registrations, audit logs, and aggregate metrics are
+              preserved. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="confirmation" className="cockpit-label">
-                Type &quot;RESET ARCHIVE&quot; to confirm:
+            {/* Safety Confirmation Button */}
+            <div className="p-4 bg-red-500/10 border-2 border-red-500/50 rounded">
+              <Label className="cockpit-label text-sm mb-2 block">
+                Step 1: Confirm Safety Acknowledgment
               </Label>
-              <Input
-                id="confirmation"
-                value={confirmationPhrase}
-                onChange={(e) => setConfirmationPhrase(e.target.value)}
-                placeholder="RESET ARCHIVE"
-                className="cockpit-input mt-2"
-                autoFocus
-              />
-              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+              <Button
+                onClick={() => setSafetyConfirmed(!safetyConfirmed)}
+                variant={safetyConfirmed ? 'default' : 'outline'}
+                className={`w-full ${
+                  safetyConfirmed
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'border-red-500 text-red-400'
+                }`}
+              >
+                {safetyConfirmed ? (
+                  <>
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Safety Acknowledged
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Click to Acknowledge Safety Warning
+                  </>
+                )}
+              </Button>
             </div>
+
+            {/* Confirmation Phrase */}
+            {safetyConfirmed && (
+              <div>
+                <Label htmlFor="confirmation" className="cockpit-label">
+                  Step 2: Type &quot;RESET ARCHIVE&quot; to confirm:
+                </Label>
+                <Input
+                  id="confirmation"
+                  value={confirmationPhrase}
+                  onChange={(e) => setConfirmationPhrase(e.target.value)}
+                  placeholder="RESET ARCHIVE"
+                  className="cockpit-input mt-2"
+                  autoFocus
+                />
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+              </div>
+            )}
           </div>
 
           <DialogFooter>
@@ -204,6 +220,7 @@ export function CreatorArchiveManagement() {
               onClick={() => {
                 setResetMode(null);
                 setConfirmationPhrase('');
+                setSafetyConfirmed(false);
                 setError(null);
               }}
               disabled={resetting}
@@ -213,10 +230,10 @@ export function CreatorArchiveManagement() {
             <Button
               onClick={confirmReset}
               variant="destructive"
-              disabled={resetting || confirmationPhrase !== 'RESET ARCHIVE'}
+              disabled={resetting || !safetyConfirmed || confirmationPhrase !== 'RESET ARCHIVE'}
               className="bg-red-600 hover:bg-red-700"
             >
-              {resetting ? 'Resetting...' : `Confirm ${resetMode === 'hard' ? 'Hard' : 'Soft'} Reset`}
+              {resetting ? 'Resetting...' : 'Confirm Reset Archive'}
             </Button>
           </DialogFooter>
         </DialogContent>

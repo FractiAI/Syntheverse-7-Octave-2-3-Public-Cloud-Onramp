@@ -56,15 +56,40 @@ export function CreatorCockpitStats() {
       const usersRes = await fetch('/api/creator/users?limit=1000');
       const usersData = usersRes.ok ? await usersRes.json() : null;
 
-      // Fetch database stats
-      const allocationsRes = await fetch('/api/creator/database/allocations?limit=1');
-      const allocationsData = allocationsRes.ok ? await allocationsRes.json() : null;
-      
-      const auditLogsRes = await fetch('/api/creator/database/audit_log?limit=1');
-      const auditLogsData = auditLogsRes.ok ? await auditLogsRes.json() : null;
-      
-      const sandboxesRes = await fetch('/api/creator/database/enterprise_sandboxes?limit=1');
-      const sandboxesData = sandboxesRes.ok ? await sandboxesRes.json() : null;
+      // Fetch database stats - get pagination totals
+      let allocationsCount = 0;
+      let auditLogsCount = 0;
+      let sandboxesCount = 0;
+
+      try {
+        const allocationsRes = await fetch('/api/creator/database/allocations?limit=1');
+        if (allocationsRes.ok) {
+          const allocationsData = await allocationsRes.json();
+          allocationsCount = allocationsData?.pagination?.total || 0;
+        }
+      } catch (e) {
+        console.error('Failed to fetch allocations count:', e);
+      }
+
+      try {
+        const auditLogsRes = await fetch('/api/creator/database/audit_log?limit=1');
+        if (auditLogsRes.ok) {
+          const auditLogsData = await auditLogsRes.json();
+          auditLogsCount = auditLogsData?.pagination?.total || 0;
+        }
+      } catch (e) {
+        console.error('Failed to fetch audit logs count:', e);
+      }
+
+      try {
+        const sandboxesRes = await fetch('/api/creator/database/enterprise_sandboxes?limit=1');
+        if (sandboxesRes.ok) {
+          const sandboxesData = await sandboxesRes.json();
+          sandboxesCount = sandboxesData?.pagination?.total || 0;
+        }
+      } catch (e) {
+        console.error('Failed to fetch sandboxes count:', e);
+      }
 
       // Fetch blockchain data
       const blockchainRes = await fetch('/api/creator/blockchain-stats');
@@ -104,10 +129,10 @@ export function CreatorCockpitStats() {
           deleted,
         },
         database: {
-          contributions: archiveStats.total || 0,
-          allocations: allocationsData?.pagination?.total || 0,
-          auditLogs: auditLogsData?.pagination?.total || 0,
-          enterpriseSandboxes: sandboxesData?.pagination?.total || 0,
+          contributions: Object.values(archiveStats.by_status || {}).reduce((sum: number, s: any) => sum + (s.count || 0), 0) || 0,
+          allocations: allocationsCount,
+          auditLogs: auditLogsCount,
+          enterpriseSandboxes: sandboxesCount,
         },
       });
     } catch (error) {
@@ -164,16 +189,16 @@ export function CreatorCockpitStats() {
         <div className="cockpit-text text-xs opacity-75 mb-2">Total Contributions</div>
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Active:</span>
-            <span className="cockpit-number">{stats.archive.active}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">On-Chain:</span>
+            <span className="cockpit-text opacity-60">Registered:</span>
             <span className="cockpit-number text-green-400">{stats.archive.onChain}</span>
           </div>
           <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Archived:</span>
+            <span className="cockpit-text opacity-60">Resettable:</span>
             <span className="cockpit-number">{stats.archive.archived}</span>
+          </div>
+          <div className="flex justify-between text-xs">
+            <span className="cockpit-text opacity-60">Qualified:</span>
+            <span className="cockpit-number">{stats.archive.qualified}</span>
           </div>
         </div>
       </div>
