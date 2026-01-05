@@ -112,8 +112,8 @@ export default function ScoringCriteriaPage() {
               </div>
               <p className="cockpit-text mb-4 text-sm opacity-80">
                 Measures fit with hydrogen-holographic fractal principles and ecosystem goals. High
-                alignment indicates work that resonates with Syntheverse's core framework and
-                contributes to the ecosystem's evolution.
+                alignment indicates work that resonates with Syntheverse&apos;s core framework and
+                contributes to the ecosystem&apos;s evolution.
               </p>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
@@ -192,7 +192,7 @@ export default function ScoringCriteriaPage() {
                 directly penalized.
               </div>
               <div className="rounded-lg bg-[var(--cockpit-carbon)] p-3">
-                <strong>Feedback:</strong> You'll receive detailed redundancy analysis showing which
+                <strong>Feedback:</strong> You&apos;ll receive detailed redundancy analysis showing which
                 prior submissions overlap and how to refine your work.
               </div>
             </div>

@@ -13,7 +13,7 @@ export function SectionTechnical() {
     >
       <p className="cockpit-text mb-8 text-base opacity-90">
         Built on SynthScan MRI, a new holographic hydrogen fractal MRI based on the same hydrogen
-        spin physics that today's MRIs use, but instead of biological flesh, it scans coherence
+        spin physics that today&apos;s MRIs use, but instead of biological flesh, it scans coherence
         patterns across domains.
       </p>
 
