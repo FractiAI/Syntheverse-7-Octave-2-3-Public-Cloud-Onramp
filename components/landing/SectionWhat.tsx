@@ -34,12 +34,12 @@ export function SectionWhat() {
     <SectionWrapper
       id="what-syntheverse-is"
       eyebrow="OVERVIEW"
-      title="What is Syntheverse?"
+      title="WHAT IS SYNTHEVERSE PoC?"
       background="muted"
     >
       <p className="cockpit-text mb-8 text-lg">
-        A system that evaluates, archives, and anchors scientific contributions — replacing peer
-        review gatekeeping with measurable coherence.
+        A system that evaluates, archives, and anchors scientific, engineering and alignment
+        contributions — replacing peer review gatekeeping with measurable coherence.
       </p>
 
       <div className="mb-8 grid gap-6 md:grid-cols-2">
