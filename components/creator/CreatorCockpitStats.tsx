@@ -240,105 +240,106 @@ export function CreatorCockpitStats() {
     <div className="mb-6 space-y-6">
       {/* Main Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {/* Blockchain Stats */}
-      <div className="cockpit-panel border-l-4 border-blue-500 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="cockpit-label flex items-center gap-2 text-xs">
-            <LinkIcon className="h-4 w-4" />
-            BLOCKCHAIN
+        {/* Blockchain Stats */}
+        <div className="cockpit-panel border-l-4 border-blue-500 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="cockpit-label flex items-center gap-2 text-xs">
+              <LinkIcon className="h-4 w-4" />
+              BLOCKCHAIN
+            </div>
+            <Activity className="h-4 w-4 animate-pulse text-green-500" />
           </div>
-          <Activity className="h-4 w-4 animate-pulse text-green-500" />
-        </div>
-        <div className="cockpit-title mb-1 text-lg">{stats.blockchain.network}</div>
-        <div className="cockpit-text mb-2 text-xs opacity-75">
-          Chain ID: {stats.blockchain.chainId}
-        </div>
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Registered PoCs:</span>
-            <span className="cockpit-number">{stats.blockchain.registeredPocs}</span>
+          <div className="cockpit-title mb-1 text-lg">{stats.blockchain.network}</div>
+          <div className="cockpit-text mb-2 text-xs opacity-75">
+            Chain ID: {stats.blockchain.chainId}
           </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Transactions:</span>
-            <span className="cockpit-number">{stats.blockchain.totalTransactions}</span>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Registered PoCs:</span>
+              <span className="cockpit-number">{stats.blockchain.registeredPocs}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Transactions:</span>
+              <span className="cockpit-number">{stats.blockchain.totalTransactions}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Archive Stats */}
-      <div className="cockpit-panel border-l-4 border-amber-500 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="cockpit-label flex items-center gap-2 text-xs">
-            <FileText className="h-4 w-4" />
-            ARCHIVE
+        {/* Archive Stats */}
+        <div className="cockpit-panel border-l-4 border-amber-500 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="cockpit-label flex items-center gap-2 text-xs">
+              <FileText className="h-4 w-4" />
+              ARCHIVE
+            </div>
+          </div>
+          <div className="cockpit-title mb-1 text-lg">{stats.archive.total}</div>
+          <div className="cockpit-text mb-2 text-xs opacity-75">Total Contributions</div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Registered:</span>
+              <span className="cockpit-number text-green-400">{stats.archive.onChain}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Resettable:</span>
+              <span className="cockpit-number">{stats.archive.archived}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Qualified:</span>
+              <span className="cockpit-number">{stats.archive.qualified}</span>
+            </div>
           </div>
         </div>
-        <div className="cockpit-title mb-1 text-lg">{stats.archive.total}</div>
-        <div className="cockpit-text mb-2 text-xs opacity-75">Total Contributions</div>
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Registered:</span>
-            <span className="cockpit-number text-green-400">{stats.archive.onChain}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Resettable:</span>
-            <span className="cockpit-number">{stats.archive.archived}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Qualified:</span>
-            <span className="cockpit-number">{stats.archive.qualified}</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Users Stats */}
-      <div className="cockpit-panel border-l-4 border-purple-500 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="cockpit-label flex items-center gap-2 text-xs">
-            <Users className="h-4 w-4" />
-            AUTHORIZED USERS
+        {/* Users Stats */}
+        <div className="cockpit-panel border-l-4 border-purple-500 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="cockpit-label flex items-center gap-2 text-xs">
+              <Users className="h-4 w-4" />
+              AUTHORIZED USERS
+            </div>
+          </div>
+          <div className="cockpit-title mb-1 text-lg">{stats.users.total}</div>
+          <div className="cockpit-text mb-2 text-xs opacity-75">Total Accounts</div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Active:</span>
+              <span className="cockpit-number">{stats.users.active}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Operators:</span>
+              <span className="cockpit-number text-purple-400">{stats.users.operators}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Deleted:</span>
+              <span className="cockpit-number text-red-400">{stats.users.deleted}</span>
+            </div>
           </div>
         </div>
-        <div className="cockpit-title mb-1 text-lg">{stats.users.total}</div>
-        <div className="cockpit-text mb-2 text-xs opacity-75">Total Accounts</div>
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Active:</span>
-            <span className="cockpit-number">{stats.users.active}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Operators:</span>
-            <span className="cockpit-number text-purple-400">{stats.users.operators}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Deleted:</span>
-            <span className="cockpit-number text-red-400">{stats.users.deleted}</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Database Stats */}
-      <div className="cockpit-panel border-l-4 border-green-500 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="cockpit-label flex items-center gap-2 text-xs">
-            <Database className="h-4 w-4" />
-            DATABASE
+        {/* Database Stats */}
+        <div className="cockpit-panel border-l-4 border-green-500 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="cockpit-label flex items-center gap-2 text-xs">
+              <Database className="h-4 w-4" />
+              DATABASE
+            </div>
           </div>
-        </div>
-        <div className="cockpit-title mb-1 text-lg">{stats.database.contributions}</div>
-        <div className="cockpit-text mb-2 text-xs opacity-75">Contributions Table</div>
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Allocations:</span>
-            <span className="cockpit-number">{stats.database.allocations}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Audit Logs:</span>
-            <span className="cockpit-number">{stats.database.auditLogs}</span>
-          </div>
-          <div className="flex justify-between text-xs">
-            <span className="cockpit-text opacity-60">Sandboxes:</span>
-            <span className="cockpit-number">{stats.database.enterpriseSandboxes}</span>
+          <div className="cockpit-title mb-1 text-lg">{stats.database.contributions}</div>
+          <div className="cockpit-text mb-2 text-xs opacity-75">Contributions Table</div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Allocations:</span>
+              <span className="cockpit-number">{stats.database.allocations}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Audit Logs:</span>
+              <span className="cockpit-number">{stats.database.auditLogs}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="cockpit-text opacity-60">Sandboxes:</span>
+              <span className="cockpit-number">{stats.database.enterpriseSandboxes}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -384,9 +385,7 @@ export function CreatorCockpitStats() {
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
               <span className="cockpit-text opacity-60">Today:</span>
-              <span className="cockpit-number text-green-400">
-                {stats.activity.newUsers.today}
-              </span>
+              <span className="cockpit-number text-green-400">{stats.activity.newUsers.today}</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="cockpit-text opacity-60">This Week:</span>
@@ -463,9 +462,7 @@ export function CreatorCockpitStats() {
               <span className="cockpit-number">{stats.activity.chatSessions.thisMonth}</span>
             </div>
             {stats.activity.chatSessions.total === 0 && (
-              <div className="cockpit-text mt-2 text-xs opacity-50 italic">
-                No chat system yet
-              </div>
+              <div className="cockpit-text mt-2 text-xs italic opacity-50">No chat system yet</div>
             )}
           </div>
         </div>
