@@ -86,11 +86,6 @@ export default function EnterpriseSandboxDetail({
       if (res.ok) {
         const data = await res.json();
         setSandbox(data.sandbox);
-        // Update edit fields when sandbox loads
-        if (data.sandbox) {
-          setEditName(data.sandbox.name || '');
-          setEditDescription(data.sandbox.description || '');
-        }
       }
     } catch (error) {
       console.error('Error fetching sandbox:', error);
