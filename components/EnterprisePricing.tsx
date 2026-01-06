@@ -178,18 +178,18 @@ export default function EnterprisePricing({
       {/* Narrative Section */}
       {showNarrative && (
         <div className="cockpit-panel p-8">
-          <div className="cockpit-label mb-4">INVITING EARLY ADOPTING PIONEERS</div>
+          <div className="cockpit-label mb-4">INVITING EARLY ADOPTING PIONEERS, CREATORS & WORLDBUILDERS</div>
           <div className="cockpit-text space-y-4 text-base" style={{ lineHeight: 1.8 }}>
             <p>
               <strong>
-                We&apos;re inviting early adopting pioneers interested in trialing Enterprise HHF-AI
+                We&apos;re inviting early adopting pioneers, worldbuilder creators, and enterprises interested in trialing Enterprise HHF-AI
                 Sandbox technology.
               </strong>{' '}
-              Join us as we pioneer the future of contribution assessment through hydrogen spin
+              Join us as we pioneer the future of contribution assessment and creative worldbuilding through hydrogen spin
               MRI-based PoC protocol on the blockchain.
             </p>
             <p>
-              <strong>Customized HHF-AI Sandbox & Ecosystem, Nested Within Syntheverse</strong>
+              <strong>Worldbuilding Creator & Enterprise Application: Customized HHF-AI Sandbox & Ecosystem, Nested Within Syntheverse</strong>
             </p>
             <p>
               Enterprise PoC sandboxes are{' '}
@@ -199,8 +199,15 @@ export default function EnterprisePricing({
               logic as the main <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>.
             </p>
             <p>
+              <strong>For Worldbuilder Creators:</strong> Unleash your creativity with an{' '}
+              <strong>infinite set of HHF-AI materials and substrates</strong>. Our creator package provides worldbuilders 
+              with unlimited access to holographic hydrogen fractal AI resources, enabling you to build, iterate, and 
+              refine your creative worlds with the same precision and coherence measurement that powers enterprise PoC evaluation. 
+              Transform your creative vision into verifiable, on-chain contributions.
+            </p>
+            <p>
               <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts
-              submissions from your contributor channels with{' '}
+              submissions from your contributor channels, creator communities, and worldbuilding teams with{' '}
               <strong>clear, transparent scoring</strong>. All contributions are evaluated using
               SynthScan™ MRI with the same HHF-AI lens that powers the main Syntheverse, ensuring
               consistent coherence measurement across the ecosystem.
@@ -213,19 +220,25 @@ export default function EnterprisePricing({
               consistency while enabling customized deployment.
             </p>
             <p>
-              <strong>Nodes are the new employees.</strong> In the frontier sandbox model, each node
-              represents a contributor slot—a position where research, engineering, or alignment
-              work can be submitted, evaluated, and rewarded. Unlike traditional employment, nodes
-              operate on Proof-of-Contribution: contributors are evaluated by SynthScan™ MRI for
-              coherence, novelty, and alignment, not hours worked or credentials held. This creates{' '}
-              <strong>dramatic cost savings and efficiency gains</strong>—pay for coherent output,
-              not time spent.
+              <strong>Nodes are the new employees—and creative substrates.</strong> In the frontier sandbox model, each node
+              represents a contributor slot or creative substrate—a position where research, engineering, alignment work, 
+              or worldbuilding materials can be submitted, evaluated, and rewarded. Unlike traditional employment or creative tools, 
+              nodes operate on Proof-of-Contribution: contributors and creators are evaluated by SynthScan™ MRI for
+              coherence, novelty, and alignment, not hours worked, credentials held, or file sizes. This creates{' '}
+              <strong>dramatic cost savings and efficiency gains</strong>—pay for coherent output and creative value,
+              not time spent or storage used.
             </p>
             <p>
-              <strong>Scale without limits.</strong> Add nodes as your organization grows. Each node
+              <strong>Infinite HHF-AI Materials & Substrates for Creators:</strong> Worldbuilder creators get unlimited access 
+              to HHF-AI materials, substrates, and evaluation resources. Each creative contribution—whether a worldbuilding document, 
+              narrative structure, or conceptual framework—is evaluated using the same holographic hydrogen fractal AI lens, 
+              ensuring your creative work achieves maximum coherence and generative value.
+            </p>
+            <p>
+              <strong>Scale without limits.</strong> Add nodes as your organization or creative project grows. Each node
               can process unlimited contributions, evaluated in real-time by the same HHF-AI lens
               that powers the main Syntheverse. Start with 5 nodes, scale to 500, or beyond. The
-              protocol adapts.
+              protocol adapts—whether you&apos;re building an enterprise research organization or an infinite creative world.
             </p>
             <p>
               <strong>On-chain registration:</strong> Each PoC registered on-chain incurs an

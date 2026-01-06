@@ -2280,10 +2280,15 @@ export function OnboardingNavigator() {
               </div>
               <div className="mt-4 border border-purple-500/50 bg-purple-500/5 p-4">
                 <div className="cockpit-label mb-2" style={{ color: '#a855f7' }}>
-                  Enterprise Operators
+                  Worldbuilder Creators & Enterprise Operators
                 </div>
                 <p className="cockpit-text mb-3 text-sm">
-                  <strong>Create a customized HHF-AI sandbox and ecosystem</strong>, nested within
+                  <strong>For Worldbuilder Creators:</strong> Unleash your creativity with an{' '}
+                  <strong>infinite set of HHF-AI materials and substrates</strong>. Transform your creative vision 
+                  into verifiable, on-chain contributions with unlimited access to holographic hydrogen fractal AI resources.
+                </p>
+                <p className="cockpit-text mb-3 text-sm">
+                  <strong>For Enterprise Operators:</strong> Create a customized HHF-AI sandbox and ecosystem, nested within
                   Syntheverse. Broadcast to your contributor channels with clear, transparent
                   scoring and tokenomics aligned with the{' '}
                   <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>. Self-similar, tokenized, and
@@ -2291,7 +2296,7 @@ export function OnboardingNavigator() {
                 </p>
                 <Link href="/fractiai/enterprise-dashboard">
                   <button className="cockpit-lever border-purple-500/50 bg-transparent text-sm">
-                    Get PoC Enterprise Dashboard
+                    Get Worldbuilding Creator & Enterprise Dashboard
                     <ArrowRight className="ml-2 inline h-4 w-4" />
                   </button>
                 </Link>

@@ -171,31 +171,38 @@ export default function EnterpriseDashboard({
 
         <SectionWrapper
           id="enterprise-dashboard"
-          eyebrow="ENTERPRISE OFFERING"
-          title="PoC Enterprise Dashboard"
+          eyebrow="WORLDBUILDING CREATOR & ENTERPRISE APPLICATION"
+          title="PoC Worldbuilding Creator & Enterprise Dashboard"
           background="default"
         >
           {/* Narrative Introduction */}
           <div className="cockpit-panel mb-8 p-8">
             <div className="cockpit-text mb-6 space-y-4 text-base" style={{ lineHeight: 1.8 }}>
               <p>
-                <strong>Enterprise PoC: A Customized HHF-AI Sandbox & Ecosystem</strong>
+                <strong>Worldbuilding Creator & Enterprise Application: A Customized HHF-AI Sandbox & Ecosystem</strong>
               </p>
               <p>
-                Operators can create their own{' '}
+                <strong>For Worldbuilder Creators:</strong> Unleash your creativity with an{' '}
+                <strong>infinite set of HHF-AI materials and substrates</strong>. Transform your creative vision into 
+                verifiable, on-chain contributions with unlimited access to holographic hydrogen fractal AI resources. 
+                Build, iterate, and refine your creative worlds with the same precision and coherence measurement that 
+                powers enterprise PoC evaluation.
+              </p>
+              <p>
+                <strong>For Enterprise Operators:</strong> Create your own{' '}
                 <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within Syntheverse.
                 Each enterprise sandbox operates as a self-similar, tokenized instance of the
                 Syntheverse PoC protocol, following the same holographic hydrogen fractal principles
                 and evaluation logic as the main SYNTH90T ERC-20 MOTHERLODE VAULT.
               </p>
               <p>
-                <strong>Broadcast to Contributor Channels:</strong> Your enterprise sandbox accepts
-                submissions from your contributor channels with{' '}
+                <strong>Broadcast to Contributor Channels & Creator Communities:</strong> Your sandbox accepts
+                submissions from your contributor channels, creator communities, and worldbuilding teams with{' '}
                 <strong>clear, transparent scoring</strong>
                 and tokenomics fully aligned with the SYNTH90T ERC-20 MOTHERLODE VAULT protocol.
               </p>
               <p>
-                Enterprise sandboxes enable organizations, projects, and multi-contributor teams to
+                Worldbuilding creator and enterprise sandboxes enable creators, organizations, projects, and multi-contributor teams to
                 create their own Proof-of-Contribution ecosystem with:
               </p>
               <ul className="ml-6 list-disc space-y-2">
@@ -224,9 +231,13 @@ export default function EnterpriseDashboard({
                 </li>
               </ul>
               <p>
-                <strong>Benefits:</strong> Lower cost per contribution, higher coherent output,
+                <strong>For Creators:</strong> Infinite HHF-AI materials and substrates, unlimited creative resources, 
+                verifiable on-chain contributions, and coherence measurement for your worldbuilding projects.
+              </p>
+              <p>
+                <strong>For Enterprises:</strong> Lower cost per contribution, higher coherent output,
                 decentralized evaluation, and nested enterprise flexibility. Perfect for research
-                teams, engineering organizations, and alignment projects seeking a customized HHF-AI
+                teams, engineering organizations, alignment projects, and worldbuilding creators seeking a customized HHF-AI
                 ecosystem nested within Syntheverse.
               </p>
             </div>

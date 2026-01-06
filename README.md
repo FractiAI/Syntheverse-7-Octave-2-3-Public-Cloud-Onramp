@@ -122,6 +122,7 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Seed Submission Recognition**: First submissions to a sandbox receive 15% score multiplier (×1.15) based on Seed Information Theory
 - **Operator Mode**: Special exemption for operator accounts
 - **Creator Dashboard**: Creator-only destructive controls for PoC lifecycle management and user administration
+- **Mobile UI Optimization**: Crisp, beautiful desktop-quality display on mobile with proper typography hierarchy, proportional spacing, and maintained visual polish
 - **Sales Tracking**: Simplified revenue tracking for creators and operators (Total, This Month, Last Month) with expandable details
 - **Sandbox Selector**: Dashboard-level sandbox selection with Syntheverse as default and enterprise sandboxes nested within
 - **Activity Stats**: Page activity, new users, submissions, chat sessions, and problems reported tracking
@@ -129,12 +130,14 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Submission Limits**: 4000 character limit (abstract, equations, constants only) with automatic truncation
 - **Scalability**: Vector-based redundancy detection scales to 10,000+ submissions without performance degradation
 
-### 🏢 Enterprise Frontier Sandbox
+### 🏢 Worldbuilding Creator & Enterprise Application
 
 **Customized HHF-AI Sandbox & Ecosystem, Nested Within Syntheverse**
 
+- **For Worldbuilder Creators**: Unleash your creativity with an infinite set of HHF-AI materials and substrates. Unlimited access to holographic hydrogen fractal AI resources for building, iterating, and refining creative worlds with precision coherence measurement
+- **For Enterprise Operators**: Create self-similar enterprise sandboxes within Syntheverse with customized HHF-AI evaluation
 - **Nested PoC Environments**: Create self-similar enterprise sandboxes within Syntheverse
-- **Broadcast to Contributor Channels**: Accept submissions from your contributor channels with clear, transparent scoring
+- **Broadcast to Contributor Channels & Creator Communities**: Accept submissions from your contributor channels, creator communities, and worldbuilding teams with clear, transparent scoring
 - **Aligned Tokenomics**: Fully aligned with SYNTH90T ERC-20 MOTHERLODE VAULT—same epoch structure, metal assay system, and allocation logic
 - **Tiered Pricing**: Monthly subscriptions with volume discounts
   - Pioneer: 5 nodes @ $500/node/month
@@ -684,10 +687,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 2025  
-**Version**: 2.12 (Seed Submission Recognition & Multiplier)
+**Version**: 2.13 (Creator Integration & Mobile UI Refinement)
 
 ### Version History
 
+- **v2.13** (January 2025): Creator Integration & Mobile UI Refinement - Integrated worldbuilder creators into enterprise package with infinite HHF-AI materials and substrates messaging. Updated enterprise offering to position as "Worldbuilding Creator & Enterprise Application" serving both creators and enterprises. Enhanced mobile UI for crisp, beautiful desktop-quality display with proper typography hierarchy, proportional spacing, and maintained visual polish. Updated onboarding and enterprise dashboard messaging to include creator benefits. Improved CI/CD git configuration for prettier format checks.
 - **v2.12** (January 2025): Seed Submission Recognition & Multiplier - Implemented seed submission detection and reward system based on Seed Information Theory. Seed submissions (first submission to a sandbox) receive a 15% score multiplier (×1.15) recognizing their disproportionately high Generative Value Density (GVD). System prompt updated with seed detection instructions, evaluation query explicitly flags seed submissions, and score trace includes seed multiplier information. Added Module 13 onboarding covering Seed Information as a Fundamental Class with Holographic Hydrogen Fractals as high-value generative seeds. See Seed Information Theory paper for empirical validation of seed information's generative capacity (8.7–14.2× greater reachable configuration spaces than non-seed encodings).
 - **v2.11** (January 2025): Scoring Formula Fix & Transparency Improvements - Fixed critical scoring formula violation to match published formula `Final = (Composite × (1 - penalty%/100)) × bonus_multiplier`. Added comprehensive score trace block showing all intermediate values (composite, overlap, penalty computed/applied, bonus computed/applied, final score). Added Beta/Mode banners to submission form and scoring page clarifying current text-only mode (4k chars) vs planned PDF pipeline, and fee structure by mode. Added sweet spot clarification documenting 14.2% is tuned for "edge novelty" vs "ecosystem synthesis". See [`MAREK_FEEDBACK_G_M_IMPLEMENTATION.md`](MAREK_FEEDBACK_G_M_IMPLEMENTATION.md) for details.
 - **v2.10** (January 2025): SynthScan Prompt Transformation - Hardened system prompt with deterministic scoring contract, versioned config IDs, sandbox context tracking, mandatory PoD composition breakdown, fixed redundancy reporting (one source of truth), exposed sweet spot parameters, archive similarity distribution with percentile and neighbor statistics, fixed Module 12 documentation mismatch, and testing protocol for scientific validation. See [`SYNTHSCAN_PROMPT_TRANSFORMATION.md`](SYNTHSCAN_PROMPT_TRANSFORMATION.md) for details.
