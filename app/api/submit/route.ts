@@ -222,18 +222,15 @@ export async function POST(request: NextRequest) {
     const submissionHash = crypto.randomBytes(32).toString('hex');
     const contentHash = crypto.createHash('sha256').update(text_content.trim()).digest('hex');
 
-    // Check if user is operator - exempt from payment
-    const operatorEmails = [
-      'info@fractiai.com',
-      'info@fractiai',
-      'danielarifriedman@gmail.com',
-      'marovw@gmail.com',
-    ];
-    const isOperator = user.email && operatorEmails.includes(user.email.toLowerCase());
+    // Check if user is creator or operator - exempt from payment for testing
+    const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
+    const isExemptFromPayment = isCreator || isOperator;
 
-    if (isOperator) {
-      debug('SubmitContribution', 'Operator mode: exempt from payment', {
+    if (isExemptFromPayment) {
+      debug('SubmitContribution', 'Creator/Operator mode: exempt from payment', {
         email: user.email,
+        isCreator,
+        isOperator,
         submissionHash,
       });
 
@@ -288,11 +285,13 @@ export async function POST(request: NextRequest) {
         const evaluateUrl = `${baseUrl}/api/evaluate/${submissionHash}`;
 
         fetch(evaluateUrl, { method: 'POST' }).catch((err) => {
-          debugError('SubmitContribution', 'Failed to trigger operator evaluation', err);
+          debugError('SubmitContribution', 'Failed to trigger creator/operator evaluation', err);
         });
 
-        debug('SubmitContribution', 'Operator submission saved, evaluation triggered', {
+        debug('SubmitContribution', 'Creator/Operator submission saved, evaluation triggered', {
           submissionHash,
+          isCreator,
+          isOperator,
         });
 
         const corsHeaders = createCorsHeaders(request);
@@ -301,13 +300,16 @@ export async function POST(request: NextRequest) {
           {
             success: true,
             submission_hash: submissionHash,
-            message: 'Operator submission accepted. Evaluation in progress.',
-            operator_mode: true,
+            message: isCreator
+              ? 'Creator submission accepted. Evaluation in progress.'
+              : 'Operator submission accepted. Evaluation in progress.',
+            creator_mode: isCreator,
+            operator_mode: isOperator,
           },
           { headers: rateLimitHeaders }
         );
       } catch (dbError) {
-        debugError('SubmitContribution', 'Failed to save operator submission', dbError);
+        debugError('SubmitContribution', 'Failed to save creator/operator submission', dbError);
         return NextResponse.json(
           {
             error: 'Database error',
