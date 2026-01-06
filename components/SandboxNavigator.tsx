@@ -77,21 +77,19 @@ export function SandboxNavigator() {
   };
 
   // Include Syntheverse as the first "sandbox"
-  const allSandboxes = [
-    {
-      id: 'syntheverse',
-      name: 'Syntheverse',
-      description: 'Main Syntheverse Protocol',
-      operator: 'system',
-      subscription_tier: null,
-      contribution_count: 0,
-      qualified_count: 0,
-      synth_activated: true,
-      vault_status: 'active',
-      created_at: null,
-    },
-    ...sandboxes,
-  ];
+  const syntheverseSandbox: EnterpriseSandbox = {
+    id: 'syntheverse',
+    name: 'Syntheverse',
+    description: 'Main Syntheverse Protocol',
+    operator: 'system',
+    subscription_tier: null,
+    contribution_count: 0,
+    qualified_count: 0,
+    synth_activated: true,
+    vault_status: 'active',
+  };
+
+  const allSandboxes: EnterpriseSandbox[] = [syntheverseSandbox, ...sandboxes];
 
   return (
     <div className="cockpit-module cockpit-panel">
