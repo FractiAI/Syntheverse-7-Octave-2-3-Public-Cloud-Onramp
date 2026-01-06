@@ -4,6 +4,7 @@ import { enterpriseContributionsTable, enterpriseSandboxesTable } from '@/utils/
 import { eq } from 'drizzle-orm';
 import { evaluateWithGrok } from '@/utils/grok/evaluate';
 import { vectorizeSubmission } from '@/utils/vectors';
+import { extractArchiveData } from '@/utils/archive/extract';
 import { debug, debugError } from '@/utils/debug';
 
 export const dynamic = 'force-dynamic';
@@ -93,6 +94,9 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
       // Continue without vectorization
     }
 
+    // Extract archive data (abstract, formulas, constants) for permanent storage
+    const archiveData = extractArchiveData(contrib.text_content, contrib.title);
+
     // Update contribution with evaluation results
     await db
       .update(enterpriseContributionsTable)
@@ -119,6 +123,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
             raw_grok_response: (evaluation as any).raw_grok_response || null,
           },
           llm_metadata: (evaluation as any).llm_metadata || null,
+          archive_data: archiveData, // Store archive data in metadata for extraction
         } as any,
         embedding: vectorizationResult ? vectorizationResult.embedding : undefined,
         vector_x: vectorizationResult ? vectorizationResult.vector.x.toString() : undefined,

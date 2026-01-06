@@ -12,6 +12,7 @@ import { evaluateWithGrok } from '@/utils/grok/evaluate';
 import { vectorizeSubmission } from '@/utils/vectors';
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request';
 import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification';
+import { extractArchiveData } from '@/utils/archive/extract';
 import crypto from 'crypto';
 import {
   checkRateLimit,
@@ -304,6 +305,9 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
 
     const processingTime = Date.now() - startTime;
 
+    // Extract archive data (abstract, formulas, constants) for permanent storage
+    const archiveData = extractArchiveData(textContent, contrib.title);
+
     // Log successful evaluation
     const evaluationCompleteLogId = crypto.randomUUID();
     await db.insert(pocLogTable).values({
@@ -334,6 +338,9 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         success: true,
         qualified,
         evaluation,
+      },
+      metadata: {
+        archive_data: archiveData,
       },
       processing_time_ms: processingTime,
       created_at: new Date(),
