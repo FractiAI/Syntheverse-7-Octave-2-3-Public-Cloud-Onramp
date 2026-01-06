@@ -54,6 +54,19 @@ export function BlogPage({
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
+        // Debug: Log post statuses to help identify issues
+        if (data.posts) {
+          data.posts.forEach((post: BlogPost) => {
+            if (post.title.includes('Hydrogen Spin')) {
+              console.log('Post status debug:', {
+                title: post.title,
+                status: post.status,
+                published_at: post.published_at,
+                isPublished: post.status === 'published',
+              });
+            }
+          });
+        }
         setPosts(data.posts || []);
       } else {
         console.error('Failed to fetch posts:', res.status, res.statusText);
@@ -370,7 +383,7 @@ function BlogPostCard({
               {formatDate(post.published_at || post.created_at)}
             </span>
           </div>
-          {post.status !== 'published' && (
+          {post.status && post.status.toLowerCase() !== 'published' && (
             <span className="rounded border border-yellow-500/30 bg-yellow-500/10 px-2 py-1 text-yellow-400">
               {post.status?.toUpperCase() || 'DRAFT'}
             </span>
