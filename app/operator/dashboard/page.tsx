@@ -14,7 +14,8 @@ import { SynthChat } from '@/components/SynthChat';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
 import { SystemBroadcastCenter } from '@/components/creator/SystemBroadcastCenter';
-import { Settings, Activity } from 'lucide-react';
+import { Settings, Activity, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,6 +58,10 @@ export default async function OperatorDashboard() {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <Link href="/blog" className="cockpit-lever inline-block text-center">
+                <FileText className="mr-2 inline h-4 w-4" />
+                Blog
+              </Link>
               <Activity className="h-5 w-5 animate-pulse text-green-500" />
               <BootSequenceIndicators />
             </div>

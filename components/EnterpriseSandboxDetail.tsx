@@ -11,7 +11,9 @@ import {
   Users,
   Coins,
   TrendingUp,
+  FileText,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
@@ -234,13 +236,22 @@ export default function EnterpriseSandboxDetail({
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto px-6 py-12">
-        <Link
-          href="/fractiai/enterprise-dashboard"
-          className="mb-8 inline-flex items-center gap-2 text-sm text-[var(--hydrogen-amber)] hover:underline"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Enterprise Dashboard
-        </Link>
+        <div className="mb-8 flex items-center justify-between">
+          <Link
+            href="/fractiai/enterprise-dashboard"
+            className="inline-flex items-center gap-2 text-sm text-[var(--hydrogen-amber)] hover:underline"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Enterprise Dashboard
+          </Link>
+          <Link
+            href={`/blog/sandbox/${sandboxId}`}
+            className="cockpit-lever inline-flex items-center gap-2 text-sm"
+          >
+            <FileText className="h-4 w-4" />
+            Sandbox Blog
+          </Link>
+        </div>
 
         <SectionWrapper
           id="sandbox-detail"

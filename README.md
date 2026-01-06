@@ -92,8 +92,14 @@ cp .env.example .env.local
 # Edit .env.local with your values (see Environment Variables section)
 
 # Run database migrations
-# In Supabase SQL Editor, run: supabase/migrations/add_synthchat_production.sql
-# This creates chat_rooms, chat_messages, and chat_participants tables
+# In Supabase SQL Editor, run:
+# 1. supabase/migrations/20250121000001_create_blog_posts.sql (creates blog_posts table)
+# 2. supabase/migrations/20250121000002_add_welcome_post.sql (adds welcome post)
+# 3. supabase/migrations/add_synthchat_production.sql (creates chat tables)
+#
+# Also create blog-images storage bucket:
+# - Go to Supabase Dashboard → Storage → New Bucket
+# - Name: blog-images, Public: Yes, Size limit: 5MB, MIME types: image/*
 
 # Run development server
 npm run dev
@@ -220,6 +226,17 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Mobile Navigation**: Optimized button placement for mobile devices
 - **Operator Broadcast Banner**: Dismissible notification system
 - **Status Indicators**: Beta Active and Base Mainnet LIVE indicators
+- **Blog System**: Comprehensive blog functionality with sandbox-specific blogs
+  - **Main Syntheverse Blog**: Public blog for protocol updates and announcements
+  - **Sandbox-Specific Blogs**: Each creator/enterprise sandbox spawns its own blog page
+  - **Blog Post Creator**: Rich text editor with markdown support, image upload/paste, and preview
+  - **Image Support**: Upload images via file picker or paste directly from clipboard
+  - **Markdown Formatting**: Full markdown support (headers, bold, italic, links, code blocks, lists, images)
+  - **Cockpit Styling**: All blog pages styled in consistent cockpit theme
+  - **Access Control**: Only creators and operators can create/edit blog posts
+  - **Featured Posts**: Mark posts as featured for prominent display
+  - **Tags & Excerpts**: Organize posts with tags and optional excerpts
+  - **Draft/Published Status**: Save drafts or publish immediately
 
 ### ⚡ Scalability Improvements (January 2025)
 

@@ -22,10 +22,11 @@ import { CreatorArchiveManagement } from './CreatorArchiveManagement';
 import { CreatorUserManagement } from './CreatorUserManagement';
 import { CreatorAuditLog } from './CreatorAuditLog';
 import { SynthChat } from '@/components/SynthChat';
+import { BlogPostCreator } from '@/components/BlogPostCreator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-type NavigationTab = 'archive' | 'users' | 'blockchain' | 'database' | 'chat';
+type NavigationTab = 'archive' | 'users' | 'blockchain' | 'database' | 'chat' | 'blog';
 
 export function CreatorCockpitNavigation() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('archive');
@@ -37,6 +38,7 @@ export function CreatorCockpitNavigation() {
     { id: 'blockchain' as NavigationTab, label: 'On-Chain Proofs', icon: LinkIcon, color: 'blue' },
     { id: 'database' as NavigationTab, label: 'System', icon: Database, color: 'green' },
     { id: 'chat' as NavigationTab, label: 'Chat', icon: MessageCircle, color: 'cyan' },
+    { id: 'blog' as NavigationTab, label: 'Blog', icon: FileText, color: 'amber' },
   ];
 
   return (
@@ -141,7 +143,51 @@ export function CreatorCockpitNavigation() {
             </div>
           </div>
         )}
+
+        {activeTab === 'blog' && (
+          <div>
+            <div className="cockpit-label mb-4 flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              BLOG POST CREATOR
+            </div>
+            <BlogCreatorPanel />
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+function BlogCreatorPanel() {
+  const [showCreator, setShowCreator] = useState(false);
+
+  return (
+    <div className="space-y-4">
+      {!showCreator ? (
+        <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-6">
+          <div className="cockpit-label mb-4">CREATE BLOG POST</div>
+          <p className="cockpit-text mb-4 text-sm opacity-80">
+            Create blog posts for the main Syntheverse blog. Posts can be published immediately or saved as drafts.
+          </p>
+          <Button onClick={() => setShowCreator(true)} className="cockpit-lever">
+            <FileText className="mr-2 h-4 w-4" />
+            Create New Post
+          </Button>
+          <div className="mt-4">
+            <a href="/blog" className="cockpit-lever inline-block text-sm">
+              View Blog →
+            </a>
+          </div>
+        </div>
+      ) : (
+        <BlogPostCreator
+          sandboxId={null}
+          onSave={() => {
+            setShowCreator(false);
+          }}
+          onCancel={() => setShowCreator(false)}
+        />
+      )}
     </div>
   );
 }

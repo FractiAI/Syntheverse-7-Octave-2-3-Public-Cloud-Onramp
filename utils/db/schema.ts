@@ -368,3 +368,26 @@ export type InsertChatMessage = typeof chatMessagesTable.$inferInsert;
 export type SelectChatMessage = typeof chatMessagesTable.$inferSelect;
 export type InsertChatParticipant = typeof chatParticipantsTable.$inferInsert;
 export type SelectChatParticipant = typeof chatParticipantsTable.$inferSelect;
+
+// Blog Posts Table
+export const blogPostsTable = pgTable('blog_posts', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  excerpt: text('excerpt'),
+  author: text('author').notNull(), // Email of the author
+  author_name: text('author_name'), // Display name of the author
+  sandbox_id: text('sandbox_id').references(() => enterpriseSandboxesTable.id, { onDelete: 'cascade' }), // NULL for main blog, sandbox ID for sandbox-specific blogs
+  status: text('status').notNull().default('draft'), // draft, published, archived
+  published_at: timestamp('published_at'),
+  featured: boolean('featured').default(false),
+  tags: jsonb('tags').$type<string[]>(),
+  metadata: jsonb('metadata').$type<{
+    [key: string]: any;
+  }>(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type InsertBlogPost = typeof blogPostsTable.$inferInsert;
+export type SelectBlogPost = typeof blogPostsTable.$inferSelect;

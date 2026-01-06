@@ -12,7 +12,7 @@ import { GenesisButton } from '@/components/GenesisButton';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 // Optional ecosystem support is intentionally not placed in the primary beta cockpit.
 // The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
-import { BookOpen, Shield, Settings } from 'lucide-react';
+import { BookOpen, Shield, Settings, FileText } from 'lucide-react';
 import { SynthChat } from '@/components/SynthChat';
 import { SandboxSelector } from '@/components/SandboxSelector';
 
@@ -101,6 +101,10 @@ export default async function Dashboard() {
               <Link href="/submit" className="cockpit-lever inline-block text-center">
                 <span className="mr-2">✎</span>
                 Submit Contribution
+              </Link>
+              <Link href="/blog" className="cockpit-lever inline-block text-center">
+                <FileText className="mr-2 inline h-4 w-4" />
+                Blog
               </Link>
               <SynthChat />
               {isCreator && (
