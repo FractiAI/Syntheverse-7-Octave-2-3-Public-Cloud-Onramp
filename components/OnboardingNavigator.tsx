@@ -2625,7 +2625,7 @@ export function OnboardingNavigator() {
               </div>
 
               <div className="cockpit-panel border-l-4 border-green-500/50 p-4">
-                <h3 className="cockpit-title mb-3 text-lg">How They're Used in SynthScan MRI</h3>
+                <h3 className="cockpit-title mb-3 text-lg">How They&apos;re Used in SynthScan MRI</h3>
                 <p className="cockpit-text mb-3 text-sm">
                   SynthScan™ MRI uses the catalog of constants and equations to:
                 </p>
