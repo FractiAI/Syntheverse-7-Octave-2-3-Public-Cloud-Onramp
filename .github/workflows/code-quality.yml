@@ -16,6 +16,14 @@ jobs:
         with:
           fetch-depth: 0  # Fetch full history for git operations
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global init.defaultBranch main
+          git config --global core.quotepath false
+          git config --global core.autocrlf false
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -25,16 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure Git (for prettier)
-        run: |
-          git config --global user.name "github-actions[bot]" || true
-          git config --global user.email "github-actions[bot]@users.noreply.github.com" || true
-          git config --global init.defaultBranch main || true
-          git config --global core.quotepath false || true
-          git config --global core.autocrlf false || true
-          # Ensure git is in a clean state
-          git status || true
-
       - name: Run ESLint
         run: npm run lint
 
@@ -42,11 +40,4 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Check formatting
-        run: |
-          # Run prettier check with explicit file patterns to avoid git issues
-          npx prettier --check "**/*.{js,jsx,ts,tsx,json,css,md}" \
-            --ignore-path .gitignore \
-            --no-error-on-unmatched-pattern || {
-            echo "Format check failed. Run 'npm run format' to fix formatting issues."
-            exit 1
-          }
+        run: npm run format:check
