@@ -99,7 +99,7 @@ cp .env.example .env.local
 #
 # Also create blog-images storage bucket:
 # - Go to Supabase Dashboard → Storage → New Bucket
-# - Name: blog-images, Public: Yes, Size limit: 5MB, MIME types: image/*
+# - Name: blog-images, Public: Yes, Size limit: 5MB, MIME types: any
 
 # Run development server
 npm run dev
