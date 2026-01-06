@@ -13,7 +13,6 @@ import {
   TrendingUp,
   FileText,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
