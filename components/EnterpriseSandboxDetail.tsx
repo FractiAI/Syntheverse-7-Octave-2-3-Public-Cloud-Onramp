@@ -17,6 +17,7 @@ import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
 import EnterpriseSubmitForm from './EnterpriseSubmitForm';
 import EnterpriseAnalytics from './EnterpriseAnalytics';
+import SandboxConfigurationWizard from './SandboxConfigurationWizard';
 
 type EnterpriseSandboxDetailProps = {
   sandboxId: string;
@@ -65,9 +66,7 @@ export default function EnterpriseSandboxDetail({
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editDescription, setEditDescription] = useState('');
+  const [showWizard, setShowWizard] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     qualified: 0,
@@ -182,21 +181,50 @@ export default function EnterpriseSandboxDetail({
 
   const isOperator = sandbox?.operator === userEmail;
 
-  async function handleSaveConfiguration() {
-    if (!sandbox || !editName.trim()) return;
+  async function handleSaveConfiguration(config: any) {
+    if (!sandbox) return;
 
     try {
       const res = await fetch(`/api/enterprise/sandboxes/${sandboxId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: editName.trim(),
-          description: editDescription.trim() || null,
+          name: config.name,
+          description: config.description,
+          scoring_config: {
+            novelty_weight: config.novelty_weight,
+            density_weight: config.density_weight,
+            coherence_weight: config.coherence_weight,
+            alignment_weight: config.alignment_weight,
+            qualification_threshold: config.qualification_threshold,
+            overlap_penalty_start: config.overlap_penalty_start,
+            sweet_spot_center: config.sweet_spot_center,
+            sweet_spot_tolerance: config.sweet_spot_tolerance,
+          },
+          metadata: {
+            mission: config.mission,
+            project_goals: config.project_goals,
+            public_access: config.public_access,
+            contributor_channels: config.contributor_channels,
+            allow_external_submissions: config.allow_external_submissions,
+            gold_focus: config.gold_focus,
+            silver_focus: config.silver_focus,
+            copper_focus: config.copper_focus,
+            hybrid_metals: config.hybrid_metals,
+            founder_threshold: config.founder_threshold,
+            pioneer_threshold: config.pioneer_threshold,
+            community_threshold: config.community_threshold,
+            ecosystem_threshold: config.ecosystem_threshold,
+            synth_activation_fee: config.synth_activation_fee,
+            monthly_rent_tier: config.monthly_rent_tier,
+            energy_cost_per_evaluation: config.energy_cost_per_evaluation,
+            energy_cost_per_registration: config.energy_cost_per_registration,
+          },
         }),
       });
 
       if (res.ok) {
-        setIsEditing(false);
+        setShowWizard(false);
         fetchSandbox();
       } else {
         const error = await res.json();
@@ -222,97 +250,70 @@ export default function EnterpriseSandboxDetail({
         <SectionWrapper
           id="sandbox-detail"
           eyebrow="SANDBOX CONFIGURATION"
-          title="Define Your Sandbox Project"
+          title="Define Your SYNTH-Based Ecosystem"
           background="default"
         >
-          {/* Guided Configuration Section */}
+          {/* Guided Configuration Wizard */}
           {isOperator && (
-            <div className="cockpit-panel mb-8 border-l-4 border-[var(--hydrogen-amber)] p-6">
-              <div className="cockpit-label mb-4" style={{ color: '#ffb84d' }}>
-                PROJECT CAPTURE & CONFIGURATION
-              </div>
-              <p className="cockpit-text mb-6 text-sm">
-                Define your sandbox project within the Syntheverse ecosystem. This nested world will
-                operate with its own evaluation parameters, contributor channels, and tokenomics
-                aligned with the SYNTH90T MOTHERLODE VAULT.
-              </p>
-
-              {!isEditing ? (
-                <div className="space-y-4">
-                  <div className="border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                    <div className="cockpit-label mb-2 text-xs">SANDBOX NAME</div>
-                    <div className="cockpit-title text-lg">{sandbox.name}</div>
+            <div className="mb-8">
+              {!showWizard ? (
+                <div className="cockpit-panel border-l-4 border-[var(--hydrogen-amber)] p-6">
+                  <div className="cockpit-label mb-4" style={{ color: '#ffb84d' }}>
+                    COMPREHENSIVE SANDBOX CONFIGURATION
                   </div>
-                  {sandbox.description && (
-                    <div className="border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                      <div className="cockpit-label mb-2 text-xs">DESCRIPTION</div>
-                      <div className="cockpit-text text-sm">{sandbox.description}</div>
-                    </div>
-                  )}
+                  <p className="cockpit-text mb-6 text-sm">
+                    Configure your sandbox as a self-similar ecosystem nested within Syntheverse.
+                    This guided setup will walk you through defining your project vision, SYNTH
+                    tokenomics, epoch structure, scoring parameters, contributor access, and metal
+                    alignment—all aligned with Syntheverse&apos;s foundational structure.
+                  </p>
+
+                  <div className="mb-6 grid gap-4 md:grid-cols-2">
+                    <Card hover={false} className="border-l-4 border-blue-500/50">
+                      <div className="cockpit-label mb-2 text-xs">CURRENT CONFIGURATION</div>
+                      <div className="cockpit-title text-lg">{sandbox.name}</div>
+                      {sandbox.description && (
+                        <div className="cockpit-text mt-2 text-xs opacity-75">
+                          {sandbox.description}
+                        </div>
+                      )}
+                    </Card>
+                    <Card hover={false} className="border-l-4 border-[var(--hydrogen-amber)]">
+                      <div className="cockpit-label mb-2 text-xs">STATUS</div>
+                      <div className="cockpit-title text-lg">
+                        {sandbox.vault_status === 'active' ? 'ACTIVE' : 'PAUSED'}
+                      </div>
+                      <div className="cockpit-text mt-2 text-xs opacity-75">
+                        Epoch: {sandbox.current_epoch.toUpperCase()}
+                      </div>
+                    </Card>
+                  </div>
+
                   <button
-                    onClick={() => {
-                      setEditName(sandbox.name);
-                      setEditDescription(sandbox.description || '');
-                      setIsEditing(true);
-                    }}
+                    onClick={() => setShowWizard(true)}
                     className="cockpit-lever inline-flex items-center text-sm"
                   >
                     <Settings className="mr-2 h-4 w-4" />
-                    Edit Configuration
+                    Configure Sandbox Ecosystem
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div>
-                    <label className="cockpit-label mb-2 block text-xs">
-                      Sandbox Name <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      placeholder="Enter your sandbox project name"
-                      className="cockpit-input w-full bg-[var(--cockpit-carbon)] p-3 text-sm"
-                    />
-                    <p className="cockpit-text mt-1 text-xs opacity-75">
-                      Choose a name that clearly identifies your project within Syntheverse
-                    </p>
-                  </div>
-                  <div>
-                    <label className="cockpit-label mb-2 block text-xs">
-                      Description (Optional)
-                    </label>
-                    <textarea
-                      value={editDescription}
-                      onChange={(e) => setEditDescription(e.target.value)}
-                      placeholder="Describe your sandbox project, its purpose, and what contributions you're seeking..."
-                      rows={4}
-                      className="cockpit-input w-full bg-[var(--cockpit-carbon)] p-3 text-sm"
-                    />
-                    <p className="cockpit-text mt-1 text-xs opacity-75">
-                      Provide context about your project to help contributors understand what
-                      you&apos;re building
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleSaveConfiguration}
-                      className="cockpit-lever inline-flex items-center text-sm"
-                    >
-                      Save Configuration
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsEditing(false);
-                        setEditName(sandbox.name);
-                        setEditDescription(sandbox.description || '');
-                      }}
-                      className="cockpit-lever inline-flex items-center bg-transparent text-sm"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
+                <SandboxConfigurationWizard
+                  sandboxId={sandboxId}
+                  initialConfig={{
+                    name: sandbox.name,
+                    description: sandbox.description || '',
+                    // Load from sandbox.scoring_config if available
+                    novelty_weight: (sandbox as any).scoring_config?.novelty_weight || 1.0,
+                    density_weight: (sandbox as any).scoring_config?.density_weight || 1.0,
+                    coherence_weight: (sandbox as any).scoring_config?.coherence_weight || 1.0,
+                    alignment_weight: (sandbox as any).scoring_config?.alignment_weight || 1.0,
+                    qualification_threshold:
+                      (sandbox as any).scoring_config?.qualification_threshold || 4000,
+                    current_epoch: sandbox.current_epoch,
+                  }}
+                  onSave={handleSaveConfiguration}
+                />
               )}
             </div>
           )}
