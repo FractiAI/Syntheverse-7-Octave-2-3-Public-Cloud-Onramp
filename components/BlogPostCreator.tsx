@@ -234,11 +234,29 @@ export function BlogPostCreator({
 
         {/* Content Editor */}
         <div>
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <Label htmlFor="content" className="cockpit-label block text-xs">
               CONTENT (MARKDOWN SUPPORTED)
             </Label>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingImage}
+                className="cockpit-lever text-xs"
+              >
+                <Upload className="mr-1 h-3 w-3" />
+                {uploadingImage ? 'Uploading...' : 'Upload Image'}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
@@ -257,24 +275,6 @@ export function BlogPostCreator({
                     Show Preview
                   </>
                 )}
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploadingImage}
-                className="cockpit-lever text-xs"
-              >
-                <Upload className="mr-1 h-3 w-3" />
-                {uploadingImage ? 'Uploading...' : 'Upload Image'}
               </Button>
             </div>
           </div>
