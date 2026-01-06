@@ -1,7 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Clock, MapPin, Radio, Activity, Users, BookOpen } from 'lucide-react';
+import {
+  ArrowRight,
+  Clock,
+  MapPin,
+  Radio,
+  Activity,
+  Users,
+  BookOpen,
+  LayoutDashboard,
+  Compass,
+  Settings,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import FractiAIStatusWidget from '@/components/FractiAIStatusWidget';
 import { StatusIndicators } from './StatusIndicators';
@@ -89,7 +100,57 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 Base Mainnet · Awareness Bridge/Router Active
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Quick Navigation Links */}
+              <div className="flex flex-wrap items-center gap-2 border-r border-[var(--keyline-primary)] pr-3">
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                    >
+                      <LayoutDashboard className="h-3.5 w-3.5" />
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/creator/dashboard"
+                      className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                    >
+                      <Settings className="h-3.5 w-3.5" />
+                      Creator
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/signup"
+                      className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                    >
+                      Join
+                    </Link>
+                    <Link
+                      href="/login"
+                      className="cockpit-lever inline-flex items-center gap-2 text-xs bg-transparent"
+                    >
+                      Log In
+                    </Link>
+                  </>
+                )}
+                <Link
+                  href="/onboarding"
+                  className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                >
+                  <Compass className="h-3.5 w-3.5" />
+                  Onboarding
+                </Link>
+                <Link
+                  href="/fractiai/enterprise-dashboard"
+                  className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                >
+                  <Settings className="h-3.5 w-3.5" />
+                  Enterprise
+                </Link>
+              </div>
               <div className="text-right">
                 <div className="cockpit-label mb-1 flex items-center gap-2 text-xs">
                   <Clock className="h-3 w-3" />
@@ -107,7 +168,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   })}
                 </div>
               </div>
-              <div className="flex items-center gap-2 border-l border-[var(--keyline-primary)] pl-4">
+              <div className="flex items-center gap-2 border-l border-[var(--keyline-primary)] pl-3">
                 <div
                   className="h-3 w-3 animate-pulse rounded-full bg-green-500"
                   style={{ boxShadow: '0 0 8px #22c55e' }}
