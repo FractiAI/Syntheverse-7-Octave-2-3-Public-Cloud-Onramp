@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/utils/db/db';
-import { blogPostsTable, enterpriseSandboxesTable } from '@/utils/db/schema';
+import { blogPostsTable, enterpriseSandboxesTable, blogPermissionsTable } from '@/utils/db/schema';
 import { eq, desc, and, isNull, or, sql } from 'drizzle-orm';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import crypto from 'crypto';
@@ -34,10 +34,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Build query with all conditions
-    const posts = await db
-      .select()
-      .from(blogPostsTable)
-      .where(conditions.length > 1 ? and(...conditions) : conditions[0])
+    let query = db.select().from(blogPostsTable);
+    
+    if (conditions.length > 0) {
+      query = query.where(conditions.length > 1 ? and(...conditions) : conditions[0]);
+    }
+    
+    const posts = await query
       .orderBy(desc(sql`COALESCE(${blogPostsTable.published_at}, ${blogPostsTable.created_at})`))
       .limit(limit)
       .offset(offset);
@@ -63,9 +66,27 @@ export async function POST(request: NextRequest) {
 
     const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
 
-    // Only creators, operators, and enterprise sandbox operators can create blog posts
-    if (!isCreator && !isOperator) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // Check blog permissions
+    const permissions = await db
+      .select()
+      .from(blogPermissionsTable)
+      .where(eq(blogPermissionsTable.id, 'main'))
+      .limit(1);
+
+    const blogPerms = permissions.length > 0 ? permissions[0] : {
+      allow_contributors: false,
+      allow_operators: true,
+      allow_creator: true,
+    };
+
+    // Check if user has permission to create blog posts
+    const canCreate =
+      (isCreator && blogPerms.allow_creator) ||
+      (isOperator && blogPerms.allow_operators) ||
+      (!isCreator && !isOperator && blogPerms.allow_contributors);
+
+    if (!canCreate) {
+      return NextResponse.json({ error: 'You do not have permission to create blog posts' }, { status: 403 });
     }
 
     const body = await request.json();

@@ -391,3 +391,16 @@ export const blogPostsTable = pgTable('blog_posts', {
 
 export type InsertBlogPost = typeof blogPostsTable.$inferInsert;
 export type SelectBlogPost = typeof blogPostsTable.$inferSelect;
+
+// Blog Permissions Table
+export const blogPermissionsTable = pgTable('blog_permissions', {
+  id: text('id').primaryKey().default('main'),
+  allow_contributors: boolean('allow_contributors').default(false).notNull(),
+  allow_operators: boolean('allow_operators').default(true).notNull(),
+  allow_creator: boolean('allow_creator').default(true).notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+  updated_by: text('updated_by'), // Email of creator who last updated
+});
+
+export type InsertBlogPermissions = typeof blogPermissionsTable.$inferInsert;
+export type SelectBlogPermissions = typeof blogPermissionsTable.$inferSelect;

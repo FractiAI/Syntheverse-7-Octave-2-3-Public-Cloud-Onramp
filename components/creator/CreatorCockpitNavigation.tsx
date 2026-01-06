@@ -25,6 +25,7 @@ import { SynthChat } from '@/components/SynthChat';
 import { BlogPostCreator } from '@/components/BlogPostCreator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useEffect } from 'react';
 
 type NavigationTab = 'archive' | 'users' | 'blockchain' | 'database' | 'chat' | 'blog';
 
@@ -160,9 +161,152 @@ export function CreatorCockpitNavigation() {
 
 function BlogCreatorPanel() {
   const [showCreator, setShowCreator] = useState(false);
+  const [showPermissions, setShowPermissions] = useState(false);
+  const [permissions, setPermissions] = useState({
+    allow_contributors: false,
+    allow_operators: true,
+    allow_creator: true,
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
+
+  async function fetchPermissions() {
+    try {
+      const res = await fetch('/api/blog/permissions');
+      if (res.ok) {
+        const data = await res.json();
+        setPermissions(data.permissions);
+      }
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleSavePermissions() {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/blog/permissions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(permissions),
+      });
+
+      if (res.ok) {
+        setShowPermissions(false);
+        alert('Blog permissions updated successfully');
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to update permissions');
+      }
+    } catch (error) {
+      console.error('Error saving permissions:', error);
+      alert('Failed to update permissions');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="space-y-4">
+      {/* Permissions Management */}
+      <div className="cockpit-panel border-l-4 border-[var(--hydrogen-amber)] p-6">
+        <div className="cockpit-label mb-4 flex items-center justify-between">
+          <span>BLOG CREATION PERMISSIONS</span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPermissions(!showPermissions)}
+            className="cockpit-lever text-xs"
+          >
+            {showPermissions ? 'Hide Settings' : 'Manage Permissions'}
+          </Button>
+        </div>
+
+        {showPermissions && (
+          <div className="mt-4 space-y-4 border-t border-[var(--keyline-primary)] pt-4">
+            <div className="cockpit-text mb-4 text-sm opacity-80">
+              Control who can create blog posts. Creator always has access.
+            </div>
+
+            <div className="space-y-3">
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={permissions.allow_creator}
+                  disabled
+                  className="h-4 w-4 rounded border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]"
+                />
+                <div>
+                  <div className="cockpit-text text-sm font-medium">Creator</div>
+                  <div className="cockpit-text text-xs opacity-60">Always enabled</div>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={permissions.allow_operators}
+                  onChange={(e) =>
+                    setPermissions({ ...permissions, allow_operators: e.target.checked })
+                  }
+                  className="h-4 w-4 rounded border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]"
+                />
+                <div>
+                  <div className="cockpit-text text-sm font-medium">Operators</div>
+                  <div className="cockpit-text text-xs opacity-60">
+                    Users with operator role can create blog posts
+                  </div>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={permissions.allow_contributors}
+                  onChange={(e) =>
+                    setPermissions({ ...permissions, allow_contributors: e.target.checked })
+                  }
+                  className="h-4 w-4 rounded border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]"
+                />
+                <div>
+                  <div className="cockpit-text text-sm font-medium">Contributors</div>
+                  <div className="cockpit-text text-xs opacity-60">
+                    Regular users (contributors) can create blog posts
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <Button
+                onClick={handleSavePermissions}
+                disabled={saving}
+                className="cockpit-lever"
+              >
+                {saving ? 'Saving...' : 'Save Permissions'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  fetchPermissions();
+                  setShowPermissions(false);
+                }}
+                className="cockpit-lever"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Blog Post Creator */}
       {!showCreator ? (
         <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-6">
           <div className="cockpit-label mb-4">CREATE BLOG POST</div>
