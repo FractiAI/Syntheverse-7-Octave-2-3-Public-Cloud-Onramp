@@ -12,7 +12,7 @@ import { GenesisButton } from '@/components/GenesisButton';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 // Optional ecosystem support is intentionally not placed in the primary beta cockpit.
 // The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
-import { BookOpen, Shield } from 'lucide-react';
+import { BookOpen, Shield, Settings } from 'lucide-react';
 import { SynthChat } from '@/components/SynthChat';
 import { SandboxSelector } from '@/components/SandboxSelector';
 
@@ -43,8 +43,8 @@ export default async function Dashboard() {
   // Get display name: prefer database name, fallback to email username, then full email
   const displayName = dbUser?.name || user.email?.split('@')[0] || user.email || 'User';
 
-  // Check if user is Creator
-  const { isCreator } = await getAuthenticatedUserWithRole();
+  // Check user role
+  const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
 
   return (
     <div className="cockpit-bg min-h-screen">
@@ -104,6 +104,12 @@ export default async function Dashboard() {
                 <Link href="/creator/dashboard" className="cockpit-lever inline-block">
                   <Shield className="mr-2 inline h-4 w-4" />
                   Creator Dashboard
+                </Link>
+              )}
+              {isOperator && !isCreator && (
+                <Link href="/operator/dashboard" className="cockpit-lever inline-block">
+                  <Settings className="mr-2 inline h-4 w-4" />
+                  Operator Dashboard
                 </Link>
               )}
             </div>

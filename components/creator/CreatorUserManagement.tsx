@@ -158,7 +158,10 @@ export function CreatorUserManagement() {
     }
   };
 
-  const filteredUsers = users.filter(
+  // Filter to only show operators (and creators for management purposes)
+  const operatorsOnly = users.filter((u) => u.role === 'operator' || u.role === 'creator');
+
+  const filteredUsers = operatorsOnly.filter(
     (u) =>
       u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -180,10 +183,10 @@ export function CreatorUserManagement() {
         <div className="mb-4 flex items-start gap-3">
           <Users className="h-6 w-6 text-red-500" />
           <div className="flex-1">
-            <div className="cockpit-label mb-2">USER MANAGEMENT</div>
-            <h2 className="cockpit-title mb-2 text-xl">User Administration</h2>
+            <div className="cockpit-label mb-2">OPERATOR MANAGEMENT</div>
+            <h2 className="cockpit-title mb-2 text-xl">Operator Administration</h2>
             <p className="cockpit-text text-sm opacity-80">
-              Manage users, delete accounts, and grant/revoke operator privileges. All actions are
+              Manage operators, grant/revoke operator privileges, and delete operator accounts. All actions are
               logged.
             </p>
           </div>
@@ -193,7 +196,7 @@ export function CreatorUserManagement() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform opacity-50" />
             <Input
-              placeholder="Search users by email or name..."
+              placeholder="Search operators by email or name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="cockpit-input pl-10"
@@ -201,6 +204,13 @@ export function CreatorUserManagement() {
           </div>
         </div>
 
+        {filteredUsers.length === 0 && !loading && (
+          <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-6 text-center">
+            <div className="cockpit-text opacity-60">
+              {searchTerm ? 'No operators found matching your search.' : 'No operators found.'}
+            </div>
+          </div>
+        )}
         <div className="max-h-96 space-y-2 overflow-y-auto">
           {filteredUsers.map((user) => (
             <div

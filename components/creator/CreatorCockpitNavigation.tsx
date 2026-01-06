@@ -339,20 +339,9 @@ function DatabaseNavigationPanel() {
         <div className="cockpit-panel border-l-4 border-red-500 bg-[var(--cockpit-carbon)] p-4">
           <div className="cockpit-label mb-3 text-xs text-red-400">DATABASE OPERATIONS</div>
           <div className="space-y-2">
-            <Button
-              variant="destructive"
-              className="cockpit-lever w-full bg-red-600 hover:bg-red-700"
-              onClick={() => {
-                // This will be handled by the Archive Management component
-                window.location.hash = 'archive-reset';
-              }}
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Reset Archive
-            </Button>
-            <div className="cockpit-text mt-4 rounded bg-[var(--cockpit-bg)] p-2 text-xs opacity-60">
+            <div className="cockpit-text rounded bg-[var(--cockpit-bg)] p-3 text-xs opacity-80">
               <strong>Note:</strong> All destructive operations require confirmation phrases and are
-              logged in the audit_log table. Use the Archive tab for archive resets.
+              logged in the audit_log table. Use the <strong>Archive</strong> tab above for archive resets.
             </div>
           </div>
         </div>

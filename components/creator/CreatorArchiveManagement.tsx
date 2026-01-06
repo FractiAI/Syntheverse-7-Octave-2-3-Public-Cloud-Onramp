@@ -251,7 +251,17 @@ export function CreatorArchiveManagement() {
       </div>
 
       {/* Confirmation Dialog */}
-      <Dialog open={resetMode !== null} onOpenChange={() => setResetMode(null)}>
+      <Dialog 
+        open={resetMode !== null} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setResetMode(null);
+            setConfirmationPhrase('');
+            setSafetyConfirmed(false);
+            setError(null);
+          }
+        }}
+      >
         <DialogContent className="cockpit-panel border-red-500">
           <DialogHeader>
             <DialogTitle className="cockpit-title flex items-center gap-2">
