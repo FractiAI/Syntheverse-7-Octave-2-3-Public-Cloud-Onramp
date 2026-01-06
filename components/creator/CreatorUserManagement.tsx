@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Users, Trash2, Shield, ShieldOff, AlertTriangle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -60,11 +60,7 @@ export function CreatorUserManagement() {
   const [managingRole, setManagingRole] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadUsers();
-  }, [filterRole]);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       const url = filterRole === 'operators' 
         ? '/api/creator/users?role=operator'
@@ -79,7 +75,11 @@ export function CreatorUserManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterRole]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const handleDelete = (email: string) => {
     setDeleteMode({ email, mode: 'hard' });

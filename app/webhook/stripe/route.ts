@@ -434,8 +434,8 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
               podScore,
               note: 'Submission is qualified but epoch is not open. Allocation will happen when epoch opens.',
             });
-            // Continue without allocating - submission is still registered
-            return NextResponse.json({ success: true });
+            // Exit early without allocating - submission is still registered
+            return;
           }
 
           debug('StripeWebhook', 'Processing automatic token allocation for registered PoC', {
