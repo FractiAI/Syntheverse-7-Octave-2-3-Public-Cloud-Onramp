@@ -48,11 +48,13 @@ export default async function Dashboard() {
 
   return (
     <div className="cockpit-bg min-h-screen">
-      <div className="container mx-auto space-y-6 px-4 py-6 md:space-y-8 md:px-6 md:py-8">
-        {/* Sandbox Selector */}
-        <div className="flex flex-col items-end gap-2">
-          <div className="cockpit-label text-xs">Select Sandbox</div>
-          <SandboxSelector />
+      <div className="container mx-auto space-y-4 px-4 py-6 md:space-y-6 md:px-6 md:py-8">
+        {/* Sandbox Selector - Cockpit Control */}
+        <div className="cockpit-panel p-3 md:p-4">
+          <div className="flex flex-col items-end gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="cockpit-label text-xs uppercase tracking-wider">SANDBOX SELECTOR</div>
+            <SandboxSelector />
+          </div>
         </div>
 
         {/* System Broadcast Banners - Fetched from API */}
@@ -60,50 +62,55 @@ export default async function Dashboard() {
 
         {/* Command Zone - Welcome & Action Control */}
         <div className="cockpit-panel p-4 md:p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="mb-2 flex items-center justify-between">
-                <div className="cockpit-label">
-                  SYNTHEVERSE PROTOCOL (PUBLIC) · FRACTIAI REFERENCE CLIENT
+          <div className="mb-4 flex items-center justify-between border-b border-[var(--keyline-primary)] pb-3">
+            <div className="cockpit-label text-xs uppercase tracking-wider">
+              SYNTHEVERSE PROTOCOL (PUBLIC) · FRACTIAI REFERENCE CLIENT
+            </div>
+            {/* Boot Sequence Indicator Lights */}
+            <BootSequenceIndicators />
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-[1fr_auto]">
+            <div className="space-y-4">
+              <div>
+                <div className="cockpit-title text-xl md:text-2xl">{displayName.toUpperCase()}</div>
+                <div className="cockpit-text mt-2 text-sm md:text-base">
+                  You are using the FractiAI reference client to interact with the public Syntheverse
+                  protocol. Records are verifiable and permanent; this UI does not represent protocol
+                  ownership, centralized governance, or financial promises.
                 </div>
-                {/* Boot Sequence Indicator Lights */}
-                <BootSequenceIndicators />
               </div>
-              <div className="cockpit-title mt-1 text-xl md:text-2xl">{displayName.toUpperCase()}</div>
-              <div className="cockpit-text mt-2">
-                You are using the FractiAI reference client to interact with the public Syntheverse
-                protocol. Records are verifiable and permanent; this UI does not represent protocol
-                ownership, centralized governance, or financial promises.
-              </div>
-              <div className="cockpit-text bg-[var(--hydrogen-amber)]/5 mt-3 border-l-4 border-[var(--hydrogen-amber)] px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm">
+              <div className="cockpit-text border-l-4 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/5 px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm">
                 <strong>Liberating Contributions:</strong> Through our hydrogen spin MRI-based PoC
                 protocol on the blockchain, your contributions are no longer gatekept—they become{' '}
                 <strong>visible and demonstrable to all</strong> via HHF-AI MRI science and
                 technology.
               </div>
             </div>
-            <div className="flex flex-wrap gap-2.5 md:gap-3">
-              <Link href="/fractiai" className="cockpit-lever inline-block">
+            
+            {/* Action Controls */}
+            <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
+              <Link href="/fractiai" className="cockpit-lever inline-block text-center">
                 <span className="mr-2">◎</span>
                 FractiAI
               </Link>
-              <Link href="/onboarding" className="cockpit-lever inline-block">
+              <Link href="/onboarding" className="cockpit-lever inline-block text-center">
                 <BookOpen className="mr-2 inline h-4 w-4" />
                 Onboarding Navigator
               </Link>
-              <Link href="/submit" className="cockpit-lever inline-block">
+              <Link href="/submit" className="cockpit-lever inline-block text-center">
                 <span className="mr-2">✎</span>
                 Submit Contribution
               </Link>
               <SynthChat />
               {isCreator && (
-                <Link href="/creator/dashboard" className="cockpit-lever inline-block">
+                <Link href="/creator/dashboard" className="cockpit-lever inline-block text-center">
                   <Shield className="mr-2 inline h-4 w-4" />
                   Creator Dashboard
                 </Link>
               )}
               {isOperator && !isCreator && (
-                <Link href="/operator/dashboard" className="cockpit-lever inline-block">
+                <Link href="/operator/dashboard" className="cockpit-lever inline-block text-center">
                   <Settings className="mr-2 inline h-4 w-4" />
                   Operator Dashboard
                 </Link>

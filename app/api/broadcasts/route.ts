@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
     const now = new Date();
     
     // Get active broadcasts that haven't expired
+    // Gracefully handle case where table might not exist yet
     const broadcasts = await db
       .select()
       .from(systemBroadcastsTable)
@@ -45,6 +46,15 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error: any) {
+    // If table doesn't exist or other database error, return empty array instead of 500
+    // This allows the UI to continue working even if broadcasts table isn't set up
+    if (error.message?.includes('does not exist') || error.message?.includes('relation') || error.code === '42P01') {
+      console.warn('Broadcasts table not found, returning empty array:', error.message);
+      return NextResponse.json({
+        broadcasts: [],
+      });
+    }
+    
     console.error('Error fetching broadcasts:', error);
     return NextResponse.json(
       {

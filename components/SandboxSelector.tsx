@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -83,6 +84,9 @@ export function SandboxSelector() {
             <Layers className="h-4 w-4" />
             SELECT SANDBOX
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Select a sandbox to view and manage contributions
+          </DialogDescription>
         </DialogHeader>
 
         {/* Fixed Header Section */}
