@@ -65,6 +65,9 @@ export default function EnterpriseSandboxDetail({
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
   const [stats, setStats] = useState({
     total: 0,
     qualified: 0,
@@ -84,6 +87,11 @@ export default function EnterpriseSandboxDetail({
       if (res.ok) {
         const data = await res.json();
         setSandbox(data.sandbox);
+        // Update edit fields when sandbox loads
+        if (data.sandbox) {
+          setEditName(data.sandbox.name || '');
+          setEditDescription(data.sandbox.description || '');
+        }
       }
     } catch (error) {
       console.error('Error fetching sandbox:', error);
@@ -172,10 +180,7 @@ export default function EnterpriseSandboxDetail({
     );
   }
 
-  const isOperator = sandbox.operator === userEmail;
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState(sandbox?.name || '');
-  const [editDescription, setEditDescription] = useState(sandbox?.description || '');
+  const isOperator = sandbox?.operator === userEmail;
 
   async function handleSaveConfiguration() {
     if (!sandbox || !editName.trim()) return;
