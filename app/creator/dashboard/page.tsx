@@ -27,7 +27,7 @@ export default async function CreatorDashboard() {
 
   const { user, isCreator } = await getAuthenticatedUserWithRole();
 
-  if (!isCreator) {
+  if (!isCreator || !user?.email) {
     redirect('/dashboard');
   }
 
@@ -73,7 +73,7 @@ export default async function CreatorDashboard() {
         </div>
 
         {/* PoC Archive - Same as Contributor Dashboard */}
-        <FrontierModule userEmail={user.email!} />
+        <FrontierModule userEmail={user.email} />
       </div>
     </div>
   );
