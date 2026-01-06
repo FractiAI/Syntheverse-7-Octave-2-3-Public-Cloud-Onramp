@@ -14,6 +14,7 @@ import { SalesTracking } from '@/components/SalesTracking';
 import { SynthChat } from '@/components/SynthChat';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
+import { SystemBroadcastCenter } from '@/components/creator/SystemBroadcastCenter';
 import { Shield, Activity } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -71,6 +72,9 @@ export default async function CreatorDashboard() {
 
         {/* Control Panels */}
         <CreatorCockpitNavigation />
+
+        {/* System Broadcast Center */}
+        <SystemBroadcastCenter />
 
         {/* Sales Tracking - Revenue & Subscriptions (Creators Only) */}
         {isCreator && <SalesTracking />}

@@ -239,6 +239,18 @@ export const enterpriseContributionsTable = pgTable('enterprise_contributions', 
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// System Broadcasts Table
+export const systemBroadcastsTable = pgTable('system_broadcasts', {
+  id: text('id').primaryKey(),
+  message: text('message').notNull(),
+  nature: text('nature').notNull().default('info'), // announcement, warning, info, success, milestone, alert, update
+  is_active: boolean('is_active').default(true).notNull(),
+  created_by: text('created_by').notNull(), // email of creator/operator
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+  expires_at: timestamp('expires_at'), // Optional expiration date
+});
+
 // Enterprise Sandbox Allocations Table
 export const enterpriseAllocationsTable = pgTable('enterprise_allocations', {
   id: text('id').primaryKey(),

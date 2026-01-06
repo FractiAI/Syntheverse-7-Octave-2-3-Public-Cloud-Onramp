@@ -13,6 +13,7 @@ import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
 import { SynthChat } from '@/components/SynthChat';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
+import { SystemBroadcastCenter } from '@/components/creator/SystemBroadcastCenter';
 import { Settings, Activity } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -70,6 +71,9 @@ export default async function OperatorDashboard() {
 
         {/* Control Panels */}
         <CreatorCockpitNavigation />
+
+        {/* System Broadcast Center */}
+        <SystemBroadcastCenter />
 
         {/* Activity Analytics */}
         <ActivityAnalytics />

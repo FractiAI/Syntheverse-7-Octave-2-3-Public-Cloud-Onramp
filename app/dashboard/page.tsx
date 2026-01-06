@@ -55,12 +55,8 @@ export default async function Dashboard() {
           <SandboxSelector />
         </div>
 
-        {/* Operator Broadcast Banner */}
-        <OperatorBroadcastBanner
-          message="Welcome to Syntheverse! SYNTH90T MOTHERLODE VAULT opens Spring Equinox, March 20, 2026. All qualifying PoCs will be registered on-chain and allocated SYNTH, by score. Be sure to get your best work in by March 19."
-          nature="milestone"
-          storageKey="motherlode_vault_opening_banner"
-        />
+        {/* System Broadcast Banners - Fetched from API */}
+        <OperatorBroadcastBanner />
 
         {/* Command Zone - Welcome & Action Control */}
         <div className="cockpit-panel p-4 md:p-6">
