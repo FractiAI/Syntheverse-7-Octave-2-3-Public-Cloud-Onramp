@@ -10,12 +10,10 @@ import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
 import { OperatorBroadcastBanner } from '@/components/OperatorBroadcastBanner';
 import { GenesisButton } from '@/components/GenesisButton';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
-// Optional ecosystem support is intentionally not placed in the primary beta cockpit.
-// The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
-import { BookOpen, Shield, Settings, FileText } from 'lucide-react';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
 import { SynthChatNavigator } from '@/components/SynthChatNavigator';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
+import CockpitHeader from '@/components/CockpitHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,12 +47,15 @@ export default async function Dashboard() {
 
   return (
     <div className="cockpit-bg min-h-screen">
+      {/* Cockpit Header - Command Center */}
+      <CockpitHeader />
+      
       {/* Quick Actions Panel - Upper Right */}
       <QuickActionsPanel isCreator={isCreator} isOperator={isOperator} />
 
       {/* Cockpit Grid Layout - Multi-column control center */}
       <div className="cockpit-grid-layout">
-        {/* Left Sidebar - Status */}
+        {/* Left Sidebar - Status & Operations */}
         <aside className="cockpit-sidebar">
           {/* System Status Panel */}
           <div className="cockpit-panel p-3 md:p-4">
@@ -76,12 +77,61 @@ export default async function Dashboard() {
                 <span className="cockpit-text text-xs">HHF-AI</span>
                 <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="cockpit-text text-xs">SynthScan™</span>
+                <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Operations Panel */}
+          <div className="cockpit-panel p-3 md:p-4 mt-3">
+            <div className="mb-3 border-b border-[var(--keyline-primary)] pb-2">
+              <div className="cockpit-label text-[10px] uppercase tracking-wider">
+                QUICK OPERATIONS
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Link 
+                href="/submit" 
+                className="cockpit-lever block w-full text-center py-2 px-3 text-xs border-2 border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors"
+              >
+                ✎ SUBMIT CONTRIBUTION
+              </Link>
+              <Link 
+                href="/onboarding" 
+                className="cockpit-lever block w-full text-center py-2 px-3 text-xs border-2 border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors"
+              >
+                📚 ONBOARDING
+              </Link>
             </div>
           </div>
         </aside>
 
         {/* Central Instrument Cluster */}
         <main className="cockpit-main">
+          {/* Cockpit Header Panel - Contributor Identity */}
+          <div className="cockpit-panel border-l-4 border-[var(--hydrogen-amber)] p-4 md:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex-1">
+                <div className="cockpit-label mb-2 flex items-center gap-2">
+                  <span className="text-[var(--hydrogen-amber)]">◎</span>
+                  CONTRIBUTOR COCKPIT
+                </div>
+                <h1 className="cockpit-title mb-2 text-2xl md:text-3xl">Proof-of-Contribution Station</h1>
+                <p className="cockpit-text opacity-80 text-sm">
+                  Submit, evaluate, and anchor contributions to the Syntheverse protocol. All records are verifiable and permanent on Base Mainnet.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <BootSequenceIndicators />
+              </div>
+            </div>
+            <div className="cockpit-text mt-3 border-t border-[var(--keyline-primary)] pt-3 text-xs opacity-60">
+              FRACTIAI RESEARCH TEAM · PROTOCOL OPERATOR REFERENCE CLIENT
+            </div>
+          </div>
+
           {/* Core Instrument Panel - Reactor Core */}
           <ReactorCore />
 
@@ -109,8 +159,11 @@ export default async function Dashboard() {
             
             <div className="space-y-3">
               <div>
+                <div className="cockpit-label text-[8px] uppercase tracking-wider opacity-60 mb-1">
+                  OPERATOR
+                </div>
                 <div className="cockpit-title text-lg md:text-xl">{displayName.toUpperCase()}</div>
-                <div className="cockpit-text mt-1.5 text-xs leading-relaxed">
+                <div className="cockpit-text mt-1.5 text-xs leading-relaxed opacity-80">
                   FractiAI reference client for Syntheverse protocol. Records are verifiable and permanent.
                 </div>
               </div>
@@ -128,15 +181,42 @@ export default async function Dashboard() {
                 PROTOCOL INFO
               </div>
             </div>
-            <div className="space-y-1.5 text-xs">
-              <div className="cockpit-text text-[10px]">
-                <strong>Status:</strong> Public Protocol
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="cockpit-text text-[10px]">Status:</span>
+                <span className="cockpit-text text-[10px] font-mono text-[var(--hydrogen-amber)]">PUBLIC</span>
               </div>
-              <div className="cockpit-text text-[10px]">
-                <strong>Client:</strong> FractiAI Reference
+              <div className="flex items-center justify-between">
+                <span className="cockpit-text text-[10px]">Client:</span>
+                <span className="cockpit-text text-[10px] font-mono">FRACTIAI</span>
               </div>
-              <div className="cockpit-text text-[10px]">
-                <strong>Network:</strong> Base Mainnet
+              <div className="flex items-center justify-between">
+                <span className="cockpit-text text-[10px]">Network:</span>
+                <span className="cockpit-text text-[10px] font-mono text-green-400">BASE MAINNET</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="cockpit-text text-[10px]">Chain ID:</span>
+                <span className="cockpit-text text-[10px] font-mono">8453</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Genesis Info */}
+          <div className="cockpit-panel p-3 md:p-4 mt-3">
+            <div className="mb-3 border-b border-[var(--keyline-primary)] pb-2">
+              <div className="cockpit-label text-[10px] uppercase tracking-wider">
+                GENESIS STATUS
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <div className="cockpit-text text-[10px] leading-tight">
+                <strong>SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026.
+              </div>
+              <div className="cockpit-text text-[10px] leading-tight opacity-80">
+                Submission deadline: March 19, 2026
+              </div>
+              <div className="mt-2 pt-2 border-t border-[var(--keyline-primary)]">
+                <GenesisButton />
               </div>
             </div>
           </div>

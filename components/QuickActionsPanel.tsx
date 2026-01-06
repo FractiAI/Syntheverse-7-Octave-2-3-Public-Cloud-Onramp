@@ -19,7 +19,7 @@ export function QuickActionsPanel({
   showContributorDashboard = false,
 }: QuickActionsPanelProps) {
   return (
-    <div className="cockpit-quick-actions-panel" style={{ display: 'block', visibility: 'visible' }}>
+    <div className="cockpit-quick-actions-panel">
       <div className="cockpit-panel p-3">
         <div className="mb-2 border-b border-[var(--keyline-primary)] pb-2">
           <div className="cockpit-label text-[10px] uppercase tracking-wider">
