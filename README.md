@@ -97,9 +97,11 @@ cp .env.example .env.local
 # 2. supabase/migrations/20250121000002_add_welcome_post.sql (adds welcome post)
 # 3. supabase/migrations/add_synthchat_production.sql (creates chat tables)
 #
-# Also create blog-images storage bucket:
+# Also create storage buckets:
 # - Go to Supabase Dashboard → Storage → New Bucket
-# - Name: blog-images, Public: Yes, Size limit: 5MB, MIME types: any
+# - blog-images: Public: Yes, Size limit: 5MB, MIME types: image/*
+# - chat-images: Public: Yes, Size limit: 10MB, MIME types: image/*
+# - chat-files: Public: Yes, Size limit: 20MB, MIME types: application/pdf
 
 # Run development server
 npm run dev
@@ -717,6 +719,7 @@ Built for the Syntheverse ecosystem with ❤️
 - **v2.11** (January 2025): Scoring Formula Fix & Transparency Improvements - Fixed critical scoring formula violation to match published formula `Final = (Composite × (1 - penalty%/100)) × bonus_multiplier`. Added comprehensive score trace block showing all intermediate values (composite, overlap, penalty computed/applied, bonus computed/applied, final score). Added Beta/Mode banners to submission form and scoring page clarifying current text-only mode (4k chars) vs planned PDF pipeline, and fee structure by mode. Added sweet spot clarification documenting 14.2% is tuned for "edge novelty" vs "ecosystem synthesis". See [`MAREK_FEEDBACK_G_M_IMPLEMENTATION.md`](MAREK_FEEDBACK_G_M_IMPLEMENTATION.md) for details.
 - **v2.10** (January 2025): SynthScan Prompt Transformation - Hardened system prompt with deterministic scoring contract, versioned config IDs, sandbox context tracking, mandatory PoD composition breakdown, fixed redundancy reporting (one source of truth), exposed sweet spot parameters, archive similarity distribution with percentile and neighbor statistics, fixed Module 12 documentation mismatch, and testing protocol for scientific validation. See [`SYNTHSCAN_PROMPT_TRANSFORMATION.md`](SYNTHSCAN_PROMPT_TRANSFORMATION.md) for details.
 - **v2.9** (January 2025): Simplified Sales Tracking & Sandbox Selector - Simplified SalesTracking component to show only essential metrics (Total Revenue, This Month, Last Month) with expandable details section. Added SandboxSelector component to dashboard with Syntheverse as default and enterprise sandboxes nested within. Sales tracking restricted to creator/operator dashboard only. Sandbox selector includes search and filter by subscription tier capabilities.
+- **v2.9** (January 2025): SynthChat File Uploads - Added image and PDF upload support to SynthChat. Users can upload images (max 10MB) and PDFs (max 20MB) directly in chat messages. Files are stored in Supabase Storage (chat-images and chat-files buckets), displayed inline for images and as download links for PDFs. Upload preview allows users to see files before sending and remove them if needed. Files are embedded as markdown in messages for compatibility.
 - **v2.8** (January 2025): SynthChat WhatsApp-Style Interface - Redesigned SynthChat with WhatsApp-style mobile interface featuring two-panel layout (sandbox list + chat view), connect/disconnect functionality, chat navigator with filtering (All/Connected/Available), embedded mode in Creator Dashboard, message bubbles with timestamps, last message preview, and participant tracking. Database schema includes chat_rooms, chat_messages, and chat_participants tables with Row Level Security policies.
 - **v2.7** (January 2025): Sales Tracking & Activity Stats - Added comprehensive sales tracking dashboard with revenue, subscription, payment, and customer analytics. Added activity stats dashboard tracking page activity, new users, submissions, chat sessions, and problems reported. Both dashboards are accessible to operators and creators with auto-refresh capabilities. Sales tracking integrates with Stripe API and database records for real-time analytics.
 - **v2.6** (January 2025): Creator Dashboard - Creator-controlled destructive operations for PoC archive management and user administration. Includes PoC archive reset (hard mode), user deletion (hard mode), operator role management, and complete audit logging. Creator-only access (info@fractiai.com) with server-side permission enforcement and safeguards.
