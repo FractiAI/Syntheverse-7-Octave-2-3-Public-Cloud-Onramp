@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { db } from '@/utils/db';
+import { db } from '@/utils/db/db';
 import { enterpriseSandboxesTable, sandboxMetricsTable } from '@/utils/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { calculatePricing } from '@/utils/enterprise/synth-pricing';

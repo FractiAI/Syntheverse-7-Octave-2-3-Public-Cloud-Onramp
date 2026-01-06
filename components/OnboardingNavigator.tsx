@@ -2384,7 +2384,7 @@ export function OnboardingNavigator() {
                 </p>
                 <Link href="/fractiai/enterprise-dashboard">
                   <button className="cockpit-lever border-purple-500/50 bg-transparent text-sm">
-                    Get Worldbuilding Creator & Enterprise Dashboard
+                    Get Creator/Enterprise Dashboard
                     <ArrowRight className="ml-2 inline h-4 w-4" />
                   </button>
                 </Link>

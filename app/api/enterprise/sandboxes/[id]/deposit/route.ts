@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { db } from '@/utils/db';
+import { db } from '@/utils/db/db';
 import { enterpriseSandboxesTable, sandboxSynthTransactionsTable } from '@/utils/db/schema';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';

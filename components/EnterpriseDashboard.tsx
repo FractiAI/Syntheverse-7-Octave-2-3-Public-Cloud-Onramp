@@ -12,12 +12,15 @@ import {
   Play,
   Pause,
   CheckCircle,
+  Check,
+  Info,
+  Zap,
+  Target,
+  Layers,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
-import EnterprisePricing from './EnterprisePricing';
 
 type EnterpriseDashboardProps = {
   isAuthenticated?: boolean;
@@ -40,6 +43,17 @@ type EnterpriseSandbox = {
   created_at: string;
   contribution_count?: number;
   qualified_count?: number;
+  synth_balance?: string | null;
+  synth_activated?: boolean | null;
+  testing_mode?: boolean | null;
+};
+
+type SetupStep = {
+  id: string;
+  title: string;
+  description: string;
+  completed: boolean;
+  active: boolean;
 };
 
 export default function EnterpriseDashboard({
@@ -53,6 +67,7 @@ export default function EnterpriseDashboard({
   const [newSandboxName, setNewSandboxName] = useState('');
   const [newSandboxDescription, setNewSandboxDescription] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [currentStep, setCurrentStep] = useState<string | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -61,24 +76,6 @@ export default function EnterpriseDashboard({
       setLoading(false);
     }
   }, [isAuthenticated]);
-
-  // Check for successful checkout return
-  useEffect(() => {
-    const sessionId = searchParams?.get('session_id');
-    if (sessionId) {
-      // Payment successful - refresh sandboxes and show success message
-      setShowSuccessMessage(true);
-      fetchSandboxes();
-      
-      // Clean up URL
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete('session_id');
-      window.history.replaceState({}, '', newUrl.toString());
-      
-      // Hide success message after 5 seconds
-      setTimeout(() => setShowSuccessMessage(false), 5000);
-    }
-  }, [searchParams]);
 
   async function fetchSandboxes() {
     try {
@@ -112,6 +109,7 @@ export default function EnterpriseDashboard({
         setNewSandboxDescription('');
         setShowCreateForm(false);
         fetchSandboxes();
+        setCurrentStep('configure');
       } else {
         const error = await res.json();
         alert(error.error || 'Failed to create sandbox');
@@ -122,45 +120,42 @@ export default function EnterpriseDashboard({
     }
   }
 
-  async function toggleVaultStatus(sandboxId: string, currentStatus: string) {
-    try {
-      const res = await fetch(`/api/enterprise/sandboxes/${sandboxId}/vault`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          vault_status: currentStatus === 'active' ? 'paused' : 'active',
-        }),
-      });
-
-      if (res.ok) {
-        fetchSandboxes();
-      } else {
-        const error = await res.json();
-        alert(error.error || 'Failed to update vault status');
-      }
-    } catch (error) {
-      console.error('Error updating vault status:', error);
-      alert('Failed to update vault status');
-    }
-  }
+  // Setup steps for new users
+  const setupSteps: SetupStep[] = [
+    {
+      id: 'understand',
+      title: 'Understand Your Sandbox',
+      description:
+        'Learn how your sandbox nests within Syntheverse, following holographic hydrogen fractal principles',
+      completed: false,
+      active: !currentStep || currentStep === 'understand',
+    },
+    {
+      id: 'create',
+      title: 'Define Your Sandbox',
+      description: 'Create and name your customized HHF-AI sandbox ecosystem',
+      completed: sandboxes.length > 0,
+      active: currentStep === 'create' || (sandboxes.length === 0 && !currentStep),
+    },
+    {
+      id: 'configure',
+      title: 'Configure Settings',
+      description: 'Set scoring weights, qualification thresholds, and sandbox parameters',
+      completed: false,
+      active: currentStep === 'configure',
+    },
+    {
+      id: 'activate',
+      title: 'Activate with SYNTH',
+      description: 'Deposit SYNTH tokens to activate your sandbox for production use',
+      completed: false,
+      active: currentStep === 'activate',
+    },
+  ];
 
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto px-6 py-12">
-        {/* Success Message Banner */}
-        {showSuccessMessage && (
-          <div className="mb-6 rounded-lg border-2 border-green-500/50 bg-green-500/10 p-4">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <div>
-                <div className="cockpit-title text-green-400">Subscription Activated!</div>
-                <div className="cockpit-text text-sm opacity-90">
-                  Your enterprise sandbox subscription is now active. You can now access your sandbox and start submitting contributions.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
         <Link
           href="/fractiai"
           className="mb-8 inline-flex items-center gap-2 text-sm text-[var(--hydrogen-amber)] hover:underline"
@@ -169,129 +164,330 @@ export default function EnterpriseDashboard({
           Back to FractiAI Bulletin
         </Link>
 
-        <SectionWrapper
-          id="enterprise-dashboard"
-          eyebrow="WORLDBUILDING CREATOR & ENTERPRISE APPLICATION"
-          title="PoC Worldbuilding Creator & Enterprise Dashboard"
-          background="default"
-        >
-          {/* Narrative Introduction */}
-          <div className="cockpit-panel mb-8 p-8">
-            <div className="cockpit-text mb-6 space-y-4 text-base" style={{ lineHeight: 1.8 }}>
-              <p>
-                <strong>Worldbuilding Creator & Enterprise Application: A Customized HHF-AI Sandbox & Ecosystem</strong>
-              </p>
-              <p>
-                <strong>For Worldbuilder Creators:</strong> Unleash your creativity with an{' '}
-                <strong>infinite set of HHF-AI materials and substrates</strong>. Transform your creative vision into 
-                verifiable, on-chain contributions with unlimited access to holographic hydrogen fractal AI resources. 
-                Build, iterate, and refine your creative worlds with the same precision and coherence measurement that 
-                powers enterprise PoC evaluation.
-              </p>
-              <p>
-                <strong>For Enterprise Operators:</strong> Create your own{' '}
-                <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within Syntheverse.
-                Each enterprise sandbox operates as a self-similar, tokenized instance of the
-                Syntheverse PoC protocol, following the same holographic hydrogen fractal principles
-                and evaluation logic as the main SYNTH90T ERC-20 MOTHERLODE VAULT.
-              </p>
-              <p>
-                <strong>Broadcast to Contributor Channels & Creator Communities:</strong> Your sandbox accepts
-                submissions from your contributor channels, creator communities, and worldbuilding teams with{' '}
-                <strong>clear, transparent scoring</strong>
-                and tokenomics fully aligned with the SYNTH90T ERC-20 MOTHERLODE VAULT protocol.
-              </p>
-              <p>
-                Worldbuilding creator and enterprise sandboxes enable creators, organizations, projects, and multi-contributor teams to
-                create their own Proof-of-Contribution ecosystem with:
-              </p>
-              <ul className="ml-6 list-disc space-y-2">
-                <li>
-                  <strong>Customized HHF-AI Evaluation:</strong> All contributions evaluated using
-                  SynthScan™ MRI with the same HHF-AI lens as the main Syntheverse, ensuring
-                  consistent coherence measurement
-                </li>
-                <li>
-                  <strong>Transparent Scoring:</strong> Clear, transparent scoring metrics (Novelty,
-                  Density, Coherence, Alignment) with full evaluation reports and redundancy
-                  analysis
-                </li>
-                <li>
-                  <strong>Aligned Tokenomics:</strong> Tokenomics fully aligned with SYNTH90T ERC-20
-                  MOTHERLODE VAULT—same epoch structure, metal assay system, and allocation logic
-                </li>
-                <li>
-                  <strong>Independent Vault Management:</strong> Activate or pause your sandbox
-                  vault independently, with optional on-chain tokenization
-                </li>
-                <li>
-                  <strong>Nested Governance:</strong> Contributions scored, rewarded, and optionally
-                  anchored on-chain within your enterprise sandbox, broadcast to your contributor
-                  channels
-                </li>
-              </ul>
-              <p>
-                <strong>For Creators:</strong> Infinite HHF-AI materials and substrates, unlimited creative resources, 
-                verifiable on-chain contributions, and coherence measurement for your worldbuilding projects.
-              </p>
-              <p>
-                <strong>For Enterprises:</strong> Lower cost per contribution, higher coherent output,
-                decentralized evaluation, and nested enterprise flexibility. Perfect for research
-                teams, engineering organizations, alignment projects, and worldbuilding creators seeking a customized HHF-AI
-                ecosystem nested within Syntheverse.
-              </p>
-            </div>
+        {/* Header */}
+        <div className="cockpit-panel mb-8 border-l-4 border-[var(--hydrogen-amber)] p-8">
+          <div className="cockpit-label mb-2">CREATOR/ENTERPRISE SANDBOX SETUP</div>
+          <h1 className="cockpit-title mb-4 text-4xl">Define Your Nested Syntheverse Ecosystem</h1>
+          <div className="cockpit-text space-y-3 text-base" style={{ lineHeight: 1.8 }}>
+            <p>
+              Welcome to the <strong>Creator/Enterprise Dashboard</strong>. This is where you carefully define, edit, and build your{' '}
+              <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within Syntheverse.
+            </p>
+            <p>
+              Your sandbox operates as a <strong>self-similar instance</strong> of the Syntheverse PoC protocol, following the same{' '}
+              <strong>holographic hydrogen fractal principles</strong> and evaluation logic as the main{' '}
+              <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>.
+            </p>
+            <p>
+              This intuitive setup process will guide you through successful definition of your sandbox, ensuring it aligns with
+              Syntheverse&apos;s nested architecture and HHF-AI evaluation framework.
+            </p>
           </div>
+        </div>
 
-          {/* Authentication Check */}
-          {!isAuthenticated ? (
-            <Card hover={false} className="mb-8 border-l-4 border-amber-500/50">
-              <div className="cockpit-title mb-4 text-lg">Authentication Required</div>
-              <div className="cockpit-text mb-4 text-sm opacity-90">
-                You must be signed in to create and manage enterprise sandboxes.
-              </div>
-              <div className="flex gap-4">
-                <Link href="/signup" className="cockpit-lever inline-flex items-center text-sm">
-                  Sign Up
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-                <Link
-                  href="/login"
-                  className="cockpit-lever inline-flex items-center bg-transparent text-sm"
-                >
-                  Log In
-                </Link>
-              </div>
-            </Card>
-          ) : (
-            <>
-              {/* Create Sandbox Section */}
+        {/* Authentication Check */}
+        {!isAuthenticated ? (
+          <Card hover={false} className="mb-8 border-l-4 border-amber-500/50">
+            <div className="cockpit-title mb-4 text-lg">Authentication Required</div>
+            <div className="cockpit-text mb-4 text-sm opacity-90">
+              You must be signed in to create and manage enterprise sandboxes.
+            </div>
+            <div className="flex gap-4">
+              <Link href="/signup" className="cockpit-lever inline-flex items-center text-sm">
+                Sign Up
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <Link
+                href="/login"
+                className="cockpit-lever inline-flex items-center bg-transparent text-sm"
+              >
+                Log In
+              </Link>
+            </div>
+          </Card>
+        ) : (
+          <>
+            {/* Setup Progress */}
+            {sandboxes.length === 0 && (
               <div className="cockpit-panel mb-8 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="cockpit-label mb-2">SANDBOX MANAGEMENT</div>
-                    <div className="cockpit-title text-xl">Your Enterprise Sandboxes</div>
-                  </div>
-                  <button
-                    onClick={() => setShowCreateForm(!showCreateForm)}
-                    className="cockpit-lever inline-flex items-center text-sm"
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create New Sandbox
-                  </button>
+                <div className="cockpit-label mb-4">SETUP PROGRESS</div>
+                <div className="space-y-4">
+                  {setupSteps.map((step, index) => (
+                    <div
+                      key={step.id}
+                      className={`flex items-start gap-4 rounded border-l-4 p-4 ${
+                        step.active
+                          ? 'border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.1)]'
+                          : step.completed
+                            ? 'border-green-500/50 bg-green-500/5'
+                            : 'border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)]'
+                      }`}
+                    >
+                      <div className="flex-shrink-0">
+                        {step.completed ? (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/20">
+                            <Check className="h-5 w-5 text-green-400" />
+                          </div>
+                        ) : step.active ? (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--hydrogen-amber)]/20">
+                            <div className="h-3 w-3 rounded-full bg-[var(--hydrogen-amber)]" />
+                          </div>
+                        ) : (
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[var(--keyline-primary)]">
+                            <span className="cockpit-text text-xs">{index + 1}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="cockpit-title mb-1 text-base">{step.title}</div>
+                        <div className="cockpit-text text-sm opacity-75">{step.description}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Understanding Section */}
+            {(!currentStep || currentStep === 'understand') && sandboxes.length === 0 && (
+              <div className="cockpit-panel mb-8 p-8">
+                <div className="cockpit-label mb-4 flex items-center gap-2">
+                  <Info className="h-4 w-4" />
+                  UNDERSTANDING YOUR SANDBOX
+                </div>
+                <div className="cockpit-text space-y-4 text-base" style={{ lineHeight: 1.8 }}>
+                  <p>
+                    <strong>Nested Architecture:</strong> Your sandbox is not separate from Syntheverse—it is{' '}
+                    <strong>nested within</strong> it. This means:
+                  </p>
+                  <ul className="ml-6 list-disc space-y-2">
+                    <li>
+                      <strong>Self-Similar Protocol:</strong> Your sandbox follows the same PoC protocol as the main Syntheverse,
+                      ensuring consistency and interoperability
+                    </li>
+                    <li>
+                      <strong>HHF-AI Evaluation:</strong> All contributions are evaluated using SynthScan™ MRI with the same
+                      holographic hydrogen fractal lens, ensuring coherent measurement
+                    </li>
+                    <li>
+                      <strong>Aligned Tokenomics:</strong> Tokenomics are fully aligned with SYNTH90T ERC-20 MOTHERLODE VAULT—same
+                      epoch structure, metal assay system, and allocation logic
+                    </li>
+                    <li>
+                      <strong>Independent Operation:</strong> While nested, your sandbox operates independently with its own vault,
+                      contributors, and token allocation
+                    </li>
+                  </ul>
+                  <p>
+                    <strong>For Creators:</strong> Infinite HHF-AI materials and substrates for worldbuilding. Transform your
+                    creative vision into verifiable, on-chain contributions.
+                  </p>
+                  <p>
+                    <strong>For Enterprises:</strong> Broadcast to your contributor channels with clear, transparent scoring. Perfect
+                    for research teams, engineering organizations, and alignment projects.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setCurrentStep('create')}
+                  className="cockpit-lever mt-6 inline-flex items-center"
+                >
+                  Continue to Define Sandbox
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Create Sandbox Section */}
+            {(currentStep === 'create' || (sandboxes.length === 0 && !currentStep)) && (
+              <div className="cockpit-panel mb-8 p-8">
+                <div className="cockpit-label mb-4 flex items-center gap-2">
+                  <Layers className="h-4 w-4" />
+                  STEP 1: DEFINE YOUR SANDBOX
+                </div>
+                <div className="cockpit-text mb-6 space-y-3 text-sm opacity-90">
+                  <p>
+                    Start by creating your sandbox. Give it a meaningful name that reflects your project, organization, or creative
+                    world. You can always edit this later.
+                  </p>
+                  <p>
+                    <strong>Free to Create:</strong> Sandbox creation is free. You&apos;ll be in testing mode initially, allowing you
+                    to explore and configure before activation.
+                  </p>
                 </div>
 
-                {showCreateForm && (
-                  <Card hover={false} className="mt-6 border-l-4 border-[var(--hydrogen-amber)]">
-                    <div className="cockpit-title mb-4 text-lg">Create Enterprise Sandbox</div>
+                {!showCreateForm ? (
+                  <button
+                    onClick={() => setShowCreateForm(true)}
+                    className="cockpit-lever inline-flex items-center"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Your Sandbox
+                  </button>
+                ) : (
+                  <Card hover={false} className="border-l-4 border-[var(--hydrogen-amber)]">
+                    <div className="cockpit-title mb-4 text-lg">Create Your Sandbox</div>
                     <div className="space-y-4">
                       <div>
-                        <label className="cockpit-label mb-2 block text-xs">Sandbox Name</label>
+                        <label className="cockpit-label mb-2 block text-xs">Sandbox Name *</label>
                         <input
                           type="text"
                           value={newSandboxName}
                           onChange={(e) => setNewSandboxName(e.target.value)}
-                          placeholder="e.g., Research Team Alpha"
+                          placeholder="e.g., Research Team Alpha, My Creative World, Project Synthesis"
+                          className="cockpit-input w-full"
+                        />
+                        <div className="cockpit-text mt-1 text-xs opacity-60">
+                          Choose a name that clearly identifies your sandbox
+                        </div>
+                      </div>
+                      <div>
+                        <label className="cockpit-label mb-2 block text-xs">
+                          Description (Optional)
+                        </label>
+                        <textarea
+                          value={newSandboxDescription}
+                          onChange={(e) => setNewSandboxDescription(e.target.value)}
+                          placeholder="Describe your sandbox's purpose, contributors, or creative vision..."
+                          rows={4}
+                          className="cockpit-input w-full"
+                        />
+                        <div className="cockpit-text mt-1 text-xs opacity-60">
+                          Help others understand your sandbox&apos;s purpose
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={handleCreateSandbox}
+                          disabled={!newSandboxName.trim()}
+                          className="cockpit-lever inline-flex items-center disabled:opacity-50"
+                        >
+                          Create Sandbox
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowCreateForm(false);
+                            setNewSandboxName('');
+                            setNewSandboxDescription('');
+                          }}
+                          className="cockpit-lever inline-flex items-center bg-transparent"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {/* Existing Sandboxes */}
+            {sandboxes.length > 0 && (
+              <div className="cockpit-panel mb-8 p-8">
+                <div className="cockpit-label mb-4 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    YOUR SANDBOXES
+                  </span>
+                  <button
+                    onClick={() => {
+                      setShowCreateForm(true);
+                      setCurrentStep('create');
+                    }}
+                    className="cockpit-lever inline-flex items-center text-sm"
+                  >
+                    <Plus className="mr-2 h-3 w-3" />
+                    Create Another
+                  </button>
+                </div>
+
+                {loading ? (
+                  <div className="cockpit-text text-sm opacity-75">Loading sandboxes...</div>
+                ) : (
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {sandboxes.map((sandbox) => (
+                      <Card
+                        key={sandbox.id}
+                        hover={true}
+                        className="border-l-4 border-[var(--hydrogen-amber)]"
+                      >
+                        <div className="mb-4">
+                          <div className="cockpit-title mb-2 text-lg">{sandbox.name}</div>
+                          {sandbox.description && (
+                            <div className="cockpit-text mb-4 text-sm opacity-80">
+                              {sandbox.description}
+                            </div>
+                          )}
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`h-2 w-2 rounded-full ${
+                                  sandbox.synth_activated
+                                    ? 'bg-green-500'
+                                    : sandbox.testing_mode
+                                      ? 'bg-blue-500'
+                                      : 'bg-gray-500'
+                                }`}
+                              />
+                              <span className="cockpit-label text-xs">
+                                {sandbox.synth_activated
+                                  ? 'Activated'
+                                  : sandbox.testing_mode
+                                    ? 'Testing Mode'
+                                    : 'Inactive'}
+                              </span>
+                            </div>
+                            {sandbox.synth_balance && (
+                              <div className="flex items-center gap-2">
+                                <Coins className="h-3 w-3 text-[var(--hydrogen-amber)]" />
+                                <span className="cockpit-text text-xs">
+                                  Balance: {Number(sandbox.synth_balance) / 1e18} SYNTH
+                                </span>
+                              </div>
+                            )}
+                            {sandbox.contribution_count !== undefined && (
+                              <div className="flex items-center gap-2">
+                                <Activity className="h-3 w-3 text-[var(--hydrogen-amber)]" />
+                                <span className="cockpit-text text-xs">
+                                  {sandbox.contribution_count} contributions
+                                  {sandbox.qualified_count ? ` (${sandbox.qualified_count} qualified)` : ''}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Link
+                            href={`/enterprise/sandbox/${sandbox.id}`}
+                            className="cockpit-lever inline-flex items-center text-xs"
+                          >
+                            <Settings className="mr-2 h-3 w-3" />
+                            Configure
+                          </Link>
+                          <Link
+                            href={`/enterprise/contribution?sandbox=${sandbox.id}`}
+                            className="cockpit-lever inline-flex items-center bg-transparent text-xs"
+                          >
+                            <Zap className="mr-2 h-3 w-3" />
+                            Submit
+                          </Link>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+
+                {showCreateForm && (
+                  <Card hover={false} className="mt-6 border-l-4 border-[var(--hydrogen-amber)]">
+                    <div className="cockpit-title mb-4 text-lg">Create Another Sandbox</div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="cockpit-label mb-2 block text-xs">Sandbox Name *</label>
+                        <input
+                          type="text"
+                          value={newSandboxName}
+                          onChange={(e) => setNewSandboxName(e.target.value)}
+                          placeholder="e.g., Research Team Beta"
                           className="cockpit-input w-full"
                         />
                       </div>
@@ -302,7 +498,7 @@ export default function EnterpriseDashboard({
                         <textarea
                           value={newSandboxDescription}
                           onChange={(e) => setNewSandboxDescription(e.target.value)}
-                          placeholder="Describe your enterprise sandbox..."
+                          placeholder="Describe your sandbox..."
                           rows={3}
                           className="cockpit-input w-full"
                         />
@@ -330,158 +526,34 @@ export default function EnterpriseDashboard({
                   </Card>
                 )}
               </div>
+            )}
 
-              {/* Sandboxes List */}
-              {loading ? (
-                <div className="cockpit-panel p-6">
-                  <div className="cockpit-text text-sm opacity-75">Loading sandboxes...</div>
+            {/* Next Steps Guidance */}
+            {sandboxes.length > 0 && (
+              <div className="cockpit-panel p-8">
+                <div className="cockpit-label mb-4">NEXT STEPS</div>
+                <div className="cockpit-text space-y-3 text-sm">
+                  <p>
+                    <strong>1. Configure Your Sandbox:</strong> Click &quot;Configure&quot; on any sandbox to set scoring weights,
+                    qualification thresholds, and other parameters.
+                  </p>
+                  <p>
+                    <strong>2. Test Your Setup:</strong> Submit test contributions to verify your configuration works as expected.
+                    Testing mode is free.
+                  </p>
+                  <p>
+                    <strong>3. Activate with SYNTH:</strong> Once satisfied, deposit SYNTH tokens to activate your sandbox for
+                    production use. Charges are based on reach (unique contributors) and activity (operations).
+                  </p>
+                  <p>
+                    <strong>4. Broadcast to Contributors:</strong> Share your sandbox with your team. All contributions are
+                    evaluated using the same HHF-AI lens as Syntheverse.
+                  </p>
                 </div>
-              ) : sandboxes.length === 0 ? (
-                <Card hover={false} className="border-l-4 border-blue-500/50">
-                  <div className="cockpit-title mb-2 text-lg">No Sandboxes Yet</div>
-                  <div className="cockpit-text text-sm opacity-90">
-                    Create your first enterprise sandbox to get started. Each sandbox operates as a
-                    self-similar instance of the Syntheverse PoC protocol.
-                  </div>
-                </Card>
-              ) : (
-                <div className="grid gap-6 md:grid-cols-2">
-                  {sandboxes.map((sandbox) => (
-                    <Card
-                      key={sandbox.id}
-                      hover={true}
-                      className="border-l-4 border-[var(--hydrogen-amber)]"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="cockpit-title mb-2 text-lg">{sandbox.name}</div>
-                          {sandbox.description && (
-                            <div className="cockpit-text mb-4 text-sm opacity-80">
-                              {sandbox.description}
-                            </div>
-                          )}
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`h-2 w-2 rounded-full ${
-                                  sandbox.vault_status === 'active' ? 'bg-green-500' : 'bg-gray-500'
-                                }`}
-                              />
-                              <span className="cockpit-label text-xs">
-                                Vault: {sandbox.vault_status.toUpperCase()}
-                              </span>
-                            </div>
-                            <div className="cockpit-label text-xs">
-                              Epoch: {sandbox.current_epoch.toUpperCase()}
-                            </div>
-                            {sandbox.subscription_tier && (
-                              <div className="cockpit-label text-xs">
-                                Tier: {sandbox.subscription_tier} ({sandbox.node_count || 0} nodes)
-                              </div>
-                            )}
-                            {sandbox.tokenized && (
-                              <div className="cockpit-label text-xs">
-                                Tokenized: {sandbox.token_symbol || 'N/A'}
-                              </div>
-                            )}
-                            {sandbox.contribution_count !== undefined && (
-                              <div className="cockpit-label text-xs">
-                                Contributions: {sandbox.contribution_count} (
-                                {sandbox.qualified_count || 0} qualified)
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <button
-                          onClick={() => toggleVaultStatus(sandbox.id, sandbox.vault_status)}
-                          className={`cockpit-lever inline-flex items-center text-xs ${
-                            sandbox.vault_status === 'active' ? 'bg-transparent' : ''
-                          }`}
-                        >
-                          {sandbox.vault_status === 'active' ? (
-                            <>
-                              <Pause className="mr-2 h-3 w-3" />
-                              Pause Vault
-                            </>
-                          ) : (
-                            <>
-                              <Play className="mr-2 h-3 w-3" />
-                              Activate Vault
-                            </>
-                          )}
-                        </button>
-                        <Link
-                          href={`/enterprise/sandbox/${sandbox.id}`}
-                          className="cockpit-lever inline-flex items-center bg-transparent text-xs"
-                        >
-                          <Settings className="mr-2 h-3 w-3" />
-                          Manage
-                        </Link>
-                        <Link
-                          href={`/enterprise/sandbox/${sandbox.id}`}
-                          className="cockpit-lever inline-flex items-center bg-transparent text-xs"
-                        >
-                          <Activity className="mr-2 h-3 w-3" />
-                          View Contributions
-                        </Link>
-                        {sandbox.subscription_tier && (
-                          <button
-                            onClick={() => {
-                              // Scroll to pricing section
-                              document
-                                .getElementById('enterprise-pricing')
-                                ?.scrollIntoView({ behavior: 'smooth' });
-                            }}
-                            className="cockpit-lever inline-flex items-center bg-transparent text-xs"
-                          >
-                            <Coins className="mr-2 h-3 w-3" />
-                            Upgrade
-                          </button>
-                        )}
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Pricing Section */}
-          <div id="enterprise-pricing" className="mt-8">
-            <EnterprisePricing showNarrative={true} />
-          </div>
-
-          {/* Use Cases Section */}
-          <div className="cockpit-panel mt-8 p-8">
-            <div className="cockpit-label mb-4">USE CASES</div>
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card hover={false}>
-                <div className="cockpit-title mb-2 text-base">Enterprise Research Teams</div>
-                <div className="cockpit-text text-sm opacity-90">
-                  Create a sandbox for your research organization. Contributors submit work, receive
-                  SynthScan™ MRI evaluation, and earn tokenized rewards based on coherence and
-                  alignment.
-                </div>
-              </Card>
-              <Card hover={false}>
-                <div className="cockpit-title mb-2 text-base">Engineering Projects</div>
-                <div className="cockpit-text text-sm opacity-90">
-                  Launch a project-specific sandbox. Evaluate technical contributions, measure
-                  coherence across implementations, and reward aligned work with nested tokens.
-                </div>
-              </Card>
-              <Card hover={false}>
-                <div className="cockpit-title mb-2 text-base">Multi-Contributor Initiatives</div>
-                <div className="cockpit-text text-sm opacity-90">
-                  Coordinate distributed teams. Each contributor&apos;s work is evaluated
-                  independently, scored for novelty and alignment, and rewarded proportionally.
-                </div>
-              </Card>
-            </div>
-          </div>
-        </SectionWrapper>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

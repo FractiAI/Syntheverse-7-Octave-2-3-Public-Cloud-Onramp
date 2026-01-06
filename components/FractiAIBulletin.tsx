@@ -184,23 +184,22 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 </div>
 
                 <div className="border-l-4 border-purple-500/50 bg-purple-500/5 p-4">
-                  <div className="cockpit-title mb-2 text-base">PoC Enterprise Dashboard</div>
+                  <div className="cockpit-title mb-2 text-base">Creator/Enterprise Dashboard</div>
                   <div className="cockpit-text text-sm opacity-90">
-                    Create a <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within
-                    Syntheverse. Broadcast to your contributor channels with{' '}
+                    Define and build your <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within
+                    Syntheverse. Carefully configure your sandbox with intuitive guidance, then broadcast to your contributor channels with{' '}
                     <strong>clear, transparent scoring</strong> and tokenomics aligned with the{' '}
                     <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>. Self-similar, tokenized, and
                     scalable.
                   </div>
                   <div className="cockpit-text mt-2 text-xs opacity-75">
-                    <strong>Pricing:</strong> Pioneer (5 nodes @ $500/node), Trading Post (20 nodes
-                    @ $400/node), Settlement (100 nodes @ $300/node), Metropolis (100+ @ $250/node)
+                    <strong>SYNTH Token-Based:</strong> Free to create and test. Activate with SYNTH tokens based on reach and activity.
                   </div>
                   <Link
                     href="/fractiai/enterprise-dashboard"
                     className="cockpit-lever mt-3 inline-flex items-center text-xs"
                   >
-                    Get Enterprise Dashboard
+                    Get Creator/Enterprise Dashboard
                     <ArrowRight className="ml-2 h-3 w-3" />
                   </Link>
                 </div>
@@ -916,7 +915,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   href="/fractiai/enterprise-dashboard"
                   className="cockpit-lever inline-flex items-center justify-center bg-transparent text-sm"
                 >
-                  Get PoC Enterprise Dashboard
+                  Get Creator/Enterprise Dashboard
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
