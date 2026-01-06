@@ -253,6 +253,14 @@ export async function evaluateWithGrok(
     similarity_score: number;
     closest_vectors: Array<{ hash: string; title: string; similarity: number; distance: number }>;
     analysis: string;
+    overlap_percentile?: number;
+    nearest_10_neighbors?: {
+      mean: number;
+      std_dev: number;
+      min: number;
+      max: number;
+    };
+    computation_context?: 'global' | 'per-user' | 'per-sandbox';
   } | null = null;
 
   if (isSeedSubmission) {

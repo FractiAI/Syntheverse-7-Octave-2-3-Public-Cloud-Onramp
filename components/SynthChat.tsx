@@ -82,6 +82,18 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const joinRoom = useCallback(async (roomId: string) => {
+    try {
+      await fetch('/api/synthchat/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room_id: roomId }),
+      });
+    } catch (error) {
+      console.error('Failed to join room:', error);
+    }
+  }, []);
+
   const fetchRooms = useCallback(async () => {
     setLoading(true);
     try {
@@ -129,7 +141,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
     } finally {
       setLoading(false);
     }
-  }, [currentRoom]);
+  }, [currentRoom, joinRoom]);
 
   const fetchMessages = useCallback(async () => {
     if (!currentRoom) return;
@@ -164,18 +176,6 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const joinRoom = useCallback(async (roomId: string) => {
-    try {
-      await fetch('/api/synthchat/rooms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room_id: roomId }),
-      });
-    } catch (error) {
-      console.error('Failed to join room:', error);
-    }
-  }, []);
 
   const handleRoomChange = async (room: ChatRoom) => {
     // If not connected, join first
