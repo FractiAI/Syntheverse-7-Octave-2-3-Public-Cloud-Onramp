@@ -10,6 +10,7 @@ import { eq, and } from 'drizzle-orm';
 import { getActivationFee, calculateReachTier, getMonthlyRent } from '@/utils/enterprise/synth-pricing';
 import { sql } from 'drizzle-orm';
 import crypto from 'crypto';
+import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,6 +54,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     const sandbox = sandboxes[0];
 
+    // Check if user is creator or operator
+    const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
+    
+    // Payment exemption: Creator bypasses all, Operator bypasses only their own sandboxes
+    // Note: The query already filters by operator, so if we get here, user is the operator
+    const isExemptFromPayment = isCreator || (isOperator && sandbox.operator === user.email);
+
     // Check if already activated
     if (sandbox.synth_activated) {
       return NextResponse.json({ error: 'Sandbox is already activated' }, { status: 400 });
@@ -62,10 +70,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     
     // Apply 5% discount if customer agrees to be a reference
     const referenceDiscount = agree_to_reference ? 0.05 : 0;
-    const activationFee = Math.floor(baseActivationFee * (1 - referenceDiscount));
+    const activationFee = isExemptFromPayment ? 0 : Math.floor(baseActivationFee * (1 - referenceDiscount));
 
-    // Check if amount is sufficient for activation
-    if (amount < activationFee) {
+    // Check if amount is sufficient for activation (skip for creator/operator)
+    if (!isExemptFromPayment && amount < activationFee) {
       return NextResponse.json(
         {
           error: `Insufficient amount. Activation requires ${activationFee} SYNTH tokens${referenceDiscount > 0 ? ` (with ${(referenceDiscount * 100).toFixed(0)}% reference discount)` : ''}`,
@@ -78,9 +86,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       );
     }
 
-    // Calculate new balance (deposit amount)
+    // Calculate new balance (deposit amount, or set to activation fee for exempt users)
     const balanceBefore = Number(sandbox.synth_balance || 0);
-    const balanceAfter = balanceBefore + amount;
+    const balanceAfter = isExemptFromPayment 
+      ? Math.max(balanceBefore, activationFee) // Set balance to at least activation fee for testing
+      : balanceBefore + amount;
 
     // Update sandbox: activate and update balance
     await db

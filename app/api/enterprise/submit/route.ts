@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 import Stripe from 'stripe';
 import { debug, debugError } from '@/utils/debug';
+import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,18 +44,71 @@ export async function POST(request: NextRequest) {
 
     const sandbox = sandboxes[0];
 
-    // Check if sandbox vault is active
-    if (sandbox.vault_status !== 'active') {
+    // Check if user is creator or operator
+    const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
+    
+    // Check if user is operator or has permission (for now, only operator can submit)
+    // TODO: Add contributor permissions system
+    // Creator can submit to any sandbox for testing
+    if (sandbox.operator !== user.email && !isCreator) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+
+    // Payment exemption: Creator bypasses all, Operator bypasses only their own sandboxes
+    const isExemptFromPayment = isCreator || (isOperator && sandbox.operator === user.email);
+
+    // Check if sandbox vault is active (unless creator/operator testing)
+    if (sandbox.vault_status !== 'active' && !isExemptFromPayment) {
       return NextResponse.json(
         { error: 'Sandbox vault is not active. Please activate the vault first.' },
         { status: 400 }
       );
     }
 
-    // Check if user is operator or has permission (for now, only operator can submit)
-    // TODO: Add contributor permissions system
-    if (sandbox.operator !== user.email) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    // If exempt from payment, skip Stripe checkout and directly evaluate
+    if (isExemptFromPayment) {
+      debug('EnterpriseSubmit', 'Creator/Operator mode: exempt from payment', {
+        email: user.email,
+        isCreator,
+        isOperator,
+        sandboxId: sandbox_id,
+      });
+
+      // Save submission directly with evaluating status
+      await db.insert(enterpriseContributionsTable).values({
+        submission_hash: submissionHash,
+        sandbox_id: sandbox_id,
+        title: title.trim(),
+        contributor: user.email,
+        content_hash: contentHash,
+        text_content: text_content,
+        category: category || null,
+        status: 'evaluating', // Direct to evaluation for creator/operator
+        metadata: {
+          payment_status: isCreator ? 'creator_exempt' : 'operator_exempt',
+          user_email: user.email,
+          submission_timestamp: new Date().toISOString(),
+          creator_mode: isCreator,
+          operator_mode: isOperator,
+        } as any,
+      });
+
+      // Trigger evaluation (async, don't wait)
+      const baseUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        process.env.NEXT_PUBLIC_WEBSITE_URL ||
+        'http://localhost:3000';
+      const evaluateUrl = `${baseUrl}/api/enterprise/evaluate/${submissionHash}`;
+      fetch(evaluateUrl, { method: 'POST' }).catch((err) => {
+        debugError('EnterpriseSubmit', 'Failed to trigger evaluation', err);
+      });
+
+      return NextResponse.json({
+        success: true,
+        submission_hash: submissionHash,
+        exempt: true,
+        message: 'Creator/Operator: Payment bypassed, evaluation started',
+      });
     }
 
     // Check if Stripe is configured
