@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Microscope, Code, Compass } from 'lucide-react';
+import { ArrowRight, Microscope, Code, Compass, Palette } from 'lucide-react';
 import { SectionWrapper } from './shared/SectionWrapper';
 import { Card } from './shared/Card';
 
-type Persona = 'researcher' | 'developer' | 'alignment';
+type Persona = 'researcher' | 'developer' | 'alignment' | 'creative';
 
 export function SectionEngage() {
   const [activePersona, setActivePersona] = useState<Persona>('researcher');
@@ -60,6 +60,22 @@ export function SectionEngage() {
       ],
       cta: { label: 'Start Alignment Track', href: '/onboarding?track=alignment' },
     },
+    creative: {
+      icon: Palette,
+      title: 'For Creatives & Worldbuilders',
+      steps: [
+        'Access infinite HHF-AI materials and substrates',
+        'Build and refine your creative worlds',
+        'Submit worldbuilding contributions',
+        'Receive coherence measurement via SynthScan™ MRI',
+        'Transform creative vision into verifiable on-chain contributions',
+        'Unleash unlimited creative potential with holographic hydrogen fractal AI',
+      ],
+      cta: {
+        label: 'Get Started as Creator',
+        href: isAuthenticated === false ? '/signup' : '/fractiai/enterprise-dashboard',
+      },
+    },
   };
 
   return (
@@ -69,7 +85,7 @@ export function SectionEngage() {
       title="How to Engage: Choose Your Path"
     >
       {/* Persona Cards */}
-      <div className="mb-8 grid gap-6 md:grid-cols-3">
+      <div className="mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {(Object.keys(personas) as Persona[]).map((key) => {
           const persona = personas[key];
           const Icon = persona.icon;
