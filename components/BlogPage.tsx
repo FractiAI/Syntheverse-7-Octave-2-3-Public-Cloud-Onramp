@@ -45,11 +45,18 @@ export function BlogPage({
   async function fetchPosts() {
     setLoading(true);
     try {
-      const url = sandboxId ? `/api/blog?sandbox_id=${sandboxId}&status=all` : '/api/blog?status=published';
+      // If user can create posts, show all statuses (including drafts)
+      // Otherwise, only show published posts
+      const statusParam = canCreate ? 'all' : 'published';
+      const url = sandboxId 
+        ? `/api/blog?sandbox_id=${sandboxId}&status=${statusParam}` 
+        : `/api/blog?status=${statusParam}`;
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         setPosts(data.posts || []);
+      } else {
+        console.error('Failed to fetch posts:', res.status, res.statusText);
       }
     } catch (error) {
       console.error('Error fetching blog posts:', error);
