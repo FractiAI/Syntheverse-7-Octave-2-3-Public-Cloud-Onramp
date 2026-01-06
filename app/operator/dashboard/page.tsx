@@ -14,6 +14,7 @@ import { SynthChat } from '@/components/SynthChat';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
 import { SystemBroadcastCenter } from '@/components/creator/SystemBroadcastCenter';
+import { SandboxSelector } from '@/components/SandboxSelector';
 import { Settings, Activity, FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -43,6 +44,14 @@ export default async function OperatorDashboard() {
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto space-y-6 px-6 py-8">
+        {/* Sandbox Selector - Cockpit Control */}
+        <div className="cockpit-panel p-3 md:p-4">
+          <div className="flex flex-col items-end gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="cockpit-label text-xs uppercase tracking-wider">SANDBOX SELECTOR</div>
+            <SandboxSelector />
+          </div>
+        </div>
+
         {/* Cockpit Header */}
         <div className="cockpit-panel border-l-4 border-blue-500 p-6">
           <div className="mb-4 flex items-center justify-between">
