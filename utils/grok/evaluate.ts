@@ -55,12 +55,44 @@ interface GrokEvaluationResult {
   };
 }
 
+// Sandbox context for customizing system prompt
+type SandboxContext = {
+  id: string;
+  name: string;
+  description?: string | null;
+  mission?: string;
+  project_goals?: string;
+  metal_focus?: {
+    gold_focus?: boolean;
+    silver_focus?: boolean;
+    copper_focus?: boolean;
+    hybrid_metals?: boolean;
+  };
+  scoring_config?: {
+    novelty_weight?: number;
+    density_weight?: number;
+    coherence_weight?: number;
+    alignment_weight?: number;
+    qualification_threshold?: number;
+    overlap_penalty_start?: number;
+    sweet_spot_center?: number;
+    sweet_spot_tolerance?: number;
+  };
+  epoch_thresholds?: {
+    founder?: number;
+    pioneer?: number;
+    community?: number;
+    ecosystem?: number;
+  };
+};
+
 // Call Grok API directly for PoC evaluation
 export async function evaluateWithGrok(
   textContent: string,
   title: string,
   category?: string,
-  excludeHash?: string
+  excludeHash?: string,
+  sandboxContext?: SandboxContext
 ): Promise<{
   coherence: number;
   density: number;
@@ -333,7 +365,56 @@ export async function evaluateWithGrok(
 
   // Use the canonical Syntheverse system prompt (intentionally long; required persona + schema).
   // Token-budget control is handled by shrinking user payload and truncating content when needed.
-  const systemPrompt = SYNTHEVERSE_SYSTEM_PROMPT;
+  let systemPrompt = SYNTHEVERSE_SYSTEM_PROMPT;
+
+  // Customize system prompt for sandbox context if provided
+  if (sandboxContext) {
+    const sandboxCustomization = `
+
+---
+
+## SANDBOX-SPECIFIC CONTEXT
+
+You are evaluating a contribution within the **${sandboxContext.name}** sandbox, a nested ecosystem within Syntheverse.
+
+**Sandbox Identity:**
+- Sandbox ID: ${sandboxContext.id}
+- Name: ${sandboxContext.name}
+${sandboxContext.description ? `- Description: ${sandboxContext.description}` : ''}
+${sandboxContext.mission ? `- Mission: ${sandboxContext.mission}` : ''}
+${sandboxContext.project_goals ? `- Project Goals: ${sandboxContext.project_goals}` : ''}
+
+**Sandbox-Specific Evaluation Parameters:**
+${sandboxContext.scoring_config ? `
+- Scoring Weights: Novelty=${sandboxContext.scoring_config.novelty_weight || 1.0}, Density=${sandboxContext.scoring_config.density_weight || 1.0}, Coherence=${sandboxContext.scoring_config.coherence_weight || 1.0}, Alignment=${sandboxContext.scoring_config.alignment_weight || 1.0}
+- Qualification Threshold: ${sandboxContext.scoring_config.qualification_threshold || 4000}
+- Overlap Parameters: Penalty Start=${sandboxContext.scoring_config.overlap_penalty_start || 30}%, Sweet Spot=${sandboxContext.scoring_config.sweet_spot_center || 14.2}%±${sandboxContext.scoring_config.sweet_spot_tolerance || 5.0}%
+` : ''}
+${sandboxContext.epoch_thresholds ? `
+- Epoch Thresholds: Founder≥${sandboxContext.epoch_thresholds.founder || 8000}, Pioneer≥${sandboxContext.epoch_thresholds.pioneer || 6000}, Community≥${sandboxContext.epoch_thresholds.community || 5000}, Ecosystem≥${sandboxContext.epoch_thresholds.ecosystem || 4000}
+` : ''}
+${sandboxContext.metal_focus ? `
+- Metal Focus: ${sandboxContext.metal_focus.gold_focus ? 'Gold (Research/Novelty) ' : ''}${sandboxContext.metal_focus.silver_focus ? 'Silver (Technology/Development) ' : ''}${sandboxContext.metal_focus.copper_focus ? 'Copper (Alignment/Coherence) ' : ''}${sandboxContext.metal_focus.hybrid_metals ? 'Hybrid (All Metals)' : ''}
+` : ''}
+
+**Evaluation Context:**
+- This contribution is being evaluated within the ${sandboxContext.name} sandbox ecosystem
+- The sandbox operates as a self-similar nested world within Syntheverse
+- All Syntheverse principles (HHF-AI, holographic hydrogen fractals, recursive awareness) apply
+- However, the sandbox may have specific focus areas, goals, or evaluation criteria as defined above
+- When evaluating alignment, consider both general Syntheverse alignment AND alignment with this sandbox's specific mission and goals
+
+**Archive Context:**
+- Similarity comparisons should be made within this sandbox's archive (per-sandbox context)
+- Contributions are compared against other submissions to the ${sandboxContext.name} sandbox
+- This ensures proper redundancy detection within the sandbox's specific domain
+
+---
+
+`;
+
+    systemPrompt = systemPrompt + sandboxCustomization;
+  }
 
   // SCALABILITY FIX: Using vectors-only approach - removed archivedPoCsContext (abstract text)
   // Vector-based redundancy (calculatedRedundancyContext) is sufficient and scales infinitely
@@ -358,9 +439,10 @@ ${calculatedRedundancy.nearest_10_neighbors ? `- nearest_10_neighbors: μ=${calc
   const SCORE_CONFIG_VERSION = 'v2.0.13';
   const scoreConfigId = `score_config=${SCORE_CONFIG_VERSION}(overlap_penalty_start=30%, sweet_spot_center=14.2%±5%, weights:N=1.0/D=1.0/C=1.0/A=1.0)`;
   
-  // Generate sandbox ID (default to main sandbox, can be overridden per-user/per-enterprise)
-  // TODO: This should come from user context or enterprise sandbox selection
-  const sandboxId = 'sandbox_id=pru-default'; // Default sandbox; can be 'marek-sandbox-01', 'syntheverse-genesis', etc.
+  // Generate sandbox ID (use actual sandbox ID if provided, otherwise default)
+  const sandboxId = sandboxContext 
+    ? `sandbox_id=${sandboxContext.id}` 
+    : 'sandbox_id=pru-default'; // Default sandbox for main Syntheverse
   
   // Archive version/snapshot ID
   const archiveVersion = `archive_version=${archivedVectors.length > 0 ? `snapshot-${archivedVectors.length}` : 'empty'}`;

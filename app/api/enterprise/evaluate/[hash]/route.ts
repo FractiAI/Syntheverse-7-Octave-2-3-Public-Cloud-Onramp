@@ -39,17 +39,41 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
 
     const sandbox = sandboxes[0];
     const scoringConfig = (sandbox.scoring_config as any) || {};
+    const sandboxMetadata = (sandbox.metadata as any) || {};
 
     if (!contrib.text_content) {
       return NextResponse.json({ error: 'Contribution text content missing' }, { status: 400 });
     }
 
-    // Evaluate with Grok (no top matches for now - can enhance later)
+    // Prepare sandbox context for system prompt customization
+    const sandboxContext = {
+      id: sandbox.id,
+      name: sandbox.name,
+      description: sandbox.description,
+      mission: sandboxMetadata.mission,
+      project_goals: sandboxMetadata.project_goals,
+      metal_focus: {
+        gold_focus: sandboxMetadata.gold_focus,
+        silver_focus: sandboxMetadata.silver_focus,
+        copper_focus: sandboxMetadata.copper_focus,
+        hybrid_metals: sandboxMetadata.hybrid_metals,
+      },
+      scoring_config: scoringConfig,
+      epoch_thresholds: {
+        founder: sandboxMetadata.founder_threshold || 8000,
+        pioneer: sandboxMetadata.pioneer_threshold || 6000,
+        community: sandboxMetadata.community_threshold || 5000,
+        ecosystem: sandboxMetadata.ecosystem_threshold || 4000,
+      },
+    };
+
+    // Evaluate with Grok, passing sandbox context for system prompt customization
     const evaluation = await evaluateWithGrok(
       contrib.text_content,
       contrib.title,
       contrib.category || undefined,
-      undefined // excludeHash
+      undefined, // excludeHash
+      sandboxContext // Pass sandbox context to customize system prompt
     );
 
     // Apply custom scoring weights if configured
