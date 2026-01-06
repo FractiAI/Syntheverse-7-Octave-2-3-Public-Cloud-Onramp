@@ -13,7 +13,6 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 // Optional ecosystem support is intentionally not placed in the primary beta cockpit.
 // The reference client stays protocol-first and avoids any "package" framing in the main dashboard.
 import { BookOpen, Shield } from 'lucide-react';
-import { SalesTracking } from '@/components/SalesTracking';
 import { SynthChat } from '@/components/SynthChat';
 
 export const dynamic = 'force-dynamic';
@@ -43,9 +42,8 @@ export default async function Dashboard() {
   // Get display name: prefer database name, fallback to email username, then full email
   const displayName = dbUser?.name || user.email?.split('@')[0] || user.email || 'User';
 
-  // Check if user is Creator or Operator
-  const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
-  const showSalesTracking = isCreator || isOperator;
+  // Check if user is Creator
+  const { isCreator } = await getAuthenticatedUserWithRole();
 
   return (
     <div className="cockpit-bg min-h-screen">
@@ -115,9 +113,6 @@ export default async function Dashboard() {
 
         {/* Frontier Modules - PoC Archive */}
         <FrontierModule userEmail={user.email!} />
-
-        {/* Sales Tracking - Operator/Creator Only */}
-        {showSalesTracking && <SalesTracking />}
       </div>
     </div>
   );

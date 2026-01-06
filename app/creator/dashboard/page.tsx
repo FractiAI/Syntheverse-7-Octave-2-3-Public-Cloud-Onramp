@@ -25,9 +25,10 @@ export default async function CreatorDashboard() {
     redirect('/login');
   }
 
-  const { user, isCreator } = await getAuthenticatedUserWithRole();
+  const { user, isCreator, isOperator } = await getAuthenticatedUserWithRole();
 
-  if (!isCreator || !user?.email) {
+  // Allow both Creator and Operators to access this dashboard
+  if ((!isCreator && !isOperator) || !user?.email) {
     redirect('/dashboard');
   }
 
@@ -63,6 +64,9 @@ export default async function CreatorDashboard() {
 
         {/* Control Panels */}
         <CreatorCockpitNavigation />
+
+        {/* Sales Tracking - Revenue & Subscriptions */}
+        <SalesTracking />
 
         {/* PoC Archive - Same as Contributor Dashboard */}
         <FrontierModule userEmail={user.email} />
