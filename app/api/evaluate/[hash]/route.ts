@@ -11,7 +11,7 @@ import { debug, debugError } from '@/utils/debug';
 import { evaluateWithGrok } from '@/utils/grok/evaluate';
 import { vectorizeSubmission } from '@/utils/vectors';
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request';
-import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification';
+import { isQualifiedForEpoch, qualifyEpoch, getOpenEpochInfo, isEpochOpen } from '@/utils/epochs/qualification';
 import { extractArchiveData } from '@/utils/archive/extract';
 import crypto from 'crypto';
 import {
@@ -207,10 +207,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
       throw error;
     }
 
-    // Check qualification based on current open epoch and thresholds
-    // Qualification is based on both pod_score and density meeting the threshold for the current open epoch
-    const epochInfo = await getOpenEpochInfo();
-    const qualifiedByEpoch = await isQualifiedForOpenEpoch(
+    // Determine which epoch this submission qualifies for based on pod_score
+    // Qualification is independent of epoch open status - submissions can qualify for epochs even when closed
+    const qualifiedEpoch = qualifyEpoch(evaluation.pod_score);
+    const qualifiedByEpoch = await isQualifiedForEpoch(
       evaluation.pod_score,
       evaluation.density
     );
@@ -218,11 +218,12 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
     // Use qualified status from evaluation if provided, otherwise use epoch-based qualification
     const qualified = evaluation.qualified !== undefined ? evaluation.qualified : qualifiedByEpoch;
 
-    // Store the open epoch that was used to qualify (capture the epoch at qualification time)
-    // This should be the current open epoch, not just which epoch it qualifies for based on density
-    // For display purposes, use the current open epoch if qualified, otherwise use the density-based epoch
-    const openEpochUsed = qualified ? epochInfo.current_epoch : evaluation.qualified_epoch || null;
-    const displayEpoch = openEpochUsed; // Alias for consistency with API response
+    // Check if the qualified epoch is currently open (for display/informational purposes)
+    const epochInfo = await getOpenEpochInfo();
+    const qualifiedEpochIsOpen = await isEpochOpen(qualifiedEpoch);
+
+    // Store the epoch this submission qualifies for (based on pod_score, not open status)
+    const displayEpoch = qualifiedEpoch;
 
     // Generate vector embedding and 3D coordinates using evaluation scores
     let vectorizationResult: {
@@ -272,7 +273,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           homebase_intro: evaluation.homebase_intro,
           tokenomics_recommendation: evaluation.tokenomics_recommendation,
           qualified_founder: qualified,
-          qualified_epoch: openEpochUsed || evaluation.qualified_epoch || null, // Store the open epoch used to qualify
+          qualified_epoch: displayEpoch || evaluation.qualified_epoch || null, // Store the epoch this submission qualifies for
           allocation_status: qualified ? 'pending_admin_approval' : 'not_qualified', // Token allocation requires admin approval
           // Store detailed Grok evaluation details for detailed report
           grok_evaluation_details: {
@@ -419,7 +420,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           pod_score: evaluation.pod_score,
           status: qualified ? 'qualified' : 'unqualified',
           qualified_founder: qualified,
-          qualified_epoch: displayEpoch, // Use current open epoch if qualified, otherwise density-based epoch
+          qualified_epoch: displayEpoch, // Epoch this submission qualifies for (based on pod_score)
+          qualified_epoch_is_open: qualifiedEpochIsOpen, // Whether the qualified epoch is currently open
           classification: evaluation.classification,
           redundancy_analysis: evaluation.redundancy_analysis,
           metal_justification: evaluation.metal_justification,

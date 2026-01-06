@@ -106,6 +106,24 @@ export async function registerPoCOnBlockchain(
     };
   }
 
+  // Check if the qualified epoch is currently open
+  // On-chain registration only happens when the epoch is open
+  if (metadata.qualified_epoch) {
+    const { isEpochOpen } = await import('@/utils/epochs/qualification');
+    const epochIsOpen = await isEpochOpen(metadata.qualified_epoch as any);
+    if (!epochIsOpen) {
+      debug('RegisterPoCBlockchain', 'Qualified epoch not open, blocking on-chain registration', {
+        submissionHash: submissionHash.substring(0, 20) + '...',
+        qualifiedEpoch: metadata.qualified_epoch,
+        note: 'Submission is qualified but epoch is not open. On-chain registration will be available when the epoch opens.',
+      });
+      return {
+        success: false,
+        error: `Qualified for ${metadata.qualified_epoch} epoch, but epoch is not yet open. On-chain registration will be available when the epoch opens.`,
+      };
+    }
+  }
+
   try {
     // Get Base configuration
     const config = getBaseMainnetConfig();

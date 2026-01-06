@@ -328,12 +328,34 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
     if (existingAllocations.length === 0 && isQualified && !isFinancialSupport) {
       try {
         const podScore = metadata.pod_score || 0;
-        const qualifiedEpoch = metadata.qualified_epoch || 'founder'; // Use the epoch that was open when PoC qualified
+        const qualifiedEpoch = (metadata.qualified_epoch || 'founder') as 'founder' | 'pioneer' | 'community' | 'ecosystem';
+
+        // Check if the qualified epoch is currently open
+        // SYNTH allocations only happen when the epoch is open
+        const { isEpochOpen } = await import('@/utils/epochs/qualification');
+        const epochIsOpen = await isEpochOpen(qualifiedEpoch);
+
+        if (!epochIsOpen) {
+          debug('RegisterPoC', 'Qualified epoch not open, skipping SYNTH allocation', {
+            submissionHash,
+            qualifiedEpoch,
+            podScore,
+            note: 'Submission is qualified but epoch is not open. Allocation will happen when epoch opens.',
+          });
+          // Continue without allocating - submission is still registered
+          return NextResponse.json({
+            success: true,
+            registered: true,
+            tx_hash: blockchainTxHash,
+            message: `PoC registered successfully. Qualified for ${qualifiedEpoch} epoch, but epoch is not yet open. SYNTH allocation will occur when the epoch opens.`,
+          });
+        }
 
         debug('RegisterPoC', 'Processing automatic token allocation for registered PoC', {
           submissionHash,
           podScore,
           qualifiedEpoch,
+          epochIsOpen,
           metals,
         });
 

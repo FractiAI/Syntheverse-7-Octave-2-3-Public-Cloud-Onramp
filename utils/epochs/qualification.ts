@@ -1,7 +1,9 @@
 /**
  * Epoch-based qualification logic
  *
- * Determines PoC qualification based on current open epoch and density thresholds
+ * Determines PoC qualification based on pod_score thresholds.
+ * Submissions can be qualified for epochs regardless of whether the epoch is open.
+ * Epoch openings determine when qualified submissions can go on-chain and receive SYNTH allocations.
  */
 
 import { db } from '@/utils/db/db';
@@ -218,42 +220,66 @@ export function qualifyEpoch(pod_score: number): EpochType {
 }
 
 /**
- * Check if a PoC qualifies for the current open epoch
+ * Check if a PoC qualifies for any epoch based on pod_score
  *
- * Qualification is based on the current epoch's threshold:
+ * Qualification is based on pod_score thresholds (regardless of epoch open status):
  * - Founder: pod_score >= 8000
  * - Pioneer: pod_score >= 6000
  * - Community: pod_score >= 5000
  * - Ecosystem: pod_score >= 4000
  *
+ * Note: Submissions can be qualified for epochs even when closed.
+ * Epoch openings determine when qualified submissions can go on-chain and receive SYNTH allocations.
+ *
  * @param pod_score - Total PoC score (0-10000) - used for epoch qualification
  * @param density - Density score (0-2500) - not used for qualification, kept for backward compatibility
- * @returns true if PoC qualifies for current open epoch
+ * @returns true if PoC qualifies for any epoch based on pod_score
+ */
+export async function isQualifiedForEpoch(
+  pod_score: number,
+  density: number
+): Promise<boolean> {
+  // Check if pod_score meets the minimum threshold (ecosystem)
+  const meetsMinimumThreshold = pod_score >= EPOCH_THRESHOLDS.ecosystem;
+
+  debug('IsQualifiedForEpoch', 'Qualification check (epoch open status not required)', {
+    pod_score,
+    density,
+    minimum_threshold: EPOCH_THRESHOLDS.ecosystem,
+    meets_minimum_threshold: meetsMinimumThreshold,
+    qualified_epoch: qualifyEpoch(pod_score),
+  });
+
+  return meetsMinimumThreshold;
+}
+
+/**
+ * Check if a qualified epoch is currently open
+ *
+ * @param qualifiedEpoch - The epoch the submission qualifies for
+ * @returns true if the qualified epoch is currently open
+ */
+export async function isEpochOpen(qualifiedEpoch: EpochType): Promise<boolean> {
+  const epochInfo = await getOpenEpochInfo();
+  const isOpen = epochInfo.open_epochs.includes(qualifiedEpoch);
+
+  debug('IsEpochOpen', `Checking if ${qualifiedEpoch} epoch is open`, {
+    qualified_epoch: qualifiedEpoch,
+    open_epochs: epochInfo.open_epochs,
+    is_open: isOpen,
+  });
+
+  return isOpen;
+}
+
+/**
+ * @deprecated Use isQualifiedForEpoch() instead. This function is kept for backward compatibility.
+ * Check if a PoC qualifies for the current open epoch
  */
 export async function isQualifiedForOpenEpoch(
   pod_score: number,
   density: number
 ): Promise<boolean> {
-  const epochInfo = await getOpenEpochInfo();
-
-  // Get threshold for current epoch (based on pod_score)
-  const epochThreshold = EPOCH_THRESHOLDS[epochInfo.current_epoch];
-
-  // Check if pod_score meets the current epoch's qualification threshold
-  const meetsPodScoreThreshold = pod_score >= epochThreshold;
-
-  // PoC qualifies if pod_score meets current epoch requirements
-  const qualified = meetsPodScoreThreshold;
-
-  debug('IsQualifiedForOpenEpoch', `Qualification check for ${epochInfo.current_epoch} epoch`, {
-    pod_score,
-    density,
-    current_epoch: epochInfo.current_epoch,
-    open_epochs: epochInfo.open_epochs,
-    qualification_threshold: epochThreshold,
-    meets_pod_score_threshold: meetsPodScoreThreshold,
-    qualified,
-  });
-
-  return qualified;
+  // Delegate to new function - qualification no longer depends on epoch being open
+  return isQualifiedForEpoch(pod_score, density);
 }

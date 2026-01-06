@@ -273,12 +273,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   <strong>Proof of Contribution is the next phase.</strong>
                 </p>
                 <p>
-                  At the root of this is <strong>Holographic Hydrogen — Element 0</strong>. Element
-                  0 resets everything. It gives us solid root stock to graft onto when systems
-                  fragment. Element 0 is the <strong>universal pixel of awareness</strong>—the
-                  smallest addressable unit where meaning, structure, and coherence live. At that
-                  level, awareness itself becomes the encryption and the key. You can&apos;t fake
-                  coherence. You can&apos;t counterfeit alignment. You can only participate.
+                  At the root of this is <strong>Element 0 as 0: Bridging Holographic Hydrogen to Classical Math-Based Awareness</strong> (H<sub>(H)</sub>). Element 0 is mathematically grounded in 0, establishing the equivalence between the minimal unit of awareness and the zero of classical mathematics. This grounding enables a direct bridge between holographic hydrogen ensembles and today&apos;s math-based awareness frameworks, including neural phase-space analysis, entropy-based cognition measures, and graph-theoretic models of intelligence. Element 0 is the <strong>universal pixel of awareness</strong>—the smallest addressable unit where meaning, structure, and coherence live. At that level, awareness itself becomes the encryption and the key. You can&apos;t fake coherence. You can&apos;t counterfeit alignment. You can only participate.
                 </p>
                 <p>
                   <strong>Syntheverse is operational technology today.</strong> It is built on

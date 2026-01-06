@@ -420,12 +420,29 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       if (existingAllocations.length === 0 && isQualified && !isFinancialSupport) {
         try {
           const podScore = metadata.pod_score || 0;
-          const qualifiedEpoch = metadata.qualified_epoch || 'founder'; // Use the epoch that was open when PoC qualified
+          const qualifiedEpoch = (metadata.qualified_epoch || 'founder') as 'founder' | 'pioneer' | 'community' | 'ecosystem';
+
+          // Check if the qualified epoch is currently open
+          // SYNTH allocations only happen when the epoch is open
+          const { isEpochOpen } = await import('@/utils/epochs/qualification');
+          const epochIsOpen = await isEpochOpen(qualifiedEpoch);
+
+          if (!epochIsOpen) {
+            debug('StripeWebhook', 'Qualified epoch not open, skipping SYNTH allocation', {
+              submissionHash,
+              qualifiedEpoch,
+              podScore,
+              note: 'Submission is qualified but epoch is not open. Allocation will happen when epoch opens.',
+            });
+            // Continue without allocating - submission is still registered
+            return NextResponse.json({ success: true });
+          }
 
           debug('StripeWebhook', 'Processing automatic token allocation for registered PoC', {
             submissionHash,
             podScore,
             qualifiedEpoch,
+            epochIsOpen,
             metals,
           });
 
