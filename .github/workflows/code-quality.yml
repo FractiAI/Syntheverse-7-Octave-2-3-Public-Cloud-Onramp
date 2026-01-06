@@ -21,8 +21,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global init.defaultBranch main
-          # Verify git is working
-          git rev-parse --git-dir > /dev/null 2>&1 || echo "Git directory check"
+          # Disable git features that might cause issues
+          git config --global core.quotepath false
+          git config --global core.autocrlf false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,11 +42,8 @@ jobs:
 
       - name: Check formatting
         run: |
-          # Ensure git is accessible for prettier
-          git config --global --get user.name || git config --global user.name "CI"
-          git config --global --get user.email || git config --global user.email "ci@example.com"
-          # Run prettier check
-          npm run format:check || {
+          # Run prettier check directly without npm script to avoid git issues
+          npx prettier --check "**/*.{js,jsx,ts,tsx,json,css,md}" --ignore-path .gitignore || {
             echo "Format check failed. Run 'npm run format' to fix formatting issues."
             exit 1
           }

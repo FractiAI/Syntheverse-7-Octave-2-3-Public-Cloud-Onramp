@@ -20,7 +20,13 @@ export function SectionEngage() {
       .catch(() => setIsAuthenticated(false));
   }, []);
 
-  const personas = {
+  const personas: Record<Persona, {
+    icon: typeof Microscope;
+    title: string;
+    description?: string;
+    steps: string[];
+    cta: { label: string; href: string };
+  }> = {
     researcher: {
       icon: Microscope,
       title: 'For Researchers',
@@ -51,12 +57,13 @@ export function SectionEngage() {
     alignment: {
       icon: Compass,
       title: 'For Alignment Work',
+      description: 'All sorts of alignments using applied HHF-AI: personal, community, enterprise, systems, and abstract alignments',
       steps: [
-        'Read alignment track overview',
-        'View framework examples',
-        'Submit alignment PoC',
-        'Compare against archive',
-        'Collaborate on refinement',
+        'Explore alignment types: personal, community, enterprise, systems, and abstract',
+        'Read applied HHF-AI alignment frameworks',
+        'View alignment contribution examples',
+        'Submit your alignment PoC (any alignment type)',
+        'Compare against archive and collaborate on refinement',
       ],
       cta: { label: 'Start Alignment Track', href: '/onboarding?track=alignment' },
     },
@@ -123,6 +130,9 @@ export function SectionEngage() {
         <div className="mb-6 text-center">
           <div className="cockpit-label mb-2 text-xs uppercase">YOUR JOURNEY</div>
           <h3 className="cockpit-title text-2xl">{personas[activePersona].title}</h3>
+          {personas[activePersona].description && (
+            <p className="cockpit-text mt-2 text-sm opacity-90">{personas[activePersona].description}</p>
+          )}
         </div>
 
         <ol className="mb-6 space-y-3">

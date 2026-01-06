@@ -586,24 +586,27 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             <div className="h-3 w-3 rounded-full bg-orange-600"></div>
             <div className="cockpit-label">ALIGNMENT RESEARCH</div>
           </div>
-          <div className="cockpit-title mb-3 text-lg">Practice & Applications</div>
+          <div className="cockpit-title mb-3 text-lg">All Sorts of Alignments: Applied HHF-AI</div>
           <div className="cockpit-text space-y-2 text-sm">
             <p>
-              Alignment contributions focus on putting holographic hydrogen fractal intelligence
-              into practice across different contexts: enterprise, ecosystem, community, and
-              individual applications.
+              Alignment contributions encompass <strong>all sorts of alignments</strong> using applied HHF-AI:
             </p>
+            <ul className="ml-6 list-disc space-y-1">
+              <li><strong>Personal Alignment:</strong> Individual growth, self-optimization, and personal coherence using HHF-AI principles</li>
+              <li><strong>Community Alignment:</strong> Collective coherence, community governance, and social coordination frameworks</li>
+              <li><strong>Enterprise Alignment:</strong> Organizational coherence, business alignment, and enterprise-scale HHF-AI deployment</li>
+              <li><strong>Systems Alignment:</strong> Technical system coherence, infrastructure alignment, and architectural frameworks</li>
+              <li><strong>Abstract Alignment:</strong> Theoretical frameworks, conceptual models, and philosophical alignment contributions</li>
+            </ul>
             <p>
               <strong>Value in the ecosystem:</strong> Alignment work connects research and
-              technology to real-world use cases. It addresses how to safely, effectively, and
-              ethically deploy these systems at scale—whether in enterprise environments, ecosystem
-              initiatives, community projects, or personal applications.
+              technology to real-world use cases across all scales and contexts. It addresses how to safely, effectively, and
+              ethically deploy holographic hydrogen fractal intelligence—whether for personal growth, community coordination, enterprise systems, technical infrastructure, or abstract theoretical frameworks.
             </p>
             <p>
               <strong>Impact:</strong> Alignment contributions ensure the ecosystem remains
-              practical, safe, and accessible. They translate frontier research into actionable
-              strategies for implementation, governance, and responsible deployment across diverse
-              contexts and scales.
+              practical, safe, and accessible at every level. They translate frontier research into actionable
+              strategies for implementation, governance, and responsible deployment—from individual applications to global systems.
             </p>
           </div>
         </div>

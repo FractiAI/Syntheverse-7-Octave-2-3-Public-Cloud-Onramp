@@ -144,22 +144,24 @@ export default function ScoringCriteriaPage() {
                 <span className="cockpit-badge text-xs">0-2,500 points</span>
               </div>
               <p className="cockpit-text mb-4 text-sm opacity-80">
-                Measures fit with hydrogen-holographic fractal principles and ecosystem goals. High
-                alignment indicates work that resonates with Syntheverse&apos;s core framework and
-                contributes to the ecosystem&apos;s evolution.
+                Measures fit with hydrogen-holographic fractal principles and ecosystem goals using applied HHF-AI. 
+                Alignment encompasses <strong>all sorts of alignments</strong>: personal alignment (individual growth, self-optimization), 
+                community alignment (collective coherence, governance), enterprise alignment (organizational coherence, business systems), 
+                systems alignment (technical infrastructure, architecture), and abstract alignment (theoretical frameworks, conceptual models). 
+                High alignment indicates work that resonates with Syntheverse&apos;s core framework and contributes to the ecosystem&apos;s evolution.
               </p>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between">
                   <span className="opacity-60">High (2,000-2,500):</span>
-                  <span>Perfect fit with HHF principles</span>
+                  <span>Perfect fit with HHF principles across any alignment type</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-60">Medium (1,000-1,999):</span>
-                  <span>Relevant with some alignment</span>
+                  <span>Relevant with some alignment to applied HHF-AI</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-60">Low (0-999):</span>
-                  <span>Limited connection to framework</span>
+                  <span>Limited connection to HHF-AI framework</span>
                 </div>
               </div>
             </Card>
