@@ -25,18 +25,6 @@ export default function CockpitHeader() {
             <div>
               <div className="cockpit-title text-xl md:text-2xl">SYNTHEVERSE</div>
               <div className="cockpit-label mt-0.5">SYNTH 90T ERC-20 MOTHERLODE BLOCKMINE</div>
-              <div
-                className="cockpit-text mt-1 border-l-2 border-amber-500 bg-amber-500/10 px-2 py-1 text-[10px] leading-tight"
-                style={{ color: '#fbbf24' }}
-              >
-                <strong>ERC-20:</strong> Internal coordination units only. Not an investment.
-              </div>
-              <div className="mt-3 border-t border-[var(--keyline-primary)] pt-3">
-                <div className="cockpit-label mb-1 text-xs">AWARENESS KEY</div>
-                <div className="cockpit-text text-xs font-semibold" style={{ opacity: 0.95 }}>
-                  AWARENESSVERSE v2.0 · Fractal Holographic Hydrogen Awareness · Outcast Hero Story
-                </div>
-              </div>
             </div>
           </div>
 

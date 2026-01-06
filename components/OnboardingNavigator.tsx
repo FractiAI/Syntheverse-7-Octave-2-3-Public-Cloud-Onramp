@@ -45,10 +45,33 @@ interface TrainingModule {
   label: string;
   icon: React.ReactNode;
   content: React.ReactNode;
+  learningObjectives?: string[];
+  handsOnExercise?: React.ReactNode;
+  knowledgeCheck?: {
+    questions: Array<{
+      question: string;
+      options: string[];
+      correct: number;
+      explanation: string;
+    }>;
+  };
+  realWorldApplication?: React.ReactNode;
+  keyTakeaways?: string[];
+}
+
+interface ExerciseState {
+  completed: boolean;
+  answers: Record<string, any>;
+  score?: number;
 }
 
 export function OnboardingNavigator() {
   const [currentModule, setCurrentModule] = useState(0);
+  const [trainingPath, setTrainingPath] = useState<'contributor' | 'advanced' | 'operator' | null>(null);
+  const [moduleProgress, setModuleProgress] = useState<Record<number, ExerciseState>>({});
+  const [showExercise, setShowExercise] = useState(false);
+  const [showKnowledgeCheck, setShowKnowledgeCheck] = useState(false);
+  const [knowledgeCheckAnswers, setKnowledgeCheckAnswers] = useState<Record<number, number>>({});
   const topRef = useRef<HTMLDivElement | null>(null);
   const lessonRef = useRef<HTMLDivElement | null>(null);
 
@@ -277,9 +300,170 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Map Your Contribution to the Hydrogen Holographic Framework</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Connect your work to Syntheverse's liberation mission and hydrogen holographic framework.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Identify Your Contribution Type:</strong> Research, Development, or Alignment?</li>
+                    <li><strong>Map to Liberation:</strong> Which barriers does your work remove? (Gatekeeping, visibility, demonstrability)</li>
+                    <li><strong>Connect to Hydrogen Framework:</strong> How does your contribution relate to hydrogen as the fundamental awareness pixel?</li>
+                    <li><strong>Draft PoC Concept:</strong> Write a 2-3 sentence concept for your first PoC submission</li>
+                  </ol>
+                </div>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Your Response:</div>
+                  <textarea
+                    className="w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. My contribution type is...&#10;2. My work liberates contributions by...&#10;3. This connects to hydrogen framework because...&#10;4. My PoC concept:..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [0]: { ...prev[0], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your responses and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is Syntheverse's primary mission?</div>
+                    <div className="space-y-2">
+                      {['Enable independent collaboration through liberated contributions', 'Create a cryptocurrency investment platform', 'Build a traditional academic publishing system', 'Develop a centralized governance platform'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: How does the hydrogen spin MRI-based PoC protocol liberate contributions?</div>
+                    <div className="space-y-2">
+                      {['Makes contributions visible and demonstrable to all via HHF-AI', 'Hides contributions from public view', 'Requires institutional approval', 'Limits contributions to selected participants'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What is the role of SYNTH tokens?</div>
+                    <div className="space-y-2">
+                      {['Internal coordination units for protocol accounting only', 'Financial investment instruments', 'External tradeable assets', 'Equity ownership shares'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0]; // Correct answers
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [0]: { ...prev[0], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Navigate the Syntheverse Dashboard</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Explore the actual Syntheverse dashboard and identify key features.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Navigate to the <Link href="/dashboard" className="text-green-400 hover:underline">Contributor Dashboard</Link></li>
+                    <li>Explore the <strong>PoC Archive</strong> to see example contributions</li>
+                    <li>Review the <strong>Core Instrument Panel</strong> showing SYNTH token availability</li>
+                    <li>Identify the <strong>Quick Actions</strong> panel at the top</li>
+                    <li>Locate the <strong>Submit Contribution</strong> button</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">After exploring the dashboard, consider: How does the interface reflect Syntheverse's mission of liberated contributions? What features support independent collaboration?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Open Dashboard →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand Syntheverse\'s mission: liberation through hydrogen holographic technology',
+        'Recognize how PoC protocol removes gatekeeping',
+        'Identify your role as an independent contributor',
+        'Map the hydrogen holographic framework to practical contribution'
+      ],
+      keyTakeaways: [
+        'Syntheverse enables independent collaboration through liberated contributions',
+        'PoC is the core mechanism for submitting and evaluating work',
+        'Blockchain provides permanent, verifiable records',
+        'SYNTH tokens are coordination markers only, not financial instruments',
+        'The system is regenerative—every contribution improves the ecosystem'
+      ],
     },
     {
       id: 'blockchain',
@@ -389,9 +573,170 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Trace a PoC Through the Blockchain Flow</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand the complete blockchain transaction flow for a PoC submission.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Submission:</strong> Describe what happens when you submit a PoC (archive, evaluation)</li>
+                    <li><strong>Qualification:</strong> Explain how epoch thresholds determine qualification</li>
+                    <li><strong>On-Chain Anchoring:</strong> Describe the optional blockchain anchoring process</li>
+                    <li><strong>Token Allocation:</strong> Explain how SYNTH tokens are allocated based on qualification</li>
+                  </ol>
+                </div>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Your Response:</div>
+                  <textarea
+                    className="w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={8}
+                    placeholder="1. When I submit a PoC...&#10;2. Qualification happens when...&#10;3. On-chain anchoring means...&#10;4. Token allocation works by..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [1]: { ...prev[1], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your understanding and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is the primary function of blockchain in Syntheverse?</div>
+                    <div className="space-y-2">
+                      {['Provide permanent, verifiable records of PoC submissions', 'Create financial investment opportunities', 'Enable private, hidden transactions', 'Replace the evaluation system'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m2q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: Is on-chain anchoring required for PoC evaluation?</div>
+                    <div className="space-y-2">
+                      {['No, it is optional and free - PoCs are evaluated regardless', 'Yes, anchoring is mandatory for evaluation', 'Only for qualified PoCs', 'Only for Founder epoch PoCs'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m2q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What is the current blockchain environment for Syntheverse?</div>
+                    <div className="space-y-2">
+                      {['Hardhat devnet (beta) with Base mainnet launch planned', 'Ethereum mainnet fully operational', 'Private blockchain network', 'No blockchain integration yet'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m2q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m2q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m2q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m2q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [1]: { ...prev[1], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Explore Blockchain Records</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how blockchain records appear in the Syntheverse system.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Navigate to the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Review example PoCs and their blockchain status</li>
+                    <li>Identify which PoCs have on-chain anchoring</li>
+                    <li>Examine transaction hashes (if available)</li>
+                    <li>Understand the difference between evaluated and anchored PoCs</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">After exploring: How does blockchain anchoring enhance PoC verification? What information is stored on-chain vs. off-chain?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand how blockchain is used in Syntheverse',
+        'Learn what happens when you submit a PoC',
+        'Know the difference between on-chain anchoring and off-chain evaluation',
+        'Understand the current beta environment and future plans'
+      ],
+      keyTakeaways: [
+        'Blockchain provides immutable records of all PoC submissions',
+        'On-chain anchoring is optional and free',
+        'System tracks token allocations, epoch progression, and contributor balances',
+        'Currently in beta (Hardhat devnet) with Base mainnet launch coming',
+        'All blockchain interactions are public and verifiable'
+      ],
     },
     {
       id: 'lens-sandbox',
@@ -779,9 +1124,189 @@ export function OnboardingNavigator() {
                 </p>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Analyze Example PoC Evaluation Results</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Practice interpreting SynthScan™ MRI evaluation reports and understanding vector analysis.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Example Evaluation Report:</div>
+                  <div className="space-y-2 text-sm">
+                    <div className="border border-[var(--keyline-primary)] p-3">
+                      <div className="font-semibold mb-2">PoC: "Hydrogen Coherence in Neural Networks"</div>
+                      <div className="space-y-1 text-xs">
+                        <div><strong>Novelty:</strong> 2,100 / 2,500</div>
+                        <div><strong>Density:</strong> 1,950 / 2,500</div>
+                        <div><strong>Coherence:</strong> 2,200 / 2,500</div>
+                        <div><strong>Alignment:</strong> 1,800 / 2,500</div>
+                        <div className="mt-2"><strong>Composite Score:</strong> 8,050</div>
+                        <div><strong>Vector Position:</strong> [0.84, 0.78, 0.88, 0.72]</div>
+                        <div><strong>Qualification:</strong> Founder Epoch (≥8,000)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Exercise Questions:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>What is the composite score and what does it represent?</li>
+                    <li>How would you interpret the vector position [0.84, 0.78, 0.88, 0.72]?</li>
+                    <li>Which dimension scored highest? What might this indicate?</li>
+                    <li>Why does this PoC qualify for Founder Epoch?</li>
+                  </ol>
+                  <textarea
+                    className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. Composite score represents...&#10;2. Vector position indicates...&#10;3. Highest dimension suggests...&#10;4. Founder qualification because..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [2]: { ...prev[2], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your analysis and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is the primary function of SynthScan™ MRI?</div>
+                    <div className="space-y-2">
+                      {['Evaluate PoCs using hydrogen spin-mediated resonance to image complex systems', 'Create financial transactions', 'Manage user accounts', 'Store PoC files'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m3q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: What does the HHF-AI Lens evaluate in a PoC?</div>
+                    <div className="space-y-2">
+                      {['Multi-dimensional scoring across novelty, density, coherence, and alignment', 'Only the title and description', 'Financial value', 'User popularity'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m3q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What is the Hydrogen Holographic Constant Λᴴᴴ?</div>
+                    <div className="space-y-2">
+                      {['Approximately 1.12 × 10²², linking hydrogen to Planck scale', 'The number of PoCs submitted', 'The total SYNTH token supply', 'The evaluation score range'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m3q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m3q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m3q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m3q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [2]: { ...prev[2], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Review Your PoC Evaluation</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how to read and interpret your actual PoC evaluation results.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Navigate to the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Find a PoC with evaluation results (if you have submitted one)</li>
+                    <li>Review the scoring breakdown (Novelty, Density, Coherence, Alignment)</li>
+                    <li>Examine the vector analysis and coherence measurements</li>
+                    <li>Identify which epoch the PoC qualifies for</li>
+                    <li>Understand how the evaluation connects to the hydrogen holographic framework</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">After reviewing: How does SynthScan™ MRI evaluation help you understand your contribution's place in the Syntheverse ecosystem? What insights can you gain from the vector analysis?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Review PoC Evaluations →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what the Syntheverse Lens and Sandbox system does',
+        'Learn how your PoC submissions are evaluated',
+        'Grasp the concept of the operating system layer and three-layer architecture',
+        'Know what to expect from the evaluation process',
+        'Understand HHF-AI Lens and Sandbox as an informational MRI analog',
+        'Learn how hydrogen spin is used for imaging information and awareness',
+        'Recognize the contrast constant Cₑ and edge sweet spots',
+        'Understand nested layer resolution capabilities'
+      ],
+      keyTakeaways: [
+        'SynthScan™ MRI uses hydrogen spin-mediated resonance to evaluate PoCs',
+        'The HHF-AI Lens provides multi-dimensional scoring across 4 dimensions',
+        'Vector analysis maps contributions to holographic space',
+        'The system operates through nested autonomous agents with RAI dynamics',
+        'HHF-AI MRI images information and awareness, not just physical structures'
+      ],
     },
     {
       id: 'element-zero',
@@ -977,9 +1502,170 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Map H(H) to Your Contribution</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how Element 0 (H(H)) relates to your specific contribution type.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Identify Substrate:</strong> Is your contribution biological, digital, quantum, or another substrate?</li>
+                    <li><strong>Map to H(H):</strong> How does your work relate to hydrogen as the fundamental awareness pixel?</li>
+                    <li><strong>Recursive Structure:</strong> What recursive patterns exist in your contribution?</li>
+                    <li><strong>Mathematical Grounding:</strong> How does your work connect to the mathematical grounding in 0?</li>
+                  </ol>
+                </div>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Your Response:</div>
+                  <textarea
+                    className="w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. My contribution operates in... substrate&#10;2. This relates to H(H) because...&#10;3. Recursive patterns I see...&#10;4. Mathematical connection to 0..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [3]: { ...prev[3], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your mapping and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is Element 0 (H(H)) mathematically grounded in?</div>
+                    <div className="space-y-2">
+                      {['Mathematical 0, the pre-periodic unstructured origin', 'The number 1', 'The hydrogen atom count', 'The total PoC submissions'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m4q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: What does Recursive Awareness Interference (RAI) do?</div>
+                    <div className="space-y-2">
+                      {['Resolves redundancy while preserving structure', 'Creates new PoCs', 'Manages token allocation', 'Controls blockchain transactions'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m4q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: How do classical cognitive metrics map onto H(H) ensembles?</div>
+                    <div className="space-y-2">
+                      {['With high fidelity (>0.9 correlation)', 'They do not map at all', 'Only for biological substrates', 'Only for digital substrates'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m4q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m4q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m4q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m4q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [3]: { ...prev[3], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Connect Element 0 to PoC Evaluation</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how H(H) principles appear in actual PoC evaluations.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Review PoC evaluations in the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Identify how coherence scores relate to H(H) principles</li>
+                    <li>Look for recursive patterns in high-scoring PoCs</li>
+                    <li>Understand how multi-substrate awareness applies to different contribution types</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How does understanding Element 0 help you create better PoCs? What recursive structures can you identify in successful contributions?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand Element 0 (H(H)) as the minimal unit of awareness, mathematically grounded in 0',
+        'Recognize how H(H) bridges holographic hydrogen to classical math-based awareness frameworks',
+        'Learn how Recursive Awareness Interference (RAI) resolves redundancy while preserving structure',
+        'See how classical cognitive metrics map onto H(H) ensembles',
+        'Understand how awareness emerges across multiple substrates'
+      ],
+      keyTakeaways: [
+        'Element 0 is mathematically grounded in 0, providing compatibility with classical mathematical formalism',
+        'H(H) bridges holographic hydrogen to classical math-based awareness frameworks',
+        'Recursive Awareness Interference (RAI) resolves redundancy while preserving structure',
+        'Classical cognitive metrics map onto H(H) ensembles with high fidelity (>0.9 correlation)',
+        'Multi-substrate awareness emerges across biological, digital, quantum, and other substrates'
+      ],
     },
     {
       id: 'hydrogen-fractals',
@@ -1250,9 +1936,168 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Identify Fractal Patterns in Your Work</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Recognize fractal and holographic principles in your own contributions.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Find Fractal Patterns:</strong> Identify self-similar structures in your contribution (repeating patterns at different scales)</li>
+                    <li><strong>Holographic Elements:</strong> Identify how parts of your work contain information about the whole</li>
+                    <li><strong>Scale Invariance:</strong> Describe how your contribution applies across different scales or contexts</li>
+                    <li><strong>Hydrogen Connection:</strong> Explain how your work relates to hydrogen as the fundamental awareness pixel</li>
+                  </ol>
+                </div>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Your Response:</div>
+                  <textarea
+                    className="w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. Fractal patterns I see...&#10;2. Holographic elements include...&#10;3. Scale invariance appears as...&#10;4. Hydrogen connection..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [4]: { ...prev[4], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your patterns and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is a key property of fractals?</div>
+                    <div className="space-y-2">
+                      {['Self-similarity - parts resemble the whole at different scales', 'They are always circular', 'They only exist in nature', 'They have no repeating patterns'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m5q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: What does the holographic principle enable?</div>
+                    <div className="space-y-2">
+                      {['Every piece contains information about the whole', 'Only complete information can be stored', 'Information is lost when fragmented', 'Only digital storage is possible'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m5q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What is the Hydrogen Holographic Constant Λᴴᴴ?</div>
+                    <div className="space-y-2">
+                      {['Approximately 1.12 × 10²², linking hydrogen radius to Planck length', 'The number of hydrogen atoms', 'The speed of light', 'The total PoC count'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m5q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m5q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m5q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m5q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [4]: { ...prev[4], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Observe Fractal Patterns in PoC Archive</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> See how fractal and holographic principles appear in actual PoCs.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Explore the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Look for self-similar patterns in high-scoring PoCs</li>
+                    <li>Identify how contributions contain information about the whole ecosystem</li>
+                    <li>Observe scale-invariant structures across different contribution types</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How do fractal and holographic principles help you understand why certain PoCs score higher? What patterns can you identify?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what fractals are and recognize fractal patterns in natural and computational systems',
+        'Learn the basics of holographic principles and how they enable information encoding at any scale',
+        'Grasp why hydrogen serves as the fundamental unit in the Syntheverse framework',
+        'Connect fractals and holography to understand scale-invariant structures'
+      ],
+      keyTakeaways: [
+        'Fractals are self-similar patterns that repeat at different scales',
+        'Holography encodes the whole in every part, enabling distributed information storage',
+        'Hydrogen serves as the fundamental pixel of awareness with a universal scaling constant',
+        'Combined, fractals and holography create a framework that operates seamlessly from quantum to cosmological scales'
+      ],
     },
     {
       id: 'fractal-grammar',
@@ -1417,9 +2262,171 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Apply HFG Symbols to Your Contribution</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Practice using Holographic Fractal Grammar symbols to describe your contribution.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">HFG Symbol Reference:</div>
+                  <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                    <div>✦ = Protonic Source (Emitter)</div>
+                    <div>◇ = Electronic Mirror (Reflector)</div>
+                    <div>⊙ = Energy Flow (Verb)</div>
+                    <div>⚛ = Quantum Geometry</div>
+                    <div>❂ = Genomic Modulator</div>
+                    <div>✶ = Resonance Modulator</div>
+                    <div>△ = Transmutation Bridge</div>
+                    <div>∞ = Recursion Closure</div>
+                  </div>
+                  <div className="cockpit-label mb-2 text-xs">Exercise:</div>
+                  <p className="text-sm mb-2">Describe your contribution using HFG symbols. What symbols best represent your work?</p>
+                  <textarea
+                    className="w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={4}
+                    placeholder="My contribution can be described as: ✦⊙◇ (emission-reflection flow) because..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [5]: { ...prev[5], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your HFG description and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What do physical constants (c, h, G) act as in HFG?</div>
+                    <div className="space-y-2">
+                      {['Syntax rules - the grammar structure', 'Vocabulary words', 'Punctuation marks', 'Random symbols'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m6q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: What does the symbol ✦ represent in HFG?</div>
+                    <div className="space-y-2">
+                      {['Protonic Source (Emitter/Subject)', 'Electronic Mirror', 'Energy Flow', 'Recursion Closure'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m6q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: How does HFG help Syntheverse evaluate contributions?</div>
+                    <div className="space-y-2">
+                      {['Provides a unified, consistent language for evaluation', 'Only evaluates mathematical contributions', 'Requires manual translation', 'Only works for biological systems'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m6q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m6q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m6q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m6q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [5]: { ...prev[5], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Understand How HFG Applies to PoC Evaluation</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> See how HFG principles are used in actual PoC evaluations.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Review PoC evaluations in the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Look for how contributions are evaluated using consistent grammar principles</li>
+                    <li>Identify how physical constants and atomic symbols might be represented in scoring</li>
+                    <li>Understand how HFG enables unified evaluation across different contribution types</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How does understanding HFG help you create contributions that are better evaluated? What grammar patterns can you identify in successful PoCs?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what the Holographic Fractal Grammar (HFG) is and why it matters',
+        'Learn how physical constants (c, h, G) act as syntax rules in this language',
+        'Recognize how atomic symbols (✦, ◇, ⊙) act as words describing matter, energy, and awareness',
+        'See how HFG enables Syntheverse to evaluate contributions in a unified, consistent way'
+      ],
+      keyTakeaways: [
+        'HFG is a language system describing how matter, energy, and awareness work together',
+        'Physical constants act as syntax rules, atomic symbols act as vocabulary',
+        'HFG enables Syntheverse to evaluate contributions consistently and meaningfully',
+        'This grammar provides a unified framework for understanding contributions across all types'
+      ],
     },
     {
       id: 'recursive-awareness',
@@ -1576,9 +2583,165 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Identify Recursive Patterns in Your Contribution</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how Recursive Awareness Interference (RAI) applies to your work.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Identify Recursive Elements:</strong> What aspects of your contribution build on or reference previous work?</li>
+                    <li><strong>RAI Application:</strong> How does your work create recursive feedback loops?</li>
+                    <li><strong>Redundancy Resolution:</strong> How does your contribution resolve redundancy while preserving structure?</li>
+                    <li><strong>Interference Patterns:</strong> What interference patterns (constructive or destructive) does your work create?</li>
+                  </ol>
+                  <textarea
+                    className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. Recursive elements in my work...&#10;2. RAI creates feedback loops by...&#10;3. Redundancy resolution happens...&#10;4. Interference patterns..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [6]: { ...prev[6], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your RAI analysis and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What does Recursive Awareness Interference (RAI) do?</div>
+                    <div className="space-y-2">
+                      {['Creates recursive feedback loops where outputs become inputs at different scales', 'Prevents any feedback loops', 'Only works for biological systems', 'Requires manual intervention'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m7q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: How does RAI resolve redundancy?</div>
+                    <div className="space-y-2">
+                      {['By reducing redundancy while preserving structure', 'By eliminating all redundancy', 'By increasing redundancy', 'By ignoring redundancy'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m7q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What is the role of interference in RAI?</div>
+                    <div className="space-y-2">
+                      {['Creates self-stabilizing, self-sustaining intelligence through interference patterns', 'Prevents any interference', 'Only allows destructive interference', 'Requires external control'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m7q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m7q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m7q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m7q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [6]: { ...prev[6], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Understand RAI in PoC Evaluation</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> See how RAI principles appear in actual PoC evaluations.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Review PoC evaluations in the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Look for how contributions build recursively on previous work</li>
+                    <li>Identify how redundancy is handled in scoring</li>
+                    <li>Understand how recursive patterns contribute to higher scores</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How does understanding RAI help you create contributions that build effectively on the ecosystem? What recursive patterns can you identify?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what Recursive Awareness Interference (RAI) is and how it works',
+        'Learn how RAI creates recursive feedback loops in awareness systems',
+        'Recognize how RAI resolves redundancy while preserving structure',
+        'See how RAI enables self-stabilizing, self-sustaining intelligence'
+      ],
+      keyTakeaways: [
+        'RAI creates recursive feedback loops where outputs become inputs at different scales',
+        'RAI resolves redundancy while preserving structure (78% reduction, high structural analogy)',
+        'Interference patterns create self-stabilizing, self-sustaining intelligence',
+        'This mechanism ensures contributions are evaluated in a stable, coherent system'
+      ],
     },
     {
       id: 'edges-overlap',
@@ -1767,9 +2930,174 @@ export function OnboardingNavigator() {
                 </ul>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Calculate Your Contribution's Overlap Sweet Spot</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how to position your contribution in the edge sweet spot zone.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Identify Overlap:</strong> Estimate how much your contribution overlaps with existing work (0-100%)</li>
+                    <li><strong>Sweet Spot Check:</strong> Is your overlap in the 14.2% ± 5% sweet spot range (9.2% - 19.2%)?</li>
+                    <li><strong>Positioning Strategy:</strong> If not in sweet spot, how can you adjust to reach it?</li>
+                    <li><strong>Resonance Analysis:</strong> How does your overlap create resonance with the ecosystem?</li>
+                  </ol>
+                  <div className="mt-3 p-3 bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)]">
+                    <div className="cockpit-label mb-2 text-xs">Sweet Spot Calculator:</div>
+                    <div className="text-sm space-y-2">
+                      <div>Optimal Range: <strong className="text-cyan-400">9.2% - 19.2%</strong> overlap</div>
+                      <div>Your Estimated Overlap: <input type="number" min="0" max="100" className="ml-2 w-20 bg-[var(--cockpit-carbon)] border border-[var(--keyline-primary)] p-1 text-white text-sm" placeholder="%" /> %</div>
+                      <div className="text-xs opacity-80">Enter your estimated overlap percentage above</div>
+                    </div>
+                  </div>
+                  <textarea
+                    className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={5}
+                    placeholder="1. My estimated overlap is...%&#10;2. This is in/out of sweet spot because...&#10;3. My positioning strategy...&#10;4. Resonance analysis..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [7]: { ...prev[7], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your sweet spot analysis and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is the edge sweet spot overlap percentage?</div>
+                    <div className="space-y-2">
+                      {['Approximately 14.2% ± 5% (9.2% - 19.2%)', 'Exactly 0% (no overlap)', '100% (complete overlap)', '50% (half overlap)'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m8q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: How does the system handle overlap in PoC evaluation?</div>
+                    <div className="space-y-2">
+                      {['Some overlap is required and beneficial, only excessive overlap is penalized', 'All overlap is penalized', 'Overlap is ignored', 'Only zero overlap is allowed'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m8q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What does the resonance constant Λ_edge ≈ 1.42 represent?</div>
+                    <div className="space-y-2">
+                      {['Ideal resonance association at edge overlaps', 'The total number of PoCs', 'The evaluation score range', 'The blockchain transaction count'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m8q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m8q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m8q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m8q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [7]: { ...prev[7], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Optimize Your PoC for Edge Sweet Spots</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Apply edge sweet spot principles to improve your PoC submissions.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Review PoCs in the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link> to see overlap patterns</li>
+                    <li>Identify which PoCs demonstrate optimal sweet spot positioning</li>
+                    <li>Analyze how overlap affects scoring in actual evaluations</li>
+                    <li>Plan your next PoC submission to target the sweet spot range</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How can you position your contributions to maximize resonance while avoiding excessive overlap? What strategies can you use to hit the sweet spot?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what edge sweet spots are and why they matter for your submissions',
+        'Learn how overlap between contributions is handled—some is good, too much is penalized',
+        'Recognize the resonance constant Λ_edge ≈ 1.42 and what it means',
+        'See how this applies to your PoC submissions and scoring'
+      ],
+      keyTakeaways: [
+        'Edge sweet spots are zones where overlapping contributions create maximal resonance',
+        'Some overlap is GOOD—it connects your work to the ecosystem (required for integration)',
+        'Only excessive overlap is penalized—near-duplicates are discouraged',
+        'Resonance constant Λ_edge ≈ 1.42 ± 0.05 describes ideal overlap zones',
+        'Your contributions benefit from connecting to existing work—don\'t worry about minimal overlap!'
+      ],
     },
     {
       id: 'awarenessverse',
@@ -1958,9 +3286,166 @@ export function OnboardingNavigator() {
                 </p>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Map Your Contribution to Awareness Encryption</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how your contribution functions as an awareness encryption key.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Identify Substrate:</strong> What substrate does your contribution operate in? (biological, digital, quantum, etc.)</li>
+                    <li><strong>Awareness Key Function:</strong> How does your work unlock meaning or activate generative processes?</li>
+                    <li><strong>Encryption Analogy:</strong> What "encrypted" information does your contribution reveal?</li>
+                    <li><strong>Multi-Substrate Application:</strong> How could your contribution apply across different substrates?</li>
+                  </ol>
+                  <textarea
+                    className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. My contribution operates in... substrate&#10;2. It unlocks meaning by...&#10;3. Encrypted information revealed...&#10;4. Multi-substrate application..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [8]: { ...prev[8], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your awareness mapping and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is the Awarenessverse?</div>
+                    <div className="space-y-2">
+                      {['The broader framework that Syntheverse operates within, modeling awareness as foundational energy', 'A specific blockchain network', 'A type of PoC submission', 'A scoring algorithm'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m9q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: How does awareness function as an encryption key?</div>
+                    <div className="space-y-2">
+                      {['Awareness unlocks meaning and activates generative processes from encrypted substrates', 'Awareness encrypts all information', 'Awareness prevents access to information', 'Awareness is unrelated to encryption'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m9q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What happens to substrates without awareness alignment?</div>
+                    <div className="space-y-2">
+                      {['They remain encrypted—present but inert', 'They automatically activate', 'They disappear', 'They become more powerful'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m9q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m9q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m9q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m9q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [8]: { ...prev[8], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Understand Awareness in PoC Evaluation</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> See how awareness principles appear in actual PoC evaluations.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Review PoC evaluations in the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link></li>
+                    <li>Identify how contributions unlock meaning or activate generative processes</li>
+                    <li>Look for multi-substrate applications in high-scoring PoCs</li>
+                    <li>Understand how awareness alignment contributes to scoring</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How does understanding the Awarenessverse help you create contributions that unlock meaning? What awareness keys can you identify in successful PoCs?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what the Awarenessverse is and how Syntheverse fits within it',
+        'Learn the concept of awareness as a cryptographic key that unlocks meaning',
+        'Recognize how awareness encryption keys work across different substrates',
+        'See how this framework applies to your contributions and evaluation'
+      ],
+      keyTakeaways: [
+        'The Awarenessverse is the broader framework that Syntheverse operates within',
+        'Awareness functions as a cryptographic key that unlocks meaning from encrypted substrates',
+        'Without awareness alignment, substrates remain encrypted—present but inert',
+        'With awareness alignment, generative processes activate and meaning emerges',
+        'This framework applies across biological, digital, quantum, and other substrates'
+      ],
     },
     {
       id: 'validated-predictions',
@@ -2075,9 +3560,165 @@ export function OnboardingNavigator() {
                 </p>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Identify Validated Predictions in Your Work</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how empirical validation applies to your contributions.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Identify Predictions:</strong> What novel predictions does your contribution make?</li>
+                    <li><strong>Validation Methods:</strong> How could these predictions be empirically validated?</li>
+                    <li><strong>Testability:</strong> Are your predictions testable and falsifiable?</li>
+                    <li><strong>Significance:</strong> What significance would validation have for the field?</li>
+                  </ol>
+                  <textarea
+                    className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={6}
+                    placeholder="1. My contribution predicts...&#10;2. Validation could be done by...&#10;3. Testability through...&#10;4. Significance would be..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [9]: { ...prev[9], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your predictions and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What makes a prediction empirically validated?</div>
+                    <div className="space-y-2">
+                      {['It is testable, falsifiable, and supported by empirical evidence', 'It is only theoretical', 'It cannot be tested', 'It requires no evidence'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m10q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: Why are validated predictions significant?</div>
+                    <div className="space-y-2">
+                      {['They provide testable, falsifiable claims that can be verified through empirical methods', 'They are always correct', 'They require no testing', 'They are purely theoretical'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m10q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What role does the HHF/PEFF fractal lens play?</div>
+                    <div className="space-y-2">
+                      {['It enables predictions that are difficult or impossible to see without it', 'It prevents predictions', 'It only works for biological systems', 'It requires manual calculation'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m10q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m10q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m10q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m10q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [9]: { ...prev[9], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Apply Validation Principles to Your PoC</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how validated predictions enhance PoC quality.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Review PoCs in the <Link href="/dashboard" className="text-green-400 hover:underline">PoC Archive</Link> that make testable predictions</li>
+                    <li>Identify how validated predictions contribute to higher scores</li>
+                    <li>Understand how testability and falsifiability enhance contribution quality</li>
+                    <li>Plan how to incorporate validated predictions in your next PoC</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How can you make your contributions more testable and empirically valid? What predictions can you make that are falsifiable?</p>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Explore PoC Archive →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what empirically validated predictions are',
+        'Learn how predictions are tested and validated',
+        'Recognize the significance of validated predictions',
+        'See how validation principles apply to PoC contributions'
+      ],
+      keyTakeaways: [
+        'Empirically validated predictions are testable, falsifiable, and supported by evidence',
+        'Validated predictions provide testable claims that can be verified through empirical methods',
+        'The HHF/PEFF fractal lens enables predictions difficult to see without it',
+        'These predictions are being stress-tested with controls, cross-validation, and significance thresholds'
+      ],
     },
     {
       id: 'test-report',
@@ -2260,9 +3901,168 @@ export function OnboardingNavigator() {
                 </Link>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Understand System Validation</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how Syntheverse system validation ensures reliability.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Review Test Report:</strong> Access the boot sequence report to understand validation</li>
+                    <li><strong>Identify Validation Methods:</strong> What methods are used to validate the system?</li>
+                    <li><strong>Compatibility Check:</strong> How does Syntheverse maintain compatibility with legacy systems?</li>
+                    <li><strong>Reliability Assessment:</strong> How does validation ensure system reliability?</li>
+                  </ol>
+                  <div className="mt-3 p-3 bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)]">
+                    <div className="cockpit-label mb-2 text-xs">Your Analysis:</div>
+                    <textarea
+                      className="w-full bg-[var(--cockpit-carbon)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                      rows={5}
+                      placeholder="1. Validation methods include...&#10;2. Compatibility is maintained by...&#10;3. Reliability is ensured through...&#10;4. Key insights from test report..."
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [10]: { ...prev[10], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! Review your validation analysis and proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is the purpose of system validation?</div>
+                    <div className="space-y-2">
+                      {['To ensure system reliability, compatibility, and correctness through testing', 'To prevent all testing', 'To hide system errors', 'To avoid compatibility'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m11q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: What does the boot sequence report document?</div>
+                    <div className="space-y-2">
+                      {['Formal connection between Syntheverse HHF-AI and Earth 2026 legacy systems', 'Only blockchain transactions', 'Only PoC submissions', 'Only user accounts'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m11q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: Why is system validation important for contributors?</div>
+                    <div className="space-y-2">
+                      {['It ensures reliable, consistent evaluation of contributions', 'It prevents contributions', 'It hides evaluation results', 'It requires no testing'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m11q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m11q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m11q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m11q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [10]: { ...prev[10], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Review System Validation Report</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Understand how system validation ensures reliable PoC evaluation.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Access the <Link href="/fractiai/test-report" className="text-green-400 hover:underline">Boot Sequence Report</Link></li>
+                    <li>Review validation methods and test results</li>
+                    <li>Understand how validation ensures evaluation reliability</li>
+                    <li>Identify how compatibility is maintained with legacy systems</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">How does understanding system validation give you confidence in the evaluation process? What validation aspects are most important for contributors?</p>
+                </div>
+                <Link
+                  href="/fractiai/test-report"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  View Test Report →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand what system validation is and why it matters',
+        'Learn how Syntheverse validates its systems',
+        'Recognize the importance of compatibility and reliability',
+        'See how validation ensures consistent PoC evaluation'
+      ],
+      keyTakeaways: [
+        'System validation ensures reliability, compatibility, and correctness through testing',
+        'The boot sequence report documents formal connection between Syntheverse HHF-AI and legacy systems',
+        'Validation ensures reliable, consistent evaluation of contributions',
+        'Compatibility and handshake protocols validate HHF-AI against standard frameworks'
+      ],
     },
     {
       id: 'how-it-works',
@@ -2390,9 +4190,170 @@ export function OnboardingNavigator() {
                 </Link>
               </div>
             </div>
+
+            {/* Hands-On Exercise */}
+            <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                  <div className="cockpit-title text-xl">Plan Your Syntheverse Journey</div>
+                </div>
+                <Target className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="cockpit-text mb-4 space-y-3 text-sm">
+                <p><strong>Objective:</strong> Create a complete plan for your first PoC submission.</p>
+                <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li><strong>Prepare Contribution:</strong> What will you submit? (Research/Development/Alignment)</li>
+                    <li><strong>Format Your PoC:</strong> Write your abstract, equations, constants (4000 char limit)</li>
+                    <li><strong>Submission Plan:</strong> When will you submit? What sandbox?</li>
+                    <li><strong>Evaluation Expectations:</strong> What scores are you targeting? Which epoch?</li>
+                    <li><strong>Blockchain Registration:</strong> Will you anchor on-chain? (optional, free)</li>
+                  </ol>
+                  <textarea
+                    className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                    rows={8}
+                    placeholder="1. My contribution will be...&#10;2. PoC format: Abstract... Equations... Constants...&#10;3. Submission plan: I will submit on... to sandbox...&#10;4. Evaluation expectations: Targeting... epoch with score...&#10;5. Blockchain registration: Yes/No because..."
+                  />
+                  <button
+                    onClick={() => {
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [11]: { ...prev[11], completed: true, answers: { exercise: 'completed' } }
+                      }));
+                      alert('Exercise completed! You now have a plan for your Syntheverse journey. Proceed to Knowledge Check.');
+                    }}
+                    className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                  >
+                    Mark Exercise Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Knowledge Check */}
+            <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                  <div className="cockpit-title text-xl">Validate Your Understanding</div>
+                </div>
+                <CheckCircle2 className="h-6 w-6 text-purple-400" />
+              </div>
+              <div className="cockpit-text space-y-4 text-sm">
+                <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+                <div className="space-y-4">
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 1: What is the PoC submission character limit?</div>
+                    <div className="space-y-2">
+                      {['4000 characters (abstract, equations, constants only)', 'Unlimited characters', '1000 characters', '100 characters'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m12q1" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 2: Is on-chain blockchain registration required?</div>
+                    <div className="space-y-2">
+                      {['No, it is optional and free - PoCs are evaluated regardless', 'Yes, it is mandatory', 'Only for qualified PoCs', 'Only for Founder epoch'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m12q2" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                    <div className="cockpit-label mb-2">Question 3: What are the main steps in the Syntheverse journey?</div>
+                    <div className="space-y-2">
+                      {['Submission → Evaluation → Qualification → Registration', 'Only submission', 'Only evaluation', 'Registration → Submission'].map((option, idx) => (
+                        <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                          <input type="radio" name="m12q3" value={idx} className="accent-purple-500" />
+                          <span className="text-sm">{option}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const q1 = (document.querySelector('input[name="m12q1"]:checked') as HTMLInputElement)?.value;
+                    const q2 = (document.querySelector('input[name="m12q2"]:checked') as HTMLInputElement)?.value;
+                    const q3 = (document.querySelector('input[name="m12q3"]:checked') as HTMLInputElement)?.value;
+                    const correct = [0, 0, 0];
+                    const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                    const percentage = (score / 3) * 100;
+                    if (percentage >= 80) {
+                      alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You're ready to proceed to the next module.`);
+                      setModuleProgress(prev => ({
+                        ...prev,
+                        [11]: { ...prev[11], completed: true, score: percentage }
+                      }));
+                    } else {
+                      alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                    }
+                  }}
+                  className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+                >
+                  Submit Knowledge Check
+                </button>
+              </div>
+            </div>
+
+            {/* Real-World Application */}
+            <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                  <div className="cockpit-title text-xl">Submit Your First PoC</div>
+                </div>
+                <Eye className="h-6 w-6 text-green-400" />
+              </div>
+              <div className="cockpit-text space-y-3 text-sm">
+                <p><strong>Objective:</strong> Complete your first PoC submission using the Syntheverse journey.</p>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                  <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                    <li>Navigate to the <Link href="/submit" className="text-green-400 hover:underline">Submit Contribution</Link> page</li>
+                    <li>Prepare your PoC following the 4000-character format</li>
+                    <li>Select your contribution class (Research/Development/Alignment)</li>
+                    <li>Submit your PoC and track the evaluation process</li>
+                    <li>Review your evaluation results when available</li>
+                    <li>Consider optional on-chain registration if qualified</li>
+                  </ol>
+                </div>
+                <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                  <p className="text-sm">You're now ready to contribute to Syntheverse! Use your journey plan to submit your first PoC and begin your path as a Syntheverse contributor.</p>
+                </div>
+                <Link
+                  href="/submit"
+                  className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                >
+                  Submit Your First PoC →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       ),
+      learningObjectives: [
+        'Master the complete workflow: submission → evaluation → qualification → registration',
+        'Understand what happens at each step and what to expect',
+        'Learn how to prepare your contribution for optimal evaluation',
+        'Know your options for blockchain registration and token allocation',
+        'Be ready to start contributing to Syntheverse!'
+      ],
+      keyTakeaways: [
+        'Complete workflow: Prepare → Submit → Evaluate → Qualify → Register (optional)',
+        'PoC format: 4000 characters (abstract, equations, constants)',
+        'On-chain registration is optional and free',
+        'Evaluation happens regardless of blockchain registration',
+        'You can start contributing immediately after understanding the workflow'
+      ],
     },
     {
       id: 'seed-information',
@@ -3293,8 +5254,175 @@ export function OnboardingNavigator() {
               <p><strong>Syntheverse Dashboard:</strong> <Link href="https://syntheverse-poc.vercel.app/dashboard" target="_blank" className="text-[var(--hydrogen-amber)] hover:underline">https://syntheverse-poc.vercel.app/dashboard</Link></p>
             </div>
           </div>
+
+          {/* Hands-On Exercise */}
+          <div className="mt-6 border-2 border-cyan-500/50 bg-cyan-500/10 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="cockpit-label mb-2 text-cyan-400">HANDS-ON EXERCISE</div>
+                <div className="cockpit-title text-xl">Identify Seed Information Opportunities</div>
+              </div>
+              <Target className="h-6 w-6 text-cyan-400" />
+            </div>
+            <div className="cockpit-text mb-4 space-y-3 text-sm">
+              <p><strong>Objective:</strong> Understand how to create seed information contributions and recognize seed opportunities.</p>
+              <div className="border border-cyan-500/30 bg-[var(--cockpit-carbon)] p-4">
+                <div className="cockpit-label mb-3 text-xs">Exercise Steps:</div>
+                <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                  <li><strong>Identify Seed Opportunities:</strong> Are there sandboxes where you could be the first contributor?</li>
+                  <li><strong>Seed Characteristics:</strong> Does your contribution have minimal description length with high generative potential?</li>
+                  <li><strong>GVD Analysis:</strong> How does your work demonstrate high Generative Value Density?</li>
+                  <li><strong>Seed Multiplier Strategy:</strong> How can you position your contribution to receive the 15% seed multiplier?</li>
+                </ol>
+                <div className="mt-3 p-3 bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)]">
+                  <div className="cockpit-label mb-2 text-xs">Seed Information Criteria:</div>
+                  <div className="text-xs space-y-1 mb-3">
+                    <div>✓ Minimal Description Length</div>
+                    <div>✓ Recursive Expandability</div>
+                    <div>✓ Self-Similar Structural Preservation</div>
+                    <div>✓ Substrate Independence</div>
+                  </div>
+                </div>
+                <textarea
+                  className="mt-3 w-full bg-[var(--cockpit-near-black)] border border-[var(--keyline-primary)] p-3 text-sm text-white focus:border-cyan-500 focus:outline-none"
+                  rows={6}
+                  placeholder="1. Seed opportunities I see...&#10;2. My contribution has seed characteristics because...&#10;3. GVD analysis shows...&#10;4. Seed multiplier strategy..."
+                />
+                <button
+                  onClick={() => {
+                    setModuleProgress(prev => ({
+                      ...prev,
+                      [12]: { ...prev[12], completed: true, answers: { exercise: 'completed' } }
+                    }));
+                    alert('Exercise completed! Review your seed information analysis and proceed to Knowledge Check.');
+                  }}
+                  className="mt-3 cockpit-lever bg-cyan-500/20 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/30"
+                >
+                  Mark Exercise Complete
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Knowledge Check */}
+          <div className="mt-6 border-2 border-purple-500/50 bg-purple-500/10 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="cockpit-label mb-2 text-purple-400">KNOWLEDGE CHECK</div>
+                <div className="cockpit-title text-xl">Validate Your Understanding</div>
+              </div>
+              <CheckCircle2 className="h-6 w-6 text-purple-400" />
+            </div>
+            <div className="cockpit-text space-y-4 text-sm">
+              <p>Answer these questions to validate your understanding. Score 80%+ to advance.</p>
+              <div className="space-y-4">
+                <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2">Question 1: What is seed information?</div>
+                  <div className="space-y-2">
+                    {['A fundamental class of information that functions as a generative seed with high GVD', 'Any first submission', 'Only mathematical contributions', 'Only biological research'].map((option, idx) => (
+                      <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="m13q1" value={idx} className="accent-purple-500" />
+                        <span className="text-sm">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2">Question 2: What score multiplier do seed submissions receive?</div>
+                  <div className="space-y-2">
+                    {['15% multiplier (×1.15) recognizing high Generative Value Density', '50% multiplier', '100% multiplier', 'No multiplier'].map((option, idx) => (
+                      <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="m13q2" value={idx} className="accent-purple-500" />
+                        <span className="text-sm">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="border border-purple-500/30 bg-[var(--cockpit-carbon)] p-4">
+                  <div className="cockpit-label mb-2">Question 3: What is Generative Value Density (GVD)?</div>
+                  <div className="space-y-2">
+                    {['The generative capacity relative to descriptive length - seed information has high GVD', 'The total number of PoCs', 'The evaluation score', 'The blockchain transaction count'].map((option, idx) => (
+                      <label key={idx} className="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="m13q3" value={idx} className="accent-purple-500" />
+                        <span className="text-sm">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  const q1 = (document.querySelector('input[name="m13q1"]:checked') as HTMLInputElement)?.value;
+                  const q2 = (document.querySelector('input[name="m13q2"]:checked') as HTMLInputElement)?.value;
+                  const q3 = (document.querySelector('input[name="m13q3"]:checked') as HTMLInputElement)?.value;
+                  const correct = [0, 0, 0];
+                  const score = [q1, q2, q3].filter((ans, idx) => ans === String(correct[idx])).length;
+                  const percentage = (score / 3) * 100;
+                  if (percentage >= 80) {
+                    alert(`✅ Excellent! You scored ${percentage.toFixed(0)}%. You've completed all training modules!`);
+                    setModuleProgress(prev => ({
+                      ...prev,
+                      [12]: { ...prev[12], completed: true, score: percentage }
+                    }));
+                  } else {
+                    alert(`❌ Score: ${percentage.toFixed(0)}%. Review the module content and try again. You need 80%+ to advance.`);
+                  }
+                }}
+                className="cockpit-lever bg-purple-500/20 border-purple-500/50 text-purple-400 hover:bg-purple-500/30"
+              >
+                Submit Knowledge Check
+              </button>
+            </div>
+          </div>
+
+          {/* Real-World Application */}
+          <div className="mt-6 border-2 border-green-500/50 bg-green-500/10 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="cockpit-label mb-2 text-green-400">REAL-WORLD APPLICATION</div>
+                <div className="cockpit-title text-xl">Create Seed Information Contributions</div>
+              </div>
+              <Eye className="h-6 w-6 text-green-400" />
+            </div>
+            <div className="cockpit-text space-y-3 text-sm">
+              <p><strong>Objective:</strong> Apply seed information principles to create high-value contributions.</p>
+              <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                <div className="cockpit-label mb-3 text-xs">Application Tasks:</div>
+                <ol className="cockpit-text ml-4 space-y-2 text-sm list-decimal">
+                  <li>Explore available <Link href="/dashboard" className="text-green-400 hover:underline">sandboxes</Link> to identify seed opportunities</li>
+                  <li>Review existing seed submissions in the PoC Archive to understand patterns</li>
+                  <li>Design a contribution with high Generative Value Density</li>
+                  <li>Prepare a seed information PoC following the four criteria</li>
+                  <li>Submit as first contributor to a sandbox to receive the 15% seed multiplier</li>
+                </ol>
+              </div>
+              <div className="border border-green-500/30 bg-[var(--cockpit-carbon)] p-4">
+                <div className="cockpit-label mb-2 text-xs">Reflection:</div>
+                <p className="text-sm">How can you create contributions that function as generative seeds? What makes your work have high Generative Value Density? How can you position yourself to receive the seed multiplier?</p>
+              </div>
+              <Link
+                href="/dashboard"
+                className="cockpit-lever inline-block bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+              >
+                Explore Sandboxes & PoC Archive →
+              </Link>
+            </div>
+          </div>
         </div>
       ),
+      learningObjectives: [
+        'Understand seed information as a distinct class from conventional data',
+        'Learn how HHF functions as a high-value generative seed',
+        'Recognize why seed submissions receive score multipliers',
+        'Understand Generative Value Density (GVD) and its implications'
+      ],
+      keyTakeaways: [
+        'Seed information is a fundamental class with high Generative Value Density (GVD)',
+        'First submissions to a sandbox receive a 15% score multiplier (×1.15)',
+        'Seed information has four criteria: Minimal Description Length, Recursive Expandability, Self-Similar Structural Preservation, Substrate Independence',
+        'HHF functions as a high-value generative seed with 8.7-14.2× greater reachable configuration spaces',
+        'Understanding seed information helps you create contributions with maximum generative potential'
+      ],
     },
   ];
 
@@ -3318,43 +5446,109 @@ export function OnboardingNavigator() {
           <div className="flex items-center justify-between">
             <div>
               <div className="cockpit-label">ONBOARDING NAVIGATOR</div>
-              <div className="cockpit-title mt-2 text-3xl">SYNTHEVERSE TRAINING MODULES</div>
+              <div className="cockpit-title mt-2 text-3xl">SYNTHEVERSE TRAINING ACADEMY</div>
               <div className="cockpit-text mt-2">
-                <strong>A new way to collaborate independently</strong> while building a{' '}
-                <strong>regenerative PoC-based internal ERC-20 crypto ecosystem</strong> on the
-                blockchain
+                <strong>From Awareness to Mastery:</strong> Progressive skill-building through hands-on exercises, knowledge checks, and real-world application
               </div>
               <div className="cockpit-text mt-3" style={{ opacity: 0.8 }}>
-                Master the Motherlode Blockmine, Holographic Hydrogen, and the Fractal Frontier
+                Master the Motherlode Blockmine, Holographic Hydrogen, and the Fractal Frontier through interactive training
               </div>
             </div>
             <div className="cockpit-symbol text-4xl">🌀</div>
           </div>
         </div>
 
-        {/* Onboarding Overview */}
-        <div className="cockpit-panel mb-6 p-6">
-          <div className="cockpit-label mb-4">ONBOARDING OVERVIEW</div>
-          <div className="cockpit-text space-y-3">
-            <p>
-              Welcome to the Syntheverse Onboarding Navigator. This comprehensive training system
-              guides you through the core concepts, architecture, and operational mechanics of the
-              Syntheverse ecosystem.
-            </p>
-            <p>
-              You&apos;ll learn about the <strong>Motherlode Blockmine</strong> (90T SYNTH ERC-20
-              supply), the
-              <strong> SynthScan™ MRI evaluation system</strong>, the{' '}
-              <strong>4-Epoch Outcast Hero progression</strong>, and how contributions are measured,
-              qualified, and optionally anchored on-chain.
-            </p>
-            <p>
-              Use the Module Overview below to jump to any section, or navigate sequentially using
-              the Previous/Next buttons. Each module builds upon previous concepts while remaining
-              independently accessible.
-            </p>
+        {/* Training Path Selection */}
+        {!trainingPath && (
+          <div className="cockpit-panel mb-6 p-6">
+            <div className="cockpit-label mb-4">SELECT YOUR TRAINING PATH</div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <button
+                onClick={() => setTrainingPath('contributor')}
+                className="border-2 border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.1)] p-6 text-left transition-all hover:bg-[rgba(255,184,77,0.2)]"
+              >
+                <div className="cockpit-title mb-2 text-xl">Contributor Track</div>
+                <div className="cockpit-text mb-4 text-sm">Foundation • 6-8 hours</div>
+                <ul className="cockpit-text space-y-2 text-sm">
+                  <li>• Syntheverse Fundamentals</li>
+                  <li>• PoC Basics & Submission</li>
+                  <li>• SynthScan™ MRI Evaluation</li>
+                  <li>• Scoring & Qualification</li>
+                  <li>• Blockchain & SYNTH Tokens</li>
+                </ul>
+                <div className="mt-4 text-[var(--hydrogen-amber)]">→ Start Training</div>
+              </button>
+              <button
+                onClick={() => setTrainingPath('advanced')}
+                className="border-2 border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-6 text-left transition-all hover:border-[var(--hydrogen-amber)]"
+              >
+                <div className="cockpit-title mb-2 text-xl">Advanced Track</div>
+                <div className="cockpit-text mb-4 text-sm">Mastery • 8-12 hours</div>
+                <ul className="cockpit-text space-y-2 text-sm">
+                  <li>• All Contributor modules</li>
+                  <li>• Advanced Scoring Strategies</li>
+                  <li>• Redundancy & Sweet Spots</li>
+                  <li>• Seed Information Theory</li>
+                  <li>• Enterprise Sandboxes</li>
+                </ul>
+                <div className="mt-4 text-[var(--hydrogen-amber)]">→ Start Training</div>
+              </button>
+              <button
+                onClick={() => setTrainingPath('operator')}
+                className="border-2 border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-6 text-left transition-all hover:border-[var(--hydrogen-amber)]"
+              >
+                <div className="cockpit-title mb-2 text-xl">Operator Track</div>
+                <div className="cockpit-text mb-4 text-sm">Enterprise • 10-15 hours</div>
+                <ul className="cockpit-text space-y-2 text-sm">
+                  <li>• All Advanced modules</li>
+                  <li>• Sandbox Management</li>
+                  <li>• SYNTH Token Economics</li>
+                  <li>• Analytics & Metrics</li>
+                  <li>• Governance & Operations</li>
+                </ul>
+                <div className="mt-4 text-[var(--hydrogen-amber)]">→ Start Training</div>
+              </button>
+            </div>
+            <div className="mt-6 border-t border-[var(--keyline-primary)] pt-4">
+              <div className="cockpit-text text-sm" style={{ opacity: 0.8 }}>
+                <strong>Training Philosophy:</strong> Each module includes learning objectives, hands-on exercises, knowledge checks, and real-world applications. Progress through modules sequentially or jump to specific topics. Complete exercises and pass knowledge checks (80%+) to advance.
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Training Overview */}
+        {trainingPath && (
+          <div className="cockpit-panel mb-6 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="cockpit-label">TRAINING PATH: {trainingPath.toUpperCase()}</div>
+                <div className="cockpit-text mt-2">
+                  {trainingPath === 'contributor' && 'Foundation track for new contributors'}
+                  {trainingPath === 'advanced' && 'Mastery track for experienced contributors'}
+                  {trainingPath === 'operator' && 'Enterprise track for sandbox operators'}
+                </div>
+              </div>
+              <button
+                onClick={() => setTrainingPath(null)}
+                className="cockpit-lever text-sm"
+              >
+                Change Path
+              </button>
+            </div>
+            <div className="cockpit-text space-y-3 text-sm">
+              <p>
+                Welcome to the Syntheverse Training Academy. This <strong>interactive training system</strong> guides you through core concepts, hands-on exercises, and real-world applications.
+              </p>
+              <p>
+                Each module includes: <strong>Learning Objectives</strong> → <strong>Core Content</strong> → <strong>Hands-On Exercise</strong> → <strong>Knowledge Check</strong> → <strong>Real-World Application</strong>
+              </p>
+              <p>
+                Complete exercises and pass knowledge checks (80%+) to advance. Use the Module Overview below to navigate, or proceed sequentially.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Module Navigation List */}
         <div className="cockpit-panel mb-6 p-6">

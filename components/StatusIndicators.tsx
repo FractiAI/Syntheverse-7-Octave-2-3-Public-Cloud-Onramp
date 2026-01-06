@@ -1,6 +1,6 @@
 /**
  * Status Indicators Component
- * Shows Syntheverse component status: Whole Brain AI, SynthScan MRI, PoC Sandbox, ERC-20 Base Mainnet, Awareness Bridge Router
+ * Shows Syntheverse component status: Whole Brain AI, SynthScan MRI, PoC Sandbox, ERC-20 Base Mainnet
  * Also shows Syntheverse and current sandbox deployment status
  */
 
@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { BootSequenceIndicators } from './BootSequenceIndicators';
-import { Brain, Scan, Layers, Network, Router, Box } from 'lucide-react';
+import { Brain, Scan, Layers, Network, Box } from 'lucide-react';
 
 interface ComponentStatus {
   name: string;
@@ -36,11 +36,6 @@ const syntheverseComponents: ComponentStatus[] = [
     name: 'erc20-base',
     label: 'ERC-20 Base',
     icon: <Network className="h-3 w-3" />,
-  },
-  {
-    name: 'awareness-bridge',
-    label: 'Awareness Bridge',
-    icon: <Router className="h-3 w-3" />,
   },
 ];
 
