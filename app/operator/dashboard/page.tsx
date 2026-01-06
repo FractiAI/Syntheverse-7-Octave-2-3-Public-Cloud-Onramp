@@ -10,7 +10,6 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { CreatorCockpitStats } from '@/components/creator/CreatorCockpitStats';
 import { CreatorCockpitNavigation } from '@/components/creator/CreatorCockpitNavigation';
 import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
-import { SynthChat } from '@/components/SynthChat';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
 import { SystemBroadcastCenter } from '@/components/creator/SystemBroadcastCenter';
@@ -45,8 +44,10 @@ export default async function OperatorDashboard() {
   return (
     <div className="cockpit-bg min-h-screen">
       <div className="container mx-auto space-y-6 px-6 py-8">
-        {/* Sandbox Navigator - Table Format */}
+        {/* Navigation Modules - Three Navigators in Sequence */}
         <SandboxNavigator />
+        <FrontierModule userEmail={userEmail} />
+        <SynthChatNavigator />
 
         {/* Cockpit Header */}
         <div className="cockpit-panel border-l-4 border-blue-500 p-6">
