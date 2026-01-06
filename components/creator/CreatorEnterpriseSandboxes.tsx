@@ -150,7 +150,7 @@ export function CreatorEnterpriseSandboxes() {
       <div className="cockpit-panel p-6">
         <div className="cockpit-label mb-4">MY ENTERPRISE SANDBOXES</div>
         <div className="cockpit-text mb-4 opacity-60">
-          You don't have any enterprise sandboxes yet. Create one to get started.
+          You don&apos;t have any enterprise sandboxes yet. Create one to get started.
         </div>
         <Link
           href="/fractiai/enterprise-dashboard"
