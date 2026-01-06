@@ -92,6 +92,10 @@ npm install
 cp .env.example .env.local
 # Edit .env.local with your values (see Environment Variables section)
 
+# Run database migrations
+# In Supabase SQL Editor, run: supabase/migrations/add_synthchat_production.sql
+# This creates chat_rooms, chat_messages, and chat_participants tables
+
 # Run development server
 npm run dev
 ```
@@ -166,15 +170,21 @@ See [Environment Variables](#environment-variables) section for complete configu
   - **Problems Reported**: Error and issue tracking with type categorization (errors, evaluation_errors, payment_errors, other)
   - **Auto-refresh**: Updates every 30 seconds
   - **Access Control**: Operator and Creator only, server-side permission enforcement
-- **SynthChat - Collaborative Sandbox Chat System**: Multi-user chat platform for sandbox collaboration
+- **SynthChat - Collaborative Sandbox Chat System**: WhatsApp-style mobile chat interface for sandbox collaboration
+  - **WhatsApp-Style Interface**: Mobile-first design with two-panel layout (sandbox list + chat view)
   - **Sandbox-Based Rooms**: Chat rooms organized by sandbox (Syntheverse default + enterprise + user-defined)
   - **Multi-User Participation**: Multiple users can participate in the same chat room
-  - **Role-Based Display**: Shows Creator/Operator/Contributor badges for each message
+  - **Role-Based Display**: Shows Creator/Operator/Contributor badges for each message with avatars
   - **Real-Time Updates**: Auto-refreshes messages every 3 seconds
   - **User-Defined Sandboxes**: Users can create custom chat sandboxes for projects/teams
-  - **Available on Both Dashboards**: SynthChat accessible from contributor and creator/operator dashboards
-  - **Participant Tracking**: Shows who's in each room with participant counts
+  - **Connect/Disconnect**: Users can join or leave chat rooms with connection status tracking
+  - **Chat Navigator**: Filter sandboxes by All, Connected, or Available with search functionality
+  - **Available on Both Dashboards**: SynthChat accessible from contributor dashboard (button) and creator/operator dashboard (embedded tab)
+  - **Embedded Mode**: Creator Dashboard displays chat interface directly in the Chat tab (no dialog)
+  - **Participant Tracking**: Shows who's in each room with participant counts and connection status
   - **Auto-Join**: Syntheverse room auto-joins users on first access
+  - **Message Bubbles**: WhatsApp-style rounded message bubbles with timestamps and sender names
+  - **Last Message Preview**: Shows last message and timestamp in sandbox list
 - **Creator Dashboard Enhancements**:
   - **PoC Archive Integration**: Full PoC Archive view (same as contributor dashboard) showing all submissions
   - **Archive Management**: View and manage PoC entries with detailed statistics
@@ -320,7 +330,8 @@ See [Testing](#testing) section for details.
 │
 ├── 📁 supabase/                      # Database migrations
 │   └── migrations/                  # SQL migration files
-│       └── 20250105000001_create_enterprise_tables.sql # Enterprise tables
+│       ├── 20250105000001_create_enterprise_tables.sql # Enterprise tables
+│       └── add_synthchat_production.sql # SynthChat tables (chat_rooms, chat_messages, chat_participants)
 │
 ├── 📁 .github/                       # GitHub templates & workflows
 │   ├── ISSUE_TEMPLATE/              # Issue templates
@@ -643,11 +654,12 @@ Built for the Syntheverse ecosystem with ❤️
 
 ---
 
-**Last Updated**: January 7, 2025  
-**Version**: 2.7 (Sales Tracking & Activity Stats)
+**Last Updated**: January 5, 2025  
+**Version**: 2.8 (SynthChat WhatsApp-Style Interface)
 
 ### Version History
 
+- **v2.8** (January 2025): SynthChat WhatsApp-Style Interface - Redesigned SynthChat with WhatsApp-style mobile interface featuring two-panel layout (sandbox list + chat view), connect/disconnect functionality, chat navigator with filtering (All/Connected/Available), embedded mode in Creator Dashboard, message bubbles with timestamps, last message preview, and participant tracking. Database schema includes chat_rooms, chat_messages, and chat_participants tables with Row Level Security policies.
 - **v2.7** (January 2025): Sales Tracking & Activity Stats - Added comprehensive sales tracking dashboard with revenue, subscription, payment, and customer analytics. Added activity stats dashboard tracking page activity, new users, submissions, chat sessions, and problems reported. Both dashboards are accessible to operators and creators with auto-refresh capabilities. Sales tracking integrates with Stripe API and database records for real-time analytics.
 - **v2.6** (January 2025): Creator Dashboard - Creator-controlled destructive operations for PoC archive management and user administration. Includes PoC archive reset (hard mode), user deletion (hard mode), operator role management, and complete audit logging. Creator-only access (info@fractiai.com) with server-side permission enforcement and safeguards.
 - **v2.5** (January 2025): Enterprise Frontier Sandbox Dashboard - Complete enterprise sandbox system with tiered pricing, contribution management, analytics, and tokenized rewards. Featured on FractiAI page with "Get" buttons and integrated into onboarding flow. Narrative emphasizes customized HHF-AI sandbox ecosystem nested within Syntheverse, broadcast to contributor channels, with transparent scoring and SYNTH90T ERC-20 MOTHERLODE VAULT alignment.
