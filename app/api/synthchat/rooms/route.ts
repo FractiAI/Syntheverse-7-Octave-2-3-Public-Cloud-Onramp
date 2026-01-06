@@ -38,9 +38,7 @@ export async function GET(request: NextRequest) {
     let accessibleSandboxes = [];
     if (isOperator || isCreator) {
       // Operators/Creators can see all enterprise sandboxes
-      accessibleSandboxes = await db
-        .select()
-        .from(enterpriseSandboxesTable);
+      accessibleSandboxes = await db.select().from(enterpriseSandboxesTable);
     } else {
       // Regular users see sandboxes they operate
       accessibleSandboxes = await db
@@ -89,12 +87,10 @@ export async function GET(request: NextRequest) {
     const userRoomIds = userParticipantRooms.map((p) => p.room_id);
 
     // Get all rooms user is in (user-defined sandboxes)
-    const allUserRooms = userRoomIds.length > 0
-      ? await db
-          .select()
-          .from(chatRoomsTable)
-          .where(inArray(chatRoomsTable.id, userRoomIds))
-      : [];
+    const allUserRooms =
+      userRoomIds.length > 0
+        ? await db.select().from(chatRoomsTable).where(inArray(chatRoomsTable.id, userRoomIds))
+        : [];
 
     // Filter to get only user-defined rooms (not Syntheverse, not enterprise sandboxes)
     const enterpriseSandboxIds = accessibleSandboxes.map((sb) => sb.id);
@@ -109,11 +105,9 @@ export async function GET(request: NextRequest) {
       .map((r) => r.id)
       .filter((id) => id !== syntheverseRoom[0].id && !sandboxRoomIds.includes(id));
 
-    const allRoomIds = [
-      syntheverseRoom[0].id,
-      ...sandboxRoomIds,
-      ...userDefinedRoomIds,
-    ].filter(Boolean);
+    const allRoomIds = [syntheverseRoom[0].id, ...sandboxRoomIds, ...userDefinedRoomIds].filter(
+      Boolean
+    );
 
     // Get participant counts for each room
     const roomsWithCounts = await Promise.all(
@@ -147,10 +141,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ rooms: filteredRooms });
   } catch (error) {
     console.error('Error fetching chat rooms:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch chat rooms' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch chat rooms' }, { status: 500 });
   }
 }
 
@@ -235,10 +226,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error joining chat room:', error);
-    return NextResponse.json(
-      { error: 'Failed to join chat room' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to join chat room' }, { status: 500 });
   }
 }
-

@@ -13,10 +13,7 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 export const dynamic = 'force-dynamic';
 
 // GET: Fetch messages for a specific room
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { roomId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { roomId: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -69,6 +66,11 @@ export async function GET(
       return NextResponse.json({ error: 'Not a participant in this room' }, { status: 403 });
     }
 
+    // Get limit from query params (for fetching last message)
+    const { searchParams } = new URL(request.url);
+    const limitParam = searchParams.get('limit');
+    const limit = limitParam ? parseInt(limitParam, 10) : 200;
+
     // Fetch messages for this room
     const messages = await db
       .select({
@@ -84,7 +86,7 @@ export async function GET(
       .leftJoin(usersTable, eq(chatMessagesTable.sender_email, usersTable.email))
       .where(eq(chatMessagesTable.room_id, roomId))
       .orderBy(desc(chatMessagesTable.created_at))
-      .limit(200);
+      .limit(limit);
 
     // Get participants for this room
     const participants = await db
@@ -104,18 +106,12 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching room messages:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch messages' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
 }
 
 // POST: Send a new message to a room
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { roomId: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { roomId: string } }) {
   try {
     const supabase = createClient();
     const {
@@ -197,10 +193,6 @@ export async function POST(
     return NextResponse.json({ success: true, id: messageId });
   } catch (error) {
     console.error('Error sending chat message:', error);
-    return NextResponse.json(
-      { error: 'Failed to send message' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
   }
 }
-

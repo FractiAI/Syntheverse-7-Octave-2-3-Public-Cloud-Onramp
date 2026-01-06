@@ -64,14 +64,6 @@ export default async function CreatorDashboard() {
         {/* Control Panels */}
         <CreatorCockpitNavigation />
 
-        {/* SynthChat - Collaborative Sandbox Chat */}
-        <div className="cockpit-panel p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="cockpit-label">SYNTHCHAT</div>
-            <SynthChat />
-          </div>
-        </div>
-
         {/* PoC Archive - Same as Contributor Dashboard */}
         <FrontierModule userEmail={user.email} />
       </div>

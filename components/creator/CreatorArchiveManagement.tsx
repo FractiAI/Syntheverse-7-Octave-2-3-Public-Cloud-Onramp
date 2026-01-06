@@ -215,7 +215,7 @@ export function CreatorArchiveManagement() {
                     className="cockpit-panel bg-[var(--cockpit-carbon)] p-4"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="cockpit-title mb-1 truncate text-sm">{poc.title}</div>
                         <div className="cockpit-text mb-2 text-xs opacity-75">
                           {poc.contributor}

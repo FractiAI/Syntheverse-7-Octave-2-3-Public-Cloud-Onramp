@@ -16,14 +16,16 @@ import {
   Search,
   Filter,
   ExternalLink,
+  MessageCircle,
 } from 'lucide-react';
 import { CreatorArchiveManagement } from './CreatorArchiveManagement';
 import { CreatorUserManagement } from './CreatorUserManagement';
 import { CreatorAuditLog } from './CreatorAuditLog';
+import { SynthChat } from '@/components/SynthChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-type NavigationTab = 'archive' | 'users' | 'blockchain' | 'database';
+type NavigationTab = 'archive' | 'users' | 'blockchain' | 'database' | 'chat';
 
 export function CreatorCockpitNavigation() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('archive');
@@ -34,6 +36,7 @@ export function CreatorCockpitNavigation() {
     { id: 'users' as NavigationTab, label: 'Operators', icon: Users, color: 'purple' },
     { id: 'blockchain' as NavigationTab, label: 'On-Chain Proofs', icon: LinkIcon, color: 'blue' },
     { id: 'database' as NavigationTab, label: 'System', icon: Database, color: 'green' },
+    { id: 'chat' as NavigationTab, label: 'Chat', icon: MessageCircle, color: 'cyan' },
   ];
 
   return (
@@ -57,9 +60,9 @@ export function CreatorCockpitNavigation() {
                 style={
                   isActive
                     ? {
-                        borderColor: `var(--${tab.color === 'amber' ? 'hydrogen-amber' : tab.color === 'purple' ? 'purple-500' : tab.color === 'blue' ? 'blue-500' : 'green-500'})`,
-                        backgroundColor: `rgba(${tab.color === 'amber' ? '255,184,77' : tab.color === 'purple' ? '147,51,234' : tab.color === 'blue' ? '59,130,246' : '34,197,94'}, 0.1)`,
-                        color: `var(--${tab.color === 'amber' ? 'hydrogen-amber' : tab.color === 'purple' ? 'purple-400' : tab.color === 'blue' ? 'blue-400' : 'green-400'})`,
+                        borderColor: `var(--${tab.color === 'amber' ? 'hydrogen-amber' : tab.color === 'purple' ? 'purple-500' : tab.color === 'blue' ? 'blue-500' : tab.color === 'green' ? 'green-500' : 'cyan-500'})`,
+                        backgroundColor: `rgba(${tab.color === 'amber' ? '255,184,77' : tab.color === 'purple' ? '147,51,234' : tab.color === 'blue' ? '59,130,246' : tab.color === 'green' ? '34,197,94' : '6,182,212'}, 0.1)`,
+                        color: `var(--${tab.color === 'amber' ? 'hydrogen-amber' : tab.color === 'purple' ? 'purple-400' : tab.color === 'blue' ? 'blue-400' : tab.color === 'green' ? 'green-400' : 'cyan-400'})`,
                       }
                     : {}
                 }
@@ -77,7 +80,7 @@ export function CreatorCockpitNavigation() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform opacity-50" />
           <Input
-            placeholder={`Search ${activeTab === 'archive' ? 'PoCs' : activeTab === 'users' ? 'operators' : activeTab === 'blockchain' ? 'on-chain proofs' : 'system data'}...`}
+            placeholder={`Search ${activeTab === 'archive' ? 'PoCs' : activeTab === 'users' ? 'operators' : activeTab === 'blockchain' ? 'on-chain proofs' : activeTab === 'chat' ? 'chat rooms' : 'system data'}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="cockpit-input pl-10"
@@ -124,6 +127,18 @@ export function CreatorCockpitNavigation() {
               DATABASE NAVIGATION & EDIT/RESET
             </div>
             <DatabaseNavigationPanel />
+          </div>
+        )}
+
+        {activeTab === 'chat' && (
+          <div>
+            <div className="cockpit-label mb-4 flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              SYNTHCHAT - COLLABORATIVE SANDBOX CHAT
+            </div>
+            <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
+              <SynthChat />
+            </div>
           </div>
         )}
       </div>
