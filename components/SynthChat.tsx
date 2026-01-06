@@ -186,6 +186,8 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
     setMessages([]);
     setShowSidebar(false); // Hide sidebar on mobile when selecting a room
     await joinRoom(room.id);
+    // Explicitly fetch messages after room change
+    await fetchMessages();
   };
 
   const handleJoinRoom = async (roomId: string) => {
@@ -349,6 +351,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
     return matchesSearch;
   });
 
+
   // If embedded, render directly without dialog
   const chatContent = (
     <div className={embedded ? 'flex h-full h-[600px] w-full' : 'flex h-full'}>
@@ -411,69 +414,84 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
                 </div>
               </div>
 
-              {/* Sandbox List */}
-              <div className="flex-1 overflow-y-auto">
+              {/* Chat Rooms Table - Similar to PoC Archive */}
+              <div className="flex-1 overflow-x-auto">
                 {loading ? (
                   <div className="cockpit-text p-8 text-center opacity-60">
-                    Loading sandboxes...
+                    Loading chat rooms...
                   </div>
                 ) : filteredRooms.length === 0 ? (
                   <div className="cockpit-text p-8 text-center opacity-60">
-                    {searchTerm ? 'No sandboxes found' : 'No sandboxes yet'}
+                    {searchTerm ? 'No chat rooms found' : 'No chat rooms yet'}
                   </div>
                 ) : (
-                  <div className="divide-y divide-[var(--keyline-primary)]">
-                    {filteredRooms.map((room) => {
-                      const isActive = currentRoom?.id === room.id;
-                      return (
-                        <button
-                          key={room.id}
-                          onClick={() => handleRoomChange(room)}
-                          className={`w-full p-4 text-left transition-colors hover:bg-[var(--cockpit-carbon)] ${
-                            isActive
-                              ? 'border-l-4 border-[var(--hydrogen-amber)] bg-[var(--cockpit-carbon)]'
-                              : ''
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            {/* Avatar */}
-                            <div className="from-[var(--hydrogen-amber)]/30 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br to-purple-500/30 text-sm font-semibold">
-                              {room.name.charAt(0).toUpperCase()}
-                            </div>
-                            {/* Content */}
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-1 flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <h3 className="cockpit-title truncate text-sm font-medium">
-                                    {room.name}
-                                  </h3>
-                                  {room.is_connected && (
-                                    <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
-                                      Connected
-                                    </span>
-                                  )}
+                  <table className="cockpit-table">
+                    <thead>
+                      <tr>
+                        <th>Room Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Participants</th>
+                        <th>Last Message</th>
+                        <th>Last Activity</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredRooms.map((room) => {
+                        const isActive = currentRoom?.id === room.id;
+                        return (
+                          <tr
+                            key={room.id}
+                            onClick={() => handleRoomChange(room)}
+                            className={`cursor-pointer ${isActive ? 'bg-[var(--cockpit-carbon)]' : ''}`}
+                          >
+                            <td>
+                              <div className="font-medium">{room.name}</div>
+                              {room.sandbox_id && (
+                                <div className="cockpit-text mt-1 text-xs opacity-60">
+                                  Sandbox Chat
                                 </div>
-                                {room.last_message && (
-                                  <span className="cockpit-text ml-2 flex-shrink-0 text-xs opacity-60">
-                                    {formatTime(room.last_message.created_at)}
-                                  </span>
-                                )}
-                              </div>
-                              {room.last_message ? (
-                                <p className="cockpit-text truncate text-xs opacity-75">
-                                  {room.last_message.sender_email === currentUserEmail
-                                    ? 'You: '
-                                    : ''}
-                                  {room.last_message.message}
-                                </p>
-                              ) : (
-                                <p className="cockpit-text text-xs opacity-60">No messages yet</p>
                               )}
-                              <div className="mt-1 flex items-center justify-between">
-                                <span className="cockpit-text text-xs opacity-50">
-                                  {room.participant_count}{' '}
-                                  {room.participant_count === 1 ? 'member' : 'members'}
+                            </td>
+                            <td className="cockpit-text text-sm">
+                              {room.description || '—'}
+                            </td>
+                            <td>
+                              {room.is_connected ? (
+                                <span className="cockpit-badge bg-green-500/20 text-green-400 border-green-500/50">
+                                  Connected
                                 </span>
+                              ) : (
+                                <span className="cockpit-badge bg-gray-500/20 text-gray-400 border-gray-500/50">
+                                  Available
+                                </span>
+                              )}
+                            </td>
+                            <td className="cockpit-text text-sm">
+                              {room.participant_count} {room.participant_count === 1 ? 'member' : 'members'}
+                            </td>
+                            <td className="cockpit-text text-sm">
+                              {room.last_message ? (
+                                <div>
+                                  <div className="truncate max-w-[200px]">
+                                    {room.last_message.sender_email === currentUserEmail
+                                      ? 'You: '
+                                      : ''}
+                                    {room.last_message.message}
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="opacity-60">No messages yet</span>
+                              )}
+                            </td>
+                            <td className="cockpit-text text-sm">
+                              {room.last_message
+                                ? formatTime(room.last_message.created_at)
+                                : '—'}
+                            </td>
+                            <td>
+                              <div className="flex items-center gap-2">
                                 {room.is_connected ? (
                                   <Button
                                     variant="ghost"
@@ -502,12 +520,12 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
                                   </Button>
                                 )}
                               </div>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 )}
               </div>
             </div>
