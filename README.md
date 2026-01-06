@@ -132,9 +132,10 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Creator Dashboard**: Creator-only destructive controls for PoC lifecycle management and user administration
 - **Mobile UI Optimization**: Crisp, beautiful desktop-quality display on mobile with proper typography hierarchy, proportional spacing, and maintained visual polish
 - **Sales Tracking**: Simplified revenue tracking for creators and operators (Total, This Month, Last Month) with expandable details
-- **Dashboard Layout**: Optimized dashboard structure with Quick Actions at top, Core Instrument Panel (ReactorCore) prominently displayed, followed by navigation modules (Sandbox Navigator, PoC Archive, SynthChat Navigator)
-  - **Quick Actions Panel**: Dedicated top section with quick access buttons (FractiAI, Onboarding Navigator, Submit Contribution, Blog, role-specific dashboards) on all dashboards
-  - **Core Instrument Panel**: SYNTH90T ERC-20 MOTHERLODE BLOCKMINE display showing available SYNTH tokens, epoch breakdown, and system status
+- **Dashboard Layout**: Optimized dashboard structure with Core Instrument Panel at the very top, followed by Quick Actions, then navigation modules (Sandbox Navigator, PoC Archive, SynthChat Navigator)
+  - **Core Instrument Panel**: SYNTH90T ERC-20 MOTHERLODE BLOCKMINE display showing available SYNTH tokens, epoch breakdown, and system status - positioned at the very top of all dashboards
+  - **Quick Actions Panel**: Dedicated section with quick access buttons (FractiAI, Onboarding Navigator, Submit Contribution, Blog, Genesis on Base Mainnet, role-specific dashboards) on all dashboards
+  - **Genesis Button**: "Check out our Syntheverse Genesis on Base Mainnet" button added to Quick Actions section on all dashboards
   - **Consistent Navigation**: Standardized table-based navigators across all dashboards for easy sandbox, PoC, and chat access
 - **Sandbox Selector**: Dashboard-level sandbox selection with Syntheverse as default and enterprise sandboxes nested within
 - **Activity Stats**: Page activity, new users, submissions, chat sessions, and problems reported tracking
@@ -237,7 +238,7 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Motherlode Vault Status**: Live epoch and SYNTH availability display
 - **Mobile Navigation**: Optimized button placement for mobile devices
 - **Operator Broadcast Banner**: Dismissible notification system
-- **Status Indicators**: Comprehensive system status display in header
+- **Status Indicators**: Comprehensive system status display in header (visible on all screen sizes)
   - **Syntheverse Components**: Green indicator lights showing online status for:
     - Syntheverse Protocol (always green, deployed)
     - Whole Brain AI
@@ -254,6 +255,7 @@ See [Environment Variables](#environment-variables) section for complete configu
   - **Boot Sequence Indicators**: System initialization status
   - **Responsive Display**: Labels visible on large screens, tooltips on smaller screens
   - **Real-Time Updates**: Listens for sandbox selection changes across all dashboards
+  - **Always Visible**: Status indicators displayed on all screen sizes (mobile, tablet, desktop)
 - **Blog System**: Comprehensive blog functionality with sandbox-specific blogs
   - **Main Syntheverse Blog**: Public blog for protocol updates and announcements
   - **Sandbox-Specific Blogs**: Each creator/enterprise sandbox spawns its own blog page
@@ -733,9 +735,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 2025  
-**Version**: 2.17 (Syntheverse Component Status Indicators)
+**Version**: 2.18 (Dashboard Layout Optimization & Status Indicators)
 
 ### Version History
+
+- **v2.18** (January 2025): Dashboard Layout Optimization & Status Indicators - Reorganized dashboard structure to prioritize Core Instrument Panel (ReactorCore) at the very top of all dashboards, followed by Quick Actions section. Added "Check out our Syntheverse Genesis on Base Mainnet" button to Quick Actions on all dashboards (contributor, creator, operator). Made status indicators visible on all screen sizes (removed mobile hiding) so system status is always accessible. Improved dashboard hierarchy: Header (with always-visible status indicators) → Core Instrument Panel → Quick Actions (including Genesis button) → Navigation Modules → Content. All dashboards now have consistent layout and structure.
 
 - **v2.17** (January 2025): Syntheverse Component Status Indicators - Enhanced status indicators in header to show comprehensive system status. Added green indicator lights for all Syntheverse components (Syntheverse Protocol, Whole Brain AI, SynthScan MRI, PoC Sandbox, ERC-20 Base Mainnet, Awareness Bridge Router) with real-time online status. Added current sandbox indicator showing active sandbox with deployment status (green if deployed, gray if not). Status indicators appear on all dashboards (contributor, creator, operator) via CockpitHeader component. Indicators update dynamically when sandbox selection changes, reading from localStorage for persistence. Responsive design shows labels on large screens and tooltips on smaller screens. All components show as green (online) with pulsing animation for deployed systems.
 
