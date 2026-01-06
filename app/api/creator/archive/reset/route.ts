@@ -2,10 +2,9 @@
  * Creator/Operator endpoint to reset PoC archive
  *
  * POST /api/creator/archive/reset
- * Body: { mode: 'soft' | 'hard', confirmation_phrase: string }
+ * Body: { confirmation_phrase: string }
  *
- * Soft Reset: Clears archived PoC records, preserves on-chain registrations, audit logs, aggregate metrics
- * Hard Reset: Deletes archived PoC data, requires explicit confirmation
+ * Hard Reset: Deletes archived PoC data (preserves on-chain registrations), requires explicit confirmation
  *
  * Access: Creator and Operators
  */
@@ -32,14 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { mode, confirmation_phrase } = body;
-
-    if (!mode || (mode !== 'soft' && mode !== 'hard')) {
-      return NextResponse.json(
-        { error: 'Invalid mode. Must be "soft" or "hard"' },
-        { status: 400 }
-      );
-    }
+    const { confirmation_phrase } = body;
 
     if (!confirmation_phrase || confirmation_phrase !== CONFIRMATION_PHRASE) {
       return NextResponse.json(
@@ -63,66 +55,32 @@ export async function POST(request: NextRequest) {
 
     const affectedCount = Number(archivedCount[0]?.count || 0);
 
-    if (mode === 'soft') {
-      // Soft reset: Set archived_at timestamp, preserve data
-      await db
-        .update(contributionsTable)
-        .set({
-          archived_at: new Date(),
-          updated_at: new Date(),
-        })
-        .where(
-          sql`${contributionsTable.status} = 'archived' AND ${contributionsTable.registered} = false AND ${contributionsTable.archived_at} IS NULL`
-        );
-
-      await logAuditEvent(
-        user.email,
-        'archive_reset_soft',
-        'archive',
-        'all_archived_pocs',
-        affectedCount,
-        {
-          confirmation_phrase,
-          ip_address,
-          user_agent,
-        }
+    // Hard reset: Delete archived PoC data (but preserve on-chain registrations)
+    // Only delete contributions that are archived AND not registered on-chain
+    await db
+      .delete(contributionsTable)
+      .where(
+        sql`${contributionsTable.status} = 'archived' AND ${contributionsTable.registered} = false`
       );
 
-      return NextResponse.json({
-        success: true,
-        message: 'Archive soft reset completed',
-        affected_count: affectedCount,
-        mode: 'soft',
-      });
-    } else {
-      // Hard reset: Delete archived PoC data (but preserve on-chain registrations)
-      // Only delete contributions that are archived AND not registered on-chain
-      const deleted = await db
-        .delete(contributionsTable)
-        .where(
-          sql`${contributionsTable.status} = 'archived' AND ${contributionsTable.registered} = false`
-        );
+    await logAuditEvent(
+      user.email,
+      'archive_reset_hard',
+      'archive',
+      'all_archived_pocs',
+      affectedCount,
+      {
+        confirmation_phrase,
+        ip_address,
+        user_agent,
+      }
+    );
 
-      await logAuditEvent(
-        user.email,
-        'archive_reset_hard',
-        'archive',
-        'all_archived_pocs',
-        affectedCount,
-        {
-          confirmation_phrase,
-          ip_address,
-          user_agent,
-        }
-      );
-
-      return NextResponse.json({
-        success: true,
-        message: 'Archive hard reset completed',
-        affected_count: affectedCount,
-        mode: 'hard',
-      });
-    }
+    return NextResponse.json({
+      success: true,
+      message: 'Archive reset completed',
+      affected_count: affectedCount,
+    });
   } catch (error) {
     console.error('Archive reset error:', error);
     return NextResponse.json(
