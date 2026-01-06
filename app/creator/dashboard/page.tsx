@@ -19,7 +19,6 @@ import { CreatorEnterpriseSandboxes } from '@/components/creator/CreatorEnterpri
 import { ReferenceCustomersList } from '@/components/ReferenceCustomersList';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
 import { SynthChatNavigator } from '@/components/SynthChatNavigator';
-import { FrontierModule } from '@/components/FrontierModule';
 import { Shield, Activity, FileText } from 'lucide-react';
 import Link from 'next/link';
 

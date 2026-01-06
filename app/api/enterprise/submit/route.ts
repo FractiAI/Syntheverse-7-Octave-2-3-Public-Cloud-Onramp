@@ -54,6 +54,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
+    // Generate submission hash (needed for both payment and exempt paths)
+    const contentHash = crypto.createHash('sha256').update(text_content).digest('hex');
+    const submissionHash = crypto
+      .createHash('sha256')
+      .update(`${sandbox_id}:${contentHash}:${Date.now()}`)
+      .digest('hex');
+
     // Payment exemption: Creator bypasses all, Operator bypasses only their own sandboxes
     const isExemptFromPayment = isCreator || (isOperator && sandbox.operator === user.email);
 
@@ -119,13 +126,6 @@ export async function POST(request: NextRequest) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2024-06-20',
     });
-
-    // Generate submission hash
-    const contentHash = crypto.createHash('sha256').update(text_content).digest('hex');
-    const submissionHash = crypto
-      .createHash('sha256')
-      .update(`${sandbox_id}:${contentHash}:${Date.now()}`)
-      .digest('hex');
 
     // Save submission with payment_pending status
     await db.insert(enterpriseContributionsTable).values({
