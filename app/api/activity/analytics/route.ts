@@ -125,11 +125,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Daily page activity
     const pageActivityDailyResult = await db.execute(sql`
       SELECT 
-        DATE(${pocLogTable.created_at}) as date,
+        DATE(created_at) as date,
         COUNT(*)::int as value
-      FROM ${pocLogTable}
-      WHERE ${pocLogTable.created_at} >= ${startDate}
-      GROUP BY DATE(${pocLogTable.created_at})
+      FROM poc_log
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE(created_at)
       ORDER BY date ASC
     `);
     const pageActivityDaily = Array.isArray(pageActivityDailyResult) ? pageActivityDailyResult : [];
@@ -137,11 +137,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Hourly page activity (last 24 hours)
     const pageActivityHourlyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('hour', ${pocLogTable.created_at}) as date,
+        DATE_TRUNC('hour', created_at) as date,
         COUNT(*)::int as value
-      FROM ${pocLogTable}
-      WHERE ${pocLogTable.created_at} >= ${startHour}
-      GROUP BY DATE_TRUNC('hour', ${pocLogTable.created_at})
+      FROM poc_log
+      WHERE created_at >= ${startHour}
+      GROUP BY DATE_TRUNC('hour', created_at)
       ORDER BY date ASC
     `);
     const pageActivityHourly = Array.isArray(pageActivityHourlyResult) ? pageActivityHourlyResult : [];
@@ -149,11 +149,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Weekly page activity
     const pageActivityWeeklyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('week', ${pocLogTable.created_at}) as date,
+        DATE_TRUNC('week', created_at) as date,
         COUNT(*)::int as value
-      FROM ${pocLogTable}
-      WHERE ${pocLogTable.created_at} >= ${startDate}
-      GROUP BY DATE_TRUNC('week', ${pocLogTable.created_at})
+      FROM poc_log
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE_TRUNC('week', created_at)
       ORDER BY date ASC
     `);
     const pageActivityWeekly = Array.isArray(pageActivityWeeklyResult) ? pageActivityWeeklyResult : [];
@@ -161,11 +161,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Daily user count
     const userCountDailyResult = await db.execute(sql`
       SELECT 
-        DATE(${contributionsTable.created_at}) as date,
-        COUNT(DISTINCT ${contributionsTable.contributor})::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-      GROUP BY DATE(${contributionsTable.created_at})
+        DATE(created_at) as date,
+        COUNT(DISTINCT contributor)::int as value
+      FROM contributions
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE(created_at)
       ORDER BY date ASC
     `);
     const userCountDaily = Array.isArray(userCountDailyResult) ? userCountDailyResult : [];
@@ -173,11 +173,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Weekly user count
     const userCountWeeklyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('week', ${contributionsTable.created_at}) as date,
-        COUNT(DISTINCT ${contributionsTable.contributor})::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-      GROUP BY DATE_TRUNC('week', ${contributionsTable.created_at})
+        DATE_TRUNC('week', created_at) as date,
+        COUNT(DISTINCT contributor)::int as value
+      FROM contributions
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE_TRUNC('week', created_at)
       ORDER BY date ASC
     `);
     const userCountWeekly = Array.isArray(userCountWeeklyResult) ? userCountWeeklyResult : [];
@@ -185,11 +185,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Monthly user count
     const userCountMonthlyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('month', ${contributionsTable.created_at}) as date,
-        COUNT(DISTINCT ${contributionsTable.contributor})::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-      GROUP BY DATE_TRUNC('month', ${contributionsTable.created_at})
+        DATE_TRUNC('month', created_at) as date,
+        COUNT(DISTINCT contributor)::int as value
+      FROM contributions
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE_TRUNC('month', created_at)
       ORDER BY date ASC
     `);
     const userCountMonthly = Array.isArray(userCountMonthlyResult) ? userCountMonthlyResult : [];
@@ -197,11 +197,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Daily submissions
     const submissionsDailyResult = await db.execute(sql`
       SELECT 
-        DATE(${contributionsTable.created_at}) as date,
+        DATE(created_at) as date,
         COUNT(*)::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-      GROUP BY DATE(${contributionsTable.created_at})
+      FROM contributions
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE(created_at)
       ORDER BY date ASC
     `);
     const submissionsDaily = Array.isArray(submissionsDailyResult) ? submissionsDailyResult : [];
@@ -209,11 +209,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Hourly submissions (last 24 hours)
     const submissionsHourlyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('hour', ${contributionsTable.created_at}) as date,
+        DATE_TRUNC('hour', created_at) as date,
         COUNT(*)::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startHour}
-      GROUP BY DATE_TRUNC('hour', ${contributionsTable.created_at})
+      FROM contributions
+      WHERE created_at >= ${startHour}
+      GROUP BY DATE_TRUNC('hour', created_at)
       ORDER BY date ASC
     `);
     const submissionsHourly = Array.isArray(submissionsHourlyResult) ? submissionsHourlyResult : [];
@@ -221,11 +221,11 @@ export async function GET(request: NextRequest) {
     // Historical data - Weekly submissions
     const submissionsWeeklyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('week', ${contributionsTable.created_at}) as date,
+        DATE_TRUNC('week', created_at) as date,
         COUNT(*)::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-      GROUP BY DATE_TRUNC('week', ${contributionsTable.created_at})
+      FROM contributions
+      WHERE created_at >= ${startDate}
+      GROUP BY DATE_TRUNC('week', created_at)
       ORDER BY date ASC
     `);
     const submissionsWeekly = Array.isArray(submissionsWeeklyResult) ? submissionsWeeklyResult : [];
@@ -233,12 +233,12 @@ export async function GET(request: NextRequest) {
     // Historical data - Daily qualifications
     const qualificationsDailyResult = await db.execute(sql`
       SELECT 
-        DATE(${contributionsTable.created_at}) as date,
+        DATE(created_at) as date,
         COUNT(*)::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-        AND ${contributionsTable.status} = 'qualified'
-      GROUP BY DATE(${contributionsTable.created_at})
+      FROM contributions
+      WHERE created_at >= ${startDate}
+        AND status = 'qualified'
+      GROUP BY DATE(created_at)
       ORDER BY date ASC
     `);
     const qualificationsDaily = Array.isArray(qualificationsDailyResult) ? qualificationsDailyResult : [];
@@ -246,12 +246,12 @@ export async function GET(request: NextRequest) {
     // Historical data - Weekly qualifications
     const qualificationsWeeklyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('week', ${contributionsTable.created_at}) as date,
+        DATE_TRUNC('week', created_at) as date,
         COUNT(*)::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-        AND ${contributionsTable.status} = 'qualified'
-      GROUP BY DATE_TRUNC('week', ${contributionsTable.created_at})
+      FROM contributions
+      WHERE created_at >= ${startDate}
+        AND status = 'qualified'
+      GROUP BY DATE_TRUNC('week', created_at)
       ORDER BY date ASC
     `);
     const qualificationsWeekly = Array.isArray(qualificationsWeeklyResult) ? qualificationsWeeklyResult : [];
@@ -259,12 +259,12 @@ export async function GET(request: NextRequest) {
     // Historical data - Monthly qualifications
     const qualificationsMonthlyResult = await db.execute(sql`
       SELECT 
-        DATE_TRUNC('month', ${contributionsTable.created_at}) as date,
+        DATE_TRUNC('month', created_at) as date,
         COUNT(*)::int as value
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.created_at} >= ${startDate}
-        AND ${contributionsTable.status} = 'qualified'
-      GROUP BY DATE_TRUNC('month', ${contributionsTable.created_at})
+      FROM contributions
+      WHERE created_at >= ${startDate}
+        AND status = 'qualified'
+      GROUP BY DATE_TRUNC('month', created_at)
       ORDER BY date ASC
     `);
     const qualificationsMonthly = Array.isArray(qualificationsMonthlyResult) ? qualificationsMonthlyResult : [];
@@ -273,15 +273,15 @@ export async function GET(request: NextRequest) {
     const qualificationsBreakdownResult = await db.execute(sql`
       SELECT 
         CASE 
-          WHEN (${contributionsTable.metadata}->>'pod_score')::numeric >= 8000 THEN 'founder'
-          WHEN (${contributionsTable.metadata}->>'pod_score')::numeric >= 6000 THEN 'pioneer'
-          WHEN (${contributionsTable.metadata}->>'pod_score')::numeric >= 5000 THEN 'community'
-          WHEN (${contributionsTable.metadata}->>'pod_score')::numeric >= 4000 THEN 'ecosystem'
+          WHEN (metadata->>'pod_score')::numeric >= 8000 THEN 'founder'
+          WHEN (metadata->>'pod_score')::numeric >= 6000 THEN 'pioneer'
+          WHEN (metadata->>'pod_score')::numeric >= 5000 THEN 'community'
+          WHEN (metadata->>'pod_score')::numeric >= 4000 THEN 'ecosystem'
           ELSE 'other'
         END as tier,
         COUNT(*)::int as count
-      FROM ${contributionsTable}
-      WHERE ${contributionsTable.status} = 'qualified'
+      FROM contributions
+      WHERE status = 'qualified'
       GROUP BY tier
     `);
     const qualificationsBreakdown = Array.isArray(qualificationsBreakdownResult) ? qualificationsBreakdownResult : [];
