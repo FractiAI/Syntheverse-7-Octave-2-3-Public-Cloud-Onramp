@@ -40,7 +40,6 @@ interface GrokEvaluationResult {
   base_novelty?: number;
   base_density?: number;
   redundancy_overlap_percent?: number;
-  is_seed_submission?: boolean;
   raw_grok_response?: string;
   llm_metadata?: {
     timestamp: string;
@@ -87,7 +86,6 @@ export async function evaluateWithGrok(
   base_novelty?: number;
   base_density?: number;
   redundancy_overlap_percent?: number;
-  is_seed_submission?: boolean;
   raw_grok_response?: string;
   llm_metadata?: {
     timestamp: string;
@@ -223,29 +221,16 @@ export async function evaluateWithGrok(
     // Continue without archived PoCs if fetch fails
   }
 
-  // CRITICAL: Detect if this submission defines the Syntheverse sandbox itself
-  //
-  // Logic: Compare this submission to:
-  // 1. The Syntheverse sandbox definition (foundational submission)
-  // 2. Prior submissions (archived PoCs)
-  //
-  // If this is the FIRST submission (no archived PoCs exist), it defines the sandbox.
-  // All subsequent submissions are compared against the sandbox definition AND prior submissions.
-  const isFirstSubmission = archivedVectors.length === 0;
-  const isSeedSubmission = isFirstSubmission; // First submission = defines the sandbox
-
   debug('EvaluateWithGrok', 'Submission comparison context', {
-    isFirstSubmission,
-    isSeedSubmission,
     archivedCount: archivedVectors.length,
     title,
-    comparisonContext: isFirstSubmission
-      ? 'FIRST SUBMISSION - Defines the Syntheverse sandbox itself'
-      : `Subsequent submission - Will be compared to sandbox definition + ${archivedVectors.length} prior submission(s)`,
+    comparisonContext:
+      archivedVectors.length === 0
+        ? 'First submission - No prior submissions to compare against'
+        : `Subsequent submission - Will be compared to ${archivedVectors.length} prior submission(s)`,
   });
 
   // Calculate actual vector-based redundancy if we have current vectorization
-  // Seed submissions always have 0% redundancy (they define the system)
   let calculatedRedundancy: {
     overlap_percent: number;
     penalty_percent: number;
@@ -263,21 +248,7 @@ export async function evaluateWithGrok(
     computation_context?: 'global' | 'per-user' | 'per-sandbox';
   } | null = null;
 
-  if (isSeedSubmission) {
-    calculatedRedundancy = {
-      overlap_percent: 0,
-      penalty_percent: 0,
-      bonus_multiplier: 1,
-      similarity_score: 0,
-      closest_vectors: [],
-      analysis:
-        'This is the FIRST submission that defines the Syntheverse sandbox itself. Redundancy is 0% because nothing exists to be redundant with - this submission establishes the framework everything else operates within.',
-    };
-    debug(
-      'EvaluateWithGrok',
-      'FIRST SUBMISSION detected - setting redundancy to 0% (defines the sandbox)'
-    );
-  } else if (currentVectorization && archivedVectors.length > 0) {
+  if (currentVectorization && archivedVectors.length > 0) {
     // Compare this submission to the Syntheverse sandbox + prior submissions
     // SCALABILITY FIX: Limit to top 50 vectors for redundancy calculation (still accurate, much faster)
     const MAX_REDUNDANCY_VECTORS = 50;
@@ -411,7 +382,7 @@ ${truncatedText}
 ${calculatedRedundancyContext ? `\n${calculatedRedundancyContext}` : ''}
 
 Notes:
-- ${isSeedSubmission ? 'This is the FIRST submission defining the Syntheverse sandbox. Redundancy penalty MUST be 0%.' : 'This is NOT the first submission. Use the vector-based redundancy information above to determine overlap and redundancy penalties.'}
+- Use the vector-based redundancy information above to determine overlap and redundancy penalties.
 - Apply redundancy penalty ONLY to the composite/total score (as specified in the system prompt).
 - You MUST include scoring_metadata, pod_composition, and archive_similarity_distribution in your JSON response.
 - Output: Provide a detailed narrative review (clear + specific), AND include the REQUIRED JSON structure from the system prompt.
@@ -1301,25 +1272,7 @@ ${answer}`;
       clamped: pod_score === 10000 || pod_score === 0,
     };
 
-    // Use actual evaluated score for all submissions, including seed submissions
     // Qualification threshold (≥8,000 for Founder) is checked separately
-    if (isSeedSubmission) {
-      debug(
-        'EvaluateWithGrok',
-        'Foundational submission detected - using actual evaluated pod_score',
-        {
-          title,
-          actual_scores: {
-            novelty: finalNoveltyScore,
-            density: densityFinal,
-            coherence: coherenceScore,
-            alignment: alignmentScore,
-          },
-          pod_score: pod_score,
-          note: 'Using actual evaluated score, not overridden to 10000',
-        }
-      );
-    }
 
     // Extract metal alignment
     let metals: string[] = [];
@@ -1350,7 +1303,6 @@ ${answer}`;
       density: densityFinal,
       qualified_epoch: qualifiedEpoch,
       qualified,
-      isSeedSubmission: isSeedSubmission,
       qualification_based_on: 'pod_score (composite score)',
     });
 
@@ -1438,12 +1390,8 @@ ${answer}`;
     const finalCoherence = Math.max(0, Math.min(2500, coherenceScore));
     const finalAlignment = Math.max(0, Math.min(2500, alignmentScore));
     const finalPodScore = Math.max(0, Math.min(10000, pod_score));
-    const finalRedundancy = isSeedSubmission
-      ? 0
-      : Math.max(0, Math.min(100, redundancyOverlapPercent)); // Always 0 for foundational submissions
-    const finalOverlap = isSeedSubmission
-      ? 0
-      : Math.max(0, Math.min(100, redundancyOverlapPercent));
+    const finalRedundancy = Math.max(0, Math.min(100, redundancyOverlapPercent));
+    const finalOverlap = Math.max(0, Math.min(100, redundancyOverlapPercent));
 
     // Capture LLM metadata for provenance (timestamp, date, model, version, system prompt)
     const evaluationTimestamp = new Date();
@@ -1493,12 +1441,9 @@ ${answer}`;
         requires_admin_approval: true,
       },
       // Store base scores and overlap effect for transparency
-      // For seed submissions, keep original base scores for transparency but award maximum final scores
       base_novelty: baseNoveltyScore,
       base_density: baseDensityScore,
       redundancy_overlap_percent: redundancyOverlapPercent,
-      // Flag to indicate if this was a seed submission with qualification override
-      is_seed_submission: isSeedSubmission,
       // Store raw Grok API response for display
       raw_grok_response: answer, // Store the raw markdown/text response from Grok
       // LLM Metadata for provenance and audit trail (required for all qualifying PoCs)
