@@ -70,7 +70,7 @@ export function SectionEngage() {
     creative: {
       icon: Palette,
       title: 'For Creators & Enterprises',
-      description: 'For Creators: A new infinite medium and materials for full reality worldbuilding creations. For Enterprises: 1.5–1.8× higher output with 38–58% lower overhead through contribution-indexed coordination.',
+      description: 'For Frontier R&D: Liberated contributions, visible and demonstrable to all. For Enterprises: 1.5–1.8× higher output with 38–58% lower overhead through contribution-indexed coordination. For Creators: A new infinite medium and materials for full reality worldbuilding creations.',
       steps: [
         'Access infinite HHF-AI materials and substrates—a new medium for worldbuilding',
         'Build complete reality worlds with unlimited creative materials',

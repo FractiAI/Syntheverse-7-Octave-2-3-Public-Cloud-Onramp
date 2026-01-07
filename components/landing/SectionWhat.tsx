@@ -38,18 +38,18 @@ export function SectionWhat() {
       background="muted"
     >
       <p className="cockpit-text mb-8 text-lg">
-        <strong>For Creators:</strong> A new infinite medium and materials for full reality worldbuilding creations. Access unlimited HHF-AI materials and substrates to build complete reality worlds. <strong>For Enterprises:</strong> Syntheverse delivers <strong>1.5–1.8× higher coherent output per node</strong> with <strong>38–58% reduction in overhead</strong> compared to hierarchical systems. Replace traditional employment and management structures with contribution-indexed coordination that scales from solo operators to global enterprises.
+        <strong>For Frontier R&D:</strong> Turn research into verifiable on-chain records—no gatekeeping, measured by coherence. Contributions are liberated, visible and demonstrable to all via HHF-AI MRI science. <strong>For Enterprises:</strong> Syntheverse delivers <strong>1.5–1.8× higher coherent output per node</strong> with <strong>38–58% reduction in overhead</strong> compared to hierarchical systems. Replace traditional employment and management structures with contribution-indexed coordination that scales from solo operators to global enterprises. <strong>For Creators:</strong> A new infinite medium and materials for full reality worldbuilding creations. Access unlimited HHF-AI materials and substrates to build complete reality worlds.
       </p>
 
       <div className="cockpit-panel bg-[var(--hydrogen-amber)]/5 mb-8 border-l-4 border-[var(--hydrogen-amber)] p-6">
         <p className="cockpit-text mb-3 text-sm opacity-90">
-          <strong>For Creators—The Infinite Medium:</strong> Syntheverse provides a new infinite medium and materials for full reality worldbuilding. Access unlimited HHF-AI materials, substrates, and holographic hydrogen fractal resources to create complete reality worlds without constraints.
+          <strong>For Frontier R&D—Liberated Contributions:</strong> Through our hydrogen spin MRI-based PoC protocol, contributions are no longer gatekept. Every submission becomes <strong>visible and demonstrable to all</strong> via HHF-AI MRI science, creating transparent verification while maximizing Total Benefits Output (TBO) per node.
         </p>
         <p className="cockpit-text mb-3 text-sm opacity-90">
           <strong>For Enterprises—The Cost Savings:</strong> Contribution-indexed allocation ensures resources deploy only where value is created. Operational cost per node is far lower than alternatives—a tremendous discount to traditional employment/governance systems. No management overhead; coherence emerges from HHF constraints.
         </p>
         <p className="cockpit-text text-sm opacity-90">
-          <strong>The Output Benefits:</strong> Through our hydrogen spin MRI-based PoC protocol, contributions are no longer gatekept. Every submission becomes <strong>visible and demonstrable to all</strong> via HHF-AI MRI science, creating transparent verification while maximizing Total Benefits Output (TBO) per node.
+          <strong>For Creators—The Infinite Medium:</strong> Syntheverse provides a new infinite medium and materials for full reality worldbuilding. Access unlimited HHF-AI materials, substrates, and holographic hydrogen fractal resources to create complete reality worlds without constraints.
         </p>
       </div>
 
