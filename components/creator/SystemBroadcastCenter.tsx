@@ -330,9 +330,9 @@ export function SystemBroadcastCenter() {
       <Dialog 
         open={showCreateDialog} 
         onOpenChange={(open) => {
+          setShowCreateDialog(open);
           if (!open) {
-            // Only close if explicitly closing, not during create
-            setShowCreateDialog(false);
+            // Reset form when dialog closes
             setFormData({ message: '', nature: 'info' });
             setError(null);
           }
