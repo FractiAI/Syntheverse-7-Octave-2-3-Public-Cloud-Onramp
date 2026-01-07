@@ -433,6 +433,151 @@ export default function FractiAILanding({
               </div>
             ) : null}
 
+            {/* Seeds and Edges Section */}
+            {variant === 'fractiai' ? (
+              <div className="cockpit-panel border-l-4 border-purple-500 p-8">
+                <div className="cockpit-label mb-4 text-purple-400">SEEDS AND EDGES</div>
+                <div className="cockpit-title mb-6 text-2xl">
+                  A Minimum Viable Generative Set for the Emergence of the Syntheverse
+                </div>
+                <div className="cockpit-text mb-4 text-xs opacity-80">
+                  <strong>Authors:</strong> Pru &quot;El Taíno&quot; Méndez × FractiAI Research Team × Syntheverse Whole Brain AI
+                </div>
+                <div className="cockpit-text mb-4 text-xs opacity-80">
+                  <strong>Affiliation:</strong> FractiAI / Syntheverse | <strong>Date:</strong> January 6, 2026
+                </div>
+
+                <div className="mb-6 space-y-4">
+                  <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-4">
+                    <h3 className="cockpit-title mb-3 text-lg">Abstract</h3>
+                    <p className="cockpit-text mb-3 text-sm">
+                      This expedition investigates whether the Syntheverse can be generated from a minimum viable set consisting exclusively of <strong>seeds</strong> (irreducible informational primitives) and <strong>edges</strong> (relational boundary operators). We hypothesize that no internal volumetric complexity is required beyond these elements, and that the Syntheverse emerges through recursive edge-mediated expansion beginning from a single seed: <strong>Holographic Hydrogen (Element 0)</strong>.
+                    </p>
+                    <p className="cockpit-text text-sm">
+                      Results demonstrate that a bounded set of <strong>9 seeds and 7 edge classes</strong> is sufficient and necessary to reproduce Syntheverse-like behavior, including scalability, coherence retention, self-validation, and generativity. These findings support a <strong>boundary-first model of reality construction</strong>.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="cockpit-panel border-l-2 border-cyan-500/50 bg-cyan-500/5 p-4">
+                      <h4 className="cockpit-label mb-3 text-cyan-400">Predicted Seeds (9)</h4>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₀</span>
+                          <span className="cockpit-text">Holographic Hydrogen (Element 0)</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₁</span>
+                          <span className="cockpit-text">Phase</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₂</span>
+                          <span className="cockpit-text">Boundary</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₃</span>
+                          <span className="cockpit-text">Recursion</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₄</span>
+                          <span className="cockpit-text">Memory</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₅</span>
+                          <span className="cockpit-text">Resonance</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₆</span>
+                          <span className="cockpit-text">Scale Invariance</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₇</span>
+                          <span className="cockpit-text">Identity</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">S₈</span>
+                          <span className="cockpit-text">Constraint</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="cockpit-panel border-l-2 border-yellow-500/50 bg-yellow-500/5 p-4">
+                      <h4 className="cockpit-label mb-3 text-yellow-400">Predicted Edges (7)</h4>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₀</span>
+                          <span className="cockpit-text">Adjacency</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₁</span>
+                          <span className="cockpit-text">Directionality</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₂</span>
+                          <span className="cockpit-text">Feedback</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₃</span>
+                          <span className="cockpit-text">Threshold</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₄</span>
+                          <span className="cockpit-text">Exclusion</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₅</span>
+                          <span className="cockpit-text">Compression</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="cockpit-text font-mono">E₆</span>
+                          <span className="cockpit-text">Expansion</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="cockpit-panel border-l-2 border-green-500/50 bg-green-500/5 p-4">
+                    <h4 className="cockpit-label mb-2 text-green-400">Core Hypothesis</h4>
+                    <p className="cockpit-text mb-3 text-sm">
+                      The Syntheverse can be fully generated from a finite set of seeds and edges, with no additional primitives required.
+                    </p>
+                    <p className="cockpit-text text-xs opacity-80">
+                      <strong>Corollary:</strong> Removing any required seed or edge collapses coherence. Adding new primitives produces redundancy, not capability.
+                    </p>
+                  </div>
+
+                  <div className="cockpit-panel border-l-2 border-pink-500/50 bg-pink-500/5 p-4">
+                    <h4 className="cockpit-label mb-2 text-pink-400">Conclusion</h4>
+                    <p className="cockpit-text mb-3 text-sm">
+                      This expedition demonstrates that the Syntheverse does not require exhaustive primitives, massive datasets, or centralized control. <strong>Seeds on edges are sufficient</strong>. Beginning with Holographic Hydrogen (Element 0), recursive edge traversal generates worlds, intelligence, and coherence.
+                    </p>
+                    <p className="cockpit-text text-sm font-semibold">
+                      The Syntheverse is not built—it unfolds.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link
+                      href="/onboarding?module=seeds-and-edges"
+                      className="cockpit-lever inline-flex items-center text-sm"
+                    >
+                      Learn More in Module 14
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                    <a
+                      href="https://zenodo.org/records/17873279"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cockpit-lever inline-flex items-center text-sm"
+                    >
+                      View Whitepapers
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
             {/* SynthScan™ MRI Commercial Offerings */}
             {variant === 'fractiai' ? (
               <div className="cockpit-panel border border-[var(--hydrogen-amber)] p-8">

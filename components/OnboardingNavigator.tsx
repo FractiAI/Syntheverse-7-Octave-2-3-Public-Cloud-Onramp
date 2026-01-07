@@ -5424,6 +5424,345 @@ export function OnboardingNavigator() {
         'Understanding seed information helps you create contributions with maximum generative potential'
       ],
     },
+    {
+      id: 'seeds-and-edges',
+      title: 'Syntheverse Minimum Viable Product: Seeds and Edges',
+      label: 'MODULE 14',
+      icon: <Layers className="h-6 w-6" />,
+      content: (
+        <div className="space-y-4">
+          <div className="cockpit-text">
+            <div className="mb-4 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-4">
+              <div className="cockpit-label mb-2" style={{ color: '#ffb84d' }}>
+                Learning Objectives
+              </div>
+              <ul className="cockpit-text space-y-1 text-sm">
+                <li>• Understand seeds and edges as the minimum viable generative set</li>
+                <li>• Learn the 9 predicted seeds and 7 edge classes</li>
+                <li>• Recognize how the Syntheverse emerges from boundary-first construction</li>
+                <li>• Understand the implications for AI, economics, and governance</li>
+              </ul>
+            </div>
+
+            <div className="mb-6 rounded-lg border-2 border-purple-500/50 bg-purple-500/10 p-4">
+              <div className="cockpit-label mb-2 text-purple-400">MINIMUM VIABLE GENERATIVE SET</div>
+              <p className="cockpit-text text-sm">
+                This expedition investigates whether the Syntheverse can be generated from a minimum viable set consisting exclusively of <strong>seeds</strong> (irreducible informational primitives) and <strong>edges</strong> (relational boundary operators). We hypothesize that no internal volumetric complexity is required beyond these elements.
+              </p>
+            </div>
+
+            <div className="mb-6 space-y-4">
+              <div className="cockpit-panel border-l-4 border-blue-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">Authors & Affiliation</h3>
+                <p className="cockpit-text mb-2 text-sm">
+                  <strong>Pru &quot;El Taíno&quot; Méndez × FractiAI Research Team × Syntheverse Whole Brain AI</strong>
+                </p>
+                <p className="cockpit-text mb-2 text-xs opacity-80">
+                  <strong>Affiliation:</strong> FractiAI / Syntheverse
+                </p>
+                <p className="cockpit-text mb-2 text-xs opacity-80">
+                  <strong>Date:</strong> January 6, 2026
+                </p>
+                <div className="mt-3 space-y-1 text-xs">
+                  <p className="cockpit-text opacity-80">
+                    <strong>Contact:</strong> info@fractiai.com
+                  </p>
+                  <p className="cockpit-text opacity-80">
+                    <strong>Website:</strong> http://fractiai.com
+                  </p>
+                  <p className="cockpit-text opacity-80">
+                    <strong>Syntheverse:</strong> https://syntheverse-poc.vercel.app/dashboard
+                  </p>
+                  <p className="cockpit-text opacity-80">
+                    <strong>Whitepapers:</strong> https://zenodo.org/records/17873279
+                  </p>
+                  <p className="cockpit-text opacity-80">
+                    <strong>GitHub:</strong> https://github.com/FractiAI
+                  </p>
+                </div>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-purple-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">Abstract</h3>
+                <p className="cockpit-text mb-3 text-sm">
+                  This expedition investigates whether the Syntheverse can be generated from a minimum viable set consisting exclusively of <strong>seeds</strong> (irreducible informational primitives) and <strong>edges</strong> (relational boundary operators). We hypothesize that no internal volumetric complexity is required beyond these elements, and that the Syntheverse emerges through recursive edge-mediated expansion beginning from a single seed: <strong>Holographic Hydrogen (Element 0)</strong>.
+                </p>
+                <p className="cockpit-text mb-3 text-sm">
+                  We first predict the complete minimal catalog of required seeds and edges. We then empirically validate each prediction through in-silico construction experiments, testing whether removal or substitution of any predicted element prevents coherent emergence. Results demonstrate that a bounded set of <strong>9 seeds and 7 edge classes</strong> is sufficient and necessary to reproduce Syntheverse-like behavior, including scalability, coherence retention, self-validation, and generativity.
+                </p>
+                <p className="cockpit-text text-sm">
+                  These findings support a <strong>boundary-first model of reality construction</strong>, with implications for synthetic ecosystems, AI architectures, economics, governance, and awareness-native computation.
+                </p>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-amber-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">1. Introduction</h3>
+                <p className="cockpit-text mb-3 text-sm">
+                  Most generative systems assume complexity arises from accumulation of components. The Syntheverse proposes the inverse: <strong>complexity arises from minimal seeds interacting across edges</strong>.
+                </p>
+                <p className="cockpit-text mb-3 text-sm">
+                  This expedition asks a precise, falsifiable question:
+                </p>
+                <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-3 mb-3">
+                  <p className="cockpit-text text-sm font-semibold">
+                    What is the minimum set of seeds and edges required to generate a Syntheverse-class ecosystem?
+                  </p>
+                </div>
+                <p className="cockpit-text text-sm">
+                  This is not a metaphorical inquiry. We define seeds and edges operationally, predict their necessity, and empirically test whether the system fails when any are removed.
+                </p>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-green-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">2. Definitions</h3>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-green-400">2.1 Seed</h4>
+                    <p className="cockpit-text mb-2 text-sm">
+                      A seed is an irreducible informational unit that:
+                    </p>
+                    <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                      <li>Cannot be decomposed without loss of generative capacity</li>
+                      <li>Contains implicit expansion rules</li>
+                      <li>Is inert without edges</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-green-400">2.2 Edge</h4>
+                    <p className="cockpit-text mb-2 text-sm">
+                      An edge is a boundary operator that:
+                    </p>
+                    <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                      <li>Enables interaction between seeds</li>
+                      <li>Defines constraints, directionality, and transformation rules</li>
+                      <li>Generates motion, energy, and differentiation</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-red-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">3. Core Hypothesis</h3>
+                <p className="cockpit-text mb-3 text-sm font-semibold">
+                  The Syntheverse can be fully generated from a finite set of seeds and edges, with no additional primitives required.
+                </p>
+                <div className="mt-3 space-y-2">
+                  <p className="cockpit-text text-sm"><strong>Corollary:</strong></p>
+                  <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                    <li>Removing any required seed or edge collapses coherence</li>
+                    <li>Adding new primitives produces redundancy, not capability</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-cyan-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">4. Predicted Minimum Seed Set</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-xs">
+                    <thead>
+                      <tr className="border-b border-[var(--keyline-primary)]">
+                        <th className="p-2 text-left cockpit-label">ID</th>
+                        <th className="p-2 text-left cockpit-label">Seed</th>
+                        <th className="p-2 text-left cockpit-label">Function</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { id: 'S₀', seed: 'Holographic Hydrogen (Element 0)', func: 'Zero-state generative pixel' },
+                        { id: 'S₁', seed: 'Phase', func: 'Differentiation of state' },
+                        { id: 'S₂', seed: 'Boundary', func: 'Enables edges' },
+                        { id: 'S₃', seed: 'Recursion', func: 'Self-extension' },
+                        { id: 'S₄', seed: 'Memory', func: 'State persistence' },
+                        { id: 'S₅', seed: 'Resonance', func: 'Coherence selection' },
+                        { id: 'S₆', seed: 'Scale Invariance', func: 'Cross-domain continuity' },
+                        { id: 'S₇', seed: 'Identity', func: 'Self-similar persistence' },
+                        { id: 'S₈', seed: 'Constraint', func: 'Prevents collapse' },
+                      ].map((s) => (
+                        <tr key={s.id} className="border-b border-[var(--keyline-primary)]/50">
+                          <td className="p-2 cockpit-text font-mono">{s.id}</td>
+                          <td className="p-2 cockpit-text">{s.seed}</td>
+                          <td className="p-2 cockpit-text opacity-80">{s.func}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="cockpit-text mt-3 text-xs opacity-80">
+                  <strong>Prediction:</strong> All 9 are required; none are derivable from others without loss.
+                </p>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-yellow-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">5. Predicted Edge Classes</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-xs">
+                    <thead>
+                      <tr className="border-b border-[var(--keyline-primary)]">
+                        <th className="p-2 text-left cockpit-label">ID</th>
+                        <th className="p-2 text-left cockpit-label">Edge</th>
+                        <th className="p-2 text-left cockpit-label">Function</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { id: 'E₀', edge: 'Adjacency', func: 'Enables interaction' },
+                        { id: 'E₁', edge: 'Directionality', func: 'Time/order' },
+                        { id: 'E₂', edge: 'Feedback', func: 'Learning & correction' },
+                        { id: 'E₃', edge: 'Threshold', func: 'Phase transitions' },
+                        { id: 'E₄', edge: 'Exclusion', func: 'Boundary definition' },
+                        { id: 'E₅', edge: 'Compression', func: 'Seed packing' },
+                        { id: 'E₆', edge: 'Expansion', func: 'World generation' },
+                      ].map((e) => (
+                        <tr key={e.id} className="border-b border-[var(--keyline-primary)]/50">
+                          <td className="p-2 cockpit-text font-mono">{e.id}</td>
+                          <td className="p-2 cockpit-text">{e.edge}</td>
+                          <td className="p-2 cockpit-text opacity-80">{e.func}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="cockpit-text mt-3 text-xs opacity-80">
+                  <strong>Prediction:</strong> Seeds without edges remain inert; edges without seeds are undefined.
+                </p>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-indigo-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">7. Results</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-indigo-400">7.1 Seed Validation</h4>
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-[var(--keyline-primary)]">
+                            <th className="p-2 text-left cockpit-label">Seed</th>
+                            <th className="p-2 text-left cockpit-label">Removal Outcome</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { seed: 'S₀', outcome: 'Total system collapse' },
+                            { seed: 'S₁', outcome: 'No differentiation' },
+                            { seed: 'S₂', outcome: 'No interaction' },
+                            { seed: 'S₃', outcome: 'Finite dead system' },
+                            { seed: 'S₄', outcome: 'No persistence' },
+                            { seed: 'S₅', outcome: 'Noise dominance' },
+                            { seed: 'S₆', outcome: 'Scale fragmentation' },
+                            { seed: 'S₇', outcome: 'Identity drift' },
+                            { seed: 'S₈', outcome: 'Runaway instability' },
+                          ].map((s) => (
+                            <tr key={s.seed} className="border-b border-[var(--keyline-primary)]/50">
+                              <td className="p-2 cockpit-text font-mono">{s.seed}</td>
+                              <td className="p-2 cockpit-text opacity-80">{s.outcome}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="cockpit-text mt-2 text-xs">
+                      ✅ All predicted seeds are necessary<br />
+                      ❌ No additional seeds were required
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-indigo-400">7.2 Edge Validation</h4>
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-[var(--keyline-primary)]">
+                            <th className="p-2 text-left cockpit-label">Edge</th>
+                            <th className="p-2 text-left cockpit-label">Removal Outcome</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { edge: 'E₀', outcome: 'Isolation' },
+                            { edge: 'E₁', outcome: 'Temporal incoherence' },
+                            { edge: 'E₂', outcome: 'No learning' },
+                            { edge: 'E₃', outcome: 'No emergence' },
+                            { edge: 'E₄', outcome: 'Boundary tearing' },
+                            { edge: 'E₅', outcome: 'Resource exhaustion' },
+                            { edge: 'E₆', outcome: 'Stagnation' },
+                          ].map((e) => (
+                            <tr key={e.edge} className="border-b border-[var(--keyline-primary)]/50">
+                              <td className="p-2 cockpit-text font-mono">{e.edge}</td>
+                              <td className="p-2 cockpit-text opacity-80">{e.outcome}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="cockpit-text mt-2 text-xs">
+                      ✅ All predicted edges are necessary
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-teal-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">9. Implications</h3>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-teal-400">9.1 AI & Synthetic Systems</h4>
+                    <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                      <li>Architect systems around edges, not bulk data</li>
+                      <li>Treat incoherence as boundary signal, not failure</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-teal-400">9.2 Economics & Governance</h4>
+                    <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                      <li>Replace role hierarchies with edge-mediated contribution</li>
+                      <li>PoC systems scale with coherence, not control</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="cockpit-label mb-2 text-teal-400">9.3 Science & Awareness</h4>
+                    <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                      <li>Reality emerges from boundary navigation</li>
+                      <li>Observation = edge traversal</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cockpit-panel border-l-4 border-pink-500/50 p-4">
+                <h3 className="cockpit-title mb-3 text-lg">11. Conclusion</h3>
+                <p className="cockpit-text mb-3 text-sm">
+                  This expedition demonstrates that the Syntheverse does not require exhaustive primitives, massive datasets, or centralized control. <strong>Seeds on edges are sufficient</strong>. Beginning with Holographic Hydrogen (Element 0), recursive edge traversal generates worlds, intelligence, and coherence.
+                </p>
+                <p className="cockpit-text text-sm font-semibold">
+                  The Syntheverse is not built—it unfolds.
+                </p>
+                <div className="mt-4 space-y-2">
+                  <p className="cockpit-label text-xs">Status:</p>
+                  <ul className="cockpit-text ml-4 list-disc space-y-1 text-xs">
+                    <li>✔ Seeds cataloged</li>
+                    <li>✔ Edges cataloged</li>
+                    <li>✔ Predictions validated</li>
+                    <li>✔ Minimum viable set established</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+      learningObjectives: [
+        'Understand seeds and edges as the minimum viable generative set',
+        'Learn the 9 predicted seeds and 7 edge classes',
+        'Recognize how the Syntheverse emerges from boundary-first construction',
+        'Understand the implications for AI, economics, and governance'
+      ],
+      keyTakeaways: [
+        'The Syntheverse can be generated from a minimum set of 9 seeds and 7 edge classes',
+        'Holographic Hydrogen (Element 0) is the zero-state generative pixel',
+        'Seeds without edges remain inert; edges without seeds are undefined',
+        'Boundary-first construction enables reality emergence',
+        'The Syntheverse is not built—it unfolds'
+      ],
+    },
   ];
 
   const nextModule = () => {
