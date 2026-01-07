@@ -6,9 +6,7 @@ import { usersTable } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ReactorCore } from '@/components/ReactorCore';
-import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
 import { OperatorBroadcastBanner } from '@/components/OperatorBroadcastBanner';
-import { GenesisButton } from '@/components/GenesisButton';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
 import { SynthChatNavigator } from '@/components/SynthChatNavigator';
@@ -17,6 +15,7 @@ import { SocialMediaPanel } from '@/components/SocialMediaPanel';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
+import { StatusPanel } from '@/components/StatusPanel';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,6 +49,9 @@ export default async function Dashboard() {
 
   return (
     <div className="cockpit-bg min-h-screen">
+      {/* Status Panel - Top Bar */}
+      <StatusPanel />
+
       {/* Quick Actions Panel - Top Bar */}
       <QuickActionsPanel isCreator={isCreator} isOperator={isOperator} showContributorDashboard={false} />
 
@@ -75,14 +77,38 @@ export default async function Dashboard() {
                 Submit, evaluate, and anchor contributions to the Syntheverse protocol. All records are verifiable and permanent on Base Mainnet.
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <BootSequenceIndicators />
-            </div>
           </div>
           <div className="cockpit-text mt-4 pt-4 border-t border-[var(--keyline-primary)] text-[10px] md:text-xs opacity-70 uppercase tracking-wider">
             FRACTIAI RESEARCH TEAM · PROTOCOL OPERATOR REFERENCE CLIENT
           </div>
         </div>
+
+        {/* Command Zone - Operator Identity - Moved to Top */}
+        <details className="cockpit-panel mb-6" open>
+          <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+            <div className="flex items-center justify-between">
+              <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
+                COMMAND ZONE
+              </div>
+              <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+            </div>
+          </summary>
+          <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-4">
+            <div>
+              <div className="cockpit-label text-[9px] uppercase tracking-wider opacity-70 mb-2">
+                OPERATOR
+              </div>
+              <div className="cockpit-title text-xl md:text-2xl mb-2">{displayName.toUpperCase()}</div>
+              <div className="cockpit-text text-xs md:text-sm leading-relaxed opacity-85">
+                FractiAI reference client for Syntheverse protocol. Records are verifiable and permanent.
+              </div>
+            </div>
+            <div className="cockpit-text border-l-3 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/8 px-3 py-2.5 text-[11px] md:text-xs leading-relaxed">
+              <strong className="text-[var(--hydrogen-amber)]">Liberating Contributions:</strong> Hydrogen spin MRI-based PoC protocol makes contributions{' '}
+              <strong>visible and demonstrable to all</strong> via HHF-AI MRI science.
+            </div>
+          </div>
+        </details>
 
         {/* Core Instrument Cluster - Reactor Core */}
         <details className="mb-6" open>
@@ -121,7 +147,7 @@ export default async function Dashboard() {
                   </div>
                 </summary>
                 <div className="px-4 md:px-5 pb-4 md:pb-5">
-                  <SandboxNavigator />
+                  <SandboxNavigator userEmail={user.email!} isCreator={isCreator} isOperator={isOperator} />
                 </div>
               </details>
 
@@ -187,90 +213,9 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          {/* Right Column - Command & Status Panels (4 columns on large screens) */}
+          {/* Right Column - Status Panels (4 columns on large screens) */}
           <aside className="lg:col-span-4 space-y-4">
-            {/* Command Zone - Operator Identity - Collapsible */}
-            <details className="cockpit-panel" open>
-              <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
-                <div className="flex items-center justify-between">
-                  <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-                    COMMAND ZONE
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <BootSequenceIndicators />
-                    <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
-                  </div>
-                </div>
-              </summary>
-              <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-4">
-                <div>
-                  <div className="cockpit-label text-[9px] uppercase tracking-wider opacity-70 mb-2">
-                    OPERATOR
-                  </div>
-                  <div className="cockpit-title text-xl md:text-2xl mb-2">{displayName.toUpperCase()}</div>
-                  <div className="cockpit-text text-xs md:text-sm leading-relaxed opacity-85">
-                    FractiAI reference client for Syntheverse protocol. Records are verifiable and permanent.
-                  </div>
-                </div>
-                <div className="cockpit-text border-l-3 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/8 px-3 py-2.5 text-[11px] md:text-xs leading-relaxed">
-                  <strong className="text-[var(--hydrogen-amber)]">Liberating Contributions:</strong> Hydrogen spin MRI-based PoC protocol makes contributions{' '}
-                  <strong>visible and demonstrable to all</strong> via HHF-AI MRI science.
-                </div>
-              </div>
-            </details>
-
-            {/* Protocol Info - Compact Status Display - Collapsible */}
-            <details className="cockpit-panel" open>
-              <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
-                <div className="flex items-center justify-between">
-                  <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-                    PROTOCOL INFO
-                  </div>
-                  <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
-                </div>
-              </summary>
-              <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-2.5">
-                <div className="flex items-center justify-between py-1.5 border-b border-[var(--keyline-primary)]/30">
-                  <span className="cockpit-text text-[11px] md:text-xs opacity-80">Status:</span>
-                  <span className="cockpit-text text-[11px] md:text-xs font-mono text-[var(--hydrogen-amber)] font-semibold">PUBLIC</span>
-                </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-[var(--keyline-primary)]/30">
-                  <span className="cockpit-text text-[11px] md:text-xs opacity-80">Client:</span>
-                  <span className="cockpit-text text-[11px] md:text-xs font-mono">FRACTIAI</span>
-                </div>
-                <div className="flex items-center justify-between py-1.5 border-b border-[var(--keyline-primary)]/30">
-                  <span className="cockpit-text text-[11px] md:text-xs opacity-80">Network:</span>
-                  <span className="cockpit-text text-[11px] md:text-xs font-mono text-green-400 font-semibold">BASE MAINNET</span>
-                </div>
-                <div className="flex items-center justify-between py-1.5">
-                  <span className="cockpit-text text-[11px] md:text-xs opacity-80">Chain ID:</span>
-                  <span className="cockpit-text text-[11px] md:text-xs font-mono">8453</span>
-                </div>
-              </div>
-            </details>
-
-            {/* Genesis Status - Vault Information - Collapsible */}
-            <details className="cockpit-panel border-t-2 border-[var(--hydrogen-amber)]/30" open>
-              <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
-                <div className="flex items-center justify-between">
-                  <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-                    GENESIS STATUS
-                  </div>
-                  <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
-                </div>
-              </summary>
-              <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-3">
-                <div className="cockpit-text text-[11px] md:text-xs leading-relaxed">
-                  <strong className="text-[var(--hydrogen-amber)]">SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026.
-                </div>
-                <div className="cockpit-text text-[11px] md:text-xs leading-relaxed opacity-85">
-                  Submission deadline: March 19, 2026
-                </div>
-                <div className="mt-4 pt-3 border-t border-[var(--keyline-primary)]">
-                  <GenesisButton />
-                </div>
-              </div>
-            </details>
+            {/* Additional status panels can be added here */}
           </aside>
         </div>
       </div>

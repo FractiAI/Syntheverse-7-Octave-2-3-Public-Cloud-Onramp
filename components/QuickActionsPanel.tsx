@@ -30,26 +30,6 @@ export function QuickActionsPanel({
       <div className="cockpit-quick-actions-panel">
       <div className="cockpit-panel px-4 py-2">
         <div className="flex items-center gap-3 flex-wrap">
-          {/* System Status Indicators */}
-          <div className="flex items-center gap-3 border-r border-[var(--keyline-primary)] pr-3 mr-1">
-            <div className="flex items-center gap-1.5">
-              <span className="cockpit-text text-[10px] uppercase tracking-wider opacity-60">Protocol</span>
-              <div className="h-2 w-2 rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="cockpit-text text-[10px] uppercase tracking-wider opacity-60">Blockchain</span>
-              <div className="h-2 w-2 rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="cockpit-text text-[10px] uppercase tracking-wider opacity-60">HHF-AI</span>
-              <div className="h-2 w-2 rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="cockpit-text text-[10px] uppercase tracking-wider opacity-60">SynthScan™</span>
-              <div className="h-2 w-2 rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-            </div>
-          </div>
-
           {/* Quick Actions Links */}
           <div className="flex items-center gap-2 flex-wrap">
             <Link 

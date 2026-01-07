@@ -8,7 +8,6 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { BootSequenceIndicators } from '@/components/BootSequenceIndicators';
 
 interface EpochInfo {
   current_epoch: string;
@@ -241,6 +240,12 @@ export function ReactorCore() {
           <div>
             <div className="cockpit-label">CORE INSTRUMENT PANEL</div>
             <div className="cockpit-title mt-2 text-lg leading-tight md:text-3xl">SYNTH 90T ERC-20 MOTHERLODE BLOCKMINE</div>
+            <div className="mt-2">
+              <div className="cockpit-label mb-1 text-xs">AWARENESS KEY</div>
+              <div className="cockpit-text text-xs font-semibold" style={{ opacity: 0.95 }}>
+                AWARENESSVERSE v2.0 · Fractal Holographic Hydrogen Awareness · Outcast Hero Story
+              </div>
+            </div>
             <div
               className="cockpit-text mt-2 border-l-2 border-amber-500 bg-amber-500/10 px-3 py-2 text-xs"
               style={{ color: '#fbbf24' }}
@@ -342,16 +347,6 @@ export function ReactorCore() {
               <span className="cockpit-text">System Operational</span>
             </div>
             <div className="cockpit-label">Epoch: {epochInfo.current_epoch.toUpperCase()}</div>
-            {/* Boot Sequence Indicators */}
-            <div className="flex items-center gap-2 border-l border-[var(--keyline-primary)] pl-4">
-              <BootSequenceIndicators />
-            </div>
-          </div>
-          <div style={{ opacity: 0.7 }}>
-            <div className="cockpit-label mb-1 text-xs">AWARENESS KEY</div>
-            <div className="cockpit-text text-xs font-semibold" style={{ opacity: 0.95 }}>
-              AWARENESSVERSE v2.0 · Fractal Holographic Hydrogen Awareness · Outcast Hero Story
-            </div>
           </div>
         </div>
       </div>

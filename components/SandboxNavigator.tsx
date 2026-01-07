@@ -2,13 +2,17 @@
  * Sandbox Navigator Component
  * Table-based sandbox selector similar to PoC Archive navigator
  * Displays all accessible sandboxes in a cockpit-table format
+ * Supports delete (contributors: own sandboxes, creators/operators: any except Syntheverse)
+ * Supports edit via sandbox builder assistant
  */
 
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, Layers, ExternalLink } from 'lucide-react';
+import { RefreshCw, Layers, ExternalLink, Trash2, Edit2, X } from 'lucide-react';
 import Link from 'next/link';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import SandboxConfigurationWizard from './SandboxConfigurationWizard';
 
 interface EnterpriseSandbox {
   id: string;
@@ -21,12 +25,22 @@ interface EnterpriseSandbox {
   synth_activated?: boolean;
   vault_status?: string;
   created_at?: string | null;
+  scoring_config?: any;
 }
 
-export function SandboxNavigator() {
+interface SandboxNavigatorProps {
+  userEmail?: string | null;
+  isCreator?: boolean;
+  isOperator?: boolean;
+}
+
+export function SandboxNavigator({ userEmail, isCreator = false, isOperator = false }: SandboxNavigatorProps) {
   const [sandboxes, setSandboxes] = useState<EnterpriseSandbox[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSandbox, setSelectedSandbox] = useState<string>('syntheverse');
+  const [editingSandbox, setEditingSandbox] = useState<EnterpriseSandbox | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [deletingSandboxId, setDeletingSandboxId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSandboxes();
@@ -53,6 +67,97 @@ export function SandboxNavigator() {
     localStorage.setItem('selectedSandbox', sandboxId);
     // Dispatch custom event to notify StatusIndicators
     window.dispatchEvent(new CustomEvent('sandboxChanged', { detail: { sandboxId } }));
+  };
+
+  const handleEdit = (sandbox: EnterpriseSandbox, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingSandbox(sandbox);
+    setShowEditDialog(true);
+  };
+
+  const handleDelete = async (sandboxId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!confirm(`Are you sure you want to delete this sandbox? This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingSandboxId(sandboxId);
+    try {
+      const res = await fetch(`/api/enterprise/sandboxes/${sandboxId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        // Refresh sandboxes list
+        await fetchSandboxes();
+        // If deleted sandbox was selected, reset to Syntheverse
+        if (selectedSandbox === sandboxId) {
+          handleSandboxClick('syntheverse');
+        }
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to delete sandbox');
+      }
+    } catch (error) {
+      console.error('Error deleting sandbox:', error);
+      alert('Failed to delete sandbox');
+    } finally {
+      setDeletingSandboxId(null);
+    }
+  };
+
+  const handleSaveConfig = async (config: any) => {
+    if (!editingSandbox) return;
+
+    try {
+      // Update sandbox via PATCH endpoint
+      const res = await fetch(`/api/enterprise/sandboxes/${editingSandbox.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: config.name,
+          description: config.description,
+          scoring_config: {
+            novelty_weight: config.novelty_weight || 1.0,
+            density_weight: config.density_weight || 1.0,
+            coherence_weight: config.coherence_weight || 1.0,
+            alignment_weight: config.alignment_weight || 1.0,
+            qualification_threshold: config.qualification_threshold || 4000,
+            overlap_penalty_start: config.overlap_penalty_start || 30,
+            sweet_spot_center: config.sweet_spot_center || 14.2,
+            sweet_spot_tolerance: config.sweet_spot_tolerance || 5.0,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        setShowEditDialog(false);
+        setEditingSandbox(null);
+        await fetchSandboxes();
+        alert('Sandbox configuration saved successfully');
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to save sandbox configuration');
+      }
+    } catch (error) {
+      console.error('Error saving sandbox configuration:', error);
+      alert('Failed to save sandbox configuration');
+    }
+  };
+
+  const canDelete = (sandbox: EnterpriseSandbox): boolean => {
+    if (sandbox.id === 'syntheverse') return false;
+    if (isCreator || isOperator) return true;
+    if (userEmail && sandbox.operator === userEmail) return true;
+    return false;
+  };
+
+  const canEdit = (sandbox: EnterpriseSandbox): boolean => {
+    if (sandbox.id === 'syntheverse') return false;
+    if (isCreator || isOperator) return true;
+    if (userEmail && sandbox.operator === userEmail) return true;
+    return false;
   };
 
   const getStatusBadge = (sandbox: EnterpriseSandbox) => {
@@ -186,6 +291,27 @@ export function SandboxNavigator() {
                               View
                             </Link>
                           )}
+                          {canEdit(sandbox) && (
+                            <button
+                              onClick={(e) => handleEdit(sandbox, e)}
+                              className="cockpit-lever text-xs"
+                              title="Edit sandbox configuration"
+                            >
+                              <Edit2 className="mr-1 inline h-3 w-3" />
+                              Edit
+                            </button>
+                          )}
+                          {canDelete(sandbox) && (
+                            <button
+                              onClick={(e) => handleDelete(sandbox.id, e)}
+                              disabled={deletingSandboxId === sandbox.id}
+                              className="cockpit-lever text-xs bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30 disabled:opacity-50"
+                              title="Delete sandbox"
+                            >
+                              <Trash2 className="mr-1 inline h-3 w-3" />
+                              {deletingSandboxId === sandbox.id ? 'Deleting...' : 'Delete'}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -196,6 +322,58 @@ export function SandboxNavigator() {
           </div>
         )}
       </div>
+
+      {/* Edit Dialog - Sandbox Builder Assistant */}
+      <Dialog open={showEditDialog} onOpenChange={(open) => {
+        setShowEditDialog(open);
+        if (!open) setEditingSandbox(null);
+      }}>
+        <DialogContent className="cockpit-panel max-w-4xl max-h-[90vh] overflow-y-auto bg-[var(--cockpit-near-black)] border-2 border-[var(--keyline-primary)]">
+          <DialogHeader>
+            <DialogTitle className="cockpit-title text-xl mb-4">
+              Edit Sandbox: {editingSandbox?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {editingSandbox && (
+            <div className="mt-4">
+              <SandboxConfigurationWizard
+                sandboxId={editingSandbox.id}
+                initialConfig={{
+                  name: editingSandbox.name,
+                  description: editingSandbox.description || '',
+                  mission: '',
+                  project_goals: '',
+                  synth_activation_fee: 10000,
+                  monthly_rent_tier: 'Seed',
+                  energy_cost_per_evaluation: 100,
+                  energy_cost_per_registration: 500,
+                  founder_threshold: 8000,
+                  pioneer_threshold: 6000,
+                  community_threshold: 5000,
+                  ecosystem_threshold: 4000,
+                  current_epoch: editingSandbox.current_epoch || 'founder',
+                  novelty_weight: editingSandbox.scoring_config?.novelty_weight || 1.0,
+                  density_weight: editingSandbox.scoring_config?.density_weight || 1.0,
+                  coherence_weight: editingSandbox.scoring_config?.coherence_weight || 1.0,
+                  alignment_weight: editingSandbox.scoring_config?.alignment_weight || 1.0,
+                  qualification_threshold: editingSandbox.scoring_config?.qualification_threshold || 4000,
+                  overlap_penalty_start: editingSandbox.scoring_config?.overlap_penalty_start || 30,
+                  sweet_spot_center: editingSandbox.scoring_config?.sweet_spot_center || 14.2,
+                  sweet_spot_tolerance: editingSandbox.scoring_config?.sweet_spot_tolerance || 5.0,
+                  public_access: false,
+                  contributor_channels: [],
+                  allow_external_submissions: false,
+                  gold_focus: false,
+                  silver_focus: false,
+                  copper_focus: false,
+                  hybrid_metals: true,
+                }}
+                onSave={handleSaveConfig}
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
