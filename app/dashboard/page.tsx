@@ -13,6 +13,7 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
 import { SynthChatNavigator } from '@/components/SynthChatNavigator';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
+import { ChevronDown } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,9 +77,19 @@ export default async function Dashboard() {
         </div>
 
         {/* Core Instrument Cluster - Reactor Core */}
-        <div className="mb-6">
-          <ReactorCore />
-        </div>
+        <details className="mb-6" open>
+          <summary className="cockpit-panel cursor-pointer select-none list-none p-4 md:p-5 mb-0">
+            <div className="flex items-center justify-between">
+              <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
+                REACTOR CORE
+              </div>
+              <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+            </div>
+          </summary>
+          <div className="mt-0">
+            <ReactorCore />
+          </div>
+        </details>
 
         {/* System Broadcast Banners - Priority Display */}
         <div className="mb-6">
@@ -91,24 +102,69 @@ export default async function Dashboard() {
           <div className="lg:col-span-8 space-y-6">
             {/* Navigation Modules - Stacked for better visibility */}
             <div className="space-y-6">
-              <SandboxNavigator />
-              <FrontierModule userEmail={user.email!} />
-              <SynthChatNavigator />
+              {/* Sandbox Navigator - Collapsible */}
+              <details className="cockpit-panel" open>
+                <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+                  <div className="flex items-center justify-between">
+                    <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
+                      SANDBOX NAVIGATOR
+                    </div>
+                    <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+                  </div>
+                </summary>
+                <div className="px-4 md:px-5 pb-4 md:pb-5">
+                  <SandboxNavigator />
+                </div>
+              </details>
+
+              {/* Frontier Module - Collapsible */}
+              <details className="cockpit-panel" open>
+                <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+                  <div className="flex items-center justify-between">
+                    <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
+                      FRONTIER MODULE
+                    </div>
+                    <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+                  </div>
+                </summary>
+                <div className="px-4 md:px-5 pb-4 md:pb-5">
+                  <FrontierModule userEmail={user.email!} />
+                </div>
+              </details>
+
+              {/* SynthChat Navigator - Collapsible */}
+              <details className="cockpit-panel" open>
+                <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+                  <div className="flex items-center justify-between">
+                    <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
+                      SYNTHCHAT NAVIGATOR
+                    </div>
+                    <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+                  </div>
+                </summary>
+                <div className="px-4 md:px-5 pb-4 md:pb-5">
+                  <SynthChatNavigator />
+                </div>
+              </details>
             </div>
           </div>
 
           {/* Right Column - Command & Status Panels (4 columns on large screens) */}
           <aside className="lg:col-span-4 space-y-4">
-            {/* Command Zone - Operator Identity */}
-            <div className="cockpit-panel p-4 md:p-5">
-              <div className="mb-4 flex items-center justify-between border-b border-[var(--keyline-primary)] pb-3">
-                <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-                  COMMAND ZONE
+            {/* Command Zone - Operator Identity - Collapsible */}
+            <details className="cockpit-panel" open>
+              <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+                <div className="flex items-center justify-between">
+                  <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
+                    COMMAND ZONE
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <BootSequenceIndicators />
+                    <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+                  </div>
                 </div>
-                <BootSequenceIndicators />
-              </div>
-              
-              <div className="space-y-4">
+              </summary>
+              <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-4">
                 <div>
                   <div className="cockpit-label text-[9px] uppercase tracking-wider opacity-70 mb-2">
                     OPERATOR
@@ -123,16 +179,19 @@ export default async function Dashboard() {
                   <strong>visible and demonstrable to all</strong> via HHF-AI MRI science.
                 </div>
               </div>
-            </div>
+            </details>
 
-            {/* Protocol Info - Compact Status Display */}
-            <div className="cockpit-panel p-4 md:p-5">
-              <div className="mb-4 border-b border-[var(--keyline-primary)] pb-3">
-                <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-                  PROTOCOL INFO
+            {/* Protocol Info - Compact Status Display - Collapsible */}
+            <details className="cockpit-panel" open>
+              <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+                <div className="flex items-center justify-between">
+                  <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
+                    PROTOCOL INFO
+                  </div>
+                  <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
                 </div>
-              </div>
-              <div className="space-y-2.5">
+              </summary>
+              <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-2.5">
                 <div className="flex items-center justify-between py-1.5 border-b border-[var(--keyline-primary)]/30">
                   <span className="cockpit-text text-[11px] md:text-xs opacity-80">Status:</span>
                   <span className="cockpit-text text-[11px] md:text-xs font-mono text-[var(--hydrogen-amber)] font-semibold">PUBLIC</span>
@@ -150,16 +209,19 @@ export default async function Dashboard() {
                   <span className="cockpit-text text-[11px] md:text-xs font-mono">8453</span>
                 </div>
               </div>
-            </div>
+            </details>
 
-            {/* Genesis Status - Vault Information */}
-            <div className="cockpit-panel p-4 md:p-5 border-t-2 border-[var(--hydrogen-amber)]/30">
-              <div className="mb-4 border-b border-[var(--keyline-primary)] pb-3">
-                <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-                  GENESIS STATUS
+            {/* Genesis Status - Vault Information - Collapsible */}
+            <details className="cockpit-panel border-t-2 border-[var(--hydrogen-amber)]/30" open>
+              <summary className="cursor-pointer select-none list-none p-4 md:p-5 border-b border-[var(--keyline-primary)]">
+                <div className="flex items-center justify-between">
+                  <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
+                    GENESIS STATUS
+                  </div>
+                  <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
                 </div>
-              </div>
-              <div className="space-y-3">
+              </summary>
+              <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-3">
                 <div className="cockpit-text text-[11px] md:text-xs leading-relaxed">
                   <strong className="text-[var(--hydrogen-amber)]">SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026.
                 </div>
@@ -170,7 +232,7 @@ export default async function Dashboard() {
                   <GenesisButton />
                 </div>
               </div>
-            </div>
+            </details>
           </aside>
         </div>
       </div>
