@@ -170,14 +170,15 @@ export async function evaluateWithGrok(
   }
 
   // SCALABILITY FIX: Truncate text content to prevent token limit errors (413/429)
-  // Groq on-demand tier has 6000 token limit. System prompt is ~4500 tokens.
-  // Available tokens: ~1500 tokens. With 20% margin: ~1200 tokens (~4800 chars).
-  // Safe limit: 4000 characters (~1000 tokens) for submissions (abstract, equations, constants only)
-  const MAX_CONTENT_LENGTH = 4000;
+  // Groq on-demand tier has 6000 token limit. Optimized system prompt is ~2210 tokens.
+  // Available tokens: ~3790 tokens. With safety margin: ~3000 tokens (~12000 chars).
+  // Safe limit: 10000 characters (~2500 tokens) for submissions
+  // Budget breakdown: System(~2210) + Content(~2500) + Overhead(~500) = ~5210 tokens (< 6000 limit)
+  const MAX_CONTENT_LENGTH = 10000;
   const truncatedText =
     textContent.length > MAX_CONTENT_LENGTH
       ? textContent.substring(0, MAX_CONTENT_LENGTH).trimEnd() +
-        '\n\n[Content truncated for evaluation]'
+        '\n\n[Content truncated for evaluation. Focus on abstract, key equations, and novel contributions.]'
       : textContent;
 
   debug('EvaluateWithGrok', 'Calling Grok API for evaluation', {
