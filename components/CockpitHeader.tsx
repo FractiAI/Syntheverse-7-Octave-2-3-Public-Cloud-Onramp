@@ -30,10 +30,11 @@ export default function CockpitHeader() {
 
           {/* Status Panel & My Account Icon */}
           <div className="flex items-center gap-4 flex-wrap">
-            {/* Status Indicators with Awareness Bridge/Router */}
-            <div className="flex items-center gap-2 min-w-0">
+            {/* Status Indicators with Awareness Bridge/Router - Hidden on Mobile */}
+            <div className="hidden lg:flex items-center gap-2 min-w-0">
               <StatusIndicators />
             </div>
+            {/* My Account Icon - Always Visible */}
             <DashboardHeaderProfileDropdown />
           </div>
         </div>

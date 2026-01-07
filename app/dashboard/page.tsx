@@ -79,8 +79,8 @@ export default async function Dashboard() {
 
         {/* Main Content Grid - Three Column Cockpit Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-          {/* Left Column - Compact Navigators (3 columns on large screens) */}
-          <aside className="lg:col-span-3 space-y-3">
+          {/* Left Column - Compact Navigators (3 columns on large screens, stacks on mobile) */}
+          <aside className="lg:col-span-3 space-y-3 order-2 lg:order-1">
             {/* Sandbox Navigator - Collapsible */}
             <details className="cockpit-panel" open>
               <summary className="cursor-pointer select-none list-none p-3 border-b border-[var(--keyline-primary)]">
@@ -116,8 +116,8 @@ export default async function Dashboard() {
             </details>
           </aside>
 
-          {/* Center Column - Primary Content (6 columns on large screens) */}
-          <div className="lg:col-span-6 space-y-4">
+          {/* Center Column - Primary Content (6 columns on large screens, first on mobile) */}
+          <div className="lg:col-span-6 space-y-4 order-1 lg:order-2">
             {/* Social Media Panel - Main Focus */}
             <details className="cockpit-panel" open>
               <summary className="cursor-pointer select-none list-none p-4 border-b border-[var(--keyline-primary)]">
@@ -149,8 +149,8 @@ export default async function Dashboard() {
             </details>
           </div>
 
-          {/* Right Column - Future Expansion (3 columns on large screens) */}
-          <aside className="lg:col-span-3 space-y-3">
+          {/* Right Column - Future Expansion (3 columns on large screens, last on mobile) */}
+          <aside className="lg:col-span-3 space-y-3 order-3">
             {/* Reserved for metrics, alerts, or quick actions */}
           </aside>
         </div>

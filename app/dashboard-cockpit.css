@@ -135,6 +135,57 @@
   height: 0.75rem;
 }
 
+/* Mobile Optimizations */
+@media (max-width: 1023px) {
+  /* Ensure navigators are readable on mobile */
+  .cockpit-navigator-compact {
+    font-size: 0.875rem;
+  }
+  
+  .cockpit-navigator-compact table {
+    font-size: 0.8rem;
+  }
+  
+  .cockpit-navigator-compact th,
+  .cockpit-navigator-compact td {
+    padding: 0.5rem !important;
+    font-size: 0.8rem;
+  }
+  
+  .cockpit-navigator-compact .cockpit-text {
+    font-size: 0.8rem;
+  }
+  
+  .cockpit-navigator-compact .cockpit-label {
+    font-size: 0.75rem;
+  }
+  
+  .cockpit-navigator-compact button,
+  .cockpit-navigator-compact .cockpit-lever {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    min-height: 36px;
+  }
+  
+  .cockpit-navigator-compact svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  
+  /* Optimize Quick Actions Panel for mobile */
+  .cockpit-quick-actions-panel .cockpit-panel {
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Ensure account icon is prominent on mobile */
+  .cockpit-quick-actions-panel button[aria-label],
+  .cockpit-quick-actions-panel > div > div > div:last-child {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+}
+
 .cockpit-panel::before {
   content: '';
   position: absolute;
