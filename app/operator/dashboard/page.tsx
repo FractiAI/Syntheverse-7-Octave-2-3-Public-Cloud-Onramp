@@ -111,7 +111,6 @@ export default async function OperatorDashboard() {
                   Blog
                 </Link>
                 <Activity className="h-5 w-5 animate-pulse text-green-500" />
-                <BootSequenceIndicators />
                 <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70 ml-2" />
               </div>
             </div>
