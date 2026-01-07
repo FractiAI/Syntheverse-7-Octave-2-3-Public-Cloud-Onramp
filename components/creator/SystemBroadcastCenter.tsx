@@ -63,9 +63,18 @@ export function SystemBroadcastCenter() {
       if (response.ok) {
         const data = await response.json();
         setBroadcasts(data.broadcasts || []);
+      } else if (response.status === 403) {
+        // User doesn't have creator/operator permissions
+        console.warn('Unauthorized to view broadcasts - creator/operator access required');
+        setBroadcasts([]);
+        setError('You do not have permission to view broadcasts. Creator or Operator access required.');
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to load broadcasts' }));
+        setError(errorData.error || 'Failed to load broadcasts');
       }
     } catch (err) {
       console.error('Failed to load broadcasts:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load broadcasts');
     } finally {
       setLoading(false);
     }
@@ -94,10 +103,15 @@ export function SystemBroadcastCenter() {
         setError(null);
         await loadBroadcasts();
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to create broadcast');
+        const data = await response.json().catch(() => ({ error: 'Failed to create broadcast' }));
+        if (response.status === 403) {
+          setError('You do not have permission to create broadcasts. Creator or Operator access required.');
+        } else {
+          setError(data.error || 'Failed to create broadcast');
+        }
       }
     } catch (err) {
+      console.error('Error creating broadcast:', err);
       setError(err instanceof Error ? err.message : 'Failed to create broadcast');
     }
   };
@@ -123,10 +137,15 @@ export function SystemBroadcastCenter() {
         setError(null);
         await loadBroadcasts();
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to update broadcast');
+        const data = await response.json().catch(() => ({ error: 'Failed to update broadcast' }));
+        if (response.status === 403) {
+          setError('You do not have permission to update broadcasts. Creator or Operator access required.');
+        } else {
+          setError(data.error || 'Failed to update broadcast');
+        }
       }
     } catch (err) {
+      console.error('Error updating broadcast:', err);
       setError(err instanceof Error ? err.message : 'Failed to update broadcast');
     }
   };
@@ -141,10 +160,15 @@ export function SystemBroadcastCenter() {
         setDeleteId(null);
         await loadBroadcasts();
       } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to delete broadcast');
+        const data = await response.json().catch(() => ({ error: 'Failed to delete broadcast' }));
+        if (response.status === 403) {
+          setError('You do not have permission to delete broadcasts. Creator or Operator access required.');
+        } else {
+          setError(data.error || 'Failed to delete broadcast');
+        }
       }
     } catch (err) {
+      console.error('Error deleting broadcast:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete broadcast');
     }
   };
@@ -161,9 +185,17 @@ export function SystemBroadcastCenter() {
 
       if (response.ok) {
         await loadBroadcasts();
+      } else {
+        const data = await response.json().catch(() => ({ error: 'Failed to toggle broadcast' }));
+        if (response.status === 403) {
+          setError('You do not have permission to toggle broadcasts. Creator or Operator access required.');
+        } else {
+          setError(data.error || 'Failed to toggle broadcast');
+        }
       }
     } catch (err) {
       console.error('Failed to toggle broadcast:', err);
+      setError(err instanceof Error ? err.message : 'Failed to toggle broadcast');
     }
   };
 
