@@ -661,7 +661,7 @@ export function OnboardingNavigator() {
     {
       id: 'blockchain',
       title: 'Blockchain Architecture',
-      label: 'MODULE 16',
+      label: 'MODULE 03',
       icon: <Network className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -934,7 +934,7 @@ export function OnboardingNavigator() {
     {
       id: 'lens-sandbox',
       title: 'SynthScan™ MRI: HHF-AI Lens and Sandbox',
-      label: 'MODULE 16',
+      label: 'MODULE 04',
       icon: <Layers className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -1504,7 +1504,7 @@ export function OnboardingNavigator() {
     {
       id: 'element-zero',
       title: 'Element 0 as 0: Bridging Holographic Hydrogen to Classical Math-Based Awareness',
-      label: 'MODULE 16',
+      label: 'MODULE 05',
       icon: <Atom className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -1863,7 +1863,7 @@ export function OnboardingNavigator() {
     {
       id: 'hydrogen-fractals',
       title: 'Fractals and Holographic Hydrogen: Fundamentals',
-      label: 'MODULE 16',
+      label: 'MODULE 06',
       icon: <Zap className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -2295,7 +2295,7 @@ export function OnboardingNavigator() {
     {
       id: 'fractal-grammar',
       title: 'Fractal Cognitive Grammar',
-      label: 'MODULE 16',
+      label: 'MODULE 07',
       icon: <FileCode className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -2624,7 +2624,7 @@ export function OnboardingNavigator() {
     {
       id: 'recursive-awareness',
       title: 'Recursive Awareness Interference',
-      label: 'MODULE 16',
+      label: 'MODULE 08',
       icon: <GitBranch className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -2939,7 +2939,7 @@ export function OnboardingNavigator() {
     {
       id: 'edges-overlap',
       title: 'Edges and Overlap: Edge Sweet Spots',
-      label: 'MODULE 16',
+      label: 'MODULE 09',
       icon: <Grid3x3 className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -3295,7 +3295,7 @@ export function OnboardingNavigator() {
     {
       id: 'awarenessverse',
       title: 'The Awarenessverse & Awareness Encryption Keys',
-      label: 'MODULE 16',
+      label: 'MODULE 10',
       icon: <Brain className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -3643,7 +3643,7 @@ export function OnboardingNavigator() {
     {
       id: 'validated-predictions',
       title: 'Empirically Validated Novel Predictions',
-      label: 'MODULE 16',
+      label: 'MODULE 11',
       icon: <Target className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -3916,7 +3916,7 @@ export function OnboardingNavigator() {
     {
       id: 'test-report',
       title: 'System Validation & Test Report',
-      label: 'MODULE 16',
+      label: 'MODULE 12',
       icon: <FileText className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -4260,7 +4260,7 @@ export function OnboardingNavigator() {
     {
       id: 'how-it-works',
       title: 'How It Works: Your Syntheverse Journey',
-      label: 'MODULE 16',
+      label: 'MODULE 13',
       icon: <LinkIcon className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -4551,7 +4551,7 @@ export function OnboardingNavigator() {
     {
       id: 'seed-information',
       title: 'Seed Information as a Fundamental Class',
-      label: 'MODULE 16',
+      label: 'MODULE 14',
       icon: <Sprout className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -4816,7 +4816,7 @@ export function OnboardingNavigator() {
     {
       id: 'constants-equations',
       title: 'Novel Constants & Equations Catalog',
-      label: 'MODULE 16',
+      label: 'MODULE 15',
       icon: <Calculator className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -5256,7 +5256,7 @@ export function OnboardingNavigator() {
     {
       id: 'expedition-report',
       title: 'Expedition Report: Recursive Self-Proof of Syntheverse',
-      label: 'MODULE 16',
+      label: 'MODULE 17',
       icon: <FileText className="h-6 w-6" />,
       content: (
         <div className="space-y-6">
@@ -5620,7 +5620,7 @@ export function OnboardingNavigator() {
     {
       id: 'seeds-and-edges',
       title: 'Syntheverse Minimum Viable Product: Seeds and Edges',
-      label: 'MODULE 16',
+      label: 'MODULE 18',
       icon: <Layers className="h-6 w-6" />,
       content: (
         <div className="space-y-4">
@@ -5959,7 +5959,7 @@ export function OnboardingNavigator() {
     {
       id: 'rituals-archetypal-grammar',
       title: 'Rituals, Archetypal Grammar, and Generative Awareness',
-      label: 'MODULE 17',
+      label: 'MODULE 19',
       icon: <Eye className="h-6 w-6" />,
       content: (
         <div className="space-y-4">

@@ -14,6 +14,7 @@ import { SocialMediaPanel } from '@/components/SocialMediaPanel';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
+import { PersistentDetails } from '@/components/PersistentDetails';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,7 +59,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Core Instrument Cluster - Reactor Core */}
-        <details className="mb-6" open>
+        <PersistentDetails storageKey="reactor-core" defaultOpen={true} className="mb-6">
           <summary className="cockpit-panel cursor-pointer select-none list-none p-4 md:p-5 mb-0">
             <div className="flex items-center justify-between">
               <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
@@ -70,7 +71,7 @@ export default async function Dashboard() {
           <div className="mt-0">
             <ReactorCore />
           </div>
-        </details>
+        </PersistentDetails>
 
         {/* System Broadcast Banners - Priority Display */}
         <div className="mb-6">
@@ -82,7 +83,7 @@ export default async function Dashboard() {
           {/* Left Column - Compact Navigators (3 columns on large screens, stacks on mobile) */}
           <aside className="lg:col-span-3 space-y-3 order-2 lg:order-1">
             {/* Sandbox Navigator - Collapsible */}
-            <details className="cockpit-panel" open>
+            <PersistentDetails storageKey="sandbox-navigator" defaultOpen={true} className="cockpit-panel">
               <summary className="cursor-pointer select-none list-none p-3 border-b border-[var(--keyline-primary)]">
                 <div className="flex items-center justify-between">
                   <div className="cockpit-label text-[10px] uppercase tracking-wider">
@@ -96,10 +97,10 @@ export default async function Dashboard() {
                   <SandboxNavigator userEmail={user.email!} isCreator={isCreator} isOperator={isOperator} />
                 </div>
               </div>
-            </details>
+            </PersistentDetails>
 
             {/* SynthChat Navigator - Collapsible */}
-            <details className="cockpit-panel" open>
+            <PersistentDetails storageKey="synthchat-navigator" defaultOpen={true} className="cockpit-panel">
               <summary className="cursor-pointer select-none list-none p-3 border-b border-[var(--keyline-primary)]">
                 <div className="flex items-center justify-between">
                   <div className="cockpit-label text-[10px] uppercase tracking-wider">
@@ -113,13 +114,13 @@ export default async function Dashboard() {
                   <SynthChatNavigator />
                 </div>
               </div>
-            </details>
+            </PersistentDetails>
           </aside>
 
           {/* Center Column - Primary Content (6 columns on large screens, first on mobile) */}
           <div className="lg:col-span-6 space-y-4 order-1 lg:order-2">
             {/* Social Media Panel - Main Focus */}
-            <details className="cockpit-panel" open>
+            <PersistentDetails storageKey="sandbox-channel" defaultOpen={true} className="cockpit-panel">
               <summary className="cursor-pointer select-none list-none p-4 border-b border-[var(--keyline-primary)]">
                 <div className="flex items-center justify-between">
                   <div className="cockpit-label text-xs uppercase tracking-wider">
@@ -131,10 +132,10 @@ export default async function Dashboard() {
               <div className="px-4 pb-4 pt-3">
                 <SocialMediaPanel />
               </div>
-            </details>
+            </PersistentDetails>
 
             {/* PoC Navigator - Collapsible */}
-            <details className="cockpit-panel" open>
+            <PersistentDetails storageKey="poc-navigator" defaultOpen={true} className="cockpit-panel">
               <summary className="cursor-pointer select-none list-none p-4 border-b border-[var(--keyline-primary)]">
                 <div className="flex items-center justify-between">
                   <div className="cockpit-label text-xs uppercase tracking-wider">
@@ -146,7 +147,7 @@ export default async function Dashboard() {
               <div className="px-4 pb-4 pt-3">
                 <FrontierModule userEmail={user.email!} />
               </div>
-            </details>
+            </PersistentDetails>
           </div>
 
           {/* Right Column - Future Expansion (3 columns on large screens, last on mobile) */}

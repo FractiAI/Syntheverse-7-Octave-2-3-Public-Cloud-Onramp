@@ -1,6 +1,6 @@
 /**
  * Status Indicators Component
- * Shows Syntheverse component status: Whole Brain AI, SynthScan MRI, PoC Sandbox, ERC-20 Base Mainnet
+ * Shows Syntheverse component status: Whole Brain AI, SynthScan MRI, PoC Sandbox, ERC-20 MOTHERLODE VAULT
  * Also shows Syntheverse and current sandbox deployment status
  */
 

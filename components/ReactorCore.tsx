@@ -8,7 +8,6 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { GenesisButtonQuickAction } from './GenesisButtonQuickAction';
 
 interface EpochInfo {
   current_epoch: string;
@@ -341,19 +340,14 @@ export function ReactorCore() {
         </div>
       </div>
 
-      {/* System Status Footer with Genesis Button */}
+      {/* System Status Footer */}
       <div className="mt-6 border-t border-[var(--keyline-primary)] pt-3 md:mt-8 md:pt-4">
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 animate-pulse rounded-full bg-[var(--hydrogen-amber)]"></div>
-              <span className="cockpit-text">System Operational</span>
-            </div>
-            <div className="cockpit-label">Epoch: {epochInfo.current_epoch.toUpperCase()}</div>
+        <div className="flex flex-wrap items-center gap-4 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-[var(--hydrogen-amber)]"></div>
+            <span className="cockpit-text">System Operational</span>
           </div>
-          <div className="flex items-center">
-            <GenesisButtonQuickAction />
-          </div>
+          <div className="cockpit-label">Epoch: {epochInfo.current_epoch.toUpperCase()}</div>
         </div>
       </div>
     </div>

@@ -74,9 +74,8 @@ export function SocialMediaPanel() {
   }, []);
 
   useEffect(() => {
-    if (selectedSandbox !== null) {
-      fetchPosts(selectedSandbox, 0, true);
-    }
+    // Fetch posts for both Syntheverse (null) and other sandboxes
+    fetchPosts(selectedSandbox, 0, true);
   }, [selectedSandbox]);
 
   const fetchPosts = useCallback(async (sandboxId: string | null, currentOffset: number = 0, reset: boolean = false) => {
