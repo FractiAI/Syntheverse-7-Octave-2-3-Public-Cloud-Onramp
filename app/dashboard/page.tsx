@@ -13,7 +13,6 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
 import { SynthChatNavigator } from '@/components/SynthChatNavigator';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
-import CockpitHeader from '@/components/CockpitHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,11 +46,8 @@ export default async function Dashboard() {
 
   return (
     <div className="cockpit-bg min-h-screen">
-      {/* Cockpit Header - Command Center */}
-      <CockpitHeader />
-      
       {/* Quick Actions Panel - Upper Right */}
-      <QuickActionsPanel isCreator={isCreator} isOperator={isOperator} />
+      <QuickActionsPanel isCreator={isCreator} isOperator={isOperator} showContributorDashboard={false} />
 
       {/* Cockpit Grid Layout - Multi-column control center */}
       <div className="cockpit-grid-layout">

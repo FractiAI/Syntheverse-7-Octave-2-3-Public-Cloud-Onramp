@@ -1,0 +1,4 @@
+# Ignore files that might cause git issues during build
+scripts/format-check-safe.sh
+.github/workflows/
+

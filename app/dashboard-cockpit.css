@@ -617,6 +617,22 @@ details[open] .cockpit-chevron {
   border: var(--keyline-thick) solid var(--keyline-primary);
   margin: 0;
   background: var(--cockpit-bg);
+  position: relative;
+  z-index: 1051;
+}
+
+/* Ensure links in Quick Actions Panel are clickable */
+.cockpit-quick-actions-panel .cockpit-lever {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto !important;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.cockpit-quick-actions-panel .cockpit-lever:hover {
+  background: var(--cockpit-obsidian);
 }
 
 /* Adjust position when header is present (for creator/operator dashboards) */
