@@ -290,10 +290,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           grok_evaluation_details: {
             base_novelty: evaluation.base_novelty,
             base_density: evaluation.base_density,
-            redundancy_penalty_percent: evaluation.redundancy_penalty_percent,
-            density_penalty_percent: evaluation.density_penalty_percent,
+            redundancy_penalty_percent: evaluation.redundancy_penalty_percent || 0,
+            density_penalty_percent: evaluation.density_penalty_percent || 0,
             overlap_percent: overlapPercent,
-            bonus_multiplier_applied: (evaluation as any).bonus_multiplier || 1.0,
+            bonus_multiplier_applied: evaluation.sweet_spot_bonus_multiplier || 1.0,
             seed_multiplier_applied: isSeed ? 1.15 : 1.0,
             has_sweet_spot_edges: hasSweetSpotEdges,
             full_evaluation: evaluation, // Store full evaluation object
@@ -301,6 +301,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           },
           // LLM Metadata for provenance (timestamp, date, model, version, system prompt)
           llm_metadata: (evaluation as any).llm_metadata || null,
+          // Deterministic Score Contract (Marek requirement) - AUTHORITATIVE scoring trace
+          score_trace: evaluation.score_trace || null,
+          scoring_metadata: evaluation.scoring_metadata || null,
+          pod_composition: evaluation.pod_composition || null,
         },
         // Store vector embedding and 3D coordinates if available
         embedding: vectorizationResult ? vectorizationResult.embedding : undefined,

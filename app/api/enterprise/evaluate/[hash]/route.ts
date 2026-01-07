@@ -153,9 +153,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           grok_evaluation_details: {
             base_novelty: evaluation.base_novelty,
             base_density: evaluation.base_density,
+            redundancy_penalty_percent: evaluation.redundancy_penalty_percent || 0,
             redundancy_overlap_percent: evaluation.redundancy_overlap_percent,
             overlap_percent: overlapPercent,
-            bonus_multiplier_applied: (evaluation as any).bonus_multiplier || 1.0,
+            bonus_multiplier_applied: evaluation.sweet_spot_bonus_multiplier || 1.0,
             seed_multiplier_applied: isSeed ? 1.15 : 1.0,
             has_sweet_spot_edges: hasSweetSpotEdges,
             full_evaluation: evaluation,
@@ -163,6 +164,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           },
           llm_metadata: (evaluation as any).llm_metadata || null,
           archive_data: archiveData, // Store archive data in metadata for extraction
+          // Deterministic Score Contract (Marek requirement) - AUTHORITATIVE scoring trace
+          score_trace: evaluation.score_trace || null,
+          scoring_metadata: evaluation.scoring_metadata || null,
+          pod_composition: evaluation.pod_composition || null,
         } as any,
         embedding: vectorizationResult ? vectorizationResult.embedding : undefined,
         vector_x: vectorizationResult ? vectorizationResult.vector.x.toString() : undefined,

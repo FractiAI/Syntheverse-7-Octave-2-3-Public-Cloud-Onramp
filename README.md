@@ -9,6 +9,8 @@
 [![Base Mainnet](https://img.shields.io/badge/Blockchain-Base%20Mainnet-blue)](https://base.org)
 [![Tests](https://img.shields.io/badge/Tests-60%2F60%20Passing-success)](tests/FINAL_TEST_REPORT.md)
 
+> **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
+
 ---
 
 ## 🚀 Liberating Contributions Through Hydrogen Spin MRI-Based PoC Protocol
@@ -37,7 +39,7 @@
 - [Current Status](#current-status)
 - [Repository Structure](#repository-structure)
 - [Environment Variables](#environment-variables)
-- [Documentation](#documentation)
+- [Documentation](#documentation) - **See [Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for comprehensive system overview**
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Tech Stack](#tech-stack)
@@ -587,7 +589,14 @@ See:
 
 - **Protocol**: [`protocol/README.md`](protocol/README.md) - Protocol specification
 - **Operator**: [`operator/README.md`](operator/README.md) - Operator documentation
-- **Code Review**: [`docs/CODE_REVIEW_SENIOR_ENGINEER.md`](docs/CODE_REVIEW_SENIOR_ENGINEER.md)
+
+### System Overview & Reviews
+
+- **Production Briefing**: [`docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md`](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) - Comprehensive system overview for senior engineers
+- **Code Review**: [`docs/CODE_REVIEW_SENIOR_ENGINEER.md`](docs/CODE_REVIEW_SENIOR_ENGINEER.md) - Detailed code review (8.5/10 rating)
+- **Architecture**: [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md) - System architecture and workflows
+- **Scoring Transparency**: [`docs/RESPONSE_TO_MAREK_SIMBA_TESTING.md`](docs/RESPONSE_TO_MAREK_SIMBA_TESTING.md) - Response to tester feedback on scoring reproducibility
+- **Metal-Aware Overlap**: [`docs/METAL_AWARE_OVERLAP_STRATEGY.md`](docs/METAL_AWARE_OVERLAP_STRATEGY.md) - Metal-specific overlap penalty strategy
 
 ### Migration Documentation
 
@@ -816,6 +825,8 @@ Built for the Syntheverse ecosystem with ❤️
 **Version**: 2.27 (Dashboard Fixes & Persistent Panel State)
 
 ### Version History
+
+- **v2.28** (January 2025): Deterministic Score Transparency & Formula Validation (Marek/Simba Audit Response) - Comprehensive scoring transparency overhaul in response to tester feedback. Implemented complete deterministic score trace showing all calculation steps: dimension scores, composite, overlap %, penalty %, bonus multiplier, seed multiplier, and final score with formula validation. Added scoring_metadata (config ID, sandbox ID, archive version, timestamp) and pod_composition to evaluation output for full audit trail. Fixed critical UI label bug: "Redundancy Penalty" now correctly labeled as "Redundancy Overlap" with visual indicators for sweet spot bonus (9.2%-19.2%) and excess penalty (>30%). Added real-time formula validation displaying k-factor (actual_score / (sum_dims × (1 − penalty%))) which should be ~1.0 - alerts if mismatch detected. All evaluation results now include authoritative score trace in UI with step-by-step calculation breakdown, configuration identifiers, and formula verification. This enables testers to validate that published formula matches displayed scores exactly, addressing all transparency concerns raised in production testing.
 
 - **v2.27** (January 2025): Dashboard Fixes & Persistent Panel State - Critical fixes and UX improvements for contributor dashboard. Fixed mobile status indicators to consistently show "ERC-20 MOTHERLODE VAULT" label. Fixed social media panel logic that prevented Syntheverse sandbox posts from loading. Removed Genesis button from Reactor Core footer for cleaner interface. Fixed onboarding module numbering to be sequential (01-19 instead of duplicated MODULE 16). Added PersistentDetails component for collapsible panels - all dashboard panels (Reactor Core, Sandbox Navigator, SynthChat Navigator, Sandbox Channel, PoC Navigator) now remember their open/closed state across page refreshes using localStorage. Significantly improves UX by maintaining user preferences for panel visibility.
 

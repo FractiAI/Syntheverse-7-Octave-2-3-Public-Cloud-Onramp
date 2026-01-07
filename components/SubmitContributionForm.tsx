@@ -439,8 +439,8 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
               Total score: 0-10,000. Founder qualification: ≥8,000
             </p>
             <p className="mt-2 border-t border-[var(--keyline-primary)] pt-2 text-xs">
-              <strong>Redundancy Penalty:</strong> Applied based on 3D vector similarity to archived
-              contributions.
+              <strong>Redundancy Overlap:</strong> Measured by 3D vector similarity to archived
+              contributions. Sweet spot (9.2%-19.2%) receives bonus. Excess (>30%) receives penalty.
             </p>
           </div>
         </div>
@@ -909,8 +909,14 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                 </div>
                                 {evaluationStatus.evaluation.redundancy !== undefined && (
                                   <div className="mt-2 text-xs text-muted-foreground">
-                                    Redundancy Penalty:{' '}
+                                    Redundancy Overlap:{' '}
                                     {evaluationStatus.evaluation.redundancy.toFixed(1)}%
+                                    {evaluationStatus.evaluation.redundancy >= 9.2 && evaluationStatus.evaluation.redundancy <= 19.2 && (
+                                      <span className="ml-2 text-green-600 font-medium">⚡ Sweet Spot Bonus</span>
+                                    )}
+                                    {evaluationStatus.evaluation.redundancy > 30 && (
+                                      <span className="ml-2 text-orange-600 font-medium">⚠ Excess Penalty Applied</span>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -1062,10 +1068,37 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                             </div>
                                             <div className="space-y-1">
                                               {evaluationStatus.evaluation.grok_evaluation_details
-                                                .redundancy_penalty_percent !== undefined && (
+                                                .overlap_percent !== undefined && (
                                                 <div className="flex items-center justify-between text-xs">
                                                   <span className="text-slate-600">
-                                                    Redundancy Penalty:
+                                                    Redundancy Overlap:
+                                                  </span>
+                                                  <span className={`font-semibold ${
+                                                    evaluationStatus.evaluation.grok_evaluation_details.overlap_percent >= 9.2 && 
+                                                    evaluationStatus.evaluation.grok_evaluation_details.overlap_percent <= 19.2
+                                                      ? 'text-green-600'
+                                                      : evaluationStatus.evaluation.grok_evaluation_details.overlap_percent > 30
+                                                      ? 'text-orange-600'
+                                                      : 'text-slate-900'
+                                                  }`}>
+                                                    {evaluationStatus.evaluation.grok_evaluation_details.overlap_percent.toFixed(
+                                                      1
+                                                    )}
+                                                    %
+                                                    {evaluationStatus.evaluation.grok_evaluation_details.overlap_percent >= 9.2 && 
+                                                     evaluationStatus.evaluation.grok_evaluation_details.overlap_percent <= 19.2 && 
+                                                     ' (⚡ Sweet Spot)'}
+                                                    {evaluationStatus.evaluation.grok_evaluation_details.overlap_percent > 30 && 
+                                                     ' (⚠ Penalty)'}
+                                                  </span>
+                                                </div>
+                                              )}
+                                              {evaluationStatus.evaluation.grok_evaluation_details
+                                                .redundancy_penalty_percent !== undefined &&
+                                                evaluationStatus.evaluation.grok_evaluation_details.redundancy_penalty_percent > 0 && (
+                                                <div className="flex items-center justify-between text-xs">
+                                                  <span className="text-slate-600">
+                                                    Excess-Overlap Penalty:
                                                   </span>
                                                   <span className="font-semibold text-orange-600">
                                                     {evaluationStatus.evaluation.grok_evaluation_details.redundancy_penalty_percent.toFixed(
@@ -1103,6 +1136,129 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                               {evaluationStatus.podScore?.toLocaleString() || 'N/A'}{' '}
                                               / 10,000
                                             </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Deterministic Score Trace - AUTHORITATIVE (Marek requirement) */}
+                                  {evaluationStatus.evaluation.score_trace && (
+                                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                                      <div className="mb-3 font-semibold text-blue-900">
+                                        📊 Deterministic Score Trace
+                                      </div>
+                                      <div className="space-y-3 text-sm">
+                                        {/* Config Identifiers */}
+                                        {evaluationStatus.evaluation.scoring_metadata && (
+                                          <div className="rounded border border-blue-300 bg-white p-2 text-xs font-mono">
+                                            <div className="mb-1 font-semibold text-blue-900">Configuration:</div>
+                                            <div className="space-y-0.5 text-slate-700">
+                                              <div>Config: {evaluationStatus.evaluation.scoring_metadata.score_config_id}</div>
+                                              <div>Sandbox: {evaluationStatus.evaluation.scoring_metadata.sandbox_id}</div>
+                                              <div>Archive: {evaluationStatus.evaluation.scoring_metadata.archive_version}</div>
+                                              <div>Timestamp: {evaluationStatus.evaluation.scoring_metadata.evaluation_timestamp}</div>
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {/* Formula Calculation Steps */}
+                                        <div className="space-y-2">
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-blue-700">1. Composite (N+D+C+A):</span>
+                                            <span className="font-mono font-semibold text-blue-900">
+                                              {evaluationStatus.evaluation.score_trace.composite.toLocaleString()}
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-blue-700">2. Overlap %:</span>
+                                            <span className="font-mono font-semibold text-blue-900">
+                                              {evaluationStatus.evaluation.score_trace.overlap_percent.toFixed(2)}%
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-blue-700">3. Penalty % (if &gt;30%):</span>
+                                            <span className="font-mono font-semibold text-orange-600">
+                                              {evaluationStatus.evaluation.score_trace.penalty_percent_applied.toFixed(2)}%
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-blue-700">4. After Penalty:</span>
+                                            <span className="font-mono font-semibold text-blue-900">
+                                              {evaluationStatus.evaluation.score_trace.after_penalty.toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-blue-700">5. Bonus Multiplier (sweet spot):</span>
+                                            <span className="font-mono font-semibold text-green-600">
+                                              ×{evaluationStatus.evaluation.score_trace.bonus_multiplier_applied.toFixed(3)}
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center justify-between text-xs">
+                                            <span className="text-blue-700">6. After Bonus:</span>
+                                            <span className="font-mono font-semibold text-blue-900">
+                                              {evaluationStatus.evaluation.score_trace.after_bonus.toFixed(2)}
+                                            </span>
+                                          </div>
+                                          {evaluationStatus.evaluation.score_trace.is_seed_submission && (
+                                            <>
+                                              <div className="flex items-center justify-between text-xs">
+                                                <span className="text-blue-700">7. Seed Multiplier:</span>
+                                                <span className="font-mono font-semibold text-purple-600">
+                                                  ×{evaluationStatus.evaluation.score_trace.seed_multiplier?.toFixed(2) || '1.00'}
+                                                </span>
+                                              </div>
+                                              <div className="flex items-center justify-between text-xs">
+                                                <span className="text-blue-700">8. After Seed:</span>
+                                                <span className="font-mono font-semibold text-blue-900">
+                                                  {evaluationStatus.evaluation.score_trace.after_seed?.toFixed(2) || 'N/A'}
+                                                </span>
+                                              </div>
+                                            </>
+                                          )}
+                                          <div className="border-t border-blue-300 pt-2">
+                                            <div className="flex items-center justify-between">
+                                              <span className="font-semibold text-blue-900">Final Score (clamped 0-10000):</span>
+                                              <span className="text-lg font-bold text-blue-900">
+                                                {evaluationStatus.evaluation.score_trace.final_score.toLocaleString()}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {/* Formula String */}
+                                        <div className="rounded border border-blue-300 bg-white p-2 text-xs font-mono text-slate-700">
+                                          <div className="mb-1 font-semibold text-blue-900">Formula:</div>
+                                          {evaluationStatus.evaluation.score_trace.formula}
+                                        </div>
+
+                                        {/* Validation Check */}
+                                        <div className="rounded border border-green-300 bg-green-50 p-2 text-xs">
+                                          <div className="mb-1 font-semibold text-green-900">Formula Validation:</div>
+                                          <div className="font-mono text-slate-700">
+                                            {(() => {
+                                              const trace = evaluationStatus.evaluation.score_trace;
+                                              const composite = trace.composite;
+                                              const penalty = trace.penalty_percent_applied / 100;
+                                              const bonus = trace.bonus_multiplier_applied;
+                                              const seed = trace.seed_multiplier || 1.0;
+                                              const expected = Math.round(composite * (1 - penalty) * bonus * seed);
+                                              const actual = trace.final_score;
+                                              const k = actual / (composite * (1 - penalty));
+                                              const match = Math.abs(expected - actual) <= 1; // Allow 1 point rounding
+                                              return (
+                                                <>
+                                                  <div>Expected: {expected.toLocaleString()}</div>
+                                                  <div>Actual: {actual.toLocaleString()}</div>
+                                                  <div>k-factor: {k.toFixed(4)} {match ? '✅' : '⚠️'}</div>
+                                                  {!match && (
+                                                    <div className="mt-1 text-orange-600 font-semibold">
+                                                      ⚠️ Formula mismatch detected! (Marek alert)
+                                                    </div>
+                                                  )}
+                                                </>
+                                              );
+                                            })()}
                                           </div>
                                         </div>
                                       </div>

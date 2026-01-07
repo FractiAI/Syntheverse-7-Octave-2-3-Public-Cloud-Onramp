@@ -137,6 +137,8 @@ export async function evaluateWithGrok(
     system_prompt_file: string;
     evaluation_timestamp_ms: number;
   };
+  redundancy_penalty_percent?: number;
+  sweet_spot_bonus_multiplier?: number;
   // H) Score trace for transparency (Marek requirement)
   score_trace?: {
     dimension_scores: {
@@ -160,6 +162,33 @@ export async function evaluateWithGrok(
     final_score: number;
     formula: string;
     clamped: boolean;
+  };
+  // Deterministic Score Contract (Marek requirement)
+  scoring_metadata?: {
+    score_config_id: string;
+    sandbox_id: string;
+    archive_version: string;
+    evaluation_timestamp: string;
+  };
+  pod_composition?: {
+    sum_dims: {
+      novelty: number;
+      density: number;
+      coherence: number;
+      alignment: number;
+      composite: number;
+    };
+    multipliers: {
+      sweet_spot_multiplier: number;
+      seed_multiplier: number;
+      total_multiplier: number;
+    };
+    penalties: {
+      overlap_penalty_percent: number;
+      total_penalty_percent: number;
+    };
+    sandbox_factor: number;
+    final_clamped: number;
   };
 }> {
   const grokApiKey = process.env.NEXT_PUBLIC_GROK_API_KEY;
@@ -1369,12 +1398,10 @@ ${answer}`;
     // G) Ensure scoring formula is always followed: Composite = N + D + C + A
     const compositeScore = finalNoveltyScore + densityFinal + coherenceScore + alignmentScore;
 
-    // Get base total score if provided by Grok (but prefer compositeScore for consistency)
-    let basePodScore =
-      evaluation.total_score ?? evaluation.pod_score ?? evaluation.poc_score ?? compositeScore;
-    if (!basePodScore || basePodScore === 0) {
-      basePodScore = compositeScore;
-    }
+    // CRITICAL FIX (Marek/Simba): ALWAYS use compositeScore as base
+    // Do NOT use Grok's total_score as it may have penalties/bonuses already applied
+    // This was causing double-application of penalties/bonuses and non-reproducible scores
+    const basePodScore = compositeScore;
 
     // G) Apply correct formula: Final = (Composite × (1 - penalty%/100)) × bonus_multiplier × seed_multiplier
     // Seed submissions (first submission) receive a multiplier for establishing foundational framework
@@ -1386,31 +1413,97 @@ ${answer}`;
     const afterSeed = afterBonus * seedMultiplier;
     const pod_score = Math.max(0, Math.min(10000, Math.round(afterSeed)));
 
-    // H) Score trace for transparency (Marek requirement)
+    // H) Score trace for transparency (Marek/Simba requirement)
     const scoreTrace = {
+      // Dimension scores (inputs to formula)
       dimension_scores: {
         novelty: finalNoveltyScore,
         density: densityFinal,
         coherence: coherenceScore,
         alignment: alignmentScore,
       },
+      // Composite (sum of dimensions) - this is ALWAYS the base
       composite: compositeScore,
-      base_pod_score: basePodScore,
+      composite_used_as_base: compositeScore, // Explicit: this is what we use as base
+      base_pod_score: basePodScore, // Should equal composite (verification)
+      
+      // Overlap (from redundancy detection)
       overlap_percent: redundancyOverlapPercent,
+      
+      // Penalty calculation and application
       penalty_percent_computed: penaltyPercent,
       penalty_percent_applied: penaltyPercent, // Same for now, but can differ if gated
+      penalty_applied_to: 'composite', // Clarify where penalty is applied
+      
+      // Bonus calculation and application
       bonus_multiplier_computed: bonusMultiplier,
       bonus_multiplier_applied: bonusMultiplier, // Same for now, but can differ if gated
+      bonus_applied_to: 'post_penalty', // Clarify where bonus is applied
+      
+      // Seed multiplier calculation and application
       seed_multiplier: seedMultiplier,
-      is_seed_submission: isSeedSubmission,
-      after_penalty: afterPenalty,
-      after_bonus: afterBonus,
-      after_seed: afterSeed,
+      seed_multiplier_applied: isSeedSubmission,
+      seed_applied_to: 'post_bonus', // Clarify where seed multiplier is applied
+      
+      // Step-by-step calculation (full transparency)
+      step_1_composite: compositeScore,
+      step_2_after_penalty: afterPenalty,
+      step_3_after_bonus: afterBonus,
+      step_4_after_seed: afterSeed,
+      step_5_clamped: pod_score,
+      
+      // Final score
       final_score: pod_score,
+      
+      // Formula used (full transparency)
       formula: isSeedSubmission
-        ? `Final = (Composite × (1 - ${penaltyPercent}% / 100)) × ${bonusMultiplier.toFixed(3)} × ${seedMultiplier.toFixed(2)} (seed) = ${pod_score}`
-        : `Final = (Composite × (1 - ${penaltyPercent}% / 100)) × ${bonusMultiplier.toFixed(3)} = ${pod_score}`,
+        ? `Final = (Composite=${compositeScore} × (1 - ${penaltyPercent}%/100)) × ${bonusMultiplier.toFixed(3)} × ${seedMultiplier.toFixed(2)} = ${pod_score}`
+        : `Final = (Composite=${compositeScore} × (1 - ${penaltyPercent}%/100)) × ${bonusMultiplier.toFixed(3)} = ${pod_score}`,
+      
+      // Step-by-step formula breakdown (for UI display)
+      formula_steps: [
+        `Step 1: Composite = N(${finalNoveltyScore}) + D(${densityFinal}) + C(${coherenceScore}) + A(${alignmentScore}) = ${compositeScore}`,
+        `Step 2: After Penalty = ${compositeScore} × (1 - ${penaltyPercent}/100) = ${afterPenalty.toFixed(2)}`,
+        `Step 3: After Bonus = ${afterPenalty.toFixed(2)} × ${bonusMultiplier.toFixed(3)} = ${afterBonus.toFixed(2)}`,
+        isSeedSubmission
+          ? `Step 4: After Seed = ${afterBonus.toFixed(2)} × ${seedMultiplier.toFixed(2)} = ${afterSeed.toFixed(2)}`
+          : null,
+        `Step ${isSeedSubmission ? '5' : '4'}: Final (clamped 0-10000) = ${pod_score}`,
+      ].filter(Boolean),
+      
+      // Clamping flag
       clamped: pod_score === 10000 || pod_score === 0,
+      clamped_reason: pod_score === 10000 ? 'max_score' : pod_score === 0 ? 'min_score' : null,
+    };
+
+    // Extract scoring_metadata and pod_composition from Grok response (if provided)
+    // These provide full transparency into Grok's internal calculation
+    const scoringMetadata = evaluation.scoring_metadata || {
+      score_config_id: scoreConfigId,
+      sandbox_id: sandboxContext?.id || 'pru-default',
+      archive_version: archiveVersionId,
+      evaluation_timestamp: new Date().toISOString(),
+    };
+
+    const podComposition = evaluation.pod_composition || {
+      sum_dims: {
+        novelty: finalNoveltyScore,
+        density: densityFinal,
+        coherence: coherenceScore,
+        alignment: alignmentScore,
+        composite: compositeScore,
+      },
+      multipliers: {
+        sweet_spot_multiplier: bonusMultiplier,
+        seed_multiplier: seedMultiplier,
+        total_multiplier: bonusMultiplier * seedMultiplier,
+      },
+      penalties: {
+        overlap_penalty_percent: penaltyPercent,
+        total_penalty_percent: penaltyPercent,
+      },
+      sandbox_factor: 1.0, // Default, can be overridden
+      final_clamped: pod_score,
     };
 
     // Qualification threshold (≥8,000 for Founder) is checked separately
@@ -1585,6 +1678,8 @@ ${answer}`;
       base_novelty: baseNoveltyScore,
       base_density: baseDensityScore,
       redundancy_overlap_percent: redundancyOverlapPercent,
+      redundancy_penalty_percent: penaltyPercent, // Explicit penalty % (0 if no penalty)
+      sweet_spot_bonus_multiplier: bonusMultiplier, // Explicit bonus multiplier (1.0 if no bonus)
       // Flag to indicate if this was a seed submission (first submission establishing framework)
       is_seed_submission: isSeedSubmission,
       // Store raw Grok API response for display
@@ -1593,6 +1688,9 @@ ${answer}`;
       llm_metadata: llmMetadata,
       // H) Score trace for transparency (Marek requirement)
       score_trace: scoreTrace,
+      // Deterministic Score Contract (Marek requirement)
+      scoring_metadata: scoringMetadata,
+      pod_composition: podComposition,
     };
   } catch (error) {
     debugError('EvaluateWithGrok', 'Grok API call failed', error);
