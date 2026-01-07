@@ -601,6 +601,15 @@ details[open] .cockpit-chevron {
   box-shadow: none;
 }
 
+/* System Status Indicators in Quick Actions */
+.cockpit-quick-actions-panel .flex.items-center.gap-3 {
+  flex-shrink: 0;
+}
+
+.cockpit-quick-actions-panel .flex.items-center.gap-1\.5 {
+  flex-shrink: 0;
+}
+
 /* Ensure links in Quick Actions Panel are clickable and horizontal */
 .cockpit-quick-actions-panel .cockpit-lever {
   position: relative;
@@ -656,6 +665,15 @@ details[open] .cockpit-chevron {
   .cockpit-quick-actions-panel .cockpit-panel::-webkit-scrollbar-thumb {
     background: var(--hydrogen-amber);
     border-radius: 2px;
+  }
+  
+  /* Hide status labels on smaller screens, show only indicators */
+  .cockpit-quick-actions-panel .flex.items-center.gap-3 .cockpit-text {
+    display: none;
+  }
+  
+  .cockpit-quick-actions-panel .flex.items-center.gap-3 {
+    gap: 0.75rem;
   }
 }
 

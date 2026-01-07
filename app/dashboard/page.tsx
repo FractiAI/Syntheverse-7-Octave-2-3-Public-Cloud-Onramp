@@ -51,57 +51,9 @@ export default async function Dashboard() {
 
       {/* Cockpit Grid Layout - Multi-column control center */}
       <div className="cockpit-grid-layout">
-        {/* Left Sidebar - Status & Operations */}
+        {/* Left Sidebar - Empty or can be used for other content */}
         <aside className="cockpit-sidebar">
-          {/* System Status Panel */}
-          <div className="cockpit-panel p-3 md:p-4">
-            <div className="mb-3 border-b border-[var(--keyline-primary)] pb-2">
-              <div className="cockpit-label text-[10px] uppercase tracking-wider">
-                SYSTEM STATUS
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="cockpit-text text-xs">Protocol</span>
-                <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="cockpit-text text-xs">Blockchain</span>
-                <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="cockpit-text text-xs">HHF-AI</span>
-                <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="cockpit-text text-xs">SynthScan™</span>
-                <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" style={{ boxShadow: '0 0 6px #22c55e' }}></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Operations Panel */}
-          <div className="cockpit-panel p-3 md:p-4 mt-3">
-            <div className="mb-3 border-b border-[var(--keyline-primary)] pb-2">
-              <div className="cockpit-label text-[10px] uppercase tracking-wider">
-                QUICK OPERATIONS
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Link 
-                href="/submit" 
-                className="cockpit-lever block w-full text-center py-2 px-3 text-xs border-2 border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors"
-              >
-                ✎ SUBMIT CONTRIBUTION
-              </Link>
-              <Link 
-                href="/onboarding" 
-                className="cockpit-lever block w-full text-center py-2 px-3 text-xs border-2 border-[var(--keyline-primary)] hover:border-[var(--hydrogen-amber)] transition-colors"
-              >
-                📚 ONBOARDING
-              </Link>
-            </div>
-          </div>
+          {/* Left sidebar content can be added here if needed */}
         </aside>
 
         {/* Central Instrument Cluster */}
