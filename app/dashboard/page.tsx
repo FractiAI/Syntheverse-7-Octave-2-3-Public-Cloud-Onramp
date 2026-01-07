@@ -15,7 +15,6 @@ import { SocialMediaPanel } from '@/components/SocialMediaPanel';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
-import DashboardHeaderProfileDropdown from '@/components/DashboardHeaderProfileDropdown';
 
 export const dynamic = 'force-dynamic';
 

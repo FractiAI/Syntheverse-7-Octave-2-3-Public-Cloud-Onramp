@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { BookOpen, Shield, Settings, FileText, Radio } from 'lucide-react';
 import { GenesisButtonQuickAction } from './GenesisButtonQuickAction';
 import { SimpleBroadcastDialog } from './SimpleBroadcastDialog';
-import DashboardHeaderProfileDropdown from './DashboardHeaderProfileDropdown';
+import { ClientProfileDropdown } from './ClientProfileDropdown';
 
 interface QuickActionsPanelProps {
   isCreator?: boolean;
@@ -109,7 +109,7 @@ export function QuickActionsPanel({
           
           {/* Account Icon - Top Right */}
           <div className="flex items-center">
-            <DashboardHeaderProfileDropdown />
+            <ClientProfileDropdown />
           </div>
         </div>
       </div>
