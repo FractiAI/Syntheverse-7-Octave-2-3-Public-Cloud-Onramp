@@ -51,19 +51,30 @@ export async function GET(request: NextRequest, { params }: { params: { roomId: 
       return NextResponse.json({ error: 'Room not found' }, { status: 404 });
     }
 
-    // Auto-join Syntheverse room if not already a participant
+    // Auto-join Syntheverse room (sandbox_id is null) if not already a participant
+    // For sandbox-based collaborative rooms, users must explicitly join
     if (!room[0].sandbox_id && participant.length === 0) {
       const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
       const userRole = isCreator ? 'creator' : isOperator ? 'operator' : 'contributor';
       const participantId = `${roomId}-${userEmail}-${Date.now()}`;
-      await db.insert(chatParticipantsTable).values({
-        id: participantId,
-        room_id: roomId,
-        user_email: userEmail,
-        role: userRole,
-      });
+      try {
+        await db.insert(chatParticipantsTable).values({
+          id: participantId,
+          room_id: roomId,
+          user_email: userEmail,
+          role: userRole,
+        });
+      } catch (error: any) {
+        // Ignore duplicate key errors (user might have been added concurrently)
+        if (!error.message?.includes('duplicate') && !error.code?.includes('23505')) {
+          console.warn('Failed to auto-join Syntheverse room:', error);
+        }
+      }
     } else if (participant.length === 0) {
-      return NextResponse.json({ error: 'Not a participant in this room' }, { status: 403 });
+      // For sandbox-based collaborative rooms, user must be a participant
+      return NextResponse.json({ 
+        error: 'Not a participant in this collaborative room. Please join the room first.' 
+      }, { status: 403 });
     }
 
     // Get limit from query params (for fetching last message)
@@ -104,9 +115,22 @@ export async function GET(request: NextRequest, { params }: { params: { roomId: 
       participants,
       room: room[0],
     });
-  } catch (error) {
+  } catch (error: any) {
+    // If tables don't exist, return empty array instead of 500
+    if (error.message?.includes('does not exist') || error.message?.includes('relation') || error.code === '42P01') {
+      console.warn('SynthChat tables not found, returning empty array:', error.message);
+      return NextResponse.json({
+        messages: [],
+        participants: [],
+        room: null,
+      });
+    }
+    
     console.error('Error fetching room messages:', error);
-    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to fetch messages',
+      message: error.message || String(error)
+    }, { status: 500 });
   }
 }
 
@@ -158,17 +182,28 @@ export async function POST(request: NextRequest, { params }: { params: { roomId:
       return NextResponse.json({ error: 'Room not found' }, { status: 404 });
     }
 
-    // Auto-join Syntheverse room if not already a participant
+    // Auto-join Syntheverse room (sandbox_id is null) if not already a participant
+    // For sandbox-based collaborative rooms, users must explicitly join before sending messages
     if (!room[0].sandbox_id && participant.length === 0) {
       const participantId = `${roomId}-${userEmail}-${Date.now()}`;
-      await db.insert(chatParticipantsTable).values({
-        id: participantId,
-        room_id: roomId,
-        user_email: userEmail,
-        role: userRole,
-      });
+      try {
+        await db.insert(chatParticipantsTable).values({
+          id: participantId,
+          room_id: roomId,
+          user_email: userEmail,
+          role: userRole,
+        });
+      } catch (error: any) {
+        // Ignore duplicate key errors (user might have been added concurrently)
+        if (!error.message?.includes('duplicate') && !error.code?.includes('23505')) {
+          console.warn('Failed to auto-join Syntheverse room:', error);
+        }
+      }
     } else if (participant.length === 0) {
-      return NextResponse.json({ error: 'Not a participant in this room' }, { status: 403 });
+      // For sandbox-based collaborative rooms, user must be a participant
+      return NextResponse.json({ 
+        error: 'Not a participant in this collaborative room. Please join the room first.' 
+      }, { status: 403 });
     }
 
     // Generate unique ID

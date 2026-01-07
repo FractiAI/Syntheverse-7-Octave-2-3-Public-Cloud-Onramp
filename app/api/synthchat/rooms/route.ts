@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { db } from '@/utils/db/db';
-import { chatRoomsTable, chatParticipantsTable, enterpriseSandboxesTable } from '@/utils/db/schema';
-import { eq, and, isNull, inArray } from 'drizzle-orm';
+import { chatRoomsTable, chatParticipantsTable, chatMessagesTable, enterpriseSandboxesTable } from '@/utils/db/schema';
+import { eq, and, isNull, inArray, desc } from 'drizzle-orm';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 
 interface ChatRoom {
@@ -110,7 +110,28 @@ export async function GET(request: NextRequest) {
       Boolean
     );
 
-    // Get participant counts for each room
+    // Auto-join user to Syntheverse room if not already a participant
+    if (!userRoomIds.has(syntheverseRoom[0].id)) {
+      const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
+      const userRole = isCreator ? 'creator' : isOperator ? 'operator' : 'contributor';
+      const participantId = `${syntheverseRoom[0].id}-${userEmail}-${Date.now()}`;
+      try {
+        await db.insert(chatParticipantsTable).values({
+          id: participantId,
+          room_id: syntheverseRoom[0].id,
+          user_email: userEmail,
+          role: userRole,
+        });
+        userRoomIds.add(syntheverseRoom[0].id);
+      } catch (error: any) {
+        // Ignore duplicate key errors (user might have been added concurrently)
+        if (!error.message?.includes('duplicate') && !error.code?.includes('23505')) {
+          console.warn('Failed to auto-join Syntheverse room:', error);
+        }
+      }
+    }
+
+    // Get participant counts and last messages for each room (only for rooms user can access)
     const roomsWithCounts = await Promise.all(
       allRoomIds.map(async (roomId) => {
         const participants = await db
@@ -126,14 +147,45 @@ export async function GET(request: NextRequest) {
 
         if (room.length === 0) return null;
 
+        const isConnected = userRoomIds.has(roomId);
+        
+        // Only fetch last message if user is a participant (to avoid 403 errors)
+        let lastMessage = null;
+        if (isConnected) {
+          try {
+            const lastMessages = await db
+              .select({
+                message: chatMessagesTable.message,
+                created_at: chatMessagesTable.created_at,
+                sender_email: chatMessagesTable.sender_email,
+              })
+              .from(chatMessagesTable)
+              .where(eq(chatMessagesTable.room_id, roomId))
+              .orderBy(desc(chatMessagesTable.created_at))
+              .limit(1);
+            
+            if (lastMessages.length > 0) {
+              lastMessage = {
+                message: lastMessages[0].message,
+                created_at: lastMessages[0].created_at?.toISOString() || '',
+                sender_email: lastMessages[0].sender_email,
+              };
+            }
+          } catch (error) {
+            // Silently fail - last message is optional
+            console.warn(`Failed to fetch last message for room ${roomId}:`, error);
+          }
+        }
+
         return {
           ...room[0],
           participant_count: participants.length,
-          is_connected: userRoomIds.has(roomId),
+          is_connected: isConnected,
           participants: participants.map((p) => ({
             email: p.user_email,
             role: p.role,
           })),
+          last_message: lastMessage,
         };
       })
     );
@@ -141,9 +193,20 @@ export async function GET(request: NextRequest) {
     const filteredRooms = roomsWithCounts.filter((r) => r !== null) as ChatRoom[];
 
     return NextResponse.json({ rooms: filteredRooms });
-  } catch (error) {
+  } catch (error: any) {
+    // If tables don't exist, return empty array instead of 500
+    if (error.message?.includes('does not exist') || error.message?.includes('relation') || error.code === '42P01') {
+      console.warn('SynthChat tables not found, returning empty array:', error.message);
+      return NextResponse.json({
+        rooms: [],
+      });
+    }
+    
     console.error('Error fetching chat rooms:', error);
-    return NextResponse.json({ error: 'Failed to fetch chat rooms' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to fetch chat rooms',
+      message: error.message || String(error)
+    }, { status: 500 });
   }
 }
 

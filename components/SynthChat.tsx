@@ -106,50 +106,26 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
         const data = await response.json();
         const roomsData = data.rooms || [];
 
-        // Fetch last message for each room
-        const roomsWithLastMessage = await Promise.all(
-          roomsData.map(async (room: ChatRoom) => {
-            try {
-              const msgResponse = await fetch(`/api/synthchat/rooms/${room.id}/messages?limit=1`);
-              if (!msgResponse.ok && msgResponse.status !== 403) {
-                // Only log non-403 errors (403 is expected if not a participant)
-                console.warn('Failed to fetch room preview:', msgResponse.status);
-              }
-              if (msgResponse.ok) {
-                const msgData = await msgResponse.json();
-                const lastMsg = msgData.messages?.[msgData.messages.length - 1];
-                return {
-                  ...room,
-                  last_message: lastMsg
-                    ? {
-                        message: lastMsg.message,
-                        created_at: lastMsg.created_at,
-                        sender_email: lastMsg.sender_email,
-                      }
-                    : undefined,
-                };
-              }
-            } catch (error) {
-              console.error('Failed to fetch last message:', error);
-            }
-            return room;
-          })
-        );
-
-        setRooms(roomsWithLastMessage);
-        // Auto-select Syntheverse room if available
-        const syntheverseRoom = roomsWithLastMessage.find((r: ChatRoom) => !r.sandbox_id);
+        // Last messages are now included in the API response, no need to fetch separately
+        setRooms(roomsData);
+        
+        // Auto-select Syntheverse room if available and user is connected
+        const syntheverseRoom = roomsData.find((r: ChatRoom) => !r.sandbox_id && r.is_connected);
         if (syntheverseRoom && !currentRoom) {
           setCurrentRoom(syntheverseRoom);
-          await joinRoom(syntheverseRoom.id);
         }
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch rooms' }));
+        console.error('Failed to fetch rooms:', response.status, errorData);
+        setRooms([]);
       }
     } catch (error) {
       console.error('Failed to fetch rooms:', error);
+      setRooms([]);
     } finally {
       setLoading(false);
     }
-  }, [currentRoom, joinRoom]);
+  }, [currentRoom]);
 
   const fetchMessages = useCallback(async () => {
     if (!currentRoom) return;
@@ -197,14 +173,13 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
   }, [messages]);
 
   const handleRoomChange = async (room: ChatRoom) => {
-    // If not connected, join first
+    // If not connected, join the collaborative room first
     if (!room.is_connected) {
       await handleJoinRoom(room.id);
     }
     setCurrentRoom(room);
     setMessages([]);
     setShowSidebar(false); // Hide sidebar on mobile when selecting a room
-    await joinRoom(room.id);
     // Explicitly fetch messages after room change
     await fetchMessages();
   };

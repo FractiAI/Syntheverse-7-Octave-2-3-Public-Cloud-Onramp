@@ -69,42 +69,16 @@ export function SynthChatNavigator() {
         const data = await response.json();
         const roomsData = data.rooms || [];
 
-        // Fetch last message for each room
-        const roomsWithLastMessage = await Promise.all(
-          roomsData.map(async (room: ChatRoom) => {
-            try {
-              const msgResponse = await fetch(`/api/synthchat/rooms/${room.id}/messages?limit=1`);
-              if (msgResponse.ok) {
-                const msgData = await msgResponse.json();
-                const lastMsg = msgData.messages?.[msgData.messages.length - 1];
-                return {
-                  ...room,
-                  last_message: lastMsg
-                    ? {
-                        message: lastMsg.message,
-                        created_at: lastMsg.created_at,
-                        sender_email: lastMsg.sender_email,
-                      }
-                    : undefined,
-                };
-              } else if (msgResponse.status === 403) {
-                // User is not a participant - return room without last message
-                return { ...room };
-              }
-            } catch (error) {
-              // Silently handle errors - don't spam console
-              if (error instanceof Error && !error.message.includes('403')) {
-                console.error('Failed to fetch last message:', error);
-              }
-            }
-            return room;
-          })
-        );
-
-        setRooms(roomsWithLastMessage);
+        // Last messages are now included in the API response, no need to fetch separately
+        setRooms(roomsData);
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch rooms' }));
+        console.error('Failed to fetch rooms:', response.status, errorData);
+        setRooms([]);
       }
     } catch (error) {
       console.error('Failed to fetch rooms:', error);
+      setRooms([]);
     } finally {
       setLoading(false);
     }
