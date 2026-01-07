@@ -16,11 +16,11 @@ export function MobileStatusIndicators() {
   // Red indicators would pulse for attention required
   const indicators: StatusIndicator[] = [
     { name: 'Syntheverse', status: 'healthy' },
+    { name: 'Awareness Bridge/Router', status: 'healthy' },
     { name: 'Whole Brain AI', status: 'healthy' },
     { name: 'SynthScan MRI', status: 'healthy' },
     { name: 'PoC Sandbox', status: 'healthy' },
     { name: 'ERC-20 Base', status: 'healthy' },
-    { name: 'FractiAI Research Team', status: 'healthy' },
   ];
 
   return (

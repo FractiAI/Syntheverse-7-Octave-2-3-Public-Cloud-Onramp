@@ -5,11 +5,8 @@
 
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, Shield, Settings, FileText, Radio } from 'lucide-react';
-import { GenesisButtonQuickAction } from './GenesisButtonQuickAction';
-import { SimpleBroadcastDialog } from './SimpleBroadcastDialog';
+import { BookOpen, Shield, Settings, FileText } from 'lucide-react';
 import { ClientProfileDropdown } from './ClientProfileDropdown';
 
 interface QuickActionsPanelProps {
@@ -23,12 +20,8 @@ export function QuickActionsPanel({
   isOperator = false,
   showContributorDashboard = false,
 }: QuickActionsPanelProps) {
-  const [showBroadcastDialog, setShowBroadcastDialog] = useState(false);
-
   return (
-    <>
-      <SimpleBroadcastDialog isOpen={showBroadcastDialog} onClose={() => setShowBroadcastDialog(false)} />
-      <div className="cockpit-quick-actions-panel">
+    <div className="cockpit-quick-actions-panel">
       <div className="cockpit-panel px-4 py-2">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           {/* Quick Actions Links */}
@@ -71,21 +64,7 @@ export function QuickActionsPanel({
               <FileText className="mr-1.5 h-3 w-3" />
               Blog
             </Link>
-                <div className="inline-flex items-center">
-                  <GenesisButtonQuickAction />
-                </div>
-                {(isCreator || isOperator) && (
-                  <button
-                    onClick={() => setShowBroadcastDialog(true)}
-                    className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
-                    type="button"
-                  >
-                    <Radio className="mr-1.5 h-3 w-3" />
-                    <span className="hidden sm:inline">Broadcast</span>
-                    <span className="sm:hidden">Msg</span>
-                  </button>
-                )}
-                {isCreator && (
+            {isCreator && (
               <Link 
                 href="/creator/dashboard" 
                 className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
@@ -114,7 +93,6 @@ export function QuickActionsPanel({
         </div>
       </div>
     </div>
-    </>
   );
 }
 

@@ -7,8 +7,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BootSequenceIndicators } from './BootSequenceIndicators';
-import { Brain, Scan, Layers, Network, Box } from 'lucide-react';
+import { Brain, Scan, Layers, Network, Box, Radio } from 'lucide-react';
 
 interface ComponentStatus {
   name: string;
@@ -17,6 +16,11 @@ interface ComponentStatus {
 }
 
 const syntheverseComponents: ComponentStatus[] = [
+  {
+    name: 'awareness-bridge',
+    label: 'Awareness Bridge/Router',
+    icon: <Radio className="h-3 w-3" />,
+  },
   {
     name: 'whole-brain-ai',
     label: 'Whole Brain AI',
@@ -206,11 +210,6 @@ export function StatusIndicators() {
 
       {/* Beta Active Indicator */}
       <span className="cockpit-badge cockpit-badge-amber">BETA ACTIVE</span>
-
-      {/* Boot Sequence Indicators */}
-      <div className="flex items-center gap-2 border-l border-[var(--keyline-primary)] pl-4">
-        <BootSequenceIndicators />
-      </div>
     </div>
   );
 }
