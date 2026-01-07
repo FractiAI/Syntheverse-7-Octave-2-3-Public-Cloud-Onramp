@@ -38,7 +38,7 @@ export function SectionWhat() {
       background="muted"
     >
       <p className="cockpit-text mb-8 text-lg">
-        A system that evaluates, archives, and anchors contributions for Frontier R&D, Creators and Enterprises — replacing peer review gatekeeping with measurable coherence.
+        A system that evaluates, archives, and anchors contributions for Frontier R&D, Creators & Enterprises — replacing peer review gatekeeping with measurable coherence.
       </p>
 
       <div className="cockpit-panel bg-[var(--hydrogen-amber)]/5 mb-8 border-l-4 border-[var(--hydrogen-amber)] p-6">

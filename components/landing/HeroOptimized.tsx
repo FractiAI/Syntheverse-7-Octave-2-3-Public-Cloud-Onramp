@@ -41,7 +41,7 @@ export function HeroOptimized() {
         </div>
 
         <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
-          Syntheverse: Proof-of-Contribution for Frontier R&D, Creators and Enterprises
+          Syntheverse: Proof-of-Contribution for Frontier R&D, Creators & Enterprises
         </h1>
 
         <p className="cockpit-text mb-4 text-lg opacity-90 md:text-xl">
