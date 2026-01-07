@@ -25,6 +25,7 @@ interface EnterpriseSandbox {
   synth_activated?: boolean;
   vault_status?: string;
   created_at?: string | null;
+  current_epoch?: string;
   scoring_config?: any;
 }
 
