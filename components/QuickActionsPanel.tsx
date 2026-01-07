@@ -1,6 +1,6 @@
 /**
  * Quick Actions Panel
- * Upper right floating panel for quick navigation
+ * Horizontal bar across the top for quick navigation
  */
 
 import Link from 'next/link';
@@ -20,72 +20,67 @@ export function QuickActionsPanel({
 }: QuickActionsPanelProps) {
   return (
     <div className="cockpit-quick-actions-panel">
-      <div className="cockpit-panel p-3">
-        <div className="mb-2 border-b border-[var(--keyline-primary)] pb-2">
-          <div className="cockpit-label text-[10px] uppercase tracking-wider">
-            QUICK ACTIONS
-          </div>
-        </div>
-        <div className="space-y-1">
+      <div className="cockpit-panel px-4 py-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link 
             href="/dashboard" 
-            className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+            className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
           >
-            <span className="mr-2">◎</span>
-            <span className="hidden sm:inline">Contributor Dashboard</span>
-            <span className="sm:hidden">Dashboard</span>
+            <span className="mr-1.5">◎</span>
+            <span className="hidden sm:inline">Dashboard</span>
+            <span className="sm:hidden">Dash</span>
           </Link>
           <Link 
             href="/fractiai" 
-            className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+            className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
           >
-            <span className="mr-2">◎</span>
+            <span className="mr-1.5">◎</span>
             FractiAI
           </Link>
           <Link 
             href="/onboarding" 
-            className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+            className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
           >
-            <BookOpen className="mr-2 inline h-3 w-3" />
-            <span className="hidden sm:inline">Onboarding Navigator</span>
-            <span className="sm:hidden">Onboarding</span>
+            <BookOpen className="mr-1.5 h-3 w-3" />
+            <span className="hidden sm:inline">Onboarding</span>
+            <span className="sm:hidden">Learn</span>
           </Link>
           <Link 
             href="/submit" 
-            className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+            className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
           >
-            <span className="mr-2">✎</span>
-            <span className="hidden sm:inline">Submit Contribution</span>
+            <span className="mr-1.5">✎</span>
+            <span className="hidden sm:inline">Submit</span>
             <span className="sm:hidden">Submit</span>
           </Link>
           <Link 
             href="/blog" 
-            className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+            className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
           >
-            <FileText className="mr-2 inline h-3 w-3" />
+            <FileText className="mr-1.5 h-3 w-3" />
             Blog
           </Link>
-          <div className="py-1.5 px-2">
+          <div className="inline-flex items-center">
             <GenesisButtonQuickAction />
           </div>
           {isCreator && (
             <Link 
               href="/creator/dashboard" 
-              className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+              className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
             >
-              <Shield className="mr-2 inline h-3 w-3" />
-              <span className="hidden sm:inline">Creator Dashboard</span>
+              <Shield className="mr-1.5 h-3 w-3" />
+              <span className="hidden sm:inline">Creator</span>
               <span className="sm:hidden">Creator</span>
             </Link>
           )}
           {isOperator && !isCreator && (
             <Link 
               href="/operator/dashboard" 
-              className="cockpit-lever block w-full text-left py-1.5 px-2 text-xs"
+              className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
             >
-              <Settings className="mr-2 inline h-3 w-3" />
-              <span className="hidden sm:inline">Operator Dashboard</span>
-              <span className="sm:hidden">Operator</span>
+              <Settings className="mr-1.5 h-3 w-3" />
+              <span className="hidden sm:inline">Operator</span>
+              <span className="sm:hidden">Ops</span>
             </Link>
           )}
         </div>

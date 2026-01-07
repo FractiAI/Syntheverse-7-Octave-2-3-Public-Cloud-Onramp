@@ -584,120 +584,111 @@ details[open] .cockpit-chevron {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Quick Actions Panel - Upper Right Floating */
+/* Quick Actions Panel - Horizontal Bar Across Top */
 .cockpit-quick-actions-panel {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  width: 240px;
+  position: relative;
+  width: 100%;
   z-index: 50;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
-  pointer-events: auto;
-  /* Smooth scrollbar styling */
-  scrollbar-width: thin;
-  scrollbar-color: var(--hydrogen-amber) transparent;
-}
-
-.cockpit-quick-actions-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-.cockpit-quick-actions-panel::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.cockpit-quick-actions-panel::-webkit-scrollbar-thumb {
-  background: var(--hydrogen-amber);
-  border-radius: 3px;
+  border-bottom: var(--keyline-thick) solid var(--keyline-primary);
 }
 
 .cockpit-quick-actions-panel .cockpit-panel {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9);
-  border: var(--keyline-thick) solid var(--keyline-primary);
+  border: none;
+  border-bottom: var(--keyline-thick) solid var(--keyline-primary);
   margin: 0;
   background: var(--cockpit-bg);
-  position: relative;
-  z-index: 1051;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* Ensure links in Quick Actions Panel are clickable */
+/* Ensure links in Quick Actions Panel are clickable and horizontal */
 .cockpit-quick-actions-panel .cockpit-lever {
   position: relative;
   z-index: 10;
   pointer-events: auto !important;
   cursor: pointer;
   text-decoration: none;
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  border: var(--keyline-thin) solid transparent;
+  transition: all var(--animation-fast) var(--easing-deliberate);
 }
 
 .cockpit-quick-actions-panel .cockpit-lever:hover {
   background: var(--cockpit-obsidian);
+  border-color: var(--hydrogen-amber);
 }
 
-/* Adjust position when header is present (for creator/operator dashboards) */
-.cockpit-bg header ~ .cockpit-quick-actions-panel,
-.cockpit-bg:has(header) .cockpit-quick-actions-panel {
-  top: calc(1rem + 80px); /* Account for header height (~80px) */
+.cockpit-quick-actions-panel .cockpit-lever:active {
+  transform: translateY(1px);
 }
 
-/* Responsive: Keep fixed on tablets */
+/* Genesis Button in Quick Actions */
+.cockpit-quick-actions-panel .cockpit-lever button {
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  border: var(--keyline-thin) solid transparent;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.cockpit-quick-actions-panel .cockpit-lever button:hover {
+  background: var(--cockpit-obsidian);
+  border-color: var(--hydrogen-amber);
+}
+
+/* Responsive: Allow horizontal scrolling on smaller screens */
 @media (max-width: 1024px) {
-  .cockpit-quick-actions-panel {
-    width: 220px;
-    right: 0.75rem;
-    top: 0.75rem;
-  }
-  
-  .cockpit-bg header ~ .cockpit-quick-actions-panel,
-  .cockpit-bg:has(header) .cockpit-quick-actions-panel {
-    top: calc(0.75rem + 80px);
-  }
-  
-  .cockpit-grid-layout {
-    padding-right: calc(0.75rem + 240px); /* Account for Quick Actions Panel */
-  }
-}
-
-/* Mobile: Make panel smaller and less intrusive */
-@media (max-width: 768px) {
-  .cockpit-quick-actions-panel {
-    position: fixed;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 200px;
-    max-height: calc(100vh - 1rem);
-    z-index: 50;
-  }
-  
-  .cockpit-bg header ~ .cockpit-quick-actions-panel,
-  .cockpit-bg:has(header) .cockpit-quick-actions-panel {
-    top: calc(0.5rem + 80px);
-  }
-  
-  .cockpit-grid-layout {
-    padding-right: calc(0.5rem + 220px); /* Account for Quick Actions Panel */
-  }
-}
-
-/* Very small screens: make panel even smaller or consider making it a dropdown */
-@media (max-width: 640px) {
-  .cockpit-quick-actions-panel {
-    width: 180px;
-    right: 0.5rem;
-    font-size: 0.7rem;
-  }
-  
-  .cockpit-grid-layout {
-    padding-right: calc(0.5rem + 200px);
-  }
-  
   .cockpit-quick-actions-panel .cockpit-panel {
-    padding: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hydrogen-amber) transparent;
+  }
+  
+  .cockpit-quick-actions-panel .cockpit-panel::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .cockpit-quick-actions-panel .cockpit-panel::-webkit-scrollbar-thumb {
+    background: var(--hydrogen-amber);
+    border-radius: 2px;
+  }
+}
+
+/* Mobile: Compact horizontal layout */
+@media (max-width: 768px) {
+  .cockpit-quick-actions-panel .cockpit-panel {
+    padding: 0.5rem 0.75rem;
   }
   
   .cockpit-quick-actions-panel .cockpit-lever {
-    padding: 0.5rem 0.75rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+  
+  .cockpit-quick-actions-panel .cockpit-lever button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Very small screens: Even more compact */
+@media (max-width: 640px) {
+  .cockpit-quick-actions-panel .cockpit-panel {
+    padding: 0.4rem 0.5rem;
+  }
+  
+  .cockpit-quick-actions-panel .cockpit-lever {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.65rem;
+  }
+  
+  .cockpit-quick-actions-panel .cockpit-lever button {
+    padding: 0.35rem 0.5rem;
     font-size: 0.65rem;
   }
 }
@@ -708,7 +699,6 @@ details[open] .cockpit-chevron {
   grid-template-columns: 240px 1fr 240px;
   gap: 1rem;
   padding: 1rem;
-  padding-right: calc(1rem + 260px); /* Account for Quick Actions Panel width + spacing */
   max-width: 1920px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
@@ -744,7 +734,6 @@ details[open] .cockpit-chevron {
   .cockpit-grid-layout {
     grid-template-columns: 1fr;
     padding: 0.75rem;
-    padding-right: calc(0.75rem + 240px); /* Account for Quick Actions Panel */
   }
 
   .cockpit-sidebar {

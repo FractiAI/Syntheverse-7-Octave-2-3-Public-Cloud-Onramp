@@ -12,12 +12,12 @@ export function GenesisButtonQuickAction() {
       <GenesisInfoModal isOpen={showGenesisModal} onClose={() => setShowGenesisModal(false)} />
       <button
         onClick={() => setShowGenesisModal(true)}
-        className="cockpit-lever block w-full text-left py-2 px-3 text-xs"
+        className="cockpit-lever inline-flex items-center whitespace-nowrap py-1.5 px-3 text-xs"
       >
-        <span className="mr-2">🔗</span>
-        <span className="hidden md:inline">Check out our Syntheverse Genesis on Base Mainnet</span>
-        <span className="md:hidden">Genesis on Base</span>
-        <ArrowRight className="ml-2 inline h-3 w-3" />
+        <span className="mr-1.5">🔗</span>
+        <span className="hidden md:inline">Genesis on Base</span>
+        <span className="md:hidden">Genesis</span>
+        <ArrowRight className="ml-1.5 h-3 w-3" />
       </button>
     </>
   );
