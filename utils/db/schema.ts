@@ -471,6 +471,7 @@ export const scoringConfigTable = pgTable('scoring_config', {
   config_value: jsonb('config_value').notNull().$type<{
     seed_enabled?: boolean;
     edge_enabled?: boolean;
+    overlap_enabled?: boolean;
     [key: string]: any;
   }>(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
