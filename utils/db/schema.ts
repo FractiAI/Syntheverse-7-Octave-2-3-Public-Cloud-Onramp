@@ -58,6 +58,9 @@ export const contributionsTable = pgTable('contributions', {
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export type InsertContribution = typeof contributionsTable.$inferInsert;
+export type SelectContribution = typeof contributionsTable.$inferSelect;
+
 // PoC Tokenomics State Table
 export const tokenomicsTable = pgTable('tokenomics', {
   id: text('id').primaryKey().default('main'),
@@ -257,6 +260,9 @@ export const enterpriseContributionsTable = pgTable('enterprise_contributions', 
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
+
+export type InsertEnterpriseContribution = typeof enterpriseContributionsTable.$inferInsert;
+export type SelectEnterpriseContribution = typeof enterpriseContributionsTable.$inferSelect;
 
 // System Broadcasts Table
 export const systemBroadcastsTable = pgTable('system_broadcasts', {
