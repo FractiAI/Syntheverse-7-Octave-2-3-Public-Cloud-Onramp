@@ -73,6 +73,8 @@ interface GroqEvaluationResult {
     system_prompt_file: string;
     evaluation_timestamp_ms: number;
   };
+  redundancy_penalty_percent_computed?: number;
+  sweet_spot_bonus_multiplier_computed?: number;
 }
 
 // Sandbox context for customizing system prompt
@@ -157,6 +159,8 @@ export async function evaluateWithGroq(
   };
   redundancy_penalty_percent?: number;
   sweet_spot_bonus_multiplier?: number;
+  redundancy_penalty_percent_computed?: number;
+  sweet_spot_bonus_multiplier_computed?: number;
   // H) Score trace for transparency (Marek requirement)
   score_trace?: {
     dimension_scores: {
