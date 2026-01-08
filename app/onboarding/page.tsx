@@ -1,6 +1,10 @@
 import { OnboardingNavigator } from '@/components/OnboardingNavigator';
-import '../dashboard-cockpit.css';
+import '../academy.css';
 
 export default function OnboardingPage() {
-  return <OnboardingNavigator />;
+  return (
+    <div className="academy-bg">
+      <OnboardingNavigator />
+    </div>
+  );
 }

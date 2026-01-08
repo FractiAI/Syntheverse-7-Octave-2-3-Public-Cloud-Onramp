@@ -37,7 +37,7 @@ import {
   Calculator,
 } from 'lucide-react';
 import Link from 'next/link';
-import '../app/dashboard-cockpit.css';
+import '../app/academy.css';
 
 interface TrainingModule {
   id: string;
@@ -6154,36 +6154,38 @@ export function OnboardingNavigator() {
   };
 
   return (
-    <div className="cockpit-bg min-h-screen">
-      <div ref={topRef} className="container mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="cockpit-panel mb-8 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="cockpit-label">ONBOARDING NAVIGATOR</div>
-              <div className="cockpit-title mt-2 text-3xl">SYNTHEVERSE TRAINING ACADEMY</div>
-              <div className="cockpit-text mt-2">
-                <strong>From Awareness to Mastery:</strong> Progressive skill-building through hands-on exercises, knowledge checks, and real-world application
-              </div>
-              <div className="cockpit-text mt-3" style={{ opacity: 0.8 }}>
-                Master the Motherlode Blockmine, Holographic Hydrogen, and the Fractal Frontier through interactive training
-              </div>
+    <div className="min-h-screen">
+      <div ref={topRef} className="container mx-auto px-4 md:px-6 py-6 md:py-8">
+        {/* Academy Header - Flight School Welcome */}
+        <div className="academy-header mb-6 md:mb-8 rounded-lg">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex-1">
+              <div className="academy-badge mb-3">🚀 SYNTHENAUT TRAINING ACADEMY</div>
+              <h1 className="academy-title">Earn Your Wings</h1>
+              <p className="academy-subtitle">
+                Progressive flight training from cadet to certified synthenaut
+              </p>
             </div>
-            <div className="cockpit-symbol text-4xl">🌀</div>
+            <div className="academy-wings-icon text-5xl md:text-6xl">🪽</div>
           </div>
+          <p className="text-sm md:text-base text-academy-text-secondary mt-4 leading-relaxed">
+            Master holographic hydrogen navigation, fractal awareness protocols, and blockchain coordination systems. 
+            Each module brings you closer to full synthenaut certification.
+          </p>
         </div>
 
-        {/* Training Path Selection */}
+        {/* Flight Path Selection */}
         {!trainingPath && (
-          <div className="cockpit-panel mb-6 p-6">
-            <div className="cockpit-label mb-4">SELECT YOUR TRAINING PATH</div>
+          <div className="academy-module mb-6 p-6">
+            <h2 className="text-xl font-bold text-academy-text-primary mb-2">Select Your Flight Path</h2>
+            <p className="text-academy-text-secondary mb-6">Choose your training trajectory based on your mission objectives</p>
             <div className="grid gap-4 md:grid-cols-3">
               <button
                 onClick={() => setTrainingPath('contributor')}
-                className="border-2 border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.1)] p-6 text-left transition-all hover:bg-[rgba(255,184,77,0.2)]"
+                className="academy-module academy-module-active p-6 text-left"
               >
-                <div className="cockpit-title mb-2 text-xl">Contributor Track</div>
-                <div className="cockpit-text mb-4 text-sm">Foundation • 6-8 hours</div>
+                <div className="academy-module-title mb-2">Cadet Track</div>
+                <div className="text-sm text-academy-text-label mb-4">Foundation • 6-8 flight hours</div>
                 <ul className="cockpit-text space-y-2 text-sm">
                   <li>• Syntheverse Fundamentals</li>
                   <li>• PoC Basics & Submission</li>

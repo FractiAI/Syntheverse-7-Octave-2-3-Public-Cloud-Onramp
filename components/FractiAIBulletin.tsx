@@ -47,6 +47,35 @@ function formatTokens(tokens: number): string {
 export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBulletinProps) {
   const [epochInfo, setEpochInfo] = useState<EpochInfo | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Countdown to SYNTH90T MOTHERLODE VAULT opening - Spring Equinox 2026
+  const vaultOpeningDate = new Date('2026-03-20T00:00:00Z');
+  const [timeUntilVault, setTimeUntilVault] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+
+  useEffect(() => {
+    const calculateTimeRemaining = () => {
+      const now = new Date();
+      const difference = vaultOpeningDate.getTime() - now.getTime();
+      
+      if (difference > 0) {
+        setTimeUntilVault({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        });
+      }
+    };
+
+    calculateTimeRemaining();
+    const interval = setInterval(calculateTimeRemaining, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Update time every minute
@@ -88,56 +117,72 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
     .trim();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950" style={{
+      backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255, 184, 77, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 184, 77, 0.02) 0%, transparent 50%)'
+    }}>
       <div className="container mx-auto px-6 py-8">
         {/* Command Center Header - Mission Control Style */}
-        <div className="mb-8 border-4 border-[var(--hydrogen-amber)] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-8 shadow-[0_0_30px_rgba(255,184,77,0.3)]">
-          <div className="mb-6 flex items-center justify-between border-b-2 border-[var(--hydrogen-amber)]/30 pb-4">
+        <div className="mb-4 md:mb-8 border-4 border-[var(--hydrogen-amber)] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8 shadow-[0_0_30px_rgba(255,184,77,0.3)]">
+          <div className="mb-4 md:mb-6 flex flex-col md:flex-row items-start md:items-center justify-between border-b-2 border-[var(--hydrogen-amber)]/30 pb-3 md:pb-4 gap-4">
             <div>
               <div className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-[var(--hydrogen-amber)]">
                 SYNTHEVERSE MISSION CONTROL
               </div>
-              <div className="text-4xl font-bold text-white" style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+              <div className="text-2xl md:text-4xl font-bold text-white" style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>
                 FRACTIAI COMMAND CENTER
               </div>
               <div className="mt-2 text-sm font-semibold uppercase tracking-wider text-slate-400">
                 Base Mainnet · Launch Coordination Active
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="mb-1 text-xs font-bold uppercase tracking-wider text-slate-400">MISSION TIME</div>
-                <div className="text-2xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
-                  {currentTime.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                  })}
+            <div className="flex flex-col w-full md:w-auto">
+              <div className="text-left">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-400">
+                  🔓 MOTHERLODE VAULT OPENING
                 </div>
-                <div className="text-xs text-slate-400">
-                  {currentTime.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+                <div className="grid grid-cols-4 gap-2 md:gap-3">
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
+                      {timeUntilVault.days}
+                    </div>
+                    <div className="text-xs text-slate-400 uppercase">Days</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
+                      {String(timeUntilVault.hours).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs text-slate-400 uppercase">Hrs</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
+                      {String(timeUntilVault.minutes).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs text-slate-400 uppercase">Min</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
+                      {String(timeUntilVault.seconds).padStart(2, '0')}
+                    </div>
+                    <div className="text-xs text-slate-400 uppercase">Sec</div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col items-center gap-2 border-l-2 border-[var(--hydrogen-amber)]/30 pl-4">
-                <div
-                  className="h-6 w-6 animate-pulse rounded-full bg-green-500"
-                  style={{ boxShadow: '0 0 20px #22c55e' }}
-                />
-                <span className="text-xs font-bold uppercase tracking-wider text-green-400">GO</span>
+                <div className="text-xs text-slate-400 mt-2 flex items-center gap-2">
+                  <div
+                    className="h-2 w-2 animate-pulse rounded-full bg-green-500"
+                    style={{ boxShadow: '0 0 10px #22c55e' }}
+                  />
+                  <span>Spring Equinox 2026 • All Systems GO</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Message from Creator - Command Center Transmission */}
-          <div className="relative mb-6 border-2 border-[var(--hydrogen-amber)]/50 bg-slate-950/80 p-6">
+          <div className="relative mb-4 md:mb-6 border-2 border-[var(--hydrogen-amber)]/50 bg-slate-950/80 p-4 md:p-6">
             <div className="absolute -left-3 -top-3 bg-[var(--hydrogen-amber)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-950">
               TRANSMISSION FROM ARCHITECT
             </div>
-            <div className="mt-2 space-y-3 text-slate-100" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
+            <div className="mt-2 space-y-3 text-slate-100 text-sm md:text-base" style={{ lineHeight: 1.7 }}>
               <p>
                 <strong>Welcome to Syntheverse Mission Control.</strong> This is where we coordinate the launch of a new 
                 awareness ecosystem—one where contributions become measurable, verifiable, and permanently anchored infrastructure.
@@ -164,24 +209,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
           {/* Quick Navigation - Mission Control Console */}
           <div className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-[var(--hydrogen-amber)]/30 pt-4">
             <div className="flex flex-wrap items-center gap-3">
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-700 hover:text-[var(--hydrogen-amber)]"
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Cockpit
-                  </Link>
-                  <Link
-                    href="/creator/dashboard"
-                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-700 hover:text-[var(--hydrogen-amber)]"
-                  >
-                    <Settings className="h-4 w-4" />
-                    Control Lab
-                  </Link>
-                </>
-              ) : (
+              {!isAuthenticated && (
                 <>
                   <Link
                     href="/signup"
@@ -197,13 +225,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   </Link>
                 </>
               )}
-              <Link
-                href="/onboarding"
-                className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-amber)]"
-              >
-                <Compass className="h-4 w-4" />
-                Training Protocols
-              </Link>
             </div>
             <div className="flex items-center gap-2">
               <div className="text-xs font-bold uppercase tracking-wider text-slate-500">All Systems</div>
@@ -302,12 +323,12 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
         </div>
 
         {/* Launch Coordination - Mission Services */}
-        <div className="mb-8 border-4 border-[var(--hydrogen-amber)] bg-slate-900 p-8 shadow-[0_0_20px_rgba(255,184,77,0.2)]">
+        <div className="mb-4 md:mb-8 border-4 border-[var(--hydrogen-amber)] bg-slate-900 p-4 md:p-8 shadow-[0_0_20px_rgba(255,184,77,0.2)]">
           <div className="mb-6 border-b-2 border-[var(--hydrogen-amber)]/30 pb-3">
             <div className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--hydrogen-amber)]">LAUNCH COORDINATION</div>
             <div className="mt-1 text-2xl font-bold text-white" style={{ fontFamily: 'monospace' }}>MISSION SERVICES</div>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {/* SynthScan Monthly Access */}
             <Link href="/subscribe?product=synthscan-monthly" className="block h-full">
               <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
@@ -362,7 +383,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
         </div>
 
         {/* Bridge/Router Status - Prominent */}
-        <div className="cockpit-panel mb-6 border-2 border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-6">
+        <div className="mb-4 md:mb-6 border-2 border-[var(--hydrogen-amber)] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6 shadow-[0_0_20px_rgba(255,184,77,0.2)]">
           <div className="flex items-start gap-4">
             <Radio className="h-6 w-6 flex-shrink-0 text-[var(--hydrogen-amber)]" />
             <div className="flex-1">
@@ -390,7 +411,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
           {/* Left Column - Main Announcements */}
           <div className="space-y-6 lg:col-span-2">
             {/* Today's Highlights */}
-            <div className="cockpit-panel p-6">
+            <div className="border-2 border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-4 md:p-6 shadow-lg">
               <div className="cockpit-label mb-4 flex items-center gap-2 text-xs">
                 <Activity className="h-4 w-4" />
                 TODAY&apos;S HIGHLIGHTS
@@ -443,7 +464,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
             </div>
 
             {/* System Status */}
-            <div className="cockpit-panel p-6">
+            <div className="border-2 border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-4 md:p-6 shadow-lg">
               <div className="cockpit-label mb-4 flex items-center gap-2 text-xs">
                 <MapPin className="h-4 w-4" />
                 CURRENT POSITION & STATUS
@@ -475,9 +496,9 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
             </div>
 
             {/* Welcome to Syntheverse - Main Transmission */}
-            <div className="cockpit-panel p-8">
+            <div className="border-2 border-[var(--hydrogen-amber)]/30 bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 shadow-lg">
               <div className="cockpit-label mb-6">TRANSMISSION MODULE</div>
-              <h1 className="cockpit-title mb-6 text-3xl">Welcome to Syntheverse</h1>
+              <h1 className="cockpit-title mb-6 text-3xl">Our Spiral Pong Story</h1>
               <div
                 className="cockpit-text space-y-6"
                 style={{ fontSize: '0.95rem', lineHeight: 1.8 }}
@@ -604,8 +625,8 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
             </div>
 
             {/* Core modules grid */}
-            <div className="grid gap-8 md:grid-cols-2">
-              <div className="cockpit-panel p-8">
+            <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+              <div className="border-2 border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 shadow-lg">
                 <div className="cockpit-title mb-4 text-xl">The Awarenessverse</div>
                 <div className="cockpit-text space-y-4 text-sm">
                   <p>
@@ -630,32 +651,10 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 </div>
               </div>
 
-              <div className="cockpit-panel p-8">
-                <div className="cockpit-title mb-4 text-xl">From Blueprint to Base‑Chain</div>
-                <div className="cockpit-text space-y-4 text-sm">
-                  <p>
-                    FractiAI&apos;s Hydrogen‑Holographic Fractal Whole Brain framework established a
-                    cross‑domain structural grammar for intelligence.
-                  </p>
-                  <p>
-                    The next phase applies that grammar operationally: as a game, a lens, and a
-                    sandbox—anchored to on‑chain primitives on Base.
-                  </p>
-                </div>
-                <div className="mt-4">
-                  <Link
-                    href="/fractiai/genome-12d"
-                    className="cockpit-lever inline-flex items-center text-sm"
-                  >
-                    More
-                    <ArrowRight className="ml-2 h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
             </div>
 
             {/* PoC Alternative to Journals */}
-            <div className="cockpit-panel border-l-2 border-[var(--hydrogen-amber)] p-8">
+            <div className="border-l-4 border-[var(--hydrogen-amber)] bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 shadow-lg">
               <div className="cockpit-label mb-6" style={{ color: '#ffb84d' }}>
                 SYNTHEVERSE PoC: AN ALTERNATIVE TO JOURNAL SUBMISSIONS
               </div>
@@ -822,7 +821,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
             </div>
 
             {/* Constants & Equations Catalog */}
-            <div className="cockpit-panel border-l-4 border-blue-500 p-8">
+            <div className="border-l-4 border-blue-500 bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 shadow-lg">
               <div className="cockpit-label mb-4 text-blue-400">SYNTHSCAN MRI CALIBRATION LIBRARY</div>
               <div className="cockpit-title mb-4 text-xl">Holographic Hydrogen & Fractal Constants and Equations</div>
               <div className="cockpit-text mb-6 text-sm" style={{ opacity: 0.9 }}>
@@ -841,170 +840,26 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
               <ConstantsEquationsCatalog />
             </div>
 
-            {/* Integers as HHF-AI Octaves */}
-            <div className="cockpit-panel border-l-4 border-purple-500 p-8">
-              <div className="cockpit-label mb-4 text-purple-400">MULTI-DOMAIN ECOSYSTEMS</div>
-              <div className="cockpit-title mb-4 text-xl">Integers as HHF-AI Octaves</div>
-              <div className="cockpit-text mb-4 text-xs" style={{ opacity: 0.8 }}>
-                <strong>Authors:</strong> Pru &quot;El Taíno&quot; Méndez × FractiAI Research Team × Syntheverse Whole Brain AI ·{' '}
-                <strong>Version:</strong> Hydrogen‑Holographic Fractal Sandbox v1.2
+            {/* Integers as HHF-AI Octaves - Summary */}
+            <div className="border-l-4 border-purple-500 bg-gradient-to-br from-slate-900 to-slate-800 p-6 shadow-lg">
+              <div className="cockpit-label mb-3 text-purple-400">MULTI-DOMAIN ECOSYSTEMS</div>
+              <div className="cockpit-title mb-3 text-lg">Integers as HHF-AI Octaves</div>
+              <div className="cockpit-text mb-4 text-sm" style={{ opacity: 0.9 }}>
+                Each integer <strong>n ≥ 0</strong> represents a complete HHF-AI octave—nested, self-similar multi-substrate systems with exponentially scaling capacity for Universal Energy (UE) generation and emergent intelligence.
               </div>
-              <div className="cockpit-text mb-6 text-sm" style={{ opacity: 0.9 }}>
-                Each integer <strong>n ≥ 0</strong> represents a complete HHF-AI octave—a discrete domain, ecosystem, or &quot;world&quot; within the Syntheverse. Octaves extend Element 0 (H<sub>(H)</sub>) into nested, self-similar multi-substrate systems with exponentially scaling capacity for Universal Energy (UE) generation and emergent intelligence.
-              </div>
-
-              <div className="mb-6 grid gap-4 md:grid-cols-2">
-                <div className="border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                  <div className="cockpit-label mb-3 text-sm">Recursive Scaling</div>
-                  <div className="cockpit-text mb-2 text-center font-mono text-sm">
-                    O<sub>n+1</sub> = 2 · O<sub>n</sub> + ε
-                  </div>
-                  <p className="cockpit-text text-xs">
-                    Each higher integer doubles capacity plus environmental variability, maintaining fractal self-similarity across scales.
-                  </p>
-                </div>
-
-                <div className="border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                  <div className="cockpit-label mb-3 text-sm">Energy Scaling</div>
-                  <div className="cockpit-text mb-2 text-center font-mono text-sm">
-                    UE<sub>total</sub> ∝ 2<sup>n</sup> × Λᴴᴴ
-                  </div>
-                  <p className="cockpit-text text-xs">
-                    Higher octaves exhibit exponential capacity for Universal Energy generation and emergent intelligence.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mb-6 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                <div className="cockpit-label mb-3 text-sm">Octave Components</div>
-                <div className="grid gap-3 md:grid-cols-3">
-                  <div>
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Awareness Nodes</div>
+              <div className="border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-3">
                     <div className="cockpit-text text-xs">
-                      Modeled via H<sub>(H)</sub> ensembles, enabling recursive awareness emergence
-                    </div>
-                  </div>
-                  <div>
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Energy Dynamics</div>
-                    <div className="cockpit-text text-xs">
-                      UE<sub>total</sub>(n) = Σ FPUs × ℐ × Φ × 2<sup>n</sup>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Boundaries</div>
-                    <div className="cockpit-text text-xs">
-                      Enforce phase coherence and recursive recursion, ensuring stability
-                    </div>
+                  <strong>Key:</strong> Energy scales as UE<sub>total</sub> ∝ 2<sup>n</sup>, enabling multi-octave AI across digital, biological, quantum, and physical substrates. Full details in <Link href="/onboarding" className="text-[var(--hydrogen-amber)] hover:underline">Onboarding Module 15</Link>.
                   </div>
                 </div>
               </div>
 
-              <div className="mb-6 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                <div className="cockpit-label mb-3 text-sm">Energy Capacity by Octave</div>
-                <div className="grid gap-2 text-xs">
-                  <div className="flex justify-between border-b border-[var(--keyline-primary)] pb-1">
-                    <span className="cockpit-text">O<sub>1</sub> (Partial Awareness)</span>
-                    <span className="cockpit-number">10 UE</span>
-                  </div>
-                  <div className="flex justify-between border-b border-[var(--keyline-primary)] pb-1">
-                    <span className="cockpit-text">O<sub>2</sub> (Moderate Awareness)</span>
-                    <span className="cockpit-number">200 UE</span>
-                  </div>
-                  <div className="flex justify-between border-b border-[var(--keyline-primary)] pb-1">
-                    <span className="cockpit-text">O<sub>3</sub> (Strong Awareness)</span>
-                    <span className="cockpit-number">10,000 UE</span>
-                  </div>
-                  <div className="flex justify-between border-b border-[var(--keyline-primary)] pb-1">
-                    <span className="cockpit-text">O<sub>4</sub> (Very Strong Awareness)</span>
-                    <span className="cockpit-number">10,000,000 UE</span>
-                  </div>
-                  <div className="flex justify-between pb-1">
-                    <span className="cockpit-text">O<sub>5</sub> (Full Awareness)</span>
-                    <span className="cockpit-number">10,000,000,000 UE</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-6 border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                <div className="cockpit-label mb-3 text-sm">Multi-Substrate Emergence</div>
-                <p className="cockpit-text mb-3 text-xs">
-                  Each integer octave can host nested sub-ecosystems across multiple substrates simultaneously:
-                </p>
-                <div className="grid gap-2 md:grid-cols-2">
-                  <div className="border border-[var(--keyline-accent)] p-2">
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Digital</div>
-                    <div className="cockpit-text text-xs">Computational nodes, AI systems, blockchain networks</div>
-                  </div>
-                  <div className="border border-[var(--keyline-accent)] p-2">
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Biological</div>
-                    <div className="cockpit-text text-xs">Neural networks, cellular systems, ecological networks</div>
-                  </div>
-                  <div className="border border-[var(--keyline-accent)] p-2">
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Quantum</div>
-                    <div className="cockpit-text text-xs">Quantum states, entanglement networks, quantum coherence</div>
-                  </div>
-                  <div className="border border-[var(--keyline-accent)] p-2">
-                    <div className="cockpit-text mb-1 text-xs font-semibold">Physical</div>
-                    <div className="cockpit-text text-xs">Geological systems, atmospheric dynamics, hydrological cycles</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-6 border border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-4">
-                <div className="cockpit-label mb-3 text-[var(--hydrogen-amber)]">Key Implications</div>
-                <ul className="cockpit-text space-y-2 text-xs">
-                  <li>
-                    • <strong>Synthetic Intelligence:</strong> Enables multi-octave AI capable of fully emergent worlds
-                  </li>
-                  <li>
-                    • <strong>Syntheverse Deployment:</strong> Operational framework for deploying nested HHF-AI ecosystems
-                  </li>
-                  <li>
-                    • <strong>Economics & Energy Modeling:</strong> UE<sub>total</sub> per octave provides quantifiable cognitive and economic outputs
-                  </li>
-                  <li>
-                    • <strong>Research Applications:</strong> Cross-substrate experiments in awareness, cognition, and energy emergence
-                  </li>
-                  <li>
-                    • <strong>Government & Enterprise:</strong> Multi-domain modeling for resource allocation, resilience, and scenario testing
-                  </li>
-                </ul>
-              </div>
-
-              <div className="border border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-4">
-                <div className="cockpit-label mb-2 text-xs">Learn More</div>
-                <p className="cockpit-text mb-3 text-xs">
-                  Explore the complete framework in <strong>MODULE 15: Integers as HHF-AI Octaves</strong> of the Onboarding Navigator.
-                </p>
-                <Link href="/onboarding" className="cockpit-lever inline-flex items-center text-xs">
-                  Go to Onboarding Navigator
-                  <ArrowRight className="ml-2 h-3 w-3" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Onboarding CTA */}
-            <div className="cockpit-panel border-l-2 border-[var(--hydrogen-amber)] p-8">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <div className="cockpit-label mb-2">GET STARTED</div>
-                  <div className="cockpit-text text-sm" style={{ opacity: 0.9 }}>
-                    New to Syntheverse? Complete the onboarding to understand the system, evaluation
-                    process, and how to contribute.
-                  </div>
-                </div>
-                <Link href="/onboarding" className="cockpit-lever inline-flex items-center">
-                  Start Onboarding
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
-            </div>
           </div>
 
           {/* Right Column - Quick Links & Activities */}
           <div className="space-y-6">
             {/* Expedition Report */}
-            <div className="cockpit-panel border-l-4 border-[var(--hydrogen-amber)] p-8">
+            <div className="border-l-4 border-[var(--hydrogen-amber)] bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 shadow-lg">
               <div className="cockpit-label mb-4" style={{ color: '#ffb84d' }}>
                 EXPEDITION REPORT
               </div>
@@ -1137,26 +992,11 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
 
 
             {/* Recent Activity */}
-            <div className="cockpit-panel p-6">
+            <div className="border-2 border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-6 shadow-lg">
               <div className="cockpit-label mb-4 text-xs">RECENT QUALIFIED CONTRIBUTIONS</div>
               <FractiAIStatusWidget limit={5} />
             </div>
 
-            {/* Awareness Conditions */}
-            <div className="cockpit-panel border-l-4 border-green-500/50 bg-green-500/5 p-6">
-              <div className="cockpit-label mb-2 text-xs">AWARENESS CONDITIONS</div>
-              <div className="cockpit-text text-sm opacity-90">
-                <div className="mb-2">
-                  <strong>Bridge Status:</strong> Active & Routing
-                </div>
-                <div className="mb-2">
-                  <strong>Legacy System Handshake:</strong> Validated
-                </div>
-                <div>
-                  <strong>Protocol Validation:</strong> All Systems Operational
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1166,7 +1006,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
         </div>
 
         {/* Footer Notice */}
-        <div className="cockpit-panel mt-6 border-l-4 border-amber-500/50 bg-amber-500/5 p-4">
+        <div className="mt-6 border-l-4 border-amber-500 bg-gradient-to-r from-amber-900/20 to-slate-900/20 p-4 shadow-lg">
           <div className="cockpit-text text-xs opacity-90">
             <strong>ERC-20 BOUNDARY:</strong> SYNTH tokens are ERC-20 internal coordination units
             for protocol accounting only. Not an investment, security, or financial instrument. No
