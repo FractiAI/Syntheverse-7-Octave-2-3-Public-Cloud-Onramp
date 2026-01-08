@@ -23,7 +23,7 @@ import { ReactorCore } from '@/components/ReactorCore';
 import CockpitHeader from '@/components/CockpitHeader';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { OperatorBroadcastBanner } from '@/components/OperatorBroadcastBanner';
-import { Shield, Activity, FileText, BookOpen, Settings } from 'lucide-react';
+import { Shield, Activity, FileText, BookOpen, Settings, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
@@ -55,14 +55,22 @@ export default async function CreatorDashboard() {
   }
 
   return (
-    <div className="lab-bg min-h-screen">
+    <div className="lab-bg holographic-grid min-h-screen relative">
+      <div className="nebula-background" style={{opacity: 0.3}} />
       {/* Control Lab Header - Scientific Control Station */}
-      <div className="lab-header">
+      <div className="lab-header relative z-10">
         <div className="lab-header-grid">
           <div>
-            <div className="lab-system-badge">SYNTHEVERSE CONTROL LABORATORY</div>
-            <h1 className="lab-title">Creator Control & Configuration</h1>
-            <p className="lab-subtitle">Precision Sandbox Management · Enterprise Coordination · System Administration</p>
+            <div className="holographic-badge badge-quantum-synthesist mb-3">
+              <Sparkles className="w-4 h-4" />
+              SYNTHEVERSE CLOUD LABORATORY
+            </div>
+            <h1 className="lab-title" style={{color: 'hsl(var(--hydrogen-gamma))'}}>
+              Creator Cloud Control
+            </h1>
+            <p className="lab-subtitle" style={{color: 'hsl(var(--text-secondary))'}}>
+              Precision Cloud Management · Enterprise Coordination · System Administration
+            </p>
           </div>
           <div className="lab-status-monitors">
             <div className="lab-status-monitor">

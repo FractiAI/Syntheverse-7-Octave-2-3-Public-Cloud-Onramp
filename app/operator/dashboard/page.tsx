@@ -49,24 +49,26 @@ export default async function OperatorDashboard() {
   }
 
   return (
-    <div className="cockpit-bg min-h-screen">
+    <div className="cockpit-bg holographic-grid min-h-screen">
+      <div className="nebula-background" style={{opacity: 0.3}} />
       <CockpitHeader />
       {/* Quick Actions Panel - Upper Right */}
       <QuickActionsPanel isCreator={false} isOperator={isOperator} showContributorDashboard={true} />
-      <div className="container mx-auto space-y-6 px-6 py-8">
+      <div className="container mx-auto space-y-6 px-6 py-8 relative z-10">
         {/* Mobile Status Indicators - Top of mobile dashboards */}
         <div className="block md:hidden">
           <MobileStatusIndicators />
         </div>
 
         {/* Core Instrument Panel - Reactor Core - Collapsible */}
-        <details className="mb-6" open>
-          <summary className="cockpit-panel cursor-pointer select-none list-none p-4 md:p-5 mb-0">
+        <details className="mb-6 frontier-panel relative" open>
+          <div className="scan-line" />
+          <summary className="cursor-pointer select-none list-none p-4 md:p-5 mb-0 border-b" style={{borderColor: 'hsl(var(--hydrogen-beta) / 0.1)'}}>
             <div className="flex items-center justify-between">
-              <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
+              <div className="text-xs md:text-sm uppercase tracking-wider font-semibold" style={{color: 'hsl(var(--hydrogen-alpha))'}}>
                 REACTOR CORE
               </div>
-              <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+              <ChevronDown className="h-5 w-5 opacity-70" style={{color: 'hsl(var(--hydrogen-alpha))'}} />
             </div>
           </summary>
           <div className="mt-0">
@@ -102,34 +104,37 @@ export default async function OperatorDashboard() {
           </div>
         </details>
 
-        {/* Cockpit Header - Collapsible */}
-        <details className="cockpit-panel border-l-4 border-blue-500" open>
+        {/* Cloud Control Center Header - Collapsible */}
+        <details className="frontier-panel relative" style={{borderLeft: '4px solid hsl(var(--hydrogen-beta))'}} open>
+          <div className="scan-line" />
           <summary className="cursor-pointer select-none list-none p-6">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex-1">
-                <div className="cockpit-label mb-2 flex items-center gap-2">
-                  <Settings className="h-4 w-4 text-blue-400" />
-                  OPERATOR COCKPIT
+                <div className="flex items-center gap-2 mb-2" style={{color: 'hsl(var(--hydrogen-beta))'}}>
+                  <Settings className="h-4 w-4" />
+                  <span className="text-xs uppercase tracking-wider font-semibold">CLOUD OPERATOR</span>
                 </div>
-                <h1 className="cockpit-title mb-2 text-3xl">Operator Control Center</h1>
-                <p className="cockpit-text opacity-80">
-                  Operator interface for managing PoC submissions, sandboxes, and system operations.
+                <h1 className="mb-2 text-3xl font-bold" style={{color: 'hsl(var(--hydrogen-beta))'}}>
+                  Cloud Control Center
+                </h1>
+                <p className="text-sm" style={{color: 'hsl(var(--text-secondary))'}}>
+                  Operator interface for managing PoC submissions, cloud instances, and system operations.
                   All actions are logged and auditable.
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Link href="/blog" className="cockpit-lever inline-block text-center">
-                  <FileText className="mr-2 inline h-4 w-4" />
+                <Link href="/blog" className="hydrogen-btn hydrogen-btn-gamma inline-flex items-center gap-2 px-4 py-2 text-sm">
+                  <FileText className="h-4 w-4" />
                   Blog
                 </Link>
-                <Activity className="h-5 w-5 animate-pulse text-green-500" />
-                <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70 ml-2" />
+                <Activity className="h-5 w-5 holographic-pulse" style={{color: 'hsl(var(--status-active))'}} />
+                <ChevronDown className="h-5 w-5 opacity-70 ml-2" style={{color: 'hsl(var(--hydrogen-beta))'}} />
               </div>
             </div>
           </summary>
           <div className="px-6 pb-6">
-            <div className="cockpit-text mt-3 border-t border-[var(--keyline-primary)] pt-3 text-xs opacity-60">
-              OPERATOR ACCESS · PROTOCOL OPERATOR REFERENCE CLIENT
+            <div className="mt-3 border-t pt-3 text-xs" style={{borderColor: 'hsl(var(--hydrogen-beta) / 0.2)', color: 'hsl(var(--text-tertiary))'}}>
+              CLOUD OPERATOR ACCESS · HOLOGRAPHIC HYDROGEN FRONTIER
             </div>
           </div>
         </details>
