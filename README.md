@@ -11,7 +11,7 @@
 
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
-> **🔧 Latest Update (Jan 8, 2026):** Fixed zero scores issue - Resolved environment variable name mismatch (`GROK` → `GROQ`) that was preventing AI evaluations. All submissions now receive proper scoring. See [Zero Scores Fix Documentation](docs/ZERO_SCORES_FIX.md) for details.
+> **🔧 Latest Update (Jan 8, 2026):** Mobile/Safari submission flow fixed - Resolved evaluation dialog visibility on iPhone (responsive width), classification.map() TypeError on Safari, and added seed/edge/metal badges to evaluation report. All device types now fully functional. Also added "Back to Dashboard" navigation button to submission page.
 
 ---
 
@@ -404,6 +404,7 @@ See [`SYNTHSCAN_PROMPT_TRANSFORMATION.md`](SYNTHSCAN_PROMPT_TRANSFORMATION.md) f
 - ✅ **Zero Scores Issue Fixed** (Jan 8, 2026): Groq AI evaluation now working properly
 - ✅ **Seed Detection Fixed** (Jan 8, 2026): Changed from timing-based to content-based detection per Seed Information Theory
 - ✅ **Edge Detection Implemented** (Jan 8, 2026): Content-based edge detection for boundary operators (E₀-E₆) with 15% multiplier; combined seed+edge = 32.25% total bonus
+- ✅ **Mobile/Safari Submission Flow Fixed** (Jan 8, 2026): Evaluation dialog now responsive on iPhone (w-full, max-h-[90vh]); classification.map() TypeError fixed; seed/edge/metal badges display in evaluation report; "Back to Dashboard" button added to submission page
 - 🎯 **SYNTH90T MOTHERLODE VAULT Opening**: Spring Equinox, March 20, 2026
 - ⏰ **Submission Deadline**: March 19, 2026
 
