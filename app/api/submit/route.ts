@@ -4,7 +4,7 @@ import { contributionsTable, pocLogTable } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
 import { createClient } from '@/utils/supabase/server';
 import { debug, debugError } from '@/utils/debug';
-import { evaluateWithGrok } from '@/utils/grok/evaluate';
+import { evaluateWithGroq } from '@/utils/grok/evaluate';
 import { vectorizeSubmission } from '@/utils/vectors';
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request';
 import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification';

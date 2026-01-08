@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/utils/db/db';
 import { enterpriseContributionsTable, enterpriseSandboxesTable } from '@/utils/db/schema';
 import { eq } from 'drizzle-orm';
-import { evaluateWithGrok } from '@/utils/grok/evaluate';
+import { evaluateWithGroq } from '@/utils/grok/evaluate';
 import { vectorizeSubmission } from '@/utils/vectors';
 import { extractArchiveData } from '@/utils/archive/extract';
 import { debug, debugError } from '@/utils/debug';
@@ -67,8 +67,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
       },
     };
 
-    // Evaluate with Grok, passing sandbox context for system prompt customization
-    const evaluation = await evaluateWithGrok(
+    // Evaluate with Groq, passing sandbox context for system prompt customization
+    const evaluation = await evaluateWithGroq(
       contrib.text_content,
       contrib.title,
       contrib.category || undefined,

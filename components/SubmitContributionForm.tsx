@@ -134,9 +134,11 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             setSuccess(true);
 
             const metadata = submission.metadata || {};
+            // SINGLE SOURCE OF TRUTH: Use score_trace.final_score as the authoritative PoC Score
+            const pocScore = metadata.score_trace?.final_score ?? metadata.pod_score ?? 0;
             setEvaluationStatus({
               completed: true,
-              podScore: metadata.pod_score || 0,
+              podScore: pocScore,
               qualified: submission.status === 'qualified',
               evaluation: metadata,
             });

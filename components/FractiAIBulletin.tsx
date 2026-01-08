@@ -132,7 +132,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 FRACTIAI COMMAND CENTER
               </div>
               <div className="mt-2 text-sm font-semibold uppercase tracking-wider text-slate-400">
-                Base Mainnet · Awareness Key
+                HOLOGRAPHIC HYDROGEN FRACTAL SYNTHEVERSE- OUTCAST HERO'S RETURN WITH FIRE AND BISON
               </div>
             </div>
             <div className="flex flex-col w-full md:w-auto">
@@ -209,7 +209,23 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
           {/* Quick Navigation - Mission Control Console */}
           <div className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-[var(--hydrogen-amber)]/30 pt-4">
             <div className="flex flex-wrap items-center gap-3">
-              {!isAuthenticated && (
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)] px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-950 transition-all hover:bg-transparent hover:text-[var(--hydrogen-amber)]"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/submit"
+                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-amber)]"
+                  >
+                    Submit PoC
+                  </Link>
+                </>
+              ) : (
                 <>
                   <Link
                     href="/signup"

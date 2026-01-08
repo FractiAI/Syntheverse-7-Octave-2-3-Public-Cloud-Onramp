@@ -342,6 +342,123 @@ export default function ScoringCriteriaPage() {
             </div>
           </Card>
 
+          {/* Metal-Aware Overlap Strategy */}
+          <Card hover={false} className="mb-8 border-l-4 border-cyan-500/50">
+            <h3 className="cockpit-title mb-4 text-lg">Metal-Aware Overlap Strategy</h3>
+            <p className="cockpit-text mb-4 text-sm opacity-80">
+              Different contribution types have different natural overlap patterns. The scoring system 
+              recognizes three metal types—<strong>Gold</strong>, <strong>Silver</strong>, and <strong>Copper</strong>—each 
+              with distinct overlap expectations and scoring adjustments.
+            </p>
+
+            <div className="mb-4 space-y-3">
+              <div className="rounded-lg border-2 border-yellow-500/50 bg-yellow-500/5 p-4">
+                <h4 className="cockpit-title mb-2 flex items-center gap-2 text-sm">
+                  <span className="cockpit-badge bg-yellow-500/20 text-yellow-300">GOLD</span>
+                  Frontier Contributions
+                </h4>
+                <p className="cockpit-text mb-3 text-xs opacity-90">
+                  Gold contributions are <strong>frontier-breaking work</strong>: novel theories, new frameworks, 
+                  original equations, or paradigm-shifting insights. These contributions are expected to have 
+                  <strong> low overlap</strong> with existing work.
+                </p>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Overlap Expectation:</span>
+                    <span>Low (0%-30%)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Penalty Zone:</span>
+                    <span>&gt;30% overlap incurs penalties (high overlap indicates derivative work)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Sweet Spot:</span>
+                    <span>9.2%-19.2% overlap (connects to existing knowledge while remaining novel)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-lg border-2 border-slate-400/50 bg-slate-400/5 p-4">
+                <h4 className="cockpit-title mb-2 flex items-center gap-2 text-sm">
+                  <span className="cockpit-badge bg-slate-400/20 text-slate-300">SILVER</span>
+                  Verification & Extension Contributions
+                </h4>
+                <p className="cockpit-text mb-3 text-xs opacity-90">
+                  Silver contributions <strong>verify, validate, or extend</strong> existing work: empirical testing, 
+                  simulations, proofs, or applied implementations. These contributions <strong>should layer on top of 
+                  existing awareness</strong> and are not penalized for moderate-to-high overlap.
+                </p>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Overlap Expectation:</span>
+                    <span>Moderate-High (19.2%-70%)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Reward Zone:</span>
+                    <span>19.2%-70% overlap receives bonuses (validates strong connection to existing work)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Penalty Zone:</span>
+                    <span>Only &gt;70% overlap (near-duplicate, insufficient new validation)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-lg border-2 border-orange-500/50 bg-orange-500/5 p-4">
+                <h4 className="cockpit-title mb-2 flex items-center gap-2 text-sm">
+                  <span className="cockpit-badge bg-orange-500/20 text-orange-300">COPPER</span>
+                  Integration & Synthesis Contributions
+                </h4>
+                <p className="cockpit-text mb-3 text-xs opacity-90">
+                  Copper contributions <strong>integrate, synthesize, or bridge</strong> multiple existing contributions: 
+                  meta-analyses, cross-domain connections, educational materials, or comprehensive reviews. These contributions 
+                  <strong>are designed to have high overlap</strong> as they weave together existing knowledge.
+                </p>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Overlap Expectation:</span>
+                    <span>High (19.2%-80%)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Reward Zone:</span>
+                    <span>19.2%-80% overlap receives bonuses (validates comprehensive integration)</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="cockpit-badge text-xs">Penalty Zone:</span>
+                    <span>Only &gt;80% overlap (insufficient synthesis, mere compilation)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg bg-[var(--cockpit-carbon)] p-4">
+              <h4 className="cockpit-title mb-2 text-sm">Metal Classification Process</h4>
+              <p className="cockpit-text mb-3 text-xs opacity-90">
+                The evaluation system automatically determines your contribution&apos;s primary metal based on content analysis:
+              </p>
+              <div className="space-y-2 text-xs">
+                <div className="flex items-start gap-2">
+                  <span className="cockpit-badge text-xs">Automatic Detection:</span>
+                  <span>AI evaluates keywords, structure, and content to classify contribution type</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="cockpit-badge text-xs">Multi-Metal Handling:</span>
+                  <span>Contributions with mixed characteristics use weighted blended scoring</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="cockpit-badge text-xs">Transparency:</span>
+                  <span>Your evaluation report shows detected metal type and how it affected scoring</span>
+                </div>
+              </div>
+              <p className="cockpit-text mt-3 text-xs opacity-75">
+                <strong>Why Metal-Aware?</strong> This strategy recognizes that verification, synthesis, and integration 
+                work is just as valuable as frontier research—each type serves a different role in building a coherent 
+                knowledge ecosystem. Silver and Copper contributions shouldn&apos;t be penalized for doing exactly what 
+                they&apos;re meant to do: build upon and connect existing awareness.
+              </p>
+            </div>
+          </Card>
+
           {/* Seed Detection & Bonus */}
           <Card hover={false} className="mb-8 border-l-4 border-purple-500/50">
             <h3 className="cockpit-title mb-4 text-lg">Seed Detection & Bonus</h3>

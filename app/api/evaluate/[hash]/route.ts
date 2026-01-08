@@ -8,7 +8,7 @@ import {
 } from '@/utils/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { debug, debugError } from '@/utils/debug';
-import { evaluateWithGrok } from '@/utils/grok/evaluate';
+import { evaluateWithGroq } from '@/utils/grok/evaluate';
 import { vectorizeSubmission } from '@/utils/vectors';
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request';
 import { isQualifiedForEpoch, qualifyEpoch, getOpenEpochInfo, isEpochOpen } from '@/utils/epochs/qualification';
@@ -113,8 +113,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
     let evaluationError: Error | null = null;
 
     try {
-      // Call Grok API for actual evaluation
-      evaluation = await evaluateWithGrok(
+      // Call Groq API for actual evaluation
+      evaluation = await evaluateWithGroq(
         textContent,
         contrib.title,
         contrib.category || undefined,

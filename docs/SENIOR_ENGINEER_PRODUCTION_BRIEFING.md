@@ -40,7 +40,7 @@ This is a **sophisticated, production-ready Next.js 14 application** implementin
 |---------|---------|--------|
 | **Supabase** | Auth + PostgreSQL database | ✅ Production |
 | **Stripe** | Payment processing (Live mode) | ✅ Production |
-| **Groq API** | AI evaluation (Grok LLM) | ✅ Production |
+| **Groq API** | AI evaluation (llama-3.3-70b-versatile) | ✅ Production |
 | **Base Mainnet** | Blockchain (Coinbase L2) | ✅ Production |
 | **Upstash Redis** | Rate limiting | ✅ Production |
 | **Vercel** | Hosting + CI/CD | ✅ Production |
@@ -82,7 +82,7 @@ Save to contributions table (status: evaluating or payment_pending)
   ↓
 Payment completed → POST /api/evaluate/{hash}
   ↓
-Grok API evaluation (4 dimensions × 0-2,500 points = 0-10,000 total)
+Groq API evaluation (4 dimensions × 0-2,500 points = 0-10,000 total)
   ├─ Novelty (originality, frontier contribution)
   ├─ Density (information richness, insight compression)
   ├─ Coherence (internal consistency, structural integrity)
@@ -269,7 +269,7 @@ Update contributions table:
 **Performance Metrics**:
 
 - API response times: < 500ms for most endpoints
-- Evaluation time: ~30-60s (Grok API processing)
+- Evaluation time: ~30-60s (Groq API processing)
 - Database queries: Indexed for fast lookups
 - 3D visualization: Client-side rendering (Three.js)
 
@@ -692,7 +692,7 @@ MOTHERLODE_VAULT_ADDRESS=0x3563388d0e1c2d66a004e5e57717dc6d7e568be3
 ### Areas to Monitor
 
 - **Rate Limiting**: Uses Upstash Redis (ensure quota sufficient)
-- **Grok API**: Token budget limits (handled with queuing)
+- **Groq API**: Token budget limits (handled with queuing)
 - **Gas Fees**: Wallet must maintain ETH balance for blockchain transactions
 - **Database Connections**: Uses connection pooling (Supabase - monitor limits)
 - **Storage Quotas**: Supabase Storage buckets (monitor usage)
