@@ -1,3 +1,15 @@
+/**
+ * Groq AI Evaluation Module
+ * 
+ * NOTE: This folder is named "utils/grok/" for historical reasons.
+ * The actual AI provider is Groq (https://groq.com), not "Grok" by Elon Musk.
+ * All variable names in this file use "groq" for clarity.
+ * 
+ * Provider: Groq (https://groq.com)
+ * Model: llama-3.3-70b-versatile
+ * Purpose: AI-powered Proof-of-Contribution evaluation using hydrogen-holographic fractal scoring
+ */
+
 import { debug, debugError } from '@/utils/debug';
 import { db } from '@/utils/db/db';
 import {
@@ -191,10 +203,11 @@ export async function evaluateWithGroq(
     final_clamped: number;
   };
 }> {
-  const groqApiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+  // Try both GROQ and GROK variants for backwards compatibility
+  const groqApiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY || process.env.NEXT_PUBLIC_GROK_API_KEY;
   if (!groqApiKey) {
     throw new Error(
-      'NEXT_PUBLIC_GROQ_API_KEY not configured. Groq API key is required for evaluation.'
+      'NEXT_PUBLIC_GROQ_API_KEY or NEXT_PUBLIC_GROK_API_KEY not configured. Groq API key is required for evaluation.'
     );
   }
 

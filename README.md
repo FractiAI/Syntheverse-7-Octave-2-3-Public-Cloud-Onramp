@@ -11,6 +11,8 @@
 
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
+> **🔧 Latest Update (Jan 8, 2026):** Fixed zero scores issue - Resolved environment variable name mismatch (`GROK` → `GROQ`) that was preventing AI evaluations. All submissions now receive proper scoring. See [Zero Scores Fix Documentation](docs/ZERO_SCORES_FIX.md) for details.
+
 ---
 
 ## 🚀 Liberating Contributions Through Hydrogen Spin MRI-Based PoC Protocol
@@ -395,6 +397,7 @@ See [`SYNTHSCAN_PROMPT_TRANSFORMATION.md`](SYNTHSCAN_PROMPT_TRANSFORMATION.md) f
 - ✅ Gas balance checker implemented
 - ✅ Default network: Base Mainnet (Chain ID: 8453)
 - ✅ Ready for production PoC registrations
+- ✅ **Zero Scores Issue Fixed** (Jan 8, 2026): Groq AI evaluation now working properly
 - 🎯 **SYNTH90T MOTHERLODE VAULT Opening**: Spring Equinox, March 20, 2026
 - ⏰ **Submission Deadline**: March 19, 2026
 

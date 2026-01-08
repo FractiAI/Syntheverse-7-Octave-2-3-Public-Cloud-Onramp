@@ -105,10 +105,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
       })
       .where(eq(contributionsTable.submission_hash, submissionHash));
 
-    // Perform evaluation with GROK
+    // Perform evaluation with Groq AI
     const textContent = contrib.text_content || contrib.title;
-    let grokRequest: any = null;
-    let grokResponse: any = null;
+    let groqRequest: any = null;
+    let groqResponse: any = null;
     let evaluation: any = null;
     let evaluationError: Error | null = null;
 
@@ -120,15 +120,15 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         contrib.category || undefined,
         submissionHash
       );
-      grokRequest = { text_content_length: textContent.length };
-      grokResponse = { success: true, evaluation };
+      groqRequest = { text_content_length: textContent.length };
+      groqResponse = { success: true, evaluation };
     } catch (error) {
       evaluationError = error instanceof Error ? error : new Error(String(error));
       const errorMessage = error instanceof Error ? error.message : String(error);
 
       // Extract detailed error information if available
       const errorDetails = (error as any)?.errorDetails || null;
-      const fullGrokResponse = (error as any)?.fullGrokResponse || null;
+      const fullGroqResponse = (error as any)?.fullGroqResponse || null;
       const rawAnswer = (error as any)?.rawAnswer || null;
       const evaluation = (error as any)?.evaluation || null;
 
@@ -149,8 +149,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
               evaluation_error_type: 'zero_scores',
               // Store detailed error information for debugging
               error_details: errorDetails,
-              full_grok_response: fullGrokResponse,
-              raw_grok_answer: rawAnswer,
+              full_groq_response: fullGroqResponse,
+              raw_groq_answer: rawAnswer,
               parsed_evaluation: evaluation,
             } as any,
             updated_at: new Date(),
@@ -174,11 +174,11 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           response_data: {
             error: errorMessage,
             error_details: errorDetails,
-            full_grok_response: fullGrokResponse,
-            raw_grok_answer: rawAnswer,
+            full_groq_response: fullGroqResponse,
+            raw_groq_answer: rawAnswer,
             parsed_evaluation: evaluation,
           },
-          grok_api_response: fullGrokResponse || null,
+          grok_api_response: fullGroqResponse || null,
           error_message: errorMessage,
           created_at: new Date(),
         });
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           submissionHash,
           error: errorMessage,
           hasErrorDetails: !!errorDetails,
-          hasFullGrokResponse: !!fullGrokResponse,
+          hasFullGroqResponse: !!fullGroqResponse,
         });
 
         // Return error response instead of throwing (so frontend can handle it)
@@ -286,7 +286,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           qualified_epoch: displayEpoch || evaluation.qualified_epoch || null, // Store the epoch this submission qualifies for
           allocation_status: qualified ? 'pending_admin_approval' : 'not_qualified', // Token allocation requires admin approval
           is_seed_submission: isSeed, // Also store in metadata for backwards compatibility
-          // Store detailed Grok evaluation details for detailed report
+          // Store detailed Groq evaluation details for detailed report
+          // Note: Field name uses "grok" for database backwards compatibility (refers to Groq AI provider)
           grok_evaluation_details: {
             base_novelty: evaluation.base_novelty,
             base_density: evaluation.base_density,
@@ -297,7 +298,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
             seed_multiplier_applied: isSeed ? 1.15 : 1.0,
             has_sweet_spot_edges: hasSweetSpotEdges,
             full_evaluation: evaluation, // Store full evaluation object
-            raw_grok_response: (evaluation as any).raw_grok_response || null, // Store raw Grok API response text/markdown
+            raw_grok_response: (evaluation as any).raw_groq_response || null, // Store raw Groq API response text/markdown
           },
           // LLM Metadata for provenance (timestamp, date, model, version, system prompt)
           llm_metadata: (evaluation as any).llm_metadata || null,
@@ -352,8 +353,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         redundancy_analysis: evaluation.redundancy_analysis,
         metal_justification: evaluation.metal_justification,
       },
-      grok_api_request: grokRequest,
-      grok_api_response: grokResponse,
+      grok_api_request: groqRequest,
+      grok_api_response: groqResponse,
       response_data: {
         success: true,
         qualified,

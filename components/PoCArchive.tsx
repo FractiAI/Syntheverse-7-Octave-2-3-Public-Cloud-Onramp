@@ -58,13 +58,14 @@ interface PoCSubmission {
   updated_at: string;
   text_content?: string;
   metadata?: any;
+  // Note: Field name uses "grok" for database backwards compatibility (refers to Groq AI provider)
   grok_evaluation_details?: {
     base_novelty?: number;
     base_density?: number;
     redundancy_overlap_percent?: number;
     density_penalty_percent?: number;
     full_evaluation?: any;
-    raw_grok_response?: string; // Raw Grok API response text/markdown
+    raw_grok_response?: string; // Raw Groq API response text/markdown (stored as "grok" for legacy reasons)
   };
 }
 
