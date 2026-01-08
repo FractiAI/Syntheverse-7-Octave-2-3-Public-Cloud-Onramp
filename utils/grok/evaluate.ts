@@ -1507,7 +1507,7 @@ ${answer}`;
       // Required for type compatibility
       after_penalty: afterPenalty,
       after_bonus: afterBonus,
-      after_seed: afterSeed,
+      after_seed_and_edge: afterSeedAndEdge,
       
       // Final score
       final_score: pod_score,
