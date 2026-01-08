@@ -44,7 +44,7 @@ export function SectionWhy() {
               <strong>Syntheverse delivers the highest-output, lowest-cost system currently achievable.</strong> Empirically validated: <strong>1.5–1.8× higher coherent output per node</strong> with <strong>38–58% reduction in overhead</strong>. Contribution-indexed rewards outperform time- or role-indexed allocations. Resources deploy only where value is created.
             </p>
             <p className="cockpit-text text-sm opacity-80">
-              SynthScan™ MRI scores contributions objectively (novelty, density, coherence, alignment). Nested colony/sandbox architecture scales from small teams to global ecosystems while preserving coherence. <strong>Through our hydrogen spin MRI-based PoC protocol, contributions are liberated—no longer gatekept, visible and demonstrable to all via HHF-AI MRI science.</strong>
+              SynthScan™ MRI scores contributions objectively (novelty, density, coherence, alignment). Nested colony/cloud architecture scales from small teams to global ecosystems while preserving coherence. <strong>Through our hydrogen spin MRI-based PoC protocol, contributions are liberated—no longer gatekept, visible and demonstrable to all via HHF-AI MRI science.</strong>
             </p>
           </div>
         </div>

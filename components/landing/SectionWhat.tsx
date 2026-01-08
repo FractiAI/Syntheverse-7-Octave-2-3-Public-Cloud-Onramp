@@ -20,7 +20,7 @@ export function SectionWhat() {
     {
       icon: Map,
       title: 'Archive & Map',
-      description: 'Your work becomes vector-searchable and comparable in the sandbox',
+      description: 'Your work becomes vector-searchable and comparable in the Syntheverse Cloud',
     },
     {
       icon: LinkIcon,

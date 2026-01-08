@@ -87,7 +87,7 @@ export function SectionEngage() {
         'Submit contributions for creative work, enterprise solutions, or Frontier R&D',
         'Receive coherence measurement via SynthScan™ MRI',
         'For enterprises: Maximize output while minimizing cost—resources deploy only where value is created',
-        'Scale from solo creators to global enterprises with nested colony/sandbox architecture',
+        'Scale from solo creators to global enterprises with nested colony/cloud architecture',
         'Transform vision into verifiable on-chain contributions',
       ],
       cta: {

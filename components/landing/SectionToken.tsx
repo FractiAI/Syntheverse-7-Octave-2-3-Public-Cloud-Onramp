@@ -5,9 +5,9 @@ import { Card } from './shared/Card';
 export function SectionToken() {
   return (
     <SectionWrapper
-      id="token-sandbox"
-      eyebrow="TOKEN & SANDBOX"
-      title="SYNTH Token & Sandbox Rules"
+      id="token-cloud"
+      eyebrow="TOKEN & CLOUD"
+      title="SYNTH Token & Cloud Rules"
     >
       {/* Warning Banner */}
       <div
@@ -51,9 +51,9 @@ export function SectionToken() {
           </div>
         </Card>
 
-        {/* Sandbox Rules */}
+        {/* Cloud Rules */}
         <Card hover={false}>
-          <h3 className="cockpit-title mb-4 text-lg">How the Sandbox Works</h3>
+          <h3 className="cockpit-title mb-4 text-lg">How the Syntheverse Cloud Works</h3>
 
           <ul className="cockpit-text space-y-3 text-sm">
             <li>
@@ -81,7 +81,7 @@ export function SectionToken() {
             </li>
           </ul>
 
-          <button className="cockpit-lever mt-4 w-full text-sm">Read Full Sandbox Rules</button>
+          <button className="cockpit-lever mt-4 w-full text-sm">Read Full Cloud Rules</button>
         </Card>
       </div>
     </SectionWrapper>
