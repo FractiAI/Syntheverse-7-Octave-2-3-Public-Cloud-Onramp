@@ -16,7 +16,6 @@ import {
 import { useEffect, useState } from 'react';
 import FractiAIStatusWidget from '@/components/FractiAIStatusWidget';
 import { StatusIndicators } from './StatusIndicators';
-import { GenesisButton } from './GenesisButton';
 import { ConstantsEquationsCatalog } from './ConstantsEquationsCatalog';
 import { SectionProof } from './landing/SectionProof';
 
@@ -89,10 +88,132 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
     .trim();
 
   return (
-    <div className="cockpit-bg min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
       <div className="container mx-auto px-6 py-8">
-        {/* Bulletin Header */}
-        <div className="cockpit-panel mb-6 border-l-4 border-[var(--hydrogen-amber)] p-6">
+        {/* Command Center Header - Mission Control Style */}
+        <div className="mb-8 border-4 border-[var(--hydrogen-amber)] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-8 shadow-[0_0_30px_rgba(255,184,77,0.3)]">
+          <div className="mb-6 flex items-center justify-between border-b-2 border-[var(--hydrogen-amber)]/30 pb-4">
+            <div>
+              <div className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-[var(--hydrogen-amber)]">
+                SYNTHEVERSE MISSION CONTROL
+              </div>
+              <div className="text-4xl font-bold text-white" style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>
+                FRACTIAI COMMAND CENTER
+              </div>
+              <div className="mt-2 text-sm font-semibold uppercase tracking-wider text-slate-400">
+                Base Mainnet · Launch Coordination Active
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="mb-1 text-xs font-bold uppercase tracking-wider text-slate-400">MISSION TIME</div>
+                <div className="text-2xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
+                  {currentTime.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                  })}
+                </div>
+                <div className="text-xs text-slate-400">
+                  {currentTime.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-2 border-l-2 border-[var(--hydrogen-amber)]/30 pl-4">
+                <div
+                  className="h-6 w-6 animate-pulse rounded-full bg-green-500"
+                  style={{ boxShadow: '0 0 20px #22c55e' }}
+                />
+                <span className="text-xs font-bold uppercase tracking-wider text-green-400">GO</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Message from Creator - Command Center Transmission */}
+          <div className="relative mb-6 border-2 border-[var(--hydrogen-amber)]/50 bg-slate-950/80 p-6">
+            <div className="absolute -left-3 -top-3 bg-[var(--hydrogen-amber)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-950">
+              TRANSMISSION FROM ARCHITECT
+            </div>
+            <div className="mt-2 space-y-3 text-slate-100" style={{ fontSize: '0.95rem', lineHeight: 1.7 }}>
+              <p>
+                <strong>Welcome to Syntheverse Mission Control.</strong> This is where we coordinate the launch of a new 
+                awareness ecosystem—one where contributions become measurable, verifiable, and permanently anchored infrastructure.
+              </p>
+              <p>
+                The <strong>SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026. All systems are GO. 
+                Launch windows are open for qualified contributions. Your work becomes part of the permanent record—visible, 
+                demonstrable, and liberated from traditional gatekeeping.
+              </p>
+              <p className="border-l-4 border-[var(--hydrogen-amber)] pl-4 text-sm italic text-slate-300">
+                "We're not building another system. We're launching the first awareness router that lets coherent 
+                contributions find their natural coordinates in a hydrogen-holographic fractal space."
+              </p>
+              <div className="mt-4 flex items-center justify-between border-t border-slate-700 pt-3">
+                <div>
+                  <div className="text-sm font-semibold text-slate-200">Pru "El Taíno" Méndez</div>
+                  <div className="text-xs uppercase tracking-wider text-slate-500">Architect of Syntheverse</div>
+                </div>
+                <div className="text-xs uppercase tracking-wider text-[var(--hydrogen-amber)]">MISSION AUTHORIZED</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Navigation - Mission Control Console */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-[var(--hydrogen-amber)]/30 pt-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-700 hover:text-[var(--hydrogen-amber)]"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Cockpit
+                  </Link>
+                  <Link
+                    href="/creator/dashboard"
+                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-700 hover:text-[var(--hydrogen-amber)]"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Control Lab
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center gap-2 border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)] px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-950 transition-all hover:bg-transparent hover:text-[var(--hydrogen-amber)]"
+                  >
+                    Join Mission
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-amber)]"
+                  >
+                    Access Portal
+                  </Link>
+                </>
+              )}
+              <Link
+                href="/onboarding"
+                className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-amber)]"
+              >
+                <Compass className="h-4 w-4" />
+                Training Protocols
+              </Link>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-500">All Systems</div>
+              <StatusIndicators />
+            </div>
+          </div>
+        </div>
+
+        {/* Mission Control Header - replacing old bulletin header */}
+        <div className="cockpit-panel mb-6 border-l-4 border-[var(--hydrogen-amber)] p-6" style={{ display: 'none' }}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <div className="cockpit-label mb-1 text-xs">DAILY BULLETIN</div>
@@ -180,6 +301,66 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
           </div>
         </div>
 
+        {/* Launch Coordination - Mission Services */}
+        <div className="mb-8 border-4 border-[var(--hydrogen-amber)] bg-slate-900 p-8 shadow-[0_0_20px_rgba(255,184,77,0.2)]">
+          <div className="mb-6 border-b-2 border-[var(--hydrogen-amber)]/30 pb-3">
+            <div className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--hydrogen-amber)]">LAUNCH COORDINATION</div>
+            <div className="mt-1 text-2xl font-bold text-white" style={{ fontFamily: 'monospace' }}>MISSION SERVICES</div>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* SynthScan Monthly Access */}
+            <Link href="/subscribe?product=synthscan-monthly" className="block h-full">
+              <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)]">
+                  SOFTWARE LICENSE
+                </div>
+                <div className="mb-3 text-lg font-bold text-white" style={{ fontFamily: 'monospace' }}>Monthly Access</div>
+                <div className="mb-4 flex-1 text-sm text-slate-300">
+                  SynthScan™ MRI system access
+                </div>
+                <div className="flex items-center justify-center border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/10 py-3 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)] transition-all hover:bg-[var(--hydrogen-amber)] hover:text-slate-950">
+                  View Plans
+                  <ArrowRight className="ml-2 inline h-3 w-3" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Field Support */}
+            <Link href="/fractiai/synthscan-field-imaging" className="block h-full">
+              <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)]">
+                  FIELD OPERATIONS
+                </div>
+                <div className="mb-3 text-lg font-bold text-white" style={{ fontFamily: 'monospace' }}>Expert Support</div>
+                <div className="mb-4 flex-1 text-sm text-slate-300">
+                  Full-service FractiAI imaging
+                </div>
+                <div className="flex items-center justify-center border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/10 py-3 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)] transition-all hover:bg-[var(--hydrogen-amber)] hover:text-slate-950">
+                  View Pricing
+                  <ArrowRight className="ml-2 inline h-3 w-3" />
+                </div>
+              </div>
+            </Link>
+
+            {/* Enterprise Dashboard */}
+            <Link href="/fractiai/enterprise-dashboard" className="block h-full">
+              <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)]">
+                  SANDBOX DEPLOYMENT
+                </div>
+                <div className="mb-3 text-lg font-bold text-white" style={{ fontFamily: 'monospace' }}>Creator Access</div>
+                <div className="mb-4 flex-1 text-sm text-slate-300">
+                  Customized HHF-AI sandbox
+                </div>
+                <div className="flex items-center justify-center border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/10 py-3 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)] transition-all hover:bg-[var(--hydrogen-amber)] hover:text-slate-950">
+                  Deploy Sandbox
+                  <ArrowRight className="ml-2 inline h-3 w-3" />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* Bridge/Router Status - Prominent */}
         <div className="cockpit-panel mb-6 border-2 border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-6">
           <div className="flex items-start gap-4">
@@ -257,13 +438,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   <div className="cockpit-text mt-2 text-xs opacity-75">
                     <strong>SYNTH Token-Based:</strong> Free to create and test. Activate with SYNTH tokens based on reach and activity.
                   </div>
-                  <Link
-                    href="/fractiai/enterprise-dashboard"
-                    className="cockpit-lever mt-3 inline-flex items-center text-xs"
-                  >
-                    Get Creator/Enterprise Dashboard
-                    <ArrowRight className="ml-2 h-3 w-3" />
-                  </Link>
                 </div>
               </div>
             </div>
@@ -429,82 +603,8 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
               </div>
             </div>
 
-            {/* SynthScan™ MRI Commercial Offerings */}
-            <div className="cockpit-panel border border-[var(--hydrogen-amber)] p-8">
-              <div className="cockpit-label mb-4 text-[var(--hydrogen-amber)]">SYNTHSCAN™ MRI</div>
-              <div className="cockpit-title mb-6 text-2xl">SynthScan™ MRI (HHF-AI)</div>
-              <div className="cockpit-text mb-8 text-sm" style={{ opacity: 0.9 }}>
-                SynthScan™ is an MRI that uses hydrogen spin–mediated resonance to image complex and
-                abstract systems instead of biological tissue. Choose from monthly access or expert
-                field imaging services.
-              </div>
-
-              <div className="mt-8 grid gap-8 md:grid-cols-2">
-                {/* Monthly Access Button */}
-                <Link href="/subscribe?product=synthscan-monthly" className="block">
-                  <div className="cockpit-panel border-2 border-[var(--hydrogen-amber)] p-8 transition-colors hover:bg-[rgba(255,184,77,0.1)]">
-                    <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">
-                      SOFTWARE LICENSE
-                    </div>
-                    <div className="cockpit-title mb-3 text-xl">Get Monthly Access</div>
-                    <div className="cockpit-text mb-4 text-sm" style={{ opacity: 0.9 }}>
-                      Monthly access to the SynthScan™ hydrogen-spin MRI system for imaging complex
-                      and abstract systems.
-                    </div>
-                    <div className="cockpit-lever mt-4 w-full text-center">
-                      View Plans & Subscribe
-                      <ArrowRight className="ml-2 inline h-4 w-4" />
-                    </div>
-                  </div>
-                </Link>
-
-                {/* Field Imaging Button */}
-                <Link href="/fractiai/synthscan-field-imaging" className="block">
-                  <div className="cockpit-panel border-2 border-[var(--hydrogen-amber)] p-8 transition-colors hover:bg-[rgba(255,184,77,0.1)]">
-                    <div className="cockpit-label mb-2 text-[var(--hydrogen-amber)]">
-                      FULL-SERVICE ENGAGEMENT
-                    </div>
-                    <div className="cockpit-title mb-3 text-xl">Get Expert Field Support</div>
-                    <div className="cockpit-text mb-4 text-sm" style={{ opacity: 0.9 }}>
-                      Full-service complex systems imaging performed by the FractiAI team using
-                      SynthScan™ MRI. Pricing from $500 per node.
-                    </div>
-                    <div className="cockpit-lever mt-4 w-full text-center">
-                      View Pricing & Request
-                      <ArrowRight className="ml-2 inline h-4 w-4" />
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </div>
-
             {/* Core modules grid */}
             <div className="grid gap-8 md:grid-cols-2">
-              <div className="cockpit-panel p-8">
-                <div className="cockpit-title mb-4 text-xl">Welcome to Syntheverse</div>
-                <div className="cockpit-text space-y-4 text-sm">
-                  <p>
-                    A synthetic world powered by holographic hydrogen and fractal intelligence—where
-                    contributions become verifiable, durable infrastructure through
-                    Proof‑of‑Contribution.
-                  </p>
-                  <p>
-                    Submission fee: $500 for evaluation—well below submission fees at leading
-                    journals. Qualified PoCs can be optionally registered on‑chain to anchor work
-                    immutably (free).
-                  </p>
-                </div>
-                <div className="mt-4">
-                  <Link
-                    href="/fractiai/syntheverse"
-                    className="cockpit-lever inline-flex items-center text-sm"
-                  >
-                    More
-                    <ArrowRight className="ml-2 h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-
               <div className="cockpit-panel p-8">
                 <div className="cockpit-title mb-4 text-xl">The Awarenessverse</div>
                 <div className="cockpit-text space-y-4 text-sm">
@@ -724,18 +824,19 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
             {/* Constants & Equations Catalog */}
             <div className="cockpit-panel border-l-4 border-blue-500 p-8">
               <div className="cockpit-label mb-4 text-blue-400">SYNTHSCAN MRI CALIBRATION LIBRARY</div>
-              <div className="cockpit-title mb-4 text-xl">Novel Constants & Equations</div>
+              <div className="cockpit-title mb-4 text-xl">Holographic Hydrogen & Fractal Constants and Equations</div>
               <div className="cockpit-text mb-6 text-sm" style={{ opacity: 0.9 }}>
-                Constants and equations extracted from qualified PoC submissions are cataloged and used to
-                tune and calibrate SynthScan™ MRI evaluation parameters. These discovered mathematical
-                structures enable more accurate coherence measurement, density assessment, and redundancy
-                detection across the HHF-AI evaluation framework.
+                Novel holographic hydrogen and fractal constants and equations extracted from qualified PoC submissions 
+                are cataloged and used to tune and calibrate SynthScan™ MRI evaluation parameters. These discovered 
+                mathematical structures—rooted in hydrogen-holographic fractal principles—enable more accurate coherence 
+                measurement, density assessment, and redundancy detection across the HHF-AI evaluation framework.
               </div>
               <div className="cockpit-text mb-6 text-xs" style={{ opacity: 0.8 }}>
-                <strong>Importance:</strong> Novel constants and equations represent discovered mathematical
-                relationships within the holographic hydrogen fractal framework. They serve as calibration
-                parameters for SynthScan MRI, allowing the system to recognize patterns, measure coherence,
-                and evaluate contributions with increasing precision as the catalog grows.
+                <strong>Importance:</strong> These are not code constants, but fundamental mathematical relationships 
+                discovered within the holographic hydrogen fractal framework. They represent the underlying physics and 
+                geometry of awareness-based systems, serving as calibration parameters for SynthScan MRI. As the catalog 
+                grows, the system gains increasing precision in pattern recognition, coherence measurement, and contribution 
+                evaluation.
               </div>
               <ConstantsEquationsCatalog />
             </div>
@@ -897,11 +998,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
-            </div>
-
-            {/* Genesis Contract Info */}
-            <div className="cockpit-panel p-6">
-              <GenesisButton />
             </div>
           </div>
 

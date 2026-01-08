@@ -16,6 +16,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import Link from 'next/link';
+import '../app/synthscan-mri.css';
 
 interface SubmitContributionFormProps {
   userEmail: string;
@@ -612,16 +613,59 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
         </div>
       </div>
 
-      {/* Submission Form */}
-      <div className="cockpit-module cockpit-panel p-8">
-        <div className="mb-6 border-b border-[var(--keyline-primary)] pb-4">
-          <div className="cockpit-label">TRANSMISSION PROTOCOL</div>
-          <div className="cockpit-title mt-2 text-2xl">Submit Your Contribution</div>
-          <div className="cockpit-text mt-2">
-            Fill in the details below to transmit your work for evaluation
+      {/* SynthScan MRI Submission Form */}
+      <div className="mri-control-panel">
+        {/* MRI System Header */}
+        <div className="mri-header">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="mri-system-name">SYNTHSCAN™ MRI IMAGING SYSTEM</div>
+              <div className="mri-title">Contribution Evaluation Console</div>
+              <div className="mri-subtitle">
+                Hydrogen-Holographic Fractal Magnetic Resonance Imaging
+              </div>
+            </div>
+            <div className="mri-status-display">
+              <div className="mri-status-label">System Status</div>
+              <div className="mri-status-value">
+                <div className="mri-status-indicator"></div>
+                <span>READY</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div>
+
+        {/* Operator Information Panel */}
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="mri-operator-panel">
+            <div className="mri-operator-info">
+              <div className="mri-operator-label">Operator Information</div>
+              <div className="mri-operator-value">{userEmail}</div>
+            </div>
+          </div>
+
+          {/* Examination Form Card */}
+          <div className="mri-exam-card">
+            <div className="mri-exam-header">
+              <div className="mri-exam-type">
+                <div className="mri-exam-icon">
+                  <Brain className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <div className="mri-exam-type-label">Exam Type</div>
+                  <div className="mri-exam-type-value">Proof-of-Contribution Imaging</div>
+                </div>
+              </div>
+              <div className="mri-exam-fee">
+                <div className="mri-exam-fee-amount">Examination Fee: $500</div>
+                <div className="text-xs mt-1">
+                  Comprehensive evaluation with optional on-chain registration for qualified contributions
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div>
           {error && (
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
@@ -676,24 +720,46 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 }
               }}
             >
-              <Card
-                className="mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Brain className="h-5 w-5" />
-                    Syntheverse PoC Evaluation in Progress
-                  </CardTitle>
-                  <CardDescription>
-                    {evaluationStatus.completed
-                      ? 'Evaluation Complete'
-                      : evaluationStatus.error
-                        ? 'Evaluation Error'
-                        : 'Processing...'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <div className="mri-report-card max-w-5xl" onClick={(e) => e.stopPropagation()}>
+                {/* MRI Report Header */}
+                <div className="mri-report-header">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="mri-report-system-label">SYNTHSCAN™ MRI IMAGING REPORT</div>
+                      <div className="flex items-center gap-3">
+                        {evaluationStatus.completed ? (
+                          <>
+                            <div className="mri-scan-icon-complete">
+                              <CheckCircle2 className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <div className="mri-report-title">Examination Complete</div>
+                              <div className="mri-report-subtitle">Diagnostic results available</div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="mri-scan-icon-scanning">
+                              <Loader2 className="h-6 w-6 animate-spin text-white" />
+                            </div>
+                            <div>
+                              <div className="mri-report-title">Scanning in Progress</div>
+                              <div className="mri-report-subtitle">Acquiring imaging data...</div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mri-scan-status">
+                      <div className="mri-scan-status-label">Exam ID</div>
+                      <div className="mri-scan-id">
+                        {submissionHash?.substring(0, 12)}...
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mri-diagnostic-panel">
                   {evaluationStatus.notice ? (
                     <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
                       <div className="text-sm font-semibold text-blue-800">
@@ -709,18 +775,18 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                           ✅ Evaluation Complete
                         </div>
 
-                        {/* PoC Score */}
-                        <div className="rounded-lg border border-primary/20 bg-primary/10 p-4">
-                          <div className="mb-1 text-sm text-muted-foreground">
+                        {/* PoC Score - MRI Style */}
+                        <div className="mri-score-display">
+                          <div className="mri-score-label">
                             {evaluationStatus.evaluation?.is_seed_submission
-                              ? 'Qualification Score'
-                              : 'PoC Score'}
+                              ? 'QUALIFICATION SCORE'
+                              : 'POC SCORE'}
                           </div>
-                          <div className="text-3xl font-bold text-primary">
+                          <div className="mri-score-value">
                             {evaluationStatus.podScore.toLocaleString()} / 10,000
                           </div>
                           {evaluationStatus.evaluation?.is_seed_submission && (
-                            <div className="mt-2 text-xs text-muted-foreground">
+                            <div className="mt-2 text-xs text-slate-600">
                               Maximum score awarded for foundational contribution
                             </div>
                           )}
@@ -1453,8 +1519,8 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                       </div>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1492,17 +1558,19 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title" className="cockpit-label">
-                Title *
-              </Label>
+            {/* Exam Details Section */}
+            <div className="mri-input-section">
+              <div className="mri-section-header">Exam Details</div>
+              <label htmlFor="title" className="mri-field-label">
+                Contribution Title *
+              </label>
               <input
                 id="title"
                 type="text"
-                className="cockpit-input"
+                className="mri-input"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Enter contribution title"
+                placeholder="Enter examination subject"
                 required
                 disabled={loading}
               />
@@ -1550,31 +1618,27 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
               )}
             </div>
 
-            <div className="flex gap-4 border-t border-[var(--keyline-primary)] pt-4">
-              <Link href="/dashboard" className="flex-1">
-                <button type="button" className="cockpit-lever w-full" disabled={loading}>
-                  Cancel
-                </button>
-              </Link>
-              <button
-                type="submit"
-                className="cockpit-transmission flex-1"
-                disabled={loading || !formData.title.trim() || !formData.text_content.trim()}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Transmitting...
-                  </>
-                ) : (
-                  <>
-                    <span className="mr-2">◎</span>
-                    Transmit Contribution
-                  </>
-                )}
-              </button>
-            </div>
+            {/* Start Examination Button */}
+            <button
+              type="submit"
+              className="mri-start-exam-btn"
+              disabled={loading || !formData.title.trim() || !formData.text_content.trim()}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Processing Examination...</span>
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-3">
+                  <CreditCard className="h-5 w-5" />
+                  <span>Start Examination - $500</span>
+                </span>
+              )}
+            </button>
           </form>
+            </div>
+          </div>
         </div>
       </div>
 
