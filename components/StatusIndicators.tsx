@@ -141,7 +141,7 @@ export function StatusIndicators() {
   }, [mounted]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3 w-full justify-between">
       {/* System Component Status Lights */}
       <div className="flex items-center gap-2 border-r border-[var(--keyline-primary)] pr-3">
         <div className="cockpit-label text-[10px] whitespace-nowrap" style={{ opacity: 0.7 }}>
@@ -193,8 +193,8 @@ export function StatusIndicators() {
         </div>
       </div>
 
-      {/* Beta Active Indicator */}
-      <span className="cockpit-badge cockpit-badge-amber">BETA ACTIVE</span>
+      {/* Beta Active Indicator - Far Right */}
+      <span className="cockpit-badge cockpit-badge-amber ml-auto">BETA ACTIVE</span>
     </div>
   );
 }
