@@ -1439,14 +1439,39 @@ ${answer}`;
     // G) Apply correct formula: Final = (Composite × (1 - penalty%/100)) × bonus_multiplier × seed_multiplier × edge_multiplier
     // Seed and Edge submissions receive multipliers based on CONTENT analysis by AI (not timing)
     // AI determines if content exhibits seed/edge characteristics
+    
+    // Fetch multiplier config from database (creator/operator can toggle these during testing)
+    let seedMultiplierEnabled = true;
+    let edgeMultiplierEnabled = true;
+    
+    try {
+      const { createClient } = await import('@/utils/supabase/server');
+      const supabase = createClient();
+      const { data: configData } = await supabase
+        .from('scoring_config')
+        .select('config_value')
+        .eq('config_key', 'multiplier_toggles')
+        .single();
+      
+      if (configData?.config_value) {
+        seedMultiplierEnabled = configData.config_value.seed_enabled !== false;
+        edgeMultiplierEnabled = configData.config_value.edge_enabled !== false;
+      }
+    } catch (error) {
+      // Default to enabled if config fetch fails
+      console.warn('Failed to fetch multiplier config, using defaults:', error);
+    }
+    
     const SEED_MULTIPLIER = 1.15; // 15% bonus for seed submissions
     const EDGE_MULTIPLIER = 1.15; // 15% bonus for edge submissions
     const isSeedFromAI = evaluation.is_seed_submission === true; // Trust AI's content-based determination
     const isEdgeFromAI = evaluation.is_edge_submission === true; // Trust AI's content-based determination
-    const seedMultiplier = isSeedFromAI ? SEED_MULTIPLIER : 1.0;
-    const edgeMultiplier = isEdgeFromAI ? EDGE_MULTIPLIER : 1.0;
     
-    // Combined multiplier: if both seed AND edge, multiply both (1.15 × 1.15 = 1.3225 = 32.25% bonus)
+    // Apply multipliers only if enabled by config
+    const seedMultiplier = (isSeedFromAI && seedMultiplierEnabled) ? SEED_MULTIPLIER : 1.0;
+    const edgeMultiplier = (isEdgeFromAI && edgeMultiplierEnabled) ? EDGE_MULTIPLIER : 1.0;
+    
+    // Combined multiplier: if both seed AND edge (and both enabled), multiply both (1.15 × 1.15 = 1.3225 = 32.25% bonus)
     const combinedMultiplier = seedMultiplier * edgeMultiplier;
 
     const afterPenalty = basePodScore * (1 - penaltyPercent / 100);

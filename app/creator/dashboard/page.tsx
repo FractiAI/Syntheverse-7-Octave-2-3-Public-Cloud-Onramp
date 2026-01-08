@@ -27,6 +27,7 @@ import { Shield, Activity, FileText, BookOpen, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
+import { MultiplierToggle } from '@/components/MultiplierToggle';
 import '../../control-lab.css';
 
 export const dynamic = 'force-dynamic';
@@ -115,6 +116,11 @@ export default async function CreatorDashboard() {
         {/* System Broadcast Banners - Priority Display */}
         <div className="mb-6">
           <OperatorBroadcastBanner />
+        </div>
+
+        {/* Scoring Multiplier Controls - Testing/Tuning */}
+        <div className="mb-6">
+          <MultiplierToggle />
         </div>
 
         {/* Navigation Modules - Collapsible */}
