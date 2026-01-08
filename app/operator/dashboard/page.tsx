@@ -194,7 +194,7 @@ export default async function OperatorDashboard() {
         </div>
 
         {/* Cloud Channel - Right Sidebar (Hidden on mobile) */}
-        <aside className="hidden lg:block w-[320px] border-l border-[var(--keyline-primary)] flex-shrink-0">
+        <aside className="hidden lg:flex w-[320px] border-l border-[var(--keyline-primary)] flex-shrink-0" style={{ transition: 'width 0.3s ease' }}>
           <CloudChannel />
         </aside>
       </div>

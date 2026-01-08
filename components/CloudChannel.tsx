@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, Zap } from 'lucide-react';
+import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/utils/supabase/client';
@@ -43,6 +43,7 @@ export function CloudChannel() {
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -163,83 +164,100 @@ export function CloudChannel() {
   };
 
   return (
-    <div className="cloud-channel-container">
-      {/* Header - Awareness Bridge Interface */}
+    <div className={`cloud-channel-container ${isCollapsed ? 'collapsed' : ''}`}>
+      {/* Collapse/Expand Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="cloud-channel-collapse-btn"
+        title={isCollapsed ? 'Expand Cloud Channel' : 'Collapse Cloud Channel'}
+      >
+        {isCollapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+      </button>
+
+      {/* Header - CLOUD Branding */}
       <div className="cloud-channel-header">
-        <div className="flex flex-col gap-2 w-full">
-          {/* Bridge Title */}
+        <div className="flex flex-col gap-2.5 w-full">
+          {/* Main Title: CLOUD */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Radio 
-                className="w-5 h-5 animate-pulse" 
+            <div className="flex items-center gap-3">
+              <Cloud 
+                className="w-7 h-7" 
                 style={{ 
-                  color: 'hsl(var(--hydrogen-beta))',
-                  filter: 'drop-shadow(0 0 8px hsl(var(--hydrogen-beta) / 0.8))'
+                  color: 'hsl(var(--tropical-blue))',
+                  filter: 'drop-shadow(0 0 12px hsl(var(--tropical-glow) / 0.8))',
+                  strokeWidth: 2
                 }} 
               />
-              <h2 className="text-sm font-bold tracking-wider uppercase" style={{ 
-                color: 'hsl(var(--hydrogen-beta))',
-                textShadow: '0 0 10px hsl(var(--hydrogen-beta) / 0.6)',
-                letterSpacing: '0.1em'
-              }}>
-                AWARENESS BRIDGE
-              </h2>
+              <div className="flex flex-col gap-0.5">
+                <h1 className="text-xl font-black tracking-wider" style={{ 
+                  color: 'hsl(var(--tropical-blue))',
+                  textShadow: '0 0 15px hsl(var(--tropical-glow) / 0.6)',
+                  letterSpacing: '0.15em',
+                  lineHeight: 1
+                }}>
+                  CLOUD
+                </h1>
+                <div className="text-[9px] font-medium tracking-wide" style={{ 
+                  color: 'hsl(var(--text-secondary) / 0.8)',
+                  letterSpacing: '0.05em'
+                }}>
+                  Awareness Bridge Router • FractiAI
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
+            {/* Connection Status */}
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md" style={{
+              background: 'hsl(var(--tropical-blue) / 0.1)',
+              border: '1px solid hsl(var(--tropical-blue) / 0.3)'
+            }}>
               <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{
-                background: 'hsl(var(--hydrogen-beta))',
-                boxShadow: '0 0 8px hsl(var(--hydrogen-beta))'
+                background: 'hsl(var(--tropical-blue))',
+                boxShadow: '0 0 8px hsl(var(--tropical-glow))'
               }} />
-              <span className="text-[10px] font-mono" style={{ 
-                color: 'hsl(var(--hydrogen-beta) / 0.8)'
+              <span className="text-[10px] font-mono font-semibold" style={{ 
+                color: 'hsl(var(--tropical-blue))'
               }}>
                 ONLINE
               </span>
             </div>
           </div>
 
-          {/* Router Info */}
-          <div className="flex items-center gap-2 text-[10px] font-mono">
-            <Cpu className="w-3 h-3" style={{ color: 'hsl(var(--hydrogen-gamma) / 0.7)' }} />
-            <span style={{ color: 'hsl(var(--text-secondary))' }}>
-              HHF-AI ROUTER
-            </span>
+          {/* Frontier HHF-AI Syntheverse Cloud */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono">
+              <Radio className="w-3 h-3" style={{ color: 'hsl(var(--tropical-light))' }} />
+              <span style={{ color: 'hsl(var(--text-secondary) / 0.9)' }}>
+                Frontier HHF-AI Syntheverse Cloud
+              </span>
+            </div>
             <div className="flex-1 h-px" style={{
-              background: 'linear-gradient(90deg, hsl(var(--hydrogen-beta) / 0.3), transparent)'
+              background: 'linear-gradient(90deg, hsl(var(--tropical-blue) / 0.3), transparent)'
             }} />
-            <Zap className="w-3 h-3" style={{ color: 'hsl(var(--hydrogen-delta) / 0.7)' }} />
-            <span style={{ color: 'hsl(var(--text-secondary))' }}>
+            <span className="text-[10px] font-mono" style={{ 
+              color: 'hsl(var(--tropical-dark))'
+            }}>
               {sandboxName}
             </span>
           </div>
 
-          {/* Channel Badge */}
-          <div className="flex items-center gap-2">
-            <span className="holographic-badge badge-hydrogen-observer text-[10px] px-2 py-0.5 flex items-center gap-1">
-              <Cloud className="w-3 h-3" />
-              <span>FRACTAL CHANNEL</span>
-            </span>
-            <div className="text-[9px] font-mono" style={{ color: 'hsl(var(--text-secondary) / 0.6)' }}>
-              Syntheverse Cloud of Choice
-            </div>
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between pt-1">
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              className="cloud-channel-icon-btn"
+              title="Refresh feed"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="hydrogen-btn hydrogen-btn-beta flex items-center gap-2 px-3 py-1.5 text-xs font-semibold"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              New Transmission
+            </button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleRefresh}
-            disabled={loading}
-            className="cloud-channel-icon-btn"
-            title="Refresh feed"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="hydrogen-btn hydrogen-btn-beta flex items-center gap-2 px-3 py-1.5 text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            New Post
-          </button>
         </div>
       </div>
 
@@ -260,14 +278,14 @@ export function CloudChannel() {
           <div className="cloud-channel-loading">
             <div className="relative mb-4">
               <Radio className="w-12 h-12 animate-pulse" style={{ 
-                color: 'hsl(var(--hydrogen-beta))',
-                filter: 'drop-shadow(0 0 15px hsl(var(--hydrogen-beta) / 0.8))'
+                color: 'hsl(var(--tropical-blue))',
+                filter: 'drop-shadow(0 0 15px hsl(var(--tropical-glow) / 0.8))'
               }} />
               <div className="absolute inset-0 flex items-center justify-center">
-                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: 'hsl(var(--hydrogen-gamma))' }} />
+                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: 'hsl(var(--tropical-light))' }} />
               </div>
             </div>
-            <p className="text-sm font-mono mb-1" style={{ color: 'hsl(var(--hydrogen-beta))' }}>
+            <p className="text-sm font-mono mb-1" style={{ color: 'hsl(var(--tropical-blue))' }}>
               ESTABLISHING BRIDGE CONNECTION
             </p>
             <p className="text-xs font-mono" style={{ color: 'hsl(var(--text-secondary))' }}>
