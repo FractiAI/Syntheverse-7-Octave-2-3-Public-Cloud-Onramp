@@ -15,9 +15,18 @@ export function SectionEngage() {
   useEffect(() => {
     // Check if user is authenticated by trying to fetch user session
     fetch('/api/auth/check')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          console.warn('Auth check failed with status:', res.status);
+          return { authenticated: false };
+        }
+        return res.json();
+      })
       .then((data) => setIsAuthenticated(data.authenticated === true))
-      .catch(() => setIsAuthenticated(false));
+      .catch((error) => {
+        console.warn('Auth check error:', error);
+        setIsAuthenticated(false);
+      });
   }, []);
 
   const personas: Record<Persona, {
