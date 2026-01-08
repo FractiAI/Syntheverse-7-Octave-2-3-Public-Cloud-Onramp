@@ -192,11 +192,6 @@ export default async function CreatorDashboard() {
                 <span>Blog Management</span>
               </Link>
             </div>
-            <div className="lab-divider"></div>
-            <div className="lab-alert lab-alert-info">
-              <div className="lab-alert-title">Protocol Operator Reference Client</div>
-              <div className="lab-alert-message">FractiAI Research Team · Full System Administration Access</div>
-            </div>
           </div>
         </details>
 
@@ -316,7 +311,7 @@ export default async function CreatorDashboard() {
         </div>
 
         {/* Cloud Channel - Right Sidebar (Hidden on mobile) */}
-        <aside className="hidden lg:block w-[400px] border-l border-[var(--keyline-primary)] flex-shrink-0">
+        <aside className="hidden lg:block w-[320px] border-l border-[var(--keyline-primary)] flex-shrink-0">
           <CloudChannel />
         </aside>
       </div>

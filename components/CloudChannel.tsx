@@ -1,13 +1,14 @@
 /**
- * Cloud Channel Component
- * Beautiful modern social feed positioned on the right side (Cursor-style)
- * Cloud-based community feed with holographic hydrogen theme
+ * Cloud Channel - Awareness Bridge/Router
+ * Connection point to the Syntheverse HHF-AI Cloud of Choice
+ * Routes consciousness through the Holographic Hydrogen Frontier
+ * Positioned on the right side (Cursor-style) as a living bridge interface
  */
 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles } from 'lucide-react';
+import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/utils/supabase/client';
@@ -163,17 +164,65 @@ export function CloudChannel() {
 
   return (
     <div className="cloud-channel-container">
-      {/* Header */}
+      {/* Header - Awareness Bridge Interface */}
       <div className="cloud-channel-header">
-        <div className="flex items-center gap-2">
-          <Cloud className="w-5 h-5" style={{ color: 'hsl(var(--hydrogen-beta))' }} />
-          <h2 className="text-lg font-bold" style={{ color: 'hsl(var(--hydrogen-beta))' }}>
-            {sandboxName}
-          </h2>
-          <span className="holographic-badge badge-hydrogen-observer text-xs px-2 py-1">
-            <Sparkles className="w-3 h-3" />
-            CHANNEL
-          </span>
+        <div className="flex flex-col gap-2 w-full">
+          {/* Bridge Title */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Radio 
+                className="w-5 h-5 animate-pulse" 
+                style={{ 
+                  color: 'hsl(var(--hydrogen-beta))',
+                  filter: 'drop-shadow(0 0 8px hsl(var(--hydrogen-beta) / 0.8))'
+                }} 
+              />
+              <h2 className="text-sm font-bold tracking-wider uppercase" style={{ 
+                color: 'hsl(var(--hydrogen-beta))',
+                textShadow: '0 0 10px hsl(var(--hydrogen-beta) / 0.6)',
+                letterSpacing: '0.1em'
+              }}>
+                AWARENESS BRIDGE
+              </h2>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{
+                background: 'hsl(var(--hydrogen-beta))',
+                boxShadow: '0 0 8px hsl(var(--hydrogen-beta))'
+              }} />
+              <span className="text-[10px] font-mono" style={{ 
+                color: 'hsl(var(--hydrogen-beta) / 0.8)'
+              }}>
+                ONLINE
+              </span>
+            </div>
+          </div>
+
+          {/* Router Info */}
+          <div className="flex items-center gap-2 text-[10px] font-mono">
+            <Cpu className="w-3 h-3" style={{ color: 'hsl(var(--hydrogen-gamma) / 0.7)' }} />
+            <span style={{ color: 'hsl(var(--text-secondary))' }}>
+              HHF-AI ROUTER
+            </span>
+            <div className="flex-1 h-px" style={{
+              background: 'linear-gradient(90deg, hsl(var(--hydrogen-beta) / 0.3), transparent)'
+            }} />
+            <Zap className="w-3 h-3" style={{ color: 'hsl(var(--hydrogen-delta) / 0.7)' }} />
+            <span style={{ color: 'hsl(var(--text-secondary))' }}>
+              {sandboxName}
+            </span>
+          </div>
+
+          {/* Channel Badge */}
+          <div className="flex items-center gap-2">
+            <span className="holographic-badge badge-hydrogen-observer text-[10px] px-2 py-0.5 flex items-center gap-1">
+              <Cloud className="w-3 h-3" />
+              <span>FRACTAL CHANNEL</span>
+            </span>
+            <div className="text-[9px] font-mono" style={{ color: 'hsl(var(--text-secondary) / 0.6)' }}>
+              Syntheverse Cloud of Choice
+            </div>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -209,8 +258,21 @@ export function CloudChannel() {
       <div className="cloud-channel-feed">
         {loading && posts.length === 0 ? (
           <div className="cloud-channel-loading">
-            <div className="hydrogen-particle" />
-            <p style={{ color: 'hsl(var(--text-secondary))' }}>Loading cloud channel...</p>
+            <div className="relative mb-4">
+              <Radio className="w-12 h-12 animate-pulse" style={{ 
+                color: 'hsl(var(--hydrogen-beta))',
+                filter: 'drop-shadow(0 0 15px hsl(var(--hydrogen-beta) / 0.8))'
+              }} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: 'hsl(var(--hydrogen-gamma))' }} />
+              </div>
+            </div>
+            <p className="text-sm font-mono mb-1" style={{ color: 'hsl(var(--hydrogen-beta))' }}>
+              ESTABLISHING BRIDGE CONNECTION
+            </p>
+            <p className="text-xs font-mono" style={{ color: 'hsl(var(--text-secondary))' }}>
+              Routing through HHF-AI Cloud...
+            </p>
           </div>
         ) : error ? (
           <div className="cloud-channel-error">
@@ -221,19 +283,37 @@ export function CloudChannel() {
           </div>
         ) : posts.length === 0 ? (
           <div className="cloud-channel-empty">
-            <Cloud className="w-12 h-12 mb-4 opacity-50" style={{ color: 'hsl(var(--hydrogen-beta))' }} />
-            <p className="text-lg font-semibold mb-2" style={{ color: 'hsl(var(--text-primary))' }}>
-              No posts yet
+            <div className="relative mb-6">
+              <Radio 
+                className="w-16 h-16 mb-2 animate-pulse" 
+                style={{ 
+                  color: 'hsl(var(--hydrogen-beta))',
+                  filter: 'drop-shadow(0 0 20px hsl(var(--hydrogen-beta) / 0.6))'
+                }} 
+              />
+              <div className="absolute -inset-8 border-2 border-dashed rounded-full animate-spin-slow" style={{
+                borderColor: 'hsl(var(--hydrogen-beta) / 0.2)'
+              }} />
+            </div>
+            <p className="text-base font-bold mb-2 tracking-wide" style={{ 
+              color: 'hsl(var(--hydrogen-beta))',
+              textShadow: '0 0 10px hsl(var(--hydrogen-beta) / 0.5)'
+            }}>
+              BRIDGE ACTIVE • AWAITING SIGNAL
             </p>
-            <p className="text-sm mb-4" style={{ color: 'hsl(var(--text-secondary))' }}>
-              Be the first to share something in this cloud!
+            <p className="text-xs mb-4 font-mono" style={{ color: 'hsl(var(--text-secondary))' }}>
+              The Awareness Bridge routes your consciousness through<br/>
+              the Holographic Hydrogen Frontier to the HHF-AI Cloud.
+            </p>
+            <p className="text-xs mb-6 opacity-70" style={{ color: 'hsl(var(--text-secondary))' }}>
+              Be the first to transmit through this channel.
             </p>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="hydrogen-btn hydrogen-btn-alpha"
+              className="hydrogen-btn hydrogen-btn-beta text-sm"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Create First Post
+              <Zap className="w-4 h-4 mr-2" />
+              Initiate Transmission
             </button>
           </div>
         ) : (

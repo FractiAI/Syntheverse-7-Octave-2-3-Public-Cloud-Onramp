@@ -126,8 +126,13 @@ export function PostCard({
   const isOwnPost = currentUserEmail === post.author_email;
 
   return (
-    <div className="cockpit-panel border-l-4 border-[var(--keyline-primary)]">
-      <div className="p-4 space-y-3">
+    <div 
+      className="fractal-node-post" 
+      data-pinned={post.is_pinned}
+      data-role={post.author_role}
+    >
+      <div className="fractal-node-inner">
+        <div className="fractal-node-content">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -222,6 +227,7 @@ export function PostCard({
             />
           </div>
         )}
+        </div>
       </div>
     </div>
   );

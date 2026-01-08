@@ -478,20 +478,302 @@ html {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: rgba(var(--background), 0.95);
-  border-left: 1px solid hsl(var(--hydrogen-beta) / 0.2);
+  background: linear-gradient(180deg, 
+    rgba(var(--background), 0.98) 0%,
+    rgba(var(--background), 0.95) 50%,
+    rgba(var(--background), 0.98) 100%);
+  border-left: 2px solid hsl(var(--hydrogen-beta) / 0.3);
+  box-shadow: inset 0 0 60px rgba(var(--hydrogen-beta-rgb), 0.1);
   overflow: hidden;
+  position: relative;
+}
+
+.cloud-channel-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent,
+    hsl(var(--hydrogen-beta)),
+    hsl(var(--hydrogen-gamma)),
+    transparent);
+  animation: scan-horizontal 3s ease-in-out infinite;
+  box-shadow: 0 0 10px hsl(var(--hydrogen-beta));
+}
+
+/* Bridge Connection Lines */
+.cloud-channel-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 80px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg,
+    hsl(var(--hydrogen-beta) / 0.3),
+    hsl(var(--hydrogen-gamma) / 0.2),
+    hsl(var(--hydrogen-delta) / 0.1),
+    transparent
+  );
+  animation: router-pulse 4s ease-in-out infinite;
+}
+
+@keyframes router-pulse {
+  0%, 100% { 
+    opacity: 0.3;
+    box-shadow: -2px 0 10px rgba(var(--hydrogen-beta-rgb), 0.3);
+  }
+  50% { 
+    opacity: 0.8;
+    box-shadow: -2px 0 20px rgba(var(--hydrogen-beta-rgb), 0.6);
+  }
+}
+
+@keyframes scan-horizontal {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* ===========================
+   FRACTAL NODE POST STYLING
+   Self-similar, dynamic, holographic
+   =========================== */
+
+.fractal-node-post {
+  position: relative;
+  margin-bottom: 1rem;
+  animation: fractal-float 6s ease-in-out infinite;
+}
+
+@keyframes fractal-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+}
+
+.fractal-node-inner {
+  position: relative;
+  background: linear-gradient(135deg, 
+    rgba(var(--background), 0.95) 0%,
+    rgba(var(--background), 0.98) 50%,
+    rgba(var(--background), 0.95) 100%);
+  border: 2px solid hsl(var(--hydrogen-beta) / 0.3);
+  border-radius: 12px;
+  padding: 3px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.fractal-node-inner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    hsl(var(--hydrogen-beta) / 0.2) 60deg,
+    transparent 120deg,
+    hsl(var(--hydrogen-gamma) / 0.2) 180deg,
+    transparent 240deg,
+    hsl(var(--hydrogen-delta) / 0.2) 300deg,
+    transparent 360deg
+  );
+  animation: fractal-rotate 20s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes fractal-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fractal-node-post:hover .fractal-node-inner::before {
+  opacity: 1;
+}
+
+.fractal-node-post:hover .fractal-node-inner {
+  border-color: hsl(var(--hydrogen-beta) / 0.6);
+  box-shadow: 
+    0 0 20px rgba(var(--hydrogen-beta-rgb), 0.3),
+    inset 0 0 20px rgba(var(--hydrogen-beta-rgb), 0.1);
+}
+
+.fractal-node-content {
+  position: relative;
+  background: rgba(var(--background), 0.9);
+  border: 1px solid hsl(var(--hydrogen-gamma) / 0.2);
+  border-radius: 10px;
+  padding: 2px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.fractal-node-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    hsl(var(--hydrogen-beta) / 0.1),
+    transparent
+  );
+  animation: fractal-scan 3s ease-in-out infinite;
+}
+
+@keyframes fractal-scan {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Inner content area with padding */
+.fractal-node-content > div:first-child {
+  background: rgba(var(--background), 0.95);
+  border-radius: 8px;
+  padding: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Fractal corner ornaments */
+.fractal-node-inner::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-top: 2px solid hsl(var(--hydrogen-beta) / 0.4);
+  border-right: 2px solid hsl(var(--hydrogen-beta) / 0.4);
+  border-radius: 0 4px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fractal-node-post:hover .fractal-node-inner::after {
+  opacity: 1;
+  animation: corner-pulse 2s ease-in-out infinite;
+}
+
+@keyframes corner-pulse {
+  0%, 100% { 
+    border-color: hsl(var(--hydrogen-beta) / 0.4);
+    box-shadow: 0 0 10px rgba(var(--hydrogen-beta-rgb), 0.3);
+  }
+  50% { 
+    border-color: hsl(var(--hydrogen-beta) / 0.8);
+    box-shadow: 0 0 20px rgba(var(--hydrogen-beta-rgb), 0.6);
+  }
+}
+
+/* Particle effect on hover */
+.fractal-node-post:hover::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--hydrogen-beta));
+  border-radius: 50%;
+  box-shadow: 
+    0 0 10px hsl(var(--hydrogen-beta)),
+    0 0 20px hsl(var(--hydrogen-beta)),
+    0 0 30px hsl(var(--hydrogen-beta));
+  animation: fractal-particle 2s ease-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes fractal-particle {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -150%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Add depth with multiple box shadows */
+.fractal-node-post:hover {
+  transform: translateY(-3px);
+}
+
+.fractal-node-post:hover .fractal-node-content {
+  border-color: hsl(var(--hydrogen-gamma) / 0.4);
+  box-shadow: 
+    0 0 15px rgba(var(--hydrogen-gamma-rgb), 0.2),
+    inset 0 0 15px rgba(var(--hydrogen-gamma-rgb), 0.1);
+}
+
+/* Hydrogen spectrum glow for different post types */
+.fractal-node-post[data-pinned="true"] .fractal-node-inner {
+  border-color: hsl(var(--hydrogen-alpha) / 0.5);
+  box-shadow: 0 0 15px rgba(var(--hydrogen-alpha-rgb), 0.3);
+}
+
+.fractal-node-post[data-role="creator"] .fractal-node-inner {
+  border-color: hsl(var(--hydrogen-gamma) / 0.4);
+}
+
+.fractal-node-post[data-role="operator"] .fractal-node-inner {
+  border-color: hsl(var(--hydrogen-beta) / 0.4);
 }
 
 .cloud-channel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid hsl(var(--hydrogen-beta) / 0.2);
-  background: rgba(var(--background), 0.98);
+  padding: 0.75rem;
+  border-bottom: 2px solid hsl(var(--hydrogen-beta) / 0.3);
+  background: linear-gradient(180deg,
+    rgba(var(--background), 1) 0%,
+    rgba(var(--background), 0.98) 100%
+  );
   backdrop-filter: blur(10px);
   flex-shrink: 0;
+  position: relative;
+  box-shadow: 
+    0 2px 15px rgba(var(--hydrogen-beta-rgb), 0.15),
+    inset 0 -1px 0 hsl(var(--hydrogen-beta) / 0.2);
+}
+
+.cloud-channel-header::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    hsl(var(--hydrogen-beta)),
+    hsl(var(--hydrogen-gamma)),
+    hsl(var(--hydrogen-delta)),
+    transparent
+  );
+  animation: header-scan 6s ease-in-out infinite;
+}
+
+@keyframes header-scan {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Slow spin animation for bridge indicators */
+@keyframes animate-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: animate-spin-slow 8s linear infinite;
 }
 
 .cloud-channel-icon-btn {

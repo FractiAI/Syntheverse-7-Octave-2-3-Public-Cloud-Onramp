@@ -132,7 +132,7 @@ export default async function Dashboard() {
         </div>
 
         {/* Cloud Channel - Right Sidebar (Hidden on mobile) */}
-        <aside className="hidden lg:block w-[400px] border-l border-[var(--keyline-primary)] flex-shrink-0">
+        <aside className="hidden lg:block w-[320px] border-l border-[var(--keyline-primary)] flex-shrink-0">
           <CloudChannel />
         </aside>
       </div>
