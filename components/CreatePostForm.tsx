@@ -140,18 +140,23 @@ export function CreatePostForm({ sandboxId, onPostCreated, onCancel }: CreatePos
   };
 
   return (
-    <div className="cockpit-panel border-l-4 border-[var(--hydrogen-amber)] p-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="cloud-card p-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <div>
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="What's on your mind?"
-            className="cockpit-input min-h-[100px] resize-none"
+            placeholder="Share your thoughts in the cloud..."
+            className="w-full min-h-[120px] resize-none bg-transparent border border-opacity-30 rounded-lg p-3 text-sm focus:border-opacity-60 focus:outline-none focus:ring-2 focus:ring-opacity-20 transition-all"
+            style={{
+              borderColor: 'hsl(var(--hydrogen-beta))',
+              color: 'hsl(var(--text-primary))',
+              '--tw-ring-color': 'hsl(var(--hydrogen-beta))',
+            } as React.CSSProperties}
             maxLength={2000}
             disabled={submitting}
           />
-          <div className="mt-1 text-xs cockpit-text opacity-70 text-right">
+          <div className="mt-1.5 text-xs text-right" style={{ color: 'hsl(var(--text-tertiary))' }}>
             {content.length}/2000
           </div>
         </div>
@@ -178,11 +183,16 @@ export function CreatePostForm({ sandboxId, onPostCreated, onCancel }: CreatePos
 
         {/* Error Message */}
         {error && (
-          <div className="cockpit-text text-red-400 text-sm">{error}</div>
+          <div className="text-sm p-2 rounded" style={{ 
+            backgroundColor: 'hsl(var(--status-error) / 0.1)',
+            color: 'hsl(var(--status-error))' 
+          }}>
+            {error}
+          </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-2">
           <div>
             <input
               ref={fileInputRef}
@@ -192,38 +202,42 @@ export function CreatePostForm({ sandboxId, onPostCreated, onCancel }: CreatePos
               className="hidden"
               disabled={uploading || submitting}
             />
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading || submitting}
-              className="cockpit-lever"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+              style={{
+                backgroundColor: 'hsl(var(--hydrogen-gamma) / 0.1)',
+                border: '1px solid hsl(var(--hydrogen-gamma) / 0.3)',
+                color: 'hsl(var(--hydrogen-gamma))',
+              }}
             >
-              <ImageIcon className={`mr-2 h-4 w-4 ${uploading ? 'animate-pulse' : ''}`} />
-              {uploading ? 'Uploading...' : 'Add Image'}
-            </Button>
+              <ImageIcon className={`h-4 w-4 ${uploading ? 'animate-pulse' : ''}`} />
+              {uploading ? 'Uploading...' : 'Image'}
+            </button>
           </div>
           <div className="flex gap-2">
-            <Button
+            <button
               type="button"
-              variant="outline"
-              size="sm"
               onClick={onCancel}
               disabled={submitting}
-              className="cockpit-lever"
+              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+              style={{
+                border: '1px solid hsl(var(--hydrogen-beta) / 0.3)',
+                color: 'hsl(var(--text-secondary))',
+              }}
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              size="sm"
               disabled={submitting || !content.trim()}
-              className="cockpit-lever"
+              className="hydrogen-btn hydrogen-btn-beta flex items-center gap-2 px-4 py-1.5 text-sm"
             >
-              <Send className="mr-2 h-4 w-4" />
+              <Send className="h-4 w-4" />
               {submitting ? 'Posting...' : 'Post'}
-            </Button>
+            </button>
           </div>
         </div>
       </form>
