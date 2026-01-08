@@ -32,30 +32,77 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Holographic Hydrogen Frontier - Design System v2.0 */
+    
+    /* === HYDROGEN SPECTRUM PALETTE === */
+    /* Hydrogen Alpha (Hα) - Deep Red - 656.3nm */
+    --hydrogen-alpha: 0 85% 62%;
+    --hydrogen-alpha-glow: 0 85% 62%;
+    
+    /* Hydrogen Beta (Hβ) - Cyan Blue - 486.1nm */
+    --hydrogen-beta: 195 100% 58%;
+    --hydrogen-beta-glow: 195 100% 58%;
+    --hydrogen-beta-accessible: 195 100% 45%;
+    
+    /* Hydrogen Gamma (Hγ) - Deep Blue-Violet - 434.0nm */
+    --hydrogen-gamma: 250 85% 62%;
+    --hydrogen-gamma-glow: 250 85% 62%;
+    --hydrogen-gamma-accessible: 250 85% 55%;
+    
+    /* Hydrogen Delta (Hδ) - Violet */
+    --hydrogen-delta: 270 75% 70%;
+    --hydrogen-delta-glow: 270 75% 70%;
+    
+    /* === SPACE LAYERS (Background Depth) === */
+    --space-void: 240 10% 3.9%;     /* Deepest layer */
+    --space-deep: 240 12% 8%;        /* Mid layer */
+    --space-mid: 240 10% 12%;        /* Surface layer */
+    
+    /* === TEXT HIERARCHY === */
+    --text-primary: 210 40% 98%;     /* Brightest */
+    --text-secondary: 215 20% 75%;   /* Standard */
+    --text-tertiary: 215 20% 50%;    /* Dimmed */
+    --text-accent-cyan: 195 100% 70%;
+    --text-accent-violet: 250 85% 75%;
+    
+    /* === FUNCTIONAL COLORS === */
+    --status-active: 142 76% 36%;    /* Green */
+    --status-warning: 38 92% 50%;    /* Orange */
+    --status-critical: 0 85% 62%;    /* Red */
+    --status-neutral: 215 20% 65%;   /* Gray */
+    
+    /* Metal Classification */
+    --metal-gold: 45 93% 47%;
+    --metal-silver: 0 0% 78%;
+    --metal-copper: 25 85% 45%;
+    
+    /* === SHADCN COMPATIBILITY === */
+    --background: 240 10% 3.9%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 240 12% 8%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 240 12% 8%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --primary: 195 100% 58%;         /* Hydrogen beta */
+    --primary-foreground: 240 10% 3.9%;
+    --secondary: 240 10% 12%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --muted: 240 10% 12%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 250 85% 62%;           /* Hydrogen gamma */
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 85% 62%;        /* Hydrogen alpha */
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 195 100% 58%;          /* Hydrogen beta with low opacity */
+    --input: 240 10% 12%;
+    --ring: 195 100% 58%;
+    
+    /* Charts - Hydrogen spectrum */
+    --chart-1: 195 100% 58%;  /* Beta */
+    --chart-2: 250 85% 62%;   /* Gamma */
+    --chart-3: 0 85% 62%;     /* Alpha */
+    --chart-4: 270 75% 70%;   /* Delta */
+    --chart-5: 45 93% 47%;    /* Gold */
   }
 }
 
@@ -89,6 +136,315 @@ html {
   scroll-behavior: smooth;
 }
 
+/* === HOLOGRAPHIC HYDROGEN EFFECTS === */
+
+/* Hydrogen Glow Animation */
+@keyframes hydrogen-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px hsl(var(--hydrogen-beta) / 0.3),
+      0 0 40px hsl(var(--hydrogen-beta) / 0.2),
+      inset 0 0 20px hsl(var(--hydrogen-beta) / 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px hsl(var(--hydrogen-beta) / 0.4),
+      0 0 60px hsl(var(--hydrogen-beta) / 0.3),
+      inset 0 0 30px hsl(var(--hydrogen-beta) / 0.15);
+  }
+}
+
+@keyframes hydrogen-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100vh);
+  }
+}
+
+/* Utility Classes */
+.holographic-glow {
+  animation: hydrogen-glow 3s ease-in-out infinite;
+}
+
+.holographic-pulse {
+  animation: hydrogen-pulse 2s ease-in-out infinite;
+}
+
+.holographic-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.holographic-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--hydrogen-beta) / 0.15) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* === HOLOGRAPHIC COMPONENT LIBRARY === */
+
+/* Cloud Card */
+.cloud-card {
+  position: relative;
+  background: hsl(var(--space-mid));
+  border-radius: 12px;
+  border: 1px solid hsl(var(--hydrogen-beta) / 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cloud-card:hover {
+  border-color: hsl(var(--hydrogen-beta) / 0.4);
+  box-shadow: 0 0 30px hsl(var(--hydrogen-beta) / 0.2);
+}
+
+.cloud-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 30% 40%,
+    hsl(var(--hydrogen-gamma) / 0.08),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* Hydrogen Buttons */
+.hydrogen-btn {
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.hydrogen-btn-alpha {
+  background: hsl(var(--hydrogen-alpha));
+  color: white;
+  box-shadow: 0 0 20px hsl(var(--hydrogen-alpha) / 0.4);
+}
+
+.hydrogen-btn-alpha:hover {
+  box-shadow: 0 0 40px hsl(var(--hydrogen-alpha) / 0.6);
+  transform: translateY(-2px);
+}
+
+.hydrogen-btn-beta {
+  background: hsl(var(--hydrogen-beta));
+  color: hsl(var(--space-void));
+  box-shadow: 0 0 20px hsl(var(--hydrogen-beta) / 0.4);
+}
+
+.hydrogen-btn-beta:hover {
+  box-shadow: 0 0 40px hsl(var(--hydrogen-beta) / 0.6);
+  transform: translateY(-2px);
+}
+
+.hydrogen-btn-gamma {
+  background: hsl(var(--hydrogen-gamma));
+  color: white;
+  box-shadow: 0 0 20px hsl(var(--hydrogen-gamma) / 0.4);
+}
+
+.hydrogen-btn-gamma:hover {
+  box-shadow: 0 0 40px hsl(var(--hydrogen-gamma) / 0.6);
+  transform: translateY(-2px);
+}
+
+/* Frontier Panel */
+.frontier-panel {
+  background: hsl(var(--space-deep));
+  border: 1px solid hsl(var(--hydrogen-beta) / 0.2);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.frontier-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    hsl(var(--hydrogen-gamma) / 0.08),
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+.frontier-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid hsl(var(--hydrogen-beta) / 0.1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: hsl(var(--text-accent-cyan));
+}
+
+/* Holographic Grid Background */
+.holographic-grid {
+  background-image: 
+    linear-gradient(hsl(var(--hydrogen-beta) / 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--hydrogen-beta) / 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  position: relative;
+}
+
+.holographic-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 40%,
+    hsl(var(--space-void)) 100%
+  );
+  pointer-events: none;
+}
+
+/* Holographic Badge */
+.holographic-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: hsl(var(--space-mid));
+  border: 1px solid;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.badge-hydrogen-observer {
+  border-color: hsl(var(--hydrogen-beta));
+  color: hsl(var(--hydrogen-beta));
+}
+
+.badge-frontier-scout {
+  border-color: hsl(var(--hydrogen-gamma));
+  color: hsl(var(--hydrogen-gamma));
+}
+
+.badge-cloud-architect {
+  border-color: hsl(var(--metal-gold));
+  color: hsl(var(--metal-gold));
+}
+
+.badge-quantum-synthesist {
+  border-color: hsl(var(--hydrogen-alpha));
+  color: hsl(var(--hydrogen-alpha));
+}
+
+.holographic-badge:hover {
+  box-shadow: 0 0 30px currentColor;
+  transform: translateY(-2px);
+}
+
+/* Nebula Background */
+.nebula-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.nebula-background::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    hsl(var(--hydrogen-beta) / 0.1),
+    transparent 40%
+  ),
+  radial-gradient(
+    circle at 70% 60%,
+    hsl(var(--hydrogen-gamma) / 0.08),
+    transparent 40%
+  ),
+  radial-gradient(
+    circle at 50% 80%,
+    hsl(var(--hydrogen-alpha) / 0.06),
+    transparent 40%
+  );
+  animation: float-nebula 20s ease-in-out infinite;
+}
+
+@keyframes float-nebula {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5%, -5%) scale(1.1); }
+}
+
+/* Hydrogen Particle Effect */
+.hydrogen-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--hydrogen-beta));
+  border-radius: 50%;
+  box-shadow: 0 0 10px hsl(var(--hydrogen-beta));
+  animation: float-up 15s ease-in-out infinite;
+  opacity: 0;
+}
+
+/* Scanning Line Effect */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    hsl(var(--hydrogen-beta) / 0.5),
+    transparent
+  );
+  animation: scan-line 3s ease-in-out infinite;
+}
+
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -101,5 +457,14 @@ html {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .holographic-glow,
+  .holographic-pulse,
+  .holographic-shimmer::before,
+  .hydrogen-particle,
+  .scan-line,
+  .nebula-background::before {
+    animation: none !important;
   }
 }
