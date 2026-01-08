@@ -479,7 +479,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                           {submission.is_seed && (
                             <span 
                               className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                              title="Seed Submission - First in sandbox (+15% multiplier)"
+                              title="Seed Submission - Defines irreducible primitives (S₀-S₈) (+15% multiplier)"
                             >
                               <Sprout className="h-3 w-3" />
                               SEED
@@ -488,10 +488,10 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                           {submission.has_sweet_spot_edges && (
                             <span 
                               className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                              title="Sweet Spot Edge - Optimal overlap (9.2%-19.2%)"
+                              title="Sweet Spot Overlap - Optimal redundancy (9.2%-19.2%) - Different from edge detection"
                             >
                               <Zap className="h-3 w-3" />
-                              EDGE
+                              SWEET SPOT
                             </span>
                           )}
                         </div>
@@ -555,7 +555,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
               {selectedSubmission?.is_seed && (
                 <span 
                   className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                  title="Seed Submission - First in sandbox (+15% multiplier)"
+                  title="Seed Submission - Defines irreducible primitives (S₀-S₈) (+15% multiplier)"
                 >
                   <Sprout className="h-3.5 w-3.5" />
                   SEED
@@ -564,10 +564,10 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
               {selectedSubmission?.has_sweet_spot_edges && (
                 <span 
                   className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                  title="Sweet Spot Edge - Optimal overlap (9.2%-19.2%)"
+                  title="Sweet Spot Overlap - Optimal redundancy (9.2%-19.2%) - Different from edge detection"
                 >
                   <Zap className="h-3.5 w-3.5" />
-                  EDGE
+                  SWEET SPOT
                 </span>
               )}
             </div>

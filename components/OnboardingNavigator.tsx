@@ -4569,17 +4569,12 @@ export function OnboardingNavigator() {
             </div>
 
             <div className="mb-6 rounded-lg border-2 border-green-500/50 bg-green-500/10 p-4">
-              <div className="academy-label mb-2 text-green-400">SEED INFORMATION RECOGNITION</div>
+              <div className="academy-label mb-2 text-green-400">SEED & EDGE INFORMATION RECOGNITION</div>
               <p className="academy-text text-sm">
-                <strong>Seed Information</strong> is a fundamental class of information—distinct from data
-                and metadata—that functions as a generative seed. <strong>First submissions to a sandbox</strong>{' '}
-                (which often exhibit seed-like properties) receive a <strong className="text-green-300">15% score multiplier</strong>. This recognizes that seed information has disproportionately high{' '}
-                <strong>Generative Value Density (GVD)</strong> relative to its descriptive length.
+                <strong>Seed Information</strong> (S₀-S₈) consists of irreducible informational primitives that cannot be decomposed without loss of generative capacity. <strong>Edge Information</strong> (E₀-E₆) consists of boundary operators that enable interaction between seeds. Submissions that define seeds or edges receive a <strong className="text-green-300">15% score multiplier each</strong>. Combined seed+edge submissions receive <strong className="text-green-300">32.25% (×1.3225)</strong>. This recognizes their disproportionately high <strong>Generative Value Density (GVD)</strong>.
               </p>
               <p className="academy-text mt-2 text-xs opacity-90">
-                Note: While the practical detection heuristic is &quot;first in sandbox,&quot; seed information
-                is defined by four conditions: Minimal Description Length, Recursive Expandability, Self-Similar
-                Structural Preservation, and Substrate Independence.
+                Note: Detection is <strong>content-based</strong>, not timing-based. The AI analyzes whether submissions define irreducible primitives (seeds) or boundary operators (edges). See Module 18 for the complete Seeds and Edges catalog.
               </p>
             </div>
 
