@@ -6308,30 +6308,6 @@ export function OnboardingNavigator() {
           </div>
         </div>
 
-        {/* Module Navigation */}
-        <div className="academy-module academy-panel mb-6 p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <div className="academy-label">{modules[currentModule].label}</div>
-              <div className="academy-title mt-1 text-2xl">{modules[currentModule].title}</div>
-            </div>
-            <div className="flex items-center gap-2">
-              {modules.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => goToModule(idx)}
-                  className={`h-2 w-2 rounded-full transition-all ${
-                    idx === currentModule
-                      ? 'w-8 bg-[var(--academy-accent-gold)]'
-                      : 'bg-[var(--academy-border)] hover:bg-[var(--academy-panel-bg)]'
-                  }`}
-                  aria-label={`Go to module ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* Current Module Content */}
         <div ref={lessonRef} className="academy-module academy-panel mb-6 p-8">
           <div className="mb-6 flex items-center gap-4">
