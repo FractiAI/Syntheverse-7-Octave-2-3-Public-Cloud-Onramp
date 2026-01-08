@@ -132,7 +132,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 FRACTIAI COMMAND CENTER
               </div>
               <div className="mt-2 text-sm font-semibold uppercase tracking-wider text-slate-400">
-                Base Mainnet · Launch Coordination Active
+                Base Mainnet · Awareness Key
               </div>
             </div>
             <div className="flex flex-col w-full md:w-auto">
@@ -171,7 +171,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                     className="h-2 w-2 animate-pulse rounded-full bg-green-500"
                     style={{ boxShadow: '0 0 10px #22c55e' }}
                   />
-                  <span>Spring Equinox 2026 • All Systems GO</span>
+                  <span>Spring Equinox 2026 • All Systems LIVE</span>
                 </div>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 awareness ecosystem—one where contributions become measurable, verifiable, and permanently anchored infrastructure.
               </p>
               <p>
-                The <strong>SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026. All systems are GO. 
+                The <strong>SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026. All systems are LIVE. 
                 Launch windows are open for qualified contributions. Your work becomes part of the permanent record—visible, 
                 demonstrable, and liberated from traditional gatekeeping.
               </p>
