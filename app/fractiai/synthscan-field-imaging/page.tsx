@@ -33,11 +33,10 @@ export default async function SynthScanFieldImagingPage() {
         </div>
 
         <div className="cockpit-panel p-8">
-          <div className="cockpit-label">FULL-SERVICE ENGAGEMENT</div>
-          <div className="cockpit-title mt-2 text-3xl">SynthScan Field Imaging</div>
+          <div className="cockpit-label">EXPERT SUPPORT</div>
+          <div className="cockpit-title mt-2 text-3xl">Full-Service SynthScan™ MRI Imaging</div>
           <div className="cockpit-text mt-3">
-            Full-service complex systems imaging performed by the FractiAI team using SynthScan™
-            MRI.
+            Full-service SynthScan™ MRI imaging of any abstract or complex system, including projects, enterprises, and beyond. Performed by the FractiAI team.
           </div>
         </div>
 
@@ -45,17 +44,16 @@ export default async function SynthScanFieldImagingPage() {
           <div className="cockpit-label">SERVICE OVERVIEW</div>
           <div className="cockpit-text mt-3 space-y-4 text-sm">
             <p>
-              SynthScan Field Imaging is <strong>not a software license</strong>. This is a
-              done-for-you imaging and analysis service performed by the FractiAI team using
-              SynthScan™ MRI technology.
+              This is <strong>not a software license</strong>. This is a full-service imaging and analysis engagement performed by the FractiAI team using SynthScan™ MRI technology.
             </p>
             <p>
-              Pricing is per node (system component or measurement target). Tier differences are
-              based on deliverables and analysis depth, not time-based billing.
+              <strong>What We Image:</strong> Any abstract or complex system—organizational structures, project architectures, enterprise systems, informational ecosystems, cognitive frameworks, strategic initiatives, and beyond.
             </p>
             <p>
-              Our team performs the imaging, analysis, and delivers structured technical reports
-              based on your system requirements.
+              Pricing is per node (system component or measurement target). Tier differences are based on deliverables and analysis depth, not time-based billing.
+            </p>
+            <p>
+              Our team performs the imaging, analysis, and delivers structured technical reports based on your system requirements.
             </p>
           </div>
         </div>
