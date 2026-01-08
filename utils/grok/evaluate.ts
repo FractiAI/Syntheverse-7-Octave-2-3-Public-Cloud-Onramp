@@ -58,6 +58,7 @@ interface GroqEvaluationResult {
   base_density?: number;
   redundancy_overlap_percent?: number;
   is_seed_submission?: boolean;
+  seed_justification?: string;
   raw_groq_response?: string;
   llm_metadata?: {
     timestamp: string;
@@ -137,6 +138,7 @@ export async function evaluateWithGroq(
   base_density?: number;
   redundancy_overlap_percent?: number;
   is_seed_submission?: boolean;
+  seed_justification?: string;
   raw_groq_response?: string;
   llm_metadata?: {
     timestamp: string;
