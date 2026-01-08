@@ -573,7 +573,7 @@ ${isSeedSubmission ? '- This is a SEED SUBMISSION: apply the 15% seed multiplier
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'llama-3.1-8b-instant',
+            model: 'llama-3.3-70b-versatile',
             messages: [
               { role: 'system', content: systemPrompt },
               { role: 'user', content: evaluationQuery },
@@ -911,7 +911,7 @@ ${answer}`;
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'llama-3.1-8b-instant',
+              model: 'llama-3.3-70b-versatile',
               messages: [
                 { role: 'system', content: repairSystemPrompt },
                 { role: 'user', content: repairUserPrompt },
@@ -1637,8 +1637,8 @@ ${answer}`;
     const llmMetadata = {
       timestamp: evaluationTimestamp.toISOString(),
       date: evaluationTimestamp.toISOString().split('T')[0], // YYYY-MM-DD format
-      model: 'llama-3.1-8b-instant',
-      model_version: '3.1',
+      model: 'llama-3.3-70b-versatile',
+      model_version: '3.3',
       provider: 'Groq',
       system_prompt_preview: systemPrompt.substring(0, 500) + '...', // First 500 chars + indicator
       system_prompt_hash: crypto
