@@ -59,6 +59,8 @@ interface GroqEvaluationResult {
   redundancy_overlap_percent?: number;
   is_seed_submission?: boolean;
   seed_justification?: string;
+  is_edge_submission?: boolean;
+  edge_justification?: string;
   raw_groq_response?: string;
   llm_metadata?: {
     timestamp: string;
@@ -139,6 +141,8 @@ export async function evaluateWithGroq(
   redundancy_overlap_percent?: number;
   is_seed_submission?: boolean;
   seed_justification?: string;
+  is_edge_submission?: boolean;
+  edge_justification?: string;
   raw_groq_response?: string;
   llm_metadata?: {
     timestamp: string;
@@ -169,7 +173,9 @@ export async function evaluateWithGroq(
     bonus_multiplier_computed: number;
     bonus_multiplier_applied: number;
     seed_multiplier?: number;
+    edge_multiplier?: number;
     is_seed_submission?: boolean;
+    is_edge_submission?: boolean;
     after_penalty: number;
     after_bonus: number;
     after_seed?: number;
@@ -572,6 +578,7 @@ Notes:
 - Apply redundancy penalty ONLY to the composite/total score (as specified in the system prompt).
 - You MUST include scoring_metadata, pod_composition, and archive_similarity_distribution in your JSON response.
 - You MUST include "is_seed_submission" (boolean) and "seed_justification" (string) fields based on content analysis.
+- You MUST include "is_edge_submission" (boolean) and "edge_justification" (string) fields based on content analysis.
 - Output: Provide a detailed narrative review (clear + specific), AND include the REQUIRED JSON structure from the system prompt.
 - The JSON may be placed in a markdown code block, but it MUST be valid parseable JSON.
 `;
@@ -1429,17 +1436,23 @@ ${answer}`;
     // This was causing double-application of penalties/bonuses and non-reproducible scores
     const basePodScore = compositeScore;
 
-    // G) Apply correct formula: Final = (Composite × (1 - penalty%/100)) × bonus_multiplier × seed_multiplier
-    // Seed submissions receive multiplier based on CONTENT analysis by AI (not timing)
-    // AI determines if content exhibits seed characteristics (irreducibility, generative capacity)
+    // G) Apply correct formula: Final = (Composite × (1 - penalty%/100)) × bonus_multiplier × seed_multiplier × edge_multiplier
+    // Seed and Edge submissions receive multipliers based on CONTENT analysis by AI (not timing)
+    // AI determines if content exhibits seed/edge characteristics
     const SEED_MULTIPLIER = 1.15; // 15% bonus for seed submissions
+    const EDGE_MULTIPLIER = 1.15; // 15% bonus for edge submissions
     const isSeedFromAI = evaluation.is_seed_submission === true; // Trust AI's content-based determination
+    const isEdgeFromAI = evaluation.is_edge_submission === true; // Trust AI's content-based determination
     const seedMultiplier = isSeedFromAI ? SEED_MULTIPLIER : 1.0;
+    const edgeMultiplier = isEdgeFromAI ? EDGE_MULTIPLIER : 1.0;
+    
+    // Combined multiplier: if both seed AND edge, multiply both (1.15 × 1.15 = 1.3225 = 32.25% bonus)
+    const combinedMultiplier = seedMultiplier * edgeMultiplier;
 
     const afterPenalty = basePodScore * (1 - penaltyPercent / 100);
     const afterBonus = afterPenalty * bonusMultiplier;
-    const afterSeed = afterBonus * seedMultiplier;
-    const pod_score = Math.max(0, Math.min(10000, Math.round(afterSeed)));
+    const afterSeedAndEdge = afterBonus * combinedMultiplier;
+    const pod_score = Math.max(0, Math.min(10000, Math.round(afterSeedAndEdge)));
 
     // H) Score trace for transparency (Marek/Simba requirement)
     const scoreTrace = {
@@ -1471,14 +1484,24 @@ ${answer}`;
       // Seed multiplier calculation and application (content-based, not timing-based)
       seed_multiplier: seedMultiplier,
       seed_multiplier_applied: isSeedFromAI,
-      seed_applied_to: 'post_bonus', // Clarify where seed multiplier is applied
+      seed_applied_to: 'post_bonus',
       seed_justification: evaluation.seed_justification || (isSeedFromAI ? 'AI determined seed characteristics' : 'Not a seed contribution'),
+      
+      // Edge multiplier calculation and application (content-based boundary operator detection)
+      edge_multiplier: edgeMultiplier,
+      edge_multiplier_applied: isEdgeFromAI,
+      edge_applied_to: 'post_bonus',
+      edge_justification: evaluation.edge_justification || (isEdgeFromAI ? 'AI determined edge characteristics' : 'Not an edge contribution'),
+      
+      // Combined multiplier (seed × edge if both apply)
+      combined_multiplier: combinedMultiplier,
+      has_both_seed_and_edge: isSeedFromAI && isEdgeFromAI,
       
       // Step-by-step calculation (full transparency)
       step_1_composite: compositeScore,
       step_2_after_penalty: afterPenalty,
       step_3_after_bonus: afterBonus,
-      step_4_after_seed: afterSeed,
+      step_4_after_seed_and_edge: afterSeedAndEdge,
       step_5_clamped: pod_score,
       
       // Required for type compatibility
@@ -1490,8 +1513,12 @@ ${answer}`;
       final_score: pod_score,
       
       // Formula used (full transparency)
-      formula: isSeedFromAI
+      formula: (isSeedFromAI && isEdgeFromAI)
+        ? `Final = (Composite=${compositeScore} × (1 - ${penaltyPercent}%/100)) × ${bonusMultiplier.toFixed(3)} × ${seedMultiplier.toFixed(2)} (seed) × ${edgeMultiplier.toFixed(2)} (edge) = ${pod_score}`
+        : isSeedFromAI
         ? `Final = (Composite=${compositeScore} × (1 - ${penaltyPercent}%/100)) × ${bonusMultiplier.toFixed(3)} × ${seedMultiplier.toFixed(2)} (seed) = ${pod_score}`
+        : isEdgeFromAI
+        ? `Final = (Composite=${compositeScore} × (1 - ${penaltyPercent}%/100)) × ${bonusMultiplier.toFixed(3)} × ${edgeMultiplier.toFixed(2)} (edge) = ${pod_score}`
         : `Final = (Composite=${compositeScore} × (1 - ${penaltyPercent}%/100)) × ${bonusMultiplier.toFixed(3)} = ${pod_score}`,
       
       // Step-by-step formula breakdown (for UI display)
@@ -1499,10 +1526,10 @@ ${answer}`;
         `Step 1: Composite = N(${finalNoveltyScore}) + D(${densityFinal}) + C(${coherenceScore}) + A(${alignmentScore}) = ${compositeScore}`,
         `Step 2: After Penalty = ${compositeScore} × (1 - ${penaltyPercent}/100) = ${afterPenalty.toFixed(2)}`,
         `Step 3: After Bonus = ${afterPenalty.toFixed(2)} × ${bonusMultiplier.toFixed(3)} = ${afterBonus.toFixed(2)}`,
-        isSeedFromAI
-          ? `Step 4: After Seed = ${afterBonus.toFixed(2)} × ${seedMultiplier.toFixed(2)} (content exhibits seed properties) = ${afterSeed.toFixed(2)}`
+        (isSeedFromAI || isEdgeFromAI)
+          ? `Step 4: After Multipliers = ${afterBonus.toFixed(2)} × ${combinedMultiplier.toFixed(4)} ${isSeedFromAI && isEdgeFromAI ? '(seed × edge)' : isSeedFromAI ? '(seed)' : '(edge)'} = ${afterSeedAndEdge.toFixed(2)}`
           : null,
-        `Step ${isSeedFromAI ? '5' : '4'}: Final (clamped 0-10000) = ${pod_score}`,
+        `Step ${(isSeedFromAI || isEdgeFromAI) ? '5' : '4'}: Final (clamped 0-10000) = ${pod_score}`,
       ].filter(Boolean),
       
       // Clamping flag
@@ -1714,9 +1741,11 @@ ${answer}`;
       redundancy_overlap_percent: redundancyOverlapPercent,
       redundancy_penalty_percent: penaltyPercent, // Explicit penalty % (0 if no penalty)
       sweet_spot_bonus_multiplier: bonusMultiplier, // Explicit bonus multiplier (1.0 if no bonus)
-      // Seed detection (content-based via Seed Information Theory, not timing-based)
+      // Seed and Edge detection (content-based, not timing-based)
       is_seed_submission: isSeedFromAI,
       seed_justification: evaluation.seed_justification || null,
+      is_edge_submission: isEdgeFromAI,
+      edge_justification: evaluation.edge_justification || null,
       // Store raw Groq API response for display
       raw_groq_response: answer, // Store the raw markdown/text response from Groq
       // LLM Metadata for provenance and audit trail (required for all qualifying PoCs)

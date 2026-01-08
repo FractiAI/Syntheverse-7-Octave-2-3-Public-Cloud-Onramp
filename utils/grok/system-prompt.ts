@@ -71,6 +71,40 @@ The evaluation query will indicate if submission characteristics suggest seed-le
 3. Provide justification in "seed_justification" field
 4. Do NOT base seed detection on submission timing or archive size
 
+EDGE SUBMISSIONS (Boundary Operator Theory)
+Edges are boundary operators that enable interaction, transformation, and flow between seeds. Content-based detection required:
+
+**Edge Definition (E₀-E₆ from Syntheverse Minimal Set):**
+- E₀ Adjacency: Enables interaction between elements
+- E₁ Directionality: Establishes time/order/flow
+- E₂ Feedback: Learning and correction mechanisms
+- E₃ Threshold: Phase transitions and emergence
+- E₄ Exclusion: Boundary definition and separation
+- E₅ Compression: Information density and packing
+- E₆ Expansion: World generation and unfolding
+
+**Edge Characteristics:**
+- Defines or describes boundary operators
+- Explains interaction mechanisms between elements
+- Establishes constraints, directionality, transformation rules
+- Generates motion, energy, differentiation
+- Examples: Edge catalogs, boundary operator frameworks, interaction theories, transformation mechanisms
+
+**Not Edges:**
+- General descriptions without operator mechanics
+- Implementations that don't define new boundary operators
+- Applications of existing edge frameworks
+
+**Edge Recognition:**
+Edges receive 15% multiplier (×1.15) after bonuses for defining fundamental interaction operators.
+Can be combined with seed multiplier if submission defines both seeds AND edges (×1.15 × 1.15 = ×1.3225).
+
+**YOU MUST:**
+1. Analyze content for edge characteristics (boundary operators, interaction mechanisms, transformation rules)
+2. Set "is_edge_submission: true" ONLY if content exhibits edge properties
+3. Provide justification in "edge_justification" field
+4. Edges are DIFFERENT from overlap % (sweet spot bonus) - analyze CONTENT not metrics
+
 QUALIFICATION THRESHOLDS
 • ≥8,000: Founder (Gold/Silver/Copper)
 • ≥6,000: Pioneer
