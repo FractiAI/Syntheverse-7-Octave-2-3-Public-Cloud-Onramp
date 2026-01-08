@@ -798,10 +798,10 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                               </div>
                             )}
 
-                          {/* Final PoD Score */}
+                          {/* Final PoC Score */}
                           <div className="border-t border-[var(--keyline-primary)] pt-3">
                             <div className="flex items-center justify-between">
-                              <span className="cockpit-text font-medium">Final PoD Score</span>
+                              <span className="cockpit-text font-medium">Final PoC Score</span>
                               <span className="cockpit-number cockpit-number-medium">
                                 {selectedSubmission.pod_score?.toLocaleString() || 'N/A'} / 10,000
                               </span>

@@ -617,11 +617,15 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
 
       {/* SynthScan MRI Submission Form */}
       <div className="mri-control-panel">
-        {/* MRI System Header */}
+        {/* MRI System Header with Branding */}
         <div className="mri-header">
           <div className="flex items-start justify-between">
             <div>
-              <div className="mri-system-name">SYNTHSCAN™ MRI IMAGING SYSTEM</div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-4xl font-bold text-blue-600">FractiAI</div>
+                <div className="h-8 w-px bg-blue-300"></div>
+                <div className="mri-system-name">SYNTHSCAN™ MRI</div>
+              </div>
               <div className="mri-title">HHF-AI Spin Resonance Imaging</div>
               <div className="mri-subtitle">
                 Hydrogen-Holographic Fractal Magnetic Resonance
@@ -637,8 +641,76 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
           </div>
         </div>
 
-        {/* Operator Information Panel */}
+        {/* What This Does - Information Panel */}
         <div className="container mx-auto max-w-5xl px-4">
+          <div className="mb-6 rounded-lg border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-white p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="rounded-full bg-blue-600 p-3">
+                  <Brain className="h-6 w-6 text-white" />
+                </div>
+              </div>
+              <div>
+                <h3 className="mb-2 text-lg font-bold text-slate-900">
+                  Proof-of-Contribution Evaluation System
+                </h3>
+                <p className="mb-3 text-sm text-slate-700">
+                  SynthScan™ MRI uses hydrogen spin–mediated resonance to image and evaluate complex 
+                  intellectual contributions. Your submission will be scanned across four dimensions 
+                  (Novelty, Density, Coherence, Alignment) and scored on a scale of 0-10,000 points.
+                </p>
+                <div className="text-xs text-slate-600">
+                  <strong>Result:</strong> Qualified contributions receive recognition, on-chain registration, 
+                  and allocation of SYNTH tokens from the 90 trillion token motherlode vault.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Examination Checklist */}
+          <div className="mb-6 rounded-lg border border-slate-300 bg-white p-6">
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">Examination Procedure</h3>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                  1
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-slate-900">Enter Exam Details</div>
+                  <div className="text-sm text-slate-600">Provide title and subject of your contribution</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                  2
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-slate-900">Submit Imaging Data</div>
+                  <div className="text-sm text-slate-600">Abstract, equations, and constants (4,000 character scan window)</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                  3
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-slate-900">Process Payment</div>
+                  <div className="text-sm text-slate-600">$500 examination fee (complimentary for approved testers)</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                  4
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-slate-900">Receive Evaluation Report</div>
+                  <div className="text-sm text-slate-600">Comprehensive diagnostic report with scores and qualification status</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Operator Information Panel */}
           <div className="mri-operator-panel">
             <div className="mri-operator-info">
               <div className="mri-operator-label">Operator Information</div>
@@ -959,7 +1031,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                   </span>
                                 </div>
                                 <div className="mt-2 text-sm text-muted-foreground">
-                                  Based on composite score (PoD Score):{' '}
+                                  Based on composite score (PoC Score):{' '}
                                   {evaluationStatus.podScore?.toLocaleString() || 'N/A'} / 10,000
                                 </div>
                               </div>
@@ -1193,11 +1265,11 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                           </div>
                                         )}
 
-                                        {/* Final PoD Score */}
+                                        {/* Final PoC Score */}
                                         <div className="border-t pt-2">
                                           <div className="flex items-center justify-between">
                                             <span className="font-medium text-slate-700">
-                                              Final PoD Score
+                                              Final PoC Score
                                             </span>
                                             <span className="text-lg font-bold">
                                               {evaluationStatus.podScore?.toLocaleString() || 'N/A'}{' '}

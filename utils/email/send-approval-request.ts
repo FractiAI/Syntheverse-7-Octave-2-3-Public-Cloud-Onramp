@@ -76,7 +76,7 @@ export async function sendApprovalRequestEmail(
                     <td style="padding: 8px 0;">${data.contributor}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 8px 0; font-weight: bold;">PoD Score:</td>
+                    <td style="padding: 8px 0; font-weight: bold;">PoC Score:</td>
                     <td style="padding: 8px 0; color: #667eea; font-size: 18px; font-weight: bold;">${data.pod_score.toLocaleString()} / 10,000</td>
                 </tr>
                 <tr>

@@ -161,7 +161,7 @@ CRITICAL REQUIREMENTS
 1. All scores MUST be numeric (not strings/null/undefined)
 2. Density MUST include base_score, final_score, AND score fields
 3. redundancy_overlap_percent: positive = bonus, negative = penalty, zero = neutral
-4. Individual dimension redundancy_penalty_percent MUST be 0 (penalty only in PoD)
+4. Individual dimension redundancy_penalty_percent MUST be 0 (penalty only in PoC)
 5. scoring_metadata, pod_composition, archive_similarity_distribution MUST be present
 6. Total score = Composite × (1 + redundancy_overlap_percent/100)
 

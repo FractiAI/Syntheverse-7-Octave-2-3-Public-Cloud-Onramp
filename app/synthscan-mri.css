@@ -22,6 +22,8 @@
 .mri-control-panel {
   min-height: 100vh;
   background: linear-gradient(to bottom, var(--mri-bg-panel), #ffffff, var(--mri-bg-panel));
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* MRI Header - Main System Display */
@@ -463,6 +465,28 @@
 
 /* Mobile-specific optimizations for iOS Safari */
 @media (max-width: 640px) {
+  /* Remove any horizontal blank spaces */
+  body {
+    overflow-x: hidden;
+  }
+  
+  .mri-control-panel {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  /* Container within control panel */
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
   /* Prevent zoom on input focus (iOS Safari) */
   .mri-input,
   .mri-textarea {
@@ -470,9 +494,11 @@
   }
   
   /* Safe area insets for notched devices */
-  .mri-control-panel {
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+  .mri-header,
+  .mri-operator-panel,
+  .mri-exam-card {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
   
   /* Improved header for mobile */
@@ -480,6 +506,10 @@
     padding: 1rem;
     flex-direction: column;
     gap: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    border-left: 4px solid var(--mri-primary);
   }
   
   .mri-header-grid {
@@ -487,13 +517,23 @@
     gap: 1rem;
   }
   
+  .mri-system-name {
+    font-size: 0.625rem;
+  }
+  
   .mri-title {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     line-height: 1.3;
   }
   
   .mri-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.625rem;
+    line-height: 1.4;
+  }
+  
+  .mri-status-display {
+    width: 100%;
+    justify-content: flex-start;
   }
   
   /* Touch-friendly buttons (44px min height for iOS) */
@@ -512,7 +552,9 @@
   /* Compact operator panel */
   .mri-operator-panel {
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin: 0 0 1rem 0;
+    flex-direction: column;
+    gap: 0.75rem;
   }
   
   /* Improved exam card */
@@ -520,16 +562,41 @@
     border-radius: 0;
     border-left: 0;
     border-right: 0;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
   }
   
   .mri-exam-header {
     padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
   
   .mri-exam-type {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+  }
+  
+  .mri-exam-fee {
+    text-align: left;
+    width: 100%;
+  }
+  
+  /* Input sections on mobile */
+  .mri-input-section {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .mri-section-header {
+    font-size: 0.875rem;
+  }
+  
+  .mri-field-label {
+    font-size: 0.75rem;
   }
   
   /* Report dialog adjustments */
@@ -556,6 +623,28 @@
   
   .mri-score-value {
     font-size: 2rem;
+  }
+  
+  /* Signal meter grid on mobile */
+  .mri-signal-meter-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0;
+  }
+  
+  /* Pre-exam info */
+  .mb-6 {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Form spacing */
+  .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  /* Ensure no horizontal overflow */
+  * {
+    max-width: 100%;
   }
 }
 

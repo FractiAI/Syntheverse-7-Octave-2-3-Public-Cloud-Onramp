@@ -1011,11 +1011,11 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                               </div>
                             )}
 
-                          {/* Final PoD Score */}
+                          {/* Final PoC Score */}
                           <div className="border-t pt-2">
                             <div className="flex items-center justify-between">
                               <span className="font-medium text-muted-foreground">
-                                Final PoD Score
+                                Final PoC Score
                               </span>
                               <span className="text-lg font-bold">
                                 {selectedSubmission.pod_score?.toLocaleString() || 'N/A'} / 10,000
