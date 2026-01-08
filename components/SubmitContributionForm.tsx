@@ -411,11 +411,21 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 Hydrogen-Holographic Fractal Magnetic Resonance
               </div>
             </div>
-            <div className="mri-status-display">
-              <div className="mri-status-label">System Status</div>
-              <div className="mri-status-value">
-                <div className="mri-status-indicator"></div>
-                <span>READY</span>
+            <div className="flex flex-col items-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => window.location.href = '/dashboard'}
+                className="border-blue-300 text-blue-700 hover:bg-blue-50"
+              >
+                ← Back to Dashboard
+              </Button>
+              <div className="mri-status-display">
+                <div className="mri-status-label">System Status</div>
+                <div className="mri-status-value">
+                  <div className="mri-status-indicator"></div>
+                  <span>READY</span>
+                </div>
               </div>
             </div>
           </div>
@@ -644,6 +654,54 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                             </div>
                           )}
                         </div>
+
+                        {/* Badges: Seed, Edge, Metals */}
+                        {(evaluationStatus.evaluation?.is_seed_submission ||
+                          evaluationStatus.evaluation?.is_edge_submission ||
+                          (evaluationStatus.evaluation?.metals && evaluationStatus.evaluation.metals.length > 0)) && (
+                          <div className="rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 p-4">
+                            <div className="mb-2 text-sm font-semibold text-slate-700">Qualifications Earned</div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {/* SEED Badge */}
+                              {evaluationStatus.evaluation?.is_seed_submission && (
+                                <span 
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-lg bg-green-500/20 text-green-700 border-2 border-green-500/30"
+                                  title="Seed Submission - Defines irreducible primitives (S₀-S₈) (+15% multiplier)"
+                                >
+                                  <Sprout className="h-4 w-4" />
+                                  SEED
+                                </span>
+                              )}
+                              
+                              {/* EDGE Badge */}
+                              {evaluationStatus.evaluation?.is_edge_submission && (
+                                <span 
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-lg bg-blue-500/20 text-blue-700 border-2 border-blue-500/30"
+                                  title="Edge Submission - Defines boundary operators (E₀-E₆) (+15% multiplier)"
+                                >
+                                  <Link2 className="h-4 w-4" />
+                                  EDGE
+                                </span>
+                              )}
+                              
+                              {/* Individual Metal Badges */}
+                              {evaluationStatus.evaluation?.metals && evaluationStatus.evaluation.metals.length > 0 && (
+                                <>
+                                  {evaluationStatus.evaluation.metals.map((metal: string, idx: number) => (
+                                    <span
+                                      key={idx}
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-lg bg-amber-500/20 text-amber-700 border-2 border-amber-500/30 capitalize"
+                                      title={`${metal} Metal Alignment`}
+                                    >
+                                      <Award className="h-4 w-4" />
+                                      {metal}
+                                    </span>
+                                  ))}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Qualification Status */}
                         {evaluationStatus.qualified && (
