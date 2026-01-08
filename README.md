@@ -11,7 +11,11 @@
 
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
-> **🔧 Latest Update (Jan 8, 2026):** Multiplier toggle controls added - Creator and Operator dashboards now include on/off toggles for seed (×1.15) and edge (×1.15) multipliers. Enables real-time scoring tuning during testing phase with automatic page refresh on state changes. Temporary feature for calibration that will be removed once scoring is stable. Also includes mobile/Safari submission flow fixes.
+> **🔧 Latest Update (Jan 8, 2026):** 
+> - **Environment Variable Fix**: Added validation and graceful error handling for Supabase environment variables to prevent Server Components render errors. All environment variables now validated before use with clear error messages.
+> - **Multiplier Toggle Controls**: Creator and Operator dashboards now include on/off toggles for seed (×1.15) and edge (×1.15) multipliers for real-time scoring tuning during testing phase. Temporary feature for calibration.
+> - **Vercel CLI Configuration**: Added scripts for automated environment variable setup via Vercel API.
+> - **Troubleshooting Documentation**: New comprehensive guides for environment setup and error resolution.
 
 ---
 
@@ -598,6 +602,9 @@ See:
 - **Local Setup**: `.env.example` file
 - **Vercel Setup**: `docs/VERCEL_BASE_SEPOLIA_SETUP.md`
 - **Base Mainnet**: `docs/BASE_MAINNET_ENV_SETUP.md`
+- **Supabase Config**: `docs/SUPABASE_COPY_PASTE_CONFIG.md` - Ready-to-use SQL snippets
+- **Troubleshooting**: `docs/TROUBLESHOOTING_SERVER_COMPONENT_ERROR.md` - Fix common errors
+- **Environment Check**: Run `tsx scripts/check-env.ts` to validate configuration
 
 ---
 
@@ -840,9 +847,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 8, 2026  
-**Version**: 2.31 (Multiplier Toggle Controls for Testing)
+**Version**: 2.32 (Environment Variable Validation & Troubleshooting)
 
 ### Version History
+
+- **v2.32** (January 8, 2026): Environment Variable Validation & Troubleshooting - Added comprehensive environment variable validation to prevent Server Components render errors. Implemented validation checks in Supabase client creation, enhanced error handling in `/api/auth/check` endpoint, and improved error messages for debugging. Created diagnostic script (`scripts/check-env.ts`) to validate all required and optional environment variables with masked output. Added troubleshooting documentation (`docs/TROUBLESHOOTING_SERVER_COMPONENT_ERROR.md`) with step-by-step fix guide, common issues, and prevention tips. Created Supabase configuration guide (`docs/SUPABASE_COPY_PASTE_CONFIG.md`) with ready-to-use SQL snippets for all tables, RLS policies, and authentication setup. Fixed empty `SUPABASE_SERVICE_ROLE_KEY` in Vercel production environment via Vercel CLI automation. All environment-related errors now provide clear, actionable error messages instead of generic "Server Components render" errors. Files: utils/supabase/server.ts (validation added), app/api/auth/check/route.ts (error handling), scripts/check-env.ts (new, 120 lines), docs/TROUBLESHOOTING_SERVER_COMPONENT_ERROR.md (new, 200 lines), docs/SUPABASE_COPY_PASTE_CONFIG.md (new, 340 lines). Total ~660 lines added.
 
 - **v2.31** (January 8, 2026): Multiplier Toggle Controls for Testing - Added on/off toggles for seed (×1.15) and edge (×1.15) multipliers to Creator and Operator dashboards. Enables real-time scoring tuning during testing/calibration phase without code changes. Created MultiplierToggle component with beautiful cockpit-themed toggle switches (green for seed, blue for edge), automatic page refresh on state changes, and loading/saving states. Implemented API endpoint (`/api/scoring/multiplier-config`) with GET/POST operations, Creator/Operator only access, and audit trail logging to poc_log. Added scoring_config database table with JSONB config storage, RLS policies, and indexed lookups. Modified evaluate.ts to fetch multiplier config from database before applying multipliers - respects both AI detection AND toggle state, falls back to enabled on error. Configuration persists across page refreshes and sessions. Temporary feature for calibration that will be removed once scoring is stable (estimated 2-4 weeks). Complete testing guide, API documentation, troubleshooting, and removal plan in [`docs/MULTIPLIER_TOGGLE_IMPLEMENTATION.md`](docs/MULTIPLIER_TOGGLE_IMPLEMENTATION.md). Files: components/MultiplierToggle.tsx (new, 145 lines), app/api/scoring/multiplier-config/route.ts (new, 112 lines), supabase/migrations/add_scoring_config.sql (new, 43 lines), plus modifications to evaluate.ts and both dashboards. Total ~900 lines added.
 
