@@ -11,7 +11,7 @@
 
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
-> **🔧 Latest Update (Jan 8, 2026):** Mobile/Safari submission flow fixed - Resolved evaluation dialog visibility on iPhone (responsive width), classification.map() TypeError on Safari, and added seed/edge/metal badges to evaluation report. All device types now fully functional. Also added "Back to Dashboard" navigation button to submission page.
+> **🔧 Latest Update (Jan 8, 2026):** Multiplier toggle controls added - Creator and Operator dashboards now include on/off toggles for seed (×1.15) and edge (×1.15) multipliers. Enables real-time scoring tuning during testing phase with automatic page refresh on state changes. Temporary feature for calibration that will be removed once scoring is stable. Also includes mobile/Safari submission flow fixes.
 
 ---
 
@@ -142,6 +142,14 @@ See [Environment Variables](#environment-variables) section for complete configu
   - **Edges (E₀-E₆)**: AI analyzes for boundary operators, interaction mechanisms, transformation rules; 15% multiplier (×1.15)
   - **Combined Multiplier**: Seed + Edge = ×1.3225 (32.25% total bonus)
   - Full justifications provided for both seed and edge characteristics
+- **🧪 Multiplier Toggle Controls** (Testing/Tuning - Temporary Feature):
+  - **Creator/Operator Dashboard**: On/off toggles for seed and edge multipliers
+  - **Real-Time Configuration**: Toggle multipliers during scoring calibration without code changes
+  - **Automatic Refresh**: Page refreshes automatically on state changes
+  - **Database-Backed**: Configuration persisted in `scoring_config` table with audit trail
+  - **Access Control**: Creator and Operator roles only
+  - **Will be removed** once scoring is stable (estimated 2-4 weeks)
+  - See [`docs/MULTIPLIER_TOGGLE_IMPLEMENTATION.md`](docs/MULTIPLIER_TOGGLE_IMPLEMENTATION.md) for complete details
 - **Operator Mode**: Special exemption for operator accounts
 - **Creator Dashboard**: Creator-only destructive controls for PoC lifecycle management and user administration
 - **Mobile UI Optimization**: Crisp, beautiful desktop-quality display on mobile with proper typography hierarchy, proportional spacing, and maintained visual polish
@@ -832,9 +840,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 8, 2026  
-**Version**: 2.30 (Content-Based Edge Detection & Database Reset)
+**Version**: 2.31 (Multiplier Toggle Controls for Testing)
 
 ### Version History
+
+- **v2.31** (January 8, 2026): Multiplier Toggle Controls for Testing - Added on/off toggles for seed (×1.15) and edge (×1.15) multipliers to Creator and Operator dashboards. Enables real-time scoring tuning during testing/calibration phase without code changes. Created MultiplierToggle component with beautiful cockpit-themed toggle switches (green for seed, blue for edge), automatic page refresh on state changes, and loading/saving states. Implemented API endpoint (`/api/scoring/multiplier-config`) with GET/POST operations, Creator/Operator only access, and audit trail logging to poc_log. Added scoring_config database table with JSONB config storage, RLS policies, and indexed lookups. Modified evaluate.ts to fetch multiplier config from database before applying multipliers - respects both AI detection AND toggle state, falls back to enabled on error. Configuration persists across page refreshes and sessions. Temporary feature for calibration that will be removed once scoring is stable (estimated 2-4 weeks). Complete testing guide, API documentation, troubleshooting, and removal plan in [`docs/MULTIPLIER_TOGGLE_IMPLEMENTATION.md`](docs/MULTIPLIER_TOGGLE_IMPLEMENTATION.md). Files: components/MultiplierToggle.tsx (new, 145 lines), app/api/scoring/multiplier-config/route.ts (new, 112 lines), supabase/migrations/add_scoring_config.sql (new, 43 lines), plus modifications to evaluate.ts and both dashboards. Total ~900 lines added.
 
 - **v2.30** (January 8, 2026): Content-Based Edge Detection & Database Reset - Implemented content-based edge detection for boundary operators (E₀-E₆) per "Seeds and Edges" paper. AI now analyzes submissions for edge characteristics: boundary operators, interaction enablers, constraint/directionality/transformation rules, motion/energy/differentiation generators. Edges receive 15% multiplier (×1.15) with justification. Combined seed+edge submissions receive ×1.3225 (32.25%) total bonus. Added `is_edge` column to database, `is_edge_submission` and `edge_justification` to evaluation response, and comprehensive edge detection to system prompt. Updated all UI tooltips and onboarding content to distinguish between content-based seed/edge detection vs overlap-based sweet spot bonuses. Database migration provided for `is_edge` column with indexes and views. All documentation aligned with seed and edge concepts from Seed Information Theory and Boundary Operator Theory. See [`docs/EDGE_DETECTION_IMPLEMENTATION.md`](docs/EDGE_DETECTION_IMPLEMENTATION.md) and [`supabase/migrations/add_edge_detection.sql`](supabase/migrations/add_edge_detection.sql) for complete details.
 
