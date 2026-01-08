@@ -67,8 +67,8 @@ The evaluation query will indicate if submission characteristics suggest seed-le
 
 **YOU MUST:**
 1. Analyze content for seed characteristics (irreducibility, generative capacity, foundational nature)
-2. Set `is_seed_submission: true` ONLY if content exhibits seed properties
-3. Provide justification in `seed_justification` field
+2. Set "is_seed_submission: true" ONLY if content exhibits seed properties
+3. Provide justification in "seed_justification" field
 4. Do NOT base seed detection on submission timing or archive size
 
 QUALIFICATION THRESHOLDS

@@ -137,7 +137,7 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Database**: PostgreSQL via Supabase with Drizzle ORM
 - **Blockchain**: ✅ **Base Mainnet Production** - Lens event emission, token allocation ready
 - **LLM Metadata**: Full capture of evaluation metadata (timestamp, model, version, prompts)
-- **Seed Submission Recognition**: First submissions to a sandbox receive 15% score multiplier (×1.15) based on Seed Information Theory
+- **Seed Submission Recognition**: Content-based seed detection using Seed Information Theory - AI analyzes submissions for irreducibility, generative capacity, and foundational nature; seeds receive 15% score multiplier (×1.15) with justification
 - **Operator Mode**: Special exemption for operator accounts
 - **Creator Dashboard**: Creator-only destructive controls for PoC lifecycle management and user administration
 - **Mobile UI Optimization**: Crisp, beautiful desktop-quality display on mobile with proper typography hierarchy, proportional spacing, and maintained visual polish
@@ -372,7 +372,7 @@ The system prompt has been transformed into a hardened SynthScan prompt incorpor
 - **✅ Archive Similarity Distribution**: Enhanced to show overlap percentile, nearest 10 neighbors statistics, and computation context (global/per-user/per-sandbox)
 - **✅ Documentation Consistency**: Fixed Module 12 mismatch (text-only PoC vs PDF pipeline)
 - **✅ Testing Protocol**: Added guidance for reset baseline, lock configs, and re-run validation
-- **✅ Seed Submission Detection**: System prompt includes seed submission recognition with 15% multiplier (×1.15) for foundational contributions
+- **✅ Content-Based Seed Detection**: System prompt implements Seed Information Theory - AI analyzes content for seed characteristics (irreducibility, generative capacity, foundational nature) rather than timing; seeds receive 15% multiplier (×1.15) with justification
 
 **Key Features:**
 - Every evaluation includes `scoring_metadata` (config ID, sandbox ID, archive version)
@@ -398,6 +398,7 @@ See [`SYNTHSCAN_PROMPT_TRANSFORMATION.md`](SYNTHSCAN_PROMPT_TRANSFORMATION.md) f
 - ✅ Default network: Base Mainnet (Chain ID: 8453)
 - ✅ Ready for production PoC registrations
 - ✅ **Zero Scores Issue Fixed** (Jan 8, 2026): Groq AI evaluation now working properly
+- ✅ **Seed Detection Fixed** (Jan 8, 2026): Changed from timing-based to content-based detection per Seed Information Theory
 - 🎯 **SYNTH90T MOTHERLODE VAULT Opening**: Spring Equinox, March 20, 2026
 - ⏰ **Submission Deadline**: March 19, 2026
 
@@ -824,10 +825,12 @@ Built for the Syntheverse ecosystem with ❤️
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 2.27 (Dashboard Fixes & Persistent Panel State)
+**Last Updated**: January 8, 2026  
+**Version**: 2.29 (Content-Based Seed Detection & Groq Fix)
 
 ### Version History
+
+- **v2.29** (January 8, 2026): Content-Based Seed Detection & Groq API Fix - Fixed zero scores issue caused by environment variable name mismatch (`NEXT_PUBLIC_GROK_API_KEY` vs `NEXT_PUBLIC_GROQ_API_KEY`). Code now accepts both spellings for backwards compatibility. Completely redesigned seed detection from timing-based (first submission) to content-based analysis per Seed Information Theory. AI now analyzes content for seed characteristics: irreducibility, generative capacity, foundational nature. Seeds are irreducible informational primitives with expansion rules, not just first submissions. Updated system prompt with precise seed definition from "Seeds and Edges" paper (9 seeds S₀-S₈, 7 edges E₀-E₆). Added `is_seed_submission` and `seed_justification` fields to evaluation response. Seed multiplier (×1.15) now applied based on CONTENT not TIMING. Examples: Holographic Hydrogen (Element 0), minimal viable generative sets, core foundational equations are TRUE seeds; implementations and derivative work are NOT seeds. See [`docs/SEED_DETECTION_FIX.md`](docs/SEED_DETECTION_FIX.md) and [`docs/ZERO_SCORES_FIX.md`](docs/ZERO_SCORES_FIX.md) for complete details.
 
 - **v2.28** (January 2025): Deterministic Score Transparency & Formula Validation (Marek/Simba Audit Response) - Comprehensive scoring transparency overhaul in response to tester feedback. Implemented complete deterministic score trace showing all calculation steps: dimension scores, composite, overlap %, penalty %, bonus multiplier, seed multiplier, and final score with formula validation. Added scoring_metadata (config ID, sandbox ID, archive version, timestamp) and pod_composition to evaluation output for full audit trail. Fixed critical UI label bug: "Redundancy Penalty" now correctly labeled as "Redundancy Overlap" with visual indicators for sweet spot bonus (9.2%-19.2%) and excess penalty (>30%). Added real-time formula validation displaying k-factor (actual_score / (sum_dims × (1 − penalty%))) which should be ~1.0 - alerts if mismatch detected. All evaluation results now include authoritative score trace in UI with step-by-step calculation breakdown, configuration identifiers, and formula verification. This enables testers to validate that published formula matches displayed scores exactly, addressing all transparency concerns raised in production testing.
 
