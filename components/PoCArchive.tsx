@@ -1051,7 +1051,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                       </div>
                     )}
 
-                    {/* Full Grok API Response - Markdown/Text */}
+                    {/* SynthScan™ MRI Evaluation Report */}
                     {(() => {
                       const raw =
                         selectedSubmission.metadata.grok_evaluation_details?.raw_grok_response ||
@@ -1062,7 +1062,7 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                       return (
                         <details className="mt-3">
                           <summary className="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground">
-                            View Full Response
+                            View SynthScan™ MRI Evaluation Report
                           </summary>
                           <div className="mt-3 rounded-lg border bg-muted p-4">
                             <pre className="max-h-96 overflow-auto whitespace-pre-wrap font-mono text-sm text-foreground">

@@ -833,7 +833,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                       </div>
                     )}
 
-                    {/* Full Grok API Response - Toggleable */}
+                    {/* Full SynthScan MRI Evaluation Report - Toggleable */}
                     {showFullReport && (
                       <div className="mt-3 border-t border-[var(--keyline-primary)] pt-3">
                         {(() => {
@@ -846,7 +846,7 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                           if (raw && raw.trim().length > 0) {
                             return (
                               <div>
-                                <div className="cockpit-label mb-2">Full Grok API Response</div>
+                                <div className="cockpit-label mb-2">SynthScan™ MRI Evaluation Report</div>
                                 <div className="rounded border border-[var(--keyline-primary)] bg-[var(--cockpit-obsidian)] p-3 md:p-4">
                                   <pre className="cockpit-text max-h-96 overflow-auto whitespace-pre-wrap font-mono text-xs">
                                     {raw}
