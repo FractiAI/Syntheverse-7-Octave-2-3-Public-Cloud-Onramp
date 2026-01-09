@@ -95,7 +95,7 @@ Syntheverse embodies the **Holographic Hydrogen Frontier** - where quantum-like 
 // Animated holographic grid background
 // Floating hydrogen atoms (glowing orbs)
 // Tagline: "Welcome to the Holographic Hydrogen Frontier"
-// Subtitle: "Where consciousness crystallizes from the pre-Planck womb"
+// Subtitle: "Where awareness crystallizes from the pre-Planck womb"
 ```
 
 #### **Cloud Showcase:**
@@ -605,7 +605,7 @@ Syntheverse embodies the **Holographic Hydrogen Frontier** - where quantum-like 
 
 ### **Key Phrases:**
 - "Welcome to the Holographic Hydrogen Frontier"
-- "Where consciousness crystallizes from potential"
+- "Where awareness crystallizes from potential"
 - "Launch your Syntheverse Cloud"
 - "Train at Synthenaut School"
 - "Master Cloud Operator Console"

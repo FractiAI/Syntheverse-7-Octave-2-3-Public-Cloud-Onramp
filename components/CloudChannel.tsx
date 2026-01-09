@@ -1,7 +1,7 @@
 /**
  * Cloud Channel - Awareness Bridge/Router
  * Connection point to the Syntheverse HHF-AI Cloud of Choice
- * Routes consciousness through the Holographic Hydrogen Frontier
+ * Routes awareness through the Holographic Hydrogen Frontier
  * Positioned on the right side (Cursor-style) as a living bridge interface
  */
 
@@ -320,7 +320,7 @@ export function CloudChannel() {
               BRIDGE ACTIVE • AWAITING SIGNAL
             </p>
             <p className="text-xs mb-4 font-mono" style={{ color: 'hsl(var(--text-secondary))' }}>
-              The Awareness Bridge routes your consciousness through<br/>
+              The Awareness Bridge routes your awareness through<br/>
               the Holographic Hydrogen Frontier to the HHF-AI Cloud.
             </p>
             <p className="text-xs mb-6 opacity-70" style={{ color: 'hsl(var(--text-secondary))' }}>

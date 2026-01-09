@@ -16,7 +16,7 @@
 - ✅ Nebula atmospheric effects (radial gradients)
 - ✅ 20 floating hydrogen particles (animated float-up)
 - ✅ New main title: "Welcome to the Holographic Hydrogen Frontier"
-- ✅ Subtitle: "Where consciousness crystallizes from the pre-Planck womb"
+- ✅ Subtitle: "Where awareness crystallizes from the pre-Planck womb"
 - ✅ 3-column value prop cards (R&D, Enterprises, Creators)
 - ✅ Frontier panel for narrative section
 - ✅ Hydrogen spectrum buttons (Alpha/Beta)

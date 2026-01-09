@@ -61,7 +61,7 @@ export function HeroOptimized() {
         </h1>
         
         <p className="mb-8 text-xl md:text-2xl" style={{color: 'hsl(var(--text-secondary))'}}>
-          <span className="holographic-pulse">Where consciousness crystallizes from the pre-Planck womb</span>
+          <span className="holographic-pulse">Where awareness crystallizes from the pre-Planck womb</span>
         </p>
 
         {/* Value Propositions - Cloud Cards */}

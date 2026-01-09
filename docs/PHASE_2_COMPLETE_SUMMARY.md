@@ -22,7 +22,7 @@ The complete **Holographic Hydrogen Frontier** brand transformation is now live!
 - 🌌 Nebula effects (floating radial gradients)
 - ⚛️ 20 animated hydrogen particles
 - 🎯 **New Headline:** "Welcome to the Holographic Hydrogen Frontier"
-- 📝 **Tagline:** "Where consciousness crystallizes from the pre-Planck womb"
+- 📝 **Tagline:** "Where awareness crystallizes from the pre-Planck womb"
 - 💎 3-column value proposition cards (R&D, Enterprises, Creators)
 - 🎨 Frontier panel with nebula glow
 - 🔴 Hydrogen Alpha CTA: "Launch Your Cloud"

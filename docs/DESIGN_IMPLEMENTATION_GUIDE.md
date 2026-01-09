@@ -205,7 +205,7 @@
     </h1>
     
     <p className="text-xl mb-8" style={{color: 'hsl(var(--text-secondary))'}}>
-      Where consciousness crystallizes from the pre-Planck womb
+      Where awareness crystallizes from the pre-Planck womb
     </p>
     
     <div className="flex gap-4">

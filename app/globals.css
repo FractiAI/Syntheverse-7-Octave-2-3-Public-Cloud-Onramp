@@ -496,8 +496,8 @@ html {
 }
 
 .cloud-channel-container {
-  width: 160px;
-  min-width: 160px;
+  width: 320px;
+  min-width: 320px;
 }
 
 .cloud-channel-container.collapsed {
