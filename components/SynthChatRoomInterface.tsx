@@ -80,7 +80,19 @@ export function SynthChatRoomInterface({
 
   // Fetch room details
   useEffect(() => {
+    console.log('[SynthChatRoomInterface] useEffect triggered for roomId:', roomId);
     fetchRoom();
+    
+    // Failsafe: if loading takes more than 10 seconds, show error
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.error('[SynthChatRoomInterface] Loading timeout - forcing error state');
+        setError('Chat room took too long to load. Please try again.');
+        setLoading(false);
+      }
+    }, 10000);
+    
+    return () => clearTimeout(timeout);
   }, [roomId]);
 
   // Fetch messages
@@ -115,20 +127,29 @@ export function SynthChatRoomInterface({
   }, [filteredMessages, showSearch]);
 
   const fetchRoom = async () => {
+    console.log('[SynthChatRoomInterface] fetchRoom START for roomId:', roomId);
     try {
-      const response = await fetch(`/api/synthchat/rooms/${roomId}`);
+      const url = `/api/synthchat/rooms/${roomId}`;
+      console.log('[SynthChatRoomInterface] Fetching:', url);
+      
+      const response = await fetch(url);
+      console.log('[SynthChatRoomInterface] Response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('[SynthChatRoomInterface] Room data:', data.room);
         setRoom(data.room);
         setError(null);
       } else {
-        const data = await response.json();
+        const data = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('[SynthChatRoomInterface] Error response:', data);
         setError(data.error || 'Failed to load room');
       }
     } catch (error) {
-      console.error('Failed to fetch room:', error);
+      console.error('[SynthChatRoomInterface] Fetch error:', error);
       setError('Failed to connect to chat room');
     } finally {
+      console.log('[SynthChatRoomInterface] Setting loading to false');
       setLoading(false);
     }
   };
@@ -307,10 +328,13 @@ export function SynthChatRoomInterface({
   };
 
   if (loading) {
+    console.log('[SynthChatRoomInterface] Rendering loading state');
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-pulse text-lg">Loading chat...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mx-auto mb-4"></div>
+          <div className="text-xl font-semibold mb-2">Loading Chat Room...</div>
+          <div className="text-sm text-gray-500">Room ID: {roomId}</div>
         </div>
       </div>
     );

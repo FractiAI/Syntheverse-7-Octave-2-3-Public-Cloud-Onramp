@@ -337,7 +337,13 @@ export function SynthChatNavigator() {
       </div>
 
       {/* Create New Room Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+      <Dialog 
+        open={showCreateDialog} 
+        onOpenChange={(open) => {
+          console.log('[SynthChatNavigator] Dialog state changing to:', open);
+          setShowCreateDialog(open);
+        }}
+      >
         <DialogContent className="cockpit-panel border-[var(--keyline-primary)]">
           <DialogHeader>
             <DialogTitle className="cockpit-title">Create New Chat Room</DialogTitle>
