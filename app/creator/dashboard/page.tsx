@@ -27,7 +27,7 @@ import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { MultiplierToggleWrapper } from '@/components/MultiplierToggleWrapper';
-import { CloudChannel } from '@/components/CloudChannel';
+// import { CloudChannel } from '@/components/CloudChannel'; // Temporarily disabled
 import '../../control-lab.css';
 
 export const dynamic = 'force-dynamic';

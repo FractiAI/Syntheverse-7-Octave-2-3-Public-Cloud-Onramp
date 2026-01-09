@@ -18,7 +18,7 @@ import { BroadcastArchiveNavigator } from '@/components/BroadcastArchiveNavigato
 import CockpitHeader from '@/components/CockpitHeader';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { OperatorBroadcastBanner } from '@/components/OperatorBroadcastBanner';
-import { CloudChannel } from '@/components/CloudChannel';
+// import { CloudChannel } from '@/components/CloudChannel'; // Temporarily disabled
 import { Settings, Activity, FileText, BookOpen, Shield, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
