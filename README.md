@@ -12,11 +12,11 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔧 Latest Update (Jan 9, 2026):** 
+> - **🔘 Explicit Open Chat Button**: Replaced row clicks with prominent **"Open Chat →"** button. No more confusion - just click the button to open any chat room. Clear, obvious navigation.
 > - **🔧 Critical Schema Fix**: Fixed table name error (`users` → `users_table`) causing query failures. Created complete SQL setup script (`20260109000002_synthchat_setup.sql`) with all tables, RLS policies, storage bucket, and indexes in one file.
 > - **✅ 403 Errors Resolved**: All SynthChat functionality now working. Users successfully ran schema setup in Supabase. Auto-participant joining, message sending, image uploads all functional.
 > - **💬 WhatsApp-Style SynthChat**: Full-featured chat interface with dedicated `/synthchat/[roomId]` pages. Message bubbles, smart timestamps, real-time updates (3s polling).
-> - **🔍 Enhanced Debugging**: Added detailed logging throughout APIs for easier troubleshooting. Console logs show auth checks, participant status, errors with full context.
-> - **📦 Complete Setup**: Single SQL file creates 3 tables, 12 RLS policies, storage bucket with 4 policies, performance indexes, unique constraints. Ready to deploy.
+> - **📦 Simplified Navigation**: Direct router navigation on button click. Auto-join handled by API on page load. Cleaner code, better UX.
 
 ---
 
@@ -853,9 +853,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 9, 2026  
-**Version**: 2.37 (SynthChat Schema Fix + Complete Setup SQL)
+**Version**: 2.38 (Explicit Open Chat Button)
 
 ### Version History
+
+- **v2.38** (January 9, 2026): **Explicit Open Chat Button** 🔘✅ - **UX Improvement**: Replaced confusing row clicks with explicit **"Open Chat →"** button in Actions column. Removed row onClick handler, removed Join button logic (auto-join happens on page load instead). Simplified component by removing `handleRoomClick`, `joinRoom` functions, `joining` state, and `useCallback` import. Button styled with cockpit-lever class and hydrogen amber color, positioned prominently in Actions column. Direct `router.push('/synthchat/[roomId]')` on click. Leave button still available for rooms you're already connected to. **Behavior**: Click "Open Chat →" → navigate to dedicated chat page → API auto-adds as participant → chat loads immediately. No more confusion about how to open chats. Clear, obvious call-to-action. **Status**: Simplified navigation, production-ready. 🚀
 
 - **v2.37** (January 9, 2026): **SynthChat Schema Fix + Complete Setup SQL** 🔧✅ - **Critical Table Name Fix**: Corrected all references from `from('users')` to `from('users_table')` (actual table name in schema). This was causing query failures when fetching user roles and sender names. Fixed in 3 locations: room details API, messages API (2 places). **Complete Schema Setup**: Created comprehensive `supabase/migrations/20260109000002_synthchat_setup.sql` (264 lines) with all necessary tables, RLS policies, storage bucket, indexes, and constraints. Single SQL file creates: `chat_rooms` (room management), `chat_messages` (with image_url, file_url, file_name columns), `chat_participants` (with auto-generated UUIDs), 12 RLS policies (4 per table), synthchat-images storage bucket with 4 policies, indexes on room_id/user_email/created_at, unique constraint on (room_id, user_email). **Enhanced Logging**: Added detailed console logging throughout APIs for debugging participant addition, auth checks, room access. **Tables Created**: chat_rooms (sandbox-based rooms), chat_messages (text/image/file support), chat_participants (auto-join tracking). **RLS Policies**: Authenticated users can view/create rooms, participants can view/send messages, auto-join functionality secured. **Storage**: Public read for images, auth required for upload/modify/delete. **Status**: Schema complete, table references fixed, 403 errors resolved, production-ready. User successfully ran SQL setup in Supabase. 🚀
 
