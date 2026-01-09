@@ -22,23 +22,23 @@ export function SupportHubTrigger({ variant = 'button', label = 'Support & Acces
       <>
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 rounded-full shadow-2xl transition-all hover:scale-110 group animate-pulse-subtle"
+          className="fixed bottom-4 right-4 z-50 rounded-full shadow-xl transition-all hover:scale-110 group animate-pulse-subtle"
           style={{
             backgroundColor: '#FFB84D',
-            boxShadow: '0 8px 40px rgba(255, 184, 77, 0.8), 0 0 20px rgba(255, 184, 77, 0.6)',
+            boxShadow: '0 4px 20px rgba(255, 184, 77, 0.6), 0 0 12px rgba(255, 184, 77, 0.4)',
             border: '2px solid rgba(255, 215, 0, 0.5)',
           }}
           aria-label="Plans & Support"
         >
-          <div className="flex items-center gap-2 px-6 py-3.5">
-            <Sparkles className="w-5 h-5 text-slate-950 group-hover:rotate-12 transition-transform" />
-            <span className="text-sm font-bold text-slate-950">Plans & Support</span>
+          <div className="flex items-center gap-1.5 px-3 py-2">
+            <Sparkles className="w-4 h-4 text-slate-950 group-hover:rotate-12 transition-transform" />
+            <span className="text-xs font-bold text-slate-950">Plans</span>
           </div>
           <div 
-            className="absolute -top-1 -right-1 w-4 h-4 rounded-full animate-pulse" 
+            className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full animate-pulse" 
             style={{
               backgroundColor: '#FFD700',
-              boxShadow: '0 0 12px #FFD700, 0 0 20px rgba(255, 215, 0, 0.6)'
+              boxShadow: '0 0 8px #FFD700, 0 0 12px rgba(255, 215, 0, 0.5)'
             }} 
           />
         </button>

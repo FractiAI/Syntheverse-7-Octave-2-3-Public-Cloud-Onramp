@@ -414,14 +414,6 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
               </div>
             </div>
             <div className="flex flex-col items-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => window.location.href = '/dashboard'}
-                className="border-blue-300 text-blue-700 hover:bg-blue-50"
-              >
-                ← Back to Dashboard
-              </Button>
               <div className="mri-status-display">
                 <div className="mri-status-label">System Status</div>
                 <div className="mri-status-value">
