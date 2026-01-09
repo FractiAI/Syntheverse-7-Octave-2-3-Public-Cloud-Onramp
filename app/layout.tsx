@@ -17,6 +17,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
+  themeColor: '#0a0e1a', // Matches --space-void for consistent mobile browser chrome
 };
 
 export default function RootLayout({

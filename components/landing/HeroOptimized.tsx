@@ -18,11 +18,11 @@ export function HeroOptimized() {
   }, []);
 
   return (
-    <section className="holographic-grid relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section className="holographic-grid relative flex min-h-screen items-center justify-center overflow-hidden" style={{ backgroundColor: 'hsl(240 10% 3.9%)' }}>
       {/* Nebula Background */}
       <div className="nebula-background" />
       
-      {/* Floating Hydrogen Particles */}
+      {/* Floating Hydrogen Particles - Hidden on mobile via CSS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {particles.map(particle => (
           <div
@@ -37,7 +37,7 @@ export function HeroOptimized() {
       </div>
       
       {/* Hero content */}
-      <div className="relative z-10 max-w-6xl px-6 text-center">
+      <div className="relative z-10 max-w-6xl px-6 text-center py-12">
         {/* Trust indicators - Holographic style */}
         <div className="cloud-card mb-8 inline-block px-6 py-3 holographic-shimmer">
           <div className="flex flex-wrap items-center justify-center gap-4">

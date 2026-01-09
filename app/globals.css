@@ -322,6 +322,8 @@ html {
 
 /* Holographic Grid Background */
 .holographic-grid {
+  /* Solid fallback for iOS Safari - prevents black screen */
+  background-color: hsl(var(--space-void));
   background-image: 
     linear-gradient(hsl(var(--hydrogen-beta) / 0.03) 1px, transparent 1px),
     linear-gradient(90deg, hsl(var(--hydrogen-beta) / 0.03) 1px, transparent 1px);
@@ -387,15 +389,18 @@ html {
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  /* Fallback for iOS Safari */
+  background: radial-gradient(ellipse at top, hsl(var(--hydrogen-beta) / 0.15), transparent 50%);
 }
 
 .nebula-background::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  /* Reduced size for mobile Safari compatibility - was 200%, now 150% */
+  top: -25%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
   background: radial-gradient(
     circle at 30% 30%,
     hsl(var(--hydrogen-beta) / 0.1),
@@ -449,6 +454,33 @@ html {
     transparent
   );
   animation: scan-line 3s ease-in-out infinite;
+}
+
+/* Mobile optimization - reduce animations for better performance and prevent black screen */
+@media (max-width: 768px) {
+  .hydrogen-particle {
+    display: none; /* Hide particles on mobile - prevents rendering issues */
+  }
+  
+  .nebula-background::before {
+    /* Simplify for mobile Safari */
+    animation: none;
+    opacity: 0.3;
+    /* Smaller size to prevent iOS Safari rendering failure */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .holographic-grid::before {
+    opacity: 0.5; /* Reduce intensity on mobile */
+  }
+  
+  /* Ensure solid background on mobile */
+  .holographic-grid {
+    background-color: hsl(240 10% 3.9%) !important;
+  }
 }
 
 /* Reduced motion preference */
