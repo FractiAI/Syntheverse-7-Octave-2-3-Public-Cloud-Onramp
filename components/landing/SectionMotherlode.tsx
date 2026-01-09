@@ -129,14 +129,6 @@ export function SectionMotherlode() {
             Submit Your PoC Now
             <ArrowRight className="h-5 w-5" />
           </Link>
-
-          <Link
-            href="/dashboard"
-            className="cockpit-lever inline-flex items-center gap-2 bg-transparent px-8 py-4 text-base"
-            style={{ border: '1px solid var(--hydrogen-amber)' }}
-          >
-            Check Eligibility
-          </Link>
         </div>
       </div>
     </div>

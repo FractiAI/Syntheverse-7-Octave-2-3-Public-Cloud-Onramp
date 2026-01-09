@@ -1,5 +1,5 @@
 import { SectionWrapper } from './shared/SectionWrapper';
-import { AlertCircle, CheckCircle, TrendingUp, Atom, Sparkles, Palette } from 'lucide-react';
+import { AlertCircle, CheckCircle, TrendingUp, Microscope, Code, Palette } from 'lucide-react';
 
 export function SectionExecutiveSummary() {
   return (
@@ -13,7 +13,7 @@ export function SectionExecutiveSummary() {
       <div id="frontier-rd" className="scroll-mt-20 mb-16">
         <div className="cloud-card p-8">
           <div className="flex items-center gap-3 mb-6">
-            <Atom className="w-10 h-10" style={{color: 'hsl(var(--hydrogen-beta))'}} />
+            <Microscope className="w-10 h-10" style={{color: 'hsl(var(--hydrogen-beta))'}} />
             <h2 className="text-3xl font-bold" style={{color: 'hsl(var(--hydrogen-beta))'}}>
               Frontier R&D
             </h2>
@@ -82,7 +82,7 @@ export function SectionExecutiveSummary() {
       <div id="frontier-enterprises" className="scroll-mt-20 mb-16">
         <div className="cloud-card p-8">
           <div className="flex items-center gap-3 mb-6">
-            <Sparkles className="w-10 h-10" style={{color: 'hsl(var(--hydrogen-gamma))'}} />
+            <Code className="w-10 h-10" style={{color: 'hsl(var(--hydrogen-gamma))'}} />
             <h2 className="text-3xl font-bold" style={{color: 'hsl(var(--hydrogen-gamma))'}}>
               Frontier Enterprises
             </h2>

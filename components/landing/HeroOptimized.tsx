@@ -1,6 +1,6 @@
 'use client';
 
-import { Palette, ChevronDown, Atom, Sparkles } from 'lucide-react';
+import { Palette, ChevronDown, Microscope, Code } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -69,7 +69,7 @@ export function HeroOptimized() {
           {/* Frontier R&D */}
           <Link href="#frontier-rd" className="cloud-card p-6 text-left hover:scale-105 transition-transform cursor-pointer group">
             <div className="flex items-center gap-3 mb-4">
-              <Atom className="w-8 h-8 group-hover:animate-pulse" style={{color: 'hsl(var(--hydrogen-beta))'}} />
+              <Microscope className="w-8 h-8 group-hover:animate-pulse" style={{color: 'hsl(var(--hydrogen-beta))'}} />
               <h3 className="text-lg font-bold group-hover:underline" style={{color: 'hsl(var(--hydrogen-beta))'}}>Frontier R&D</h3>
             </div>
             <p className="text-sm leading-relaxed" style={{color: 'hsl(var(--text-secondary))'}}>
@@ -83,7 +83,7 @@ export function HeroOptimized() {
           {/* Frontier Enterprises */}
           <Link href="#frontier-enterprises" className="cloud-card p-6 text-left hover:scale-105 transition-transform cursor-pointer group">
             <div className="flex items-center gap-3 mb-4">
-              <Sparkles className="w-8 h-8 group-hover:animate-pulse" style={{color: 'hsl(var(--hydrogen-gamma))'}} />
+              <Code className="w-8 h-8 group-hover:animate-pulse" style={{color: 'hsl(var(--hydrogen-gamma))'}} />
               <h3 className="text-lg font-bold group-hover:underline" style={{color: 'hsl(var(--hydrogen-gamma))'}}>Frontier Enterprises</h3>
             </div>
             <p className="text-sm leading-relaxed mb-2" style={{color: 'hsl(var(--text-secondary))'}}>
