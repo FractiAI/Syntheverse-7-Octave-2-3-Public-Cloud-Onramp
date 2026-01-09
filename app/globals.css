@@ -997,6 +997,11 @@ html {
 }
 
 @media (max-width: 768px) {
+  .cloud-channel-container {
+    width: 280px !important;
+    min-width: 280px !important;
+  }
+
   .cloud-channel-header {
     padding: 0.75rem;
   }
@@ -1007,6 +1012,14 @@ html {
   
   .cloud-channel-create-post {
     padding: 0.75rem;
+  }
+}
+
+/* Extra small mobile devices (iPhone SE, etc.) */
+@media (max-width: 430px) {
+  .cloud-channel-container {
+    width: 240px !important;
+    min-width: 240px !important;
   }
 }
 
