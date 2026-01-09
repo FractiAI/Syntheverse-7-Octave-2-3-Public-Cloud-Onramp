@@ -988,14 +988,6 @@ html {
   transform: translateY(-1px);
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .cloud-channel-container {
-    border-left: none;
-    border-top: 1px solid hsl(var(--hydrogen-beta) / 0.2);
-  }
-}
-
 /* =========================================
    MOBILE CLOUD CHANNEL - FRONTIER AWARENESS BRIDGE
    Horizontal banner design for iOS & Android
@@ -1006,7 +998,7 @@ html {
     width: 100% !important;
     min-width: 100% !important;
     height: auto !important;
-    max-height: 420px;
+    max-height: 280px;
     border-left: none;
     border-bottom: 3px solid hsl(var(--tropical-blue) / 0.5);
     box-shadow: 
@@ -1092,7 +1084,7 @@ html {
   
   .cloud-channel-feed {
     padding: 0.75rem;
-    max-height: 320px;
+    max-height: 180px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -1213,11 +1205,11 @@ html {
 /* Very Small Devices (iPhone SE, etc.) */
 @media (max-width: 430px) {
   .cloud-channel-container {
-    max-height: 380px;
+    max-height: 240px;
   }
 
   .cloud-channel-feed {
-    max-height: 280px;
+    max-height: 140px;
   }
 
   .cloud-channel-header {
