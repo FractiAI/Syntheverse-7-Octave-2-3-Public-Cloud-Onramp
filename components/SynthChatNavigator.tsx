@@ -62,7 +62,7 @@ export function SynthChatNavigator() {
     fetchRooms();
   }, []);
 
-  const fetchRooms = useCallback(async () => {
+  const fetchRooms = async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/synthchat/rooms');
@@ -83,7 +83,7 @@ export function SynthChatNavigator() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   const handleLeaveRoom = async (roomId: string, e: React.MouseEvent) => {
     e.stopPropagation();
