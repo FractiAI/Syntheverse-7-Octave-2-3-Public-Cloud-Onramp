@@ -3,7 +3,6 @@
 import { Palette, ChevronDown, Microscope, Code, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { SupportHubTrigger } from '../SupportHubTrigger';
 
 export function HeroOptimized() {
   const [particles, setParticles] = useState<Array<{id: number; left: string; delay: string}>>([]);
@@ -135,8 +134,6 @@ export function HeroOptimized() {
             Launch Your Cloud
             <ArrowRight className="h-5 w-5" />
           </Link>
-
-          <SupportHubTrigger variant="button" label="Access & Support" />
 
           <Link
             href="/dashboard"

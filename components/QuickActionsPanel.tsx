@@ -8,7 +8,6 @@
 import Link from 'next/link';
 import { BookOpen, Shield, Settings, FileText } from 'lucide-react';
 import { ClientProfileDropdown } from './ClientProfileDropdown';
-import { SupportHubTrigger } from './SupportHubTrigger';
 
 interface QuickActionsPanelProps {
   isCreator?: boolean;
@@ -77,11 +76,6 @@ export function QuickActionsPanel({
                 <span className="sm:hidden">Ops</span>
               </Link>
             )}
-            
-            {/* Support Hub Trigger */}
-            <div className="ml-2">
-              <SupportHubTrigger variant="nav" label="Support" />
-            </div>
           </div>
           
           {/* Account Icon - Top Right (hidden on mobile, shown in CockpitHeader) */}

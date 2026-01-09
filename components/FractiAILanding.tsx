@@ -258,9 +258,6 @@ export default function FractiAILanding({
                   Onboarding
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-                <div className="w-full">
-                  <SupportHubTrigger variant="nav" label="Support & Access" />
-                </div>
               </div>
             </div>
           </div>

@@ -29,15 +29,15 @@ export function SupportHub({ isOpen, onClose }: SupportHubProps) {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg" style={{backgroundColor: 'hsl(var(--hydrogen-alpha) / 0.15)'}}>
-                  <Sparkles className="w-6 h-6" style={{color: 'hsl(var(--hydrogen-alpha))'}} />
+                <div className="p-2 rounded-lg" style={{backgroundColor: 'rgba(255, 184, 77, 0.15)'}}>
+                  <Sparkles className="w-6 h-6" style={{color: 'var(--hydrogen-amber)'}} />
                 </div>
                 <DialogTitle className="text-2xl font-bold" style={{color: 'hsl(var(--text-primary))'}}>
-                  Support & Access Hub
+                  Plans & Financial Support
                 </DialogTitle>
               </div>
               <p className="text-sm opacity-80 ml-11" style={{color: 'hsl(var(--text-secondary))'}}>
-                Choose how you'd like to support the frontier or access advanced features
+                Monthly access plans and one-time contributions to support the frontier
               </p>
             </div>
             <button
