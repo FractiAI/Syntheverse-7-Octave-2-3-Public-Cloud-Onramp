@@ -21,7 +21,10 @@ import {
   Map,
   Users,
   TrendingUp,
-  Atom
+  Atom,
+  Telescope,
+  Cloud,
+  Globe
 } from 'lucide-react';
 
 export function ThemeParkEntrance() {
@@ -146,21 +149,10 @@ export function ThemeParkEntrance() {
                     </div>
                   </div>
 
-                  {/* Icon - Copper Wings */}
+                  {/* Icon - Telescope for R&D */}
                   <div className="flex justify-center mb-6 mt-4">
                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#C77C5D]/20 to-[#B5693D]/10 flex items-center justify-center border-2 border-[#C77C5D]/50 group-hover:animate-pulse">
-                      <svg className="w-12 h-12 md:w-14 md:h-14" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Center shield/badge */}
-                        <circle cx="32" cy="32" r="6" fill="#C77C5D" opacity="0.3"/>
-                        {/* Left wing */}
-                        <path d="M26 32 Q20 28, 8 30 Q6 31, 8 32 Q20 34, 26 32 Z" fill="#C77C5D" stroke="#C77C5D" strokeWidth="0.5"/>
-                        <path d="M24 30 Q18 27, 10 28.5 Q9 29, 10 29.5 Q18 31, 24 30 Z" fill="#C77C5D" opacity="0.7"/>
-                        <path d="M24 34 Q18 37, 10 35.5 Q9 35, 10 34.5 Q18 33, 24 34 Z" fill="#C77C5D" opacity="0.7"/>
-                        {/* Right wing */}
-                        <path d="M38 32 Q44 28, 56 30 Q58 31, 56 32 Q44 34, 38 32 Z" fill="#C77C5D" stroke="#C77C5D" strokeWidth="0.5"/>
-                        <path d="M40 30 Q46 27, 54 28.5 Q55 29, 54 29.5 Q46 31, 40 30 Z" fill="#C77C5D" opacity="0.7"/>
-                        <path d="M40 34 Q46 37, 54 35.5 Q55 35, 54 34.5 Q46 33, 40 34 Z" fill="#C77C5D" opacity="0.7"/>
-                      </svg>
+                      <Telescope className="w-10 h-10 md:w-12 md:h-12" style={{color: '#C77C5D'}} />
                     </div>
                   </div>
 
@@ -234,21 +226,10 @@ export function ThemeParkEntrance() {
                     </div>
                   </div>
 
-                  {/* Icon - Silver Wings */}
+                  {/* Icon - Cloud for Enterprise */}
                   <div className="flex justify-center mb-6 mt-4">
                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#C0C0C0]/20 to-[#A8A8A8]/10 flex items-center justify-center border-2 border-[#C0C0C0]/50 group-hover:animate-pulse">
-                      <svg className="w-12 h-12 md:w-14 md:h-14" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Center shield/badge */}
-                        <circle cx="32" cy="32" r="6" fill="#C0C0C0" opacity="0.3"/>
-                        {/* Left wing */}
-                        <path d="M26 32 Q20 28, 8 30 Q6 31, 8 32 Q20 34, 26 32 Z" fill="#C0C0C0" stroke="#C0C0C0" strokeWidth="0.5"/>
-                        <path d="M24 30 Q18 27, 10 28.5 Q9 29, 10 29.5 Q18 31, 24 30 Z" fill="#C0C0C0" opacity="0.7"/>
-                        <path d="M24 34 Q18 37, 10 35.5 Q9 35, 10 34.5 Q18 33, 24 34 Z" fill="#C0C0C0" opacity="0.7"/>
-                        {/* Right wing */}
-                        <path d="M38 32 Q44 28, 56 30 Q58 31, 56 32 Q44 34, 38 32 Z" fill="#C0C0C0" stroke="#C0C0C0" strokeWidth="0.5"/>
-                        <path d="M40 30 Q46 27, 54 28.5 Q55 29, 54 29.5 Q46 31, 40 30 Z" fill="#C0C0C0" opacity="0.7"/>
-                        <path d="M40 34 Q46 37, 54 35.5 Q55 35, 54 34.5 Q46 33, 40 34 Z" fill="#C0C0C0" opacity="0.7"/>
-                      </svg>
+                      <Cloud className="w-10 h-10 md:w-12 md:h-12" style={{color: '#C0C0C0'}} />
                     </div>
                   </div>
 
@@ -322,21 +303,10 @@ export function ThemeParkEntrance() {
                     </div>
                   </div>
 
-                  {/* Icon - Gold Wings */}
+                  {/* Icon - Globe for Reality Worldbuilding */}
                   <div className="flex justify-center mb-6 mt-4">
                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#FFD700]/20 to-[#FFC700]/10 flex items-center justify-center border-2 border-[#FFD700]/50 group-hover:animate-pulse">
-                      <svg className="w-12 h-12 md:w-14 md:h-14" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Center shield/badge */}
-                        <circle cx="32" cy="32" r="6" fill="#FFD700" opacity="0.3"/>
-                        {/* Left wing */}
-                        <path d="M26 32 Q20 28, 8 30 Q6 31, 8 32 Q20 34, 26 32 Z" fill="#FFD700" stroke="#FFD700" strokeWidth="0.5"/>
-                        <path d="M24 30 Q18 27, 10 28.5 Q9 29, 10 29.5 Q18 31, 24 30 Z" fill="#FFD700" opacity="0.7"/>
-                        <path d="M24 34 Q18 37, 10 35.5 Q9 35, 10 34.5 Q18 33, 24 34 Z" fill="#FFD700" opacity="0.7"/>
-                        {/* Right wing */}
-                        <path d="M38 32 Q44 28, 56 30 Q58 31, 56 32 Q44 34, 38 32 Z" fill="#FFD700" stroke="#FFD700" strokeWidth="0.5"/>
-                        <path d="M40 30 Q46 27, 54 28.5 Q55 29, 54 29.5 Q46 31, 40 30 Z" fill="#FFD700" opacity="0.7"/>
-                        <path d="M40 34 Q46 37, 54 35.5 Q55 35, 54 34.5 Q46 33, 40 34 Z" fill="#FFD700" opacity="0.7"/>
-                      </svg>
+                      <Globe className="w-10 h-10 md:w-12 md:h-12" style={{color: '#FFD700'}} />
                     </div>
                   </div>
 
