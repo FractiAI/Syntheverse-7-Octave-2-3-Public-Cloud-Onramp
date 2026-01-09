@@ -65,18 +65,18 @@ export function ThemeParkEntrance() {
       {/* Main Content */}
       <div className="relative z-10">
         {/* ENTRANCE GATES */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-6 py-20">
+        <section className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 py-20">
           {/* Grand Title Portal */}
-          <div className="text-center mb-16 relative">
-            {/* Holographic Portal Effect */}
-            <div className="absolute inset-0 -m-20 pointer-events-none">
+          <div className="text-center mb-20 relative">
+            {/* Holographic Portal Effect - Hidden on mobile for performance */}
+            <div className="absolute inset-0 -m-20 pointer-events-none hidden md:block">
               <div className="w-full h-full rounded-full border-4 border-blue-500/30 animate-pulse-slow"></div>
               <div className="absolute inset-8 w-full h-full rounded-full border-4 border-purple-500/20 animate-pulse-slow" style={{animationDelay: '0.5s'}}></div>
               <div className="absolute inset-16 w-full h-full rounded-full border-4 border-amber-500/10 animate-pulse-slow" style={{animationDelay: '1s'}}></div>
             </div>
 
             {/* Main Title */}
-            <div className="relative">
+            <div className="relative px-4">
               <div className="inline-block mb-4">
                 <div className="px-6 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-[var(--hydrogen-beta)] rounded-full backdrop-blur-sm">
                   <span className="text-sm uppercase tracking-wider" style={{color: 'var(--hydrogen-beta)'}}>
@@ -95,8 +95,7 @@ export function ThemeParkEntrance() {
               </h1>
 
               <p className="text-xl md:text-2xl opacity-80 max-w-3xl mx-auto mb-8 leading-relaxed">
-                Where awareness crystallizes from the pre-Planck womb into verifiable, 
-                blockchain-anchored proof of contribution
+                Where Holographic Hydrogen Fractal Awareness Crystallizes into Verifiable, Blockchain-Anchored Proof-of-Contribution
               </p>
 
               {/* Quick Stats */}
@@ -119,14 +118,14 @@ export function ThemeParkEntrance() {
 
           {/* THEME PARK MAP - THREE LANDS */}
           <div className="max-w-7xl mx-auto w-full mb-16">
-            <div className="text-center mb-12">
+            <div className="text-center mb-16">
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-black/40 border border-[var(--keyline-primary)] rounded-full backdrop-blur-md">
                 <Map className="w-5 h-5" style={{color: 'var(--hydrogen-beta)'}} />
                 <span className="font-bold uppercase tracking-wider">Choose Your Adventure</span>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-8 pt-6">
               {/* FRONTIER R&D LAND */}
               <Link 
                 href="/fractiai"
