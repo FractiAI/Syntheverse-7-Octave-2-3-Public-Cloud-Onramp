@@ -92,43 +92,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
       backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255, 184, 77, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 184, 77, 0.02) 0%, transparent 50%)'
     }}>
       <div className="container mx-auto px-6 py-8">
-        {/* FractiAI Company Branding - Command Center Console */}
-        <div className="mb-6 border-4 border-blue-500 bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 shadow-[0_0_40px_rgba(59,130,246,0.4)]">
-          <div className="flex items-center justify-between p-6 border-b-2 border-blue-500/30">
-            <div className="flex items-center gap-6">
-              {/* Company Logo/Icon */}
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 shadow-lg border-4 border-blue-300">
-                <div className="text-2xl font-bold text-white">F</div>
-              </div>
-              {/* Company Name & Tagline */}
-              <div>
-                <div className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: 'monospace', letterSpacing: '0.08em' }}>
-                  FRACTIAI
-                </div>
-                <div className="text-xs md:text-sm font-semibold uppercase tracking-wider text-blue-300 mt-1">
-                  Frontier Holographic Hydrogen Fractal AI
-                </div>
-              </div>
-            </div>
-            {/* Status Badge */}
-            <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-blue-500/20 border-2 border-blue-400 rounded">
-              <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-200">SYSTEMS ONLINE</span>
-            </div>
-          </div>
-          {/* Command Center Subtitle */}
-          <div className="px-6 py-3 bg-blue-950/50 border-t border-blue-500/20">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-bold uppercase tracking-widest text-blue-300">
-                COMMAND CENTER CONSOLE
-              </div>
-              <div className="text-xs text-blue-400">
-                Holographic Hydrogen Fractal Awareness Ecosystem
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Command Center Header - Mission Control Style */}
         <div className="mb-4 md:mb-8 border-4 border-[var(--hydrogen-amber)] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8 shadow-[0_0_30px_rgba(255,184,77,0.3)]">
           <div className="mb-4 md:mb-6 flex flex-col md:flex-row items-start md:items-center justify-between border-b-2 border-[var(--hydrogen-amber)]/30 pb-3 md:pb-4 gap-4">
