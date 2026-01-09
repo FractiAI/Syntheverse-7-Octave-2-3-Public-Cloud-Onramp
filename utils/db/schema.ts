@@ -54,6 +54,8 @@ export const contributionsTable = pgTable('contributions', {
   is_edge: boolean('is_edge').default(false), // Content exhibits edge characteristics (E₀-E₆) - receives 15% multiplier (×1.15)
   has_sweet_spot_edges: boolean('has_sweet_spot_edges').default(false), // Overlap in sweet spot range (9.2%-19.2%, centered at 14.2%) - receives bonus multiplier
   overlap_percent: numeric('overlap_percent', { precision: 5, scale: 2 }).default('0'), // Percentage overlap with archive (0-100)
+  // TSRC: Content-addressed archive snapshot for deterministic evaluation
+  snapshot_id: text('snapshot_id'), // SHA-256 hash of archive state at evaluation time (enables exact reproducibility)
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -257,6 +259,8 @@ export const enterpriseContributionsTable = pgTable('enterprise_contributions', 
   is_edge: boolean('is_edge').default(false), // Content exhibits edge characteristics (E₀-E₆) - receives 15% multiplier (×1.15)
   has_sweet_spot_edges: boolean('has_sweet_spot_edges').default(false), // Overlap in sweet spot range (9.2%-19.2%, centered at 14.2%) - receives bonus multiplier
   overlap_percent: numeric('overlap_percent', { precision: 5, scale: 2 }).default('0'), // Percentage overlap with archive (0-100)
+  // TSRC: Content-addressed archive snapshot for deterministic evaluation
+  snapshot_id: text('snapshot_id'), // SHA-256 hash of archive state at evaluation time (enables exact reproducibility)
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 });

@@ -259,6 +259,9 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
     // Sweet spot range is 9.2%-19.2% (centered at 14.2%)
     const hasSweetSpotEdges = overlapPercent >= 9.2 && overlapPercent <= 19.2;
 
+    // TSRC: Extract snapshot_id from llm_metadata for top-level storage
+    const snapshotId = (evaluation as any).llm_metadata?.tsrc?.archive_snapshot?.snapshot_id || null;
+
     // Update contribution with evaluation results and vector data
     await db
       .update(contributionsTable)
@@ -270,6 +273,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         is_edge: isEdge,
         has_sweet_spot_edges: hasSweetSpotEdges,
         overlap_percent: overlapPercent.toString(),
+        // TSRC: Store snapshot_id for deterministic evaluation reproducibility
+        snapshot_id: snapshotId,
         metadata: {
           ...currentMetadata,
           coherence: evaluation.coherence,

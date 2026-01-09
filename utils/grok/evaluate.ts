@@ -30,6 +30,11 @@ import { SYNTHEVERSE_SYSTEM_PROMPT } from '@/utils/grok/system-prompt';
 import crypto from 'crypto';
 // SCALABILITY FIX: Removed archive utilities - using vectors-only approach for infinite scalability
 
+// TSRC: Import snapshot and operator utilities
+import { createArchiveSnapshot, verifySnapshotIntegrity } from '@/utils/tsrc/snapshot';
+import { createIsotropicOperator } from '@/utils/tsrc/operators';
+import type { DeterminismContract, TSRCEvaluationTrace } from '@/utils/tsrc/types';
+
 interface TokenomicsInfo {
   current_epoch: string;
   epoch_balances: Record<string, number>;
@@ -349,6 +354,33 @@ export async function evaluateWithGroq(
     // Continue without archived PoCs if fetch fails
   }
 
+  // TSRC: Create content-addressed archive snapshot for deterministic evaluation
+  const contributionHashes = archivedVectors.map(v => v.submission_hash);
+  const archiveSnapshot = createArchiveSnapshot(
+    contributionHashes,
+    sandboxContext?.id || null,
+    {
+      name: 'text-embedding-3-small',
+      version: '1.0',
+      provider: 'openai',
+    },
+    {
+      method: 'cosine_similarity',
+      dimensions: 1536,
+      normalization: 'l2',
+    },
+    {
+      purpose: 'evaluation',
+      notes: `Evaluation for: ${title}`,
+    }
+  );
+
+  debug('TSRC:Snapshot', 'Created archive snapshot', {
+    snapshot_id: archiveSnapshot.snapshot_id,
+    item_count: archiveSnapshot.item_count,
+    sandbox_id: archiveSnapshot.sandbox_id,
+  });
+
   // Seed detection: NOT based on timing, but on CONTENT (Seed Information Theory)
   // The AI will analyze if content exhibits seed characteristics:
   // - Irreducible informational primitive
@@ -543,8 +575,53 @@ ${calculatedRedundancy.nearest_10_neighbors ? `- nearest_10_neighbors: μ=${calc
     ? `sandbox_id=${sandboxContext.id}` 
     : 'sandbox_id=pru-default'; // Default sandbox for main Syntheverse
   
-  // Archive version/snapshot ID
-  const archiveVersion = `archive_version=${archivedVectors.length > 0 ? `snapshot-${archivedVectors.length}` : 'empty'}`;
+  // TSRC: Compute content hash for determinism
+  const contentHash = crypto.createHash('sha256').update(textContent).digest('hex');
+  
+  // TSRC: Hash system prompt for version tracking
+  const promptHash = crypto.createHash('sha256').update(systemPrompt).digest('hex');
+  
+  // TSRC: Create IsotropicOperator record (O_kiss)
+  const isotropicOperator = createIsotropicOperator(
+    'embedding_cosine',
+    '1.0',
+    {
+      name: 'text-embedding-3-small',
+      version: '1.0',
+      provider: 'openai',
+    },
+    'cosine'
+  );
+  
+  // TSRC: Build determinism contract
+  const determinismContract: DeterminismContract = {
+    content_hash: contentHash,
+    score_config_id: SCORE_CONFIG_VERSION,
+    sandbox_id: sandboxContext?.id || null,
+    snapshot_id: archiveSnapshot.snapshot_id,
+    mode_state: 'growth', // TODO: Get from stability monitoring system
+    llm_params: {
+      model: 'llama-3.3-70b-versatile',
+      model_version: '3.3',
+      provider: 'groq',
+      temperature: 0, // Enforced for determinism
+      prompt_hash: promptHash,
+    },
+    operators: {
+      isotropic: isotropicOperator,
+    },
+    evaluated_at: new Date().toISOString(),
+  };
+
+  debug('TSRC:Determinism', 'Created determinism contract', {
+    content_hash: contentHash.substring(0, 16) + '...',
+    snapshot_id: archiveSnapshot.snapshot_id,
+    prompt_hash: promptHash.substring(0, 16) + '...',
+    operator: isotropicOperator.operator_name,
+  });
+
+  // Archive version/snapshot ID (TSRC: Now using content-addressed snapshot)
+  const archiveVersion = `archive_version=${archiveSnapshot.snapshot_id}`;
 
   // Format tokenomics context (condensed)
   const tokenomicsContext = tokenomicsInfo
@@ -1820,6 +1897,7 @@ ${answer}`;
     const finalOverlap = Math.max(0, Math.min(100, redundancyOverlapPercent));
 
     // Capture LLM metadata for provenance (timestamp, date, model, version, system prompt)
+    // TSRC: Enhanced with determinism contract and operator metadata
     const evaluationTimestamp = new Date();
     const llmMetadata = {
       timestamp: evaluationTimestamp.toISOString(),
@@ -1835,6 +1913,22 @@ ${answer}`;
         .substring(0, 16), // Hash for verification
       system_prompt_file: 'utils/grok/system-prompt.ts', // Reference to full prompt location (note: "grok" is folder name, Groq is the API provider)
       evaluation_timestamp_ms: evaluationTimestamp.getTime(),
+      // TSRC: Determinism contract and operator metadata
+      tsrc: {
+        determinism_contract: determinismContract,
+        archive_snapshot: {
+          snapshot_id: archiveSnapshot.snapshot_id,
+          item_count: archiveSnapshot.item_count,
+          created_at: archiveSnapshot.created_at,
+        },
+        operators: {
+          isotropic: isotropicOperator,
+        },
+        content_hash: contentHash,
+        mode_state: determinismContract.mode_state,
+        temperature: 0, // Enforced for determinism
+        reproducible: true, // This evaluation is reproducible via snapshot_id
+      },
     };
 
     return {
