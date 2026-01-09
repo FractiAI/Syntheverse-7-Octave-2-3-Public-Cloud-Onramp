@@ -301,7 +301,7 @@ export default function CreatorsSolutionsPage() {
           <p className="text-xl opacity-80 mb-8">
             Access infinite creative materials and fractal design tools. Build worlds that truly live.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               href="/creator"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FFD700] hover:bg-[#FFC700] text-slate-900 font-bold rounded-lg transition-all text-lg"
@@ -315,6 +315,16 @@ export default function CreatorsSolutionsPage() {
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#FFD700] hover:bg-[#FFD700]/20 font-bold rounded-lg transition-all text-lg"
             >
               Start Building
+            </Link>
+          </div>
+          <div className="flex justify-center">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all text-base sm:text-lg transform hover:scale-105"
+            >
+              <Sparkles className="w-5 h-5" />
+              Join the Holographic Hydrogen Fractal Frontier
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
           <p className="text-sm opacity-60 mt-6">

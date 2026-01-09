@@ -15,7 +15,6 @@ import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { PersistentDetails } from '@/components/PersistentDetails';
-import { FinancialSupportBanner } from '@/components/FinancialSupportBanner';
 import { StabilityMonitor } from '@/components/tsrc';
 
 export const dynamic = 'force-dynamic';
@@ -81,11 +80,6 @@ export default async function Dashboard() {
             {/* System Broadcast Banners */}
             <div className="mb-6">
               <OperatorBroadcastBanner />
-            </div>
-
-            {/* Financial Support Banner */}
-            <div className="mb-6">
-              <FinancialSupportBanner variant="compact" dismissible={true} />
             </div>
 
             {/* TSRC Stability Monitor - Automatic System Status */}

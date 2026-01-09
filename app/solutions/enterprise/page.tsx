@@ -319,7 +319,7 @@ export default function EnterpriseSolutionsPage() {
           <p className="text-xl opacity-80 mb-8">
             Deploy a private HHF-AI evaluation cloud for your organization.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               href="/enterprise"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#C0C0C0] hover:bg-[#A8A8A8] text-slate-900 font-bold rounded-lg transition-all text-lg"
@@ -333,6 +333,16 @@ export default function EnterpriseSolutionsPage() {
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#C0C0C0] hover:bg-[#C0C0C0]/20 font-bold rounded-lg transition-all text-lg"
             >
               Contact Sales
+            </Link>
+          </div>
+          <div className="flex justify-center">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all text-base sm:text-lg transform hover:scale-105"
+            >
+              <Zap className="w-5 h-5" />
+              Join the Holographic Hydrogen Fractal Frontier
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
           <p className="text-sm opacity-60 mt-6">

@@ -102,7 +102,7 @@ export function ThemeParkEntrance() {
               </p>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12">
+              <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12 mb-8">
                 <div className="text-center">
                   <div className="text-3xl font-bold" style={{color: 'var(--hydrogen-beta)'}}>90T</div>
                   <div className="text-sm opacity-70">SYNTH Tokens</div>
@@ -115,6 +115,18 @@ export function ThemeParkEntrance() {
                   <div className="text-3xl font-bold" style={{color: 'var(--hydrogen-alpha)'}}>∞</div>
                   <div className="text-sm opacity-70">Possibilities</div>
                 </div>
+              </div>
+
+              {/* Main CTA Button */}
+              <div className="flex justify-center mt-8">
+                <Link 
+                  href="/dashboard"
+                  className="group inline-flex items-center gap-3 px-8 py-5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-full text-base md:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <Rocket className="w-5 h-5 md:w-6 md:h-6 group-hover:rotate-12 transition-transform" />
+                  <span className="text-center">Join the Holographic Hydrogen Fractal Frontier</span>
+                  <ArrowRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
             </div>
           </div>

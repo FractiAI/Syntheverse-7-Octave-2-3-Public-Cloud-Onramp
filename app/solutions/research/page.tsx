@@ -275,7 +275,7 @@ export default function ResearchSolutionsPage() {
           <p className="text-xl opacity-80 mb-8">
             Join the frontier. Submit your research. Get evaluated in 10 minutes.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Link
               href="/fractiai"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#C77C5D] hover:bg-[#B5693D] text-white font-bold rounded-lg transition-all text-lg"
@@ -289,6 +289,16 @@ export default function ResearchSolutionsPage() {
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#C77C5D] hover:bg-[#C77C5D]/20 font-bold rounded-lg transition-all text-lg"
             >
               Create Free Account
+            </Link>
+          </div>
+          <div className="flex justify-center">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all text-base sm:text-lg transform hover:scale-105"
+            >
+              <Zap className="w-5 h-5" />
+              Join the Holographic Hydrogen Fractal Frontier
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
           <p className="text-sm opacity-60 mt-6">
