@@ -3,6 +3,7 @@
  * Connection point to the Syntheverse HHF-AI Cloud of Choice
  * Routes awareness through the Holographic Hydrogen Frontier
  * Positioned on the right side (Cursor-style) as a living bridge interface
+ * Mobile: Expandable banner at top of content
  */
 
 'use client';
