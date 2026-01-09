@@ -47,25 +47,42 @@ export async function GET(
     // Check if current user is a participant
     let isConnected = participants?.some(p => p.user_email === user.email) || false;
 
+    console.log('[SynthChat Room] User:', user.email);
+    console.log('[SynthChat Room] Room:', roomId);
+    console.log('[SynthChat Room] Is connected:', isConnected);
+
     // If not connected, auto-add them as participant
     if (!isConnected) {
-      const { data: userData } = await supabase
-        .from('users')
+      console.log('[SynthChat Room] Auto-adding user as participant');
+      
+      const { data: userData, error: userError } = await supabase
+        .from('users_table')
         .select('role')
         .eq('email', user.email)
         .single();
 
-      const userRole = userData?.role || 'contributor';
+      if (userError) {
+        console.error('[SynthChat Room] Error fetching user role:', userError);
+      }
 
-      const { error: addError } = await supabase
+      const userRole = userData?.role || 'contributor';
+      console.log('[SynthChat Room] User role:', userRole);
+
+      const { error: addError, data: addedParticipant } = await supabase
         .from('chat_participants')
         .insert({
           room_id: roomId,
           user_email: user.email,
           role: userRole,
-        });
+        })
+        .select()
+        .single();
 
-      if (!addError) {
+      if (addError) {
+        console.error('[SynthChat Room] Error adding participant:', addError);
+        console.error('[SynthChat Room] Add error details:', JSON.stringify(addError, null, 2));
+      } else {
+        console.log('[SynthChat Room] Successfully added participant:', addedParticipant);
         isConnected = true;
       }
     }

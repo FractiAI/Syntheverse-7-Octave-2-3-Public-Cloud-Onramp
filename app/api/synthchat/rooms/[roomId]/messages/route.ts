@@ -12,17 +12,33 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { roomId: string } }
 ) {
+  console.log('[SynthChat Messages] === REQUEST START ===');
+  console.log('[SynthChat Messages] Request URL:', request.url);
+  console.log('[SynthChat Messages] Params:', params);
+  
   try {
     const supabase = createClient();
+    
+    console.log('[SynthChat Messages] Supabase client created');
+    
     const {
       data: { user },
+      error: authError,
     } = await supabase.auth.getUser();
 
+    console.log('[SynthChat Messages] Auth check result:', { 
+      hasUser: !!user, 
+      email: user?.email,
+      authError: authError?.message 
+    });
+
     if (!user?.email) {
+      console.log('[SynthChat Messages] Unauthorized - no user');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { roomId } = params;
+    console.log('[SynthChat Messages] Processing room:', roomId);
 
     // Check if room exists first
     const { data: room, error: roomError } = await supabase
@@ -36,36 +52,53 @@ export async function GET(
     }
 
     // Check if user is a participant of this room
-    const { data: participant } = await supabase
+    const { data: participant, error: participantCheckError } = await supabase
       .from('chat_participants')
       .select('*')
       .eq('room_id', roomId)
       .eq('user_email', user.email)
       .single();
 
+    console.log('[SynthChat Messages] User:', user.email);
+    console.log('[SynthChat Messages] Room:', roomId);
+    console.log('[SynthChat Messages] Is participant:', !!participant);
+    console.log('[SynthChat Messages] Participant check error:', participantCheckError);
+
     // If not a participant, auto-add them (room is accessible to authenticated users)
     if (!participant) {
-      // Get user role from users table
-      const { data: userData } = await supabase
-        .from('users')
+      console.log('[SynthChat Messages] Auto-adding user as participant');
+      
+      // Get user role from users_table
+      const { data: userData, error: userError } = await supabase
+        .from('users_table')
         .select('role')
         .eq('email', user.email)
         .single();
 
+      if (userError) {
+        console.error('[SynthChat Messages] Error fetching user role:', userError);
+      }
+
       const userRole = userData?.role || 'contributor';
+      console.log('[SynthChat Messages] User role:', userRole);
 
       // Add user as participant
-      const { error: addError } = await supabase
+      const { error: addError, data: addedParticipant } = await supabase
         .from('chat_participants')
         .insert({
           room_id: roomId,
           user_email: user.email,
           role: userRole,
-        });
+        })
+        .select()
+        .single();
 
       if (addError) {
-        console.error('Error adding participant:', addError);
+        console.error('[SynthChat Messages] Error adding participant:', addError);
+        console.error('[SynthChat Messages] Add error details:', JSON.stringify(addError, null, 2));
         // Continue anyway - they might still be able to view
+      } else {
+        console.log('[SynthChat Messages] Successfully added participant:', addedParticipant);
       }
     }
 
@@ -92,10 +125,10 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
     }
 
-    // Get sender names from users table
+    // Get sender names from users_table
     const senderEmails = [...new Set(messages?.map(m => m.sender_email) || [])];
     const { data: users } = await supabase
-      .from('users')
+      .from('users_table')
       .select('email, name')
       .in('email', senderEmails);
 
