@@ -1,6 +1,6 @@
 'use client';
 
-import { Palette, ChevronDown, Microscope, Code } from 'lucide-react';
+import { Palette, ChevronDown, Microscope, Code, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
