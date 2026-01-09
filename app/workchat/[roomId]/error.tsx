@@ -1,5 +1,5 @@
 /**
- * Error boundary for SynthChat room page
+ * Error boundary for WorkChat room page
  */
 
 'use client';
@@ -15,7 +15,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[SynthChat Error]', error);
+    console.error('[WorkChat Error]', error);
   }, [error]);
 
   return (

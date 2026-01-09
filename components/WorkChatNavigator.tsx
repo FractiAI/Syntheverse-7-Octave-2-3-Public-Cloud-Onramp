@@ -1,5 +1,5 @@
 /**
- * SynthChat Navigator Component
+ * WorkChat Navigator Component
  * Table-based chat room navigator similar to PoC Archive and Sandbox Navigator
  * Displays all accessible chat rooms in a cockpit-table format
  */
@@ -38,7 +38,7 @@ interface ChatRoom {
   };
 }
 
-export function SynthChatNavigator() {
+export function WorkChatNavigator() {
   const router = useRouter();
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +65,7 @@ export function SynthChatNavigator() {
   const fetchRooms = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/synthchat/rooms');
+      const response = await fetch('/api/workchat/rooms');
       if (response.ok) {
         const data = await response.json();
         const roomsData = data.rooms || [];
@@ -89,7 +89,7 @@ export function SynthChatNavigator() {
     e.stopPropagation();
     setLeaving(roomId);
     try {
-      const response = await fetch(`/api/synthchat/rooms/${roomId}/leave`, {
+      const response = await fetch(`/api/workchat/rooms/${roomId}/leave`, {
         method: 'POST',
       });
       if (response.ok) {
@@ -110,7 +110,7 @@ export function SynthChatNavigator() {
 
     setCreating(true);
     try {
-      const response = await fetch('/api/synthchat/rooms/create', {
+      const response = await fetch('/api/workchat/rooms/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -303,8 +303,8 @@ export function SynthChatNavigator() {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                console.log('[SynthChat] Opening chat room:', room.id);
-                                router.push(`/synthchat/${room.id}`);
+                                console.log('[WorkChat] Opening chat room:', room.id);
+                                router.push(`/workchat/${room.id}`);
                               }}
                               className="h-7 px-3 text-xs cockpit-lever text-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-beta)]"
                             >
@@ -340,7 +340,7 @@ export function SynthChatNavigator() {
       <Dialog 
         open={showCreateDialog} 
         onOpenChange={(open) => {
-          console.log('[SynthChatNavigator] Dialog state changing to:', open);
+          console.log('[WorkChatNavigator] Dialog state changing to:', open);
           setShowCreateDialog(open);
         }}
       >

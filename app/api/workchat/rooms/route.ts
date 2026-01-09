@@ -196,7 +196,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     // If tables don't exist, return empty array instead of 500
     if (error.message?.includes('does not exist') || error.message?.includes('relation') || error.code === '42P01') {
-      console.warn('SynthChat tables not found, returning empty array:', error.message);
+      console.warn('WorkChat tables not found, returning empty array:', error.message);
       return NextResponse.json({
         rooms: [],
       });

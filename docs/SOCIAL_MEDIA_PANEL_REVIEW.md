@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This review outlines the requirements for implementing a **single collapsible social media panel** in the Contributor Dashboard. The panel will enable users to post content, view community feeds, and upload images—all organized by sandbox to create distinct communities. This follows the same architectural pattern as SynthChat (sandbox-based collaborative rooms) and uses the same collapsible `<details>` pattern as other dashboard panels.
+This review outlines the requirements for implementing a **single collapsible social media panel** in the Contributor Dashboard. The panel will enable users to post content, view community feeds, and upload images—all organized by sandbox to create distinct communities. This follows the same architectural pattern as WorkChat (sandbox-based collaborative rooms) and uses the same collapsible `<details>` pattern as other dashboard panels.
 
 **Key Design Principle:** Each sandbox has its own social feed, creating isolated communities while maintaining the Syntheverse ecosystem structure. The panel is collapsible to save screen space and follows the cockpit aesthetic of other dashboard panels.
 
@@ -79,7 +79,7 @@ CREATE INDEX idx_social_post_comments_created_at ON public.social_post_comments(
 
 ### 1.2 Row Level Security (RLS) Policies
 
-**Pattern:** Follow SynthChat RLS pattern - users can read posts in sandboxes they have access to, can post to sandboxes they're part of.
+**Pattern:** Follow WorkChat RLS pattern - users can read posts in sandboxes they have access to, can post to sandboxes they're part of.
 
 ```sql
 -- Enable RLS
@@ -161,7 +161,7 @@ CREATE POLICY "Public can view images"
 
 ### 2.2 Image Upload API Endpoint
 
-**Pattern:** Follow `/api/blog/upload-image/route.ts` and `/api/synthchat/upload-file/route.ts`
+**Pattern:** Follow `/api/blog/upload-image/route.ts` and `/api/workchat/upload-file/route.ts`
 
 **Endpoint:** `POST /api/social/upload-image`
 
@@ -326,7 +326,7 @@ CREATE POLICY "Public can view images"
 **Location:** `components/SocialMediaPanel.tsx`
 
 **Features:**
-- **Collapsible panel** (using `<details>` pattern like other dashboard panels - SynthChat Navigator, Broadcast Archive, etc.)
+- **Collapsible panel** (using `<details>` pattern like other dashboard panels - WorkChat Navigator, Broadcast Archive, etc.)
 - Self-contained component that handles its own collapse/expand state
 - Sandbox selector (inherits from dashboard sandbox selection)
 - Post feed (infinite scroll or pagination)
@@ -440,7 +440,7 @@ CREATE POLICY "Public can view images"
 
 **Styling:**
 - Use existing cockpit CSS classes (`cockpit-panel`, `cockpit-text`, `cockpit-label`, etc.)
-- Match SynthChat visual style (rounded message bubbles, timestamps)
+- Match WorkChat visual style (rounded message bubbles, timestamps)
 - Use hydrogen-amber accents for interactive elements
 - Dark theme with keyline borders
 
@@ -560,9 +560,9 @@ CREATE POLICY "Public can view images"
 
 ## 10. Similar Patterns to Follow
 
-### 10.1 SynthChat Pattern (Primary Reference)
+### 10.1 WorkChat Pattern (Primary Reference)
 
-**Why:** SynthChat already implements sandbox-based collaborative rooms with:
+**Why:** WorkChat already implements sandbox-based collaborative rooms with:
 - Sandbox linking (`sandbox_id` field)
 - Participant tracking
 - Message history
@@ -701,7 +701,7 @@ CREATE POLICY "Public can view images"
 
 ### Immediate Actions
 1. **Start with MVP:** Core posting, viewing, liking, commenting
-2. **Follow SynthChat pattern:** Reuse proven sandbox-based architecture
+2. **Follow WorkChat pattern:** Reuse proven sandbox-based architecture
 3. **Use existing storage patterns:** Leverage blog/chat image upload code
 4. **Implement pagination early:** Prevent performance issues
 
@@ -722,11 +722,11 @@ CREATE POLICY "Public can view images"
 
 ## 16. Conclusion
 
-The social media panel is **feasible and well-aligned** with existing architecture. The sandbox-based approach creates natural community boundaries while maintaining ecosystem coherence. Following the SynthChat pattern provides a proven foundation, and existing image upload patterns reduce implementation complexity.
+The social media panel is **feasible and well-aligned** with existing architecture. The sandbox-based approach creates natural community boundaries while maintaining ecosystem coherence. Following the WorkChat pattern provides a proven foundation, and existing image upload patterns reduce implementation complexity.
 
 **Key Success Factors:**
 - ✅ Clear sandbox isolation
-- ✅ Reuse of existing patterns (SynthChat, Blog, Storage)
+- ✅ Reuse of existing patterns (WorkChat, Blog, Storage)
 - ✅ Incremental development (MVP first)
 - ✅ Performance considerations (pagination, indexing)
 - ✅ Security best practices (RLS, rate limiting)

@@ -59,7 +59,7 @@ allocations                  → Token allocation records
 epoch_metal_balances        → Token pool tracking (Gold/Silver/Copper)
 tokenomics                  → Global token state (90T total supply)
 poc_log                     → Audit trail (all PoC operations)
-chat_rooms/messages         → SynthChat system
+chat_rooms/messages         → WorkChat system
 social_posts/likes/comments → Social media feed
 blog_posts                  → Blog system
 enterprise_sandboxes        → Enterprise/Creator sandboxes
@@ -167,7 +167,7 @@ Update contributions table:
 - Broadcast to contributor channels/communities
 - Full analytics dashboard with contribution metrics
 
-### SynthChat (WhatsApp-style)
+### WorkChat (WhatsApp-style)
 
 - Sandbox-based chat rooms for collaboration
 - Multi-user participation with role badges
@@ -371,7 +371,7 @@ ENABLE_BLOCKCHAIN_REGISTRATION=false  # Disabled until March 2026
   /[id]/activate                → Activate sandbox with SYNTH tokens
   /[id]/analytics               → Sandbox analytics dashboard
   /[id]/contributions           → List sandbox contributions
-/synthchat/rooms                → Chat room management
+/workchat/rooms                → Chat room management
   /[roomId]/messages            → Get/post messages
   /create                       → Create user-defined sandbox
 /social/posts                   → Social media posts
@@ -419,7 +419,7 @@ ENABLE_BLOCKCHAIN_REGISTRATION=false  # Disabled until March 2026
 /ReactorCore.tsx                → Main dashboard (SYNTH token display)
 /FrontierModule.tsx             → PoC archive viewer
 /SubmitContributionForm.tsx     → Submission form
-/SynthChatNavigator.tsx         → Chat interface (WhatsApp-style)
+/WorkChatNavigator.tsx         → Chat interface (WhatsApp-style)
 /SocialMediaPanel.tsx           → Social media feed
 /CreatePostForm.tsx             → Post creation with image upload
 /PostCard.tsx                   → Individual post display
@@ -450,7 +450,7 @@ ENABLE_BLOCKCHAIN_REGISTRATION=false  # Disabled until March 2026
 20250108000001_add_seed_and_sweetspot_columns.sql → Seed/edge detection
 20250121000001_create_blog_posts.sql              → Blog system
 20250121000002_add_welcome_post.sql               → Initial blog post
-add_synthchat_production.sql                      → SynthChat tables
+add_workchat_production.sql                      → WorkChat tables
 SOCIAL_MEDIA_SETUP_SNIPPET.sql                    → Copy-paste ready setup
 ```
 
@@ -494,7 +494,7 @@ SOCIAL_MEDIA_SETUP_SNIPPET.sql                    → Copy-paste ready setup
 -- Run in order:
 1. supabase/migrations/20250121000001_create_blog_posts.sql
 2. supabase/migrations/20250121000002_add_welcome_post.sql
-3. supabase/migrations/add_synthchat_production.sql
+3. supabase/migrations/add_workchat_production.sql
 4. supabase/migrations/SOCIAL_MEDIA_SETUP_SNIPPET.sql (copy entire file)
 5. supabase/migrations/20250108000001_add_seed_and_sweetspot_columns.sql
 ```

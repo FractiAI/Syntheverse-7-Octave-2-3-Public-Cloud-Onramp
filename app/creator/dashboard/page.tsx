@@ -11,13 +11,13 @@ import { CreatorCockpitStats } from '@/components/creator/CreatorCockpitStats';
 import { CreatorCockpitNavigation } from '@/components/creator/CreatorCockpitNavigation';
 import { StatusPanel } from '@/components/StatusPanel';
 import { SalesTracking } from '@/components/SalesTracking';
-import { SynthChat } from '@/components/SynthChat';
+import { SynthChat } from "@/components/WorkChat";
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
 import { CreatorEnterpriseSandboxes } from '@/components/creator/CreatorEnterpriseSandboxes';
 import { ReferenceCustomersList } from '@/components/ReferenceCustomersList';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
-import { SynthChatNavigator } from '@/components/SynthChatNavigator';
+import { SynthChatNavigator } from "@/components/WorkChat";
 import { BroadcastArchiveNavigator } from '@/components/BroadcastArchiveNavigator';
 import CockpitHeader from '@/components/CockpitHeader';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
@@ -134,7 +134,7 @@ export default async function CreatorDashboard() {
           <div className="p-6 space-y-6 border-t-2 border-[var(--lab-border)]" style={{color: 'var(--lab-text-primary)'}}>
             <SandboxNavigator userEmail={userEmail} isCreator={isCreator} isOperator={isOperator} />
             <FrontierModule userEmail={userEmail} />
-            <SynthChatNavigator />
+            <WorkChatNavigator />
             <BroadcastArchiveNavigator />
           </div>
         </details>

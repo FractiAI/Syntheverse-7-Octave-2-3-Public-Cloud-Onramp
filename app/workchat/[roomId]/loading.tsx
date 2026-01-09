@@ -1,5 +1,5 @@
 /**
- * Loading state for SynthChat room page
+ * Loading state for WorkChat room page
  */
 
 export default function Loading() {

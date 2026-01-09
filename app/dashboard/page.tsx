@@ -9,7 +9,7 @@ import { ReactorCore } from '@/components/ReactorCore';
 import { OperatorBroadcastBanner } from '@/components/OperatorBroadcastBanner';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
-import { SynthChatNavigator } from '@/components/SynthChatNavigator';
+import { SynthChatNavigator } from "@/components/WorkChat";
 import { CloudChannel } from '@/components/CloudChannel';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
 import { ChevronDown } from 'lucide-react';
@@ -109,7 +109,7 @@ export default async function Dashboard() {
                   </div>
                 </summary>
                 <div className="px-3 pb-3 pt-2">
-                  <SynthChatNavigator />
+                  <WorkChatNavigator />
                 </div>
               </PersistentDetails>
             </div>

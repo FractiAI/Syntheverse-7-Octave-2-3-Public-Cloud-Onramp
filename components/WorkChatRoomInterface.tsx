@@ -1,5 +1,5 @@
 /**
- * SynthChat Room Interface
+ * WorkChat Room Interface
  * WhatsApp/iPhone-style chat interface with:
  * - Message search functionality
  * - Image upload support
@@ -48,17 +48,17 @@ interface ChatRoom {
   participants: Array<{ email: string; role: string; name?: string }>;
 }
 
-interface SynthChatRoomInterfaceProps {
+interface WorkChatRoomInterfaceProps {
   roomId: string;
   userEmail: string;
   searchTerm?: string;
 }
 
-export function SynthChatRoomInterface({ 
+export function WorkChatRoomInterface({ 
   roomId, 
   userEmail,
   searchTerm: initialSearchTerm = '' 
-}: SynthChatRoomInterfaceProps) {
+}: WorkChatRoomInterfaceProps) {
   const [room, setRoom] = useState<ChatRoom | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [filteredMessages, setFilteredMessages] = useState<ChatMessage[]>([]);
@@ -80,13 +80,13 @@ export function SynthChatRoomInterface({
 
   // Fetch room details
   useEffect(() => {
-    console.log('[SynthChatRoomInterface] useEffect triggered for roomId:', roomId);
+    console.log('[WorkChatRoomInterface] useEffect triggered for roomId:', roomId);
     fetchRoom();
     
     // Failsafe: if loading takes more than 10 seconds, show error
     const timeout = setTimeout(() => {
       if (loading) {
-        console.error('[SynthChatRoomInterface] Loading timeout - forcing error state');
+        console.error('[WorkChatRoomInterface] Loading timeout - forcing error state');
         setError('Chat room took too long to load. Please try again.');
         setLoading(false);
       }
@@ -95,11 +95,11 @@ export function SynthChatRoomInterface({
     return () => clearTimeout(timeout);
   }, [roomId]);
 
-  // Fetch messages
+  // Fetch messages with less aggressive polling
   useEffect(() => {
     if (room) {
       fetchMessages();
-      const interval = setInterval(fetchMessages, 3000); // Poll every 3s
+      const interval = setInterval(fetchMessages, 10000); // Poll every 10s (optimized from 3s)
       return () => clearInterval(interval);
     }
   }, [room]);
@@ -127,36 +127,58 @@ export function SynthChatRoomInterface({
   }, [filteredMessages, showSearch]);
 
   const fetchRoom = async () => {
-    console.log('[SynthChatRoomInterface] fetchRoom START for roomId:', roomId);
+    console.log('[WorkChatRoomInterface] fetchRoom START for roomId:', roomId);
     try {
-      const url = `/api/synthchat/rooms/${roomId}`;
-      console.log('[SynthChatRoomInterface] Fetching:', url);
+      const url = `/api/workchat/rooms/${roomId}`;
+      console.log('[WorkChatRoomInterface] Fetching:', url);
       
-      const response = await fetch(url);
-      console.log('[SynthChatRoomInterface] Response status:', response.status);
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
+      const response = await fetch(url, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      console.log('[WorkChatRoomInterface] Response status:', response.status);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('[SynthChatRoomInterface] Room data:', data.room);
+        console.log('[WorkChatRoomInterface] Room data:', data.room);
         setRoom(data.room);
         setError(null);
       } else {
         const data = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('[SynthChatRoomInterface] Error response:', data);
+        console.error('[WorkChatRoomInterface] Error response:', data);
         setError(data.error || 'Failed to load room');
       }
-    } catch (error) {
-      console.error('[SynthChatRoomInterface] Fetch error:', error);
-      setError('Failed to connect to chat room');
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.error('[WorkChatRoomInterface] Fetch timeout after 8 seconds');
+        setError('Chat room took too long to load. Please check your connection and try again.');
+      } else {
+        console.error('[WorkChatRoomInterface] Fetch error:', error);
+        setError('Failed to connect to chat room');
+      }
     } finally {
-      console.log('[SynthChatRoomInterface] Setting loading to false');
+      console.log('[WorkChatRoomInterface] Setting loading to false');
       setLoading(false);
     }
   };
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`/api/synthchat/rooms/${roomId}/messages`);
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
+      const response = await fetch(`/api/workchat/rooms/${roomId}/messages`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
@@ -166,8 +188,12 @@ export function SynthChatRoomInterface({
         console.error('Failed to fetch messages:', data.error);
         // Don't set error state for message fetch failures to avoid blocking UI
       }
-    } catch (error) {
-      console.error('Failed to fetch messages:', error);
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.warn('Message fetch timed out after 5 seconds');
+      } else {
+        console.error('Failed to fetch messages:', error);
+      }
       // Don't set error state for message fetch failures to avoid blocking UI
     }
   };
@@ -194,7 +220,7 @@ export function SynthChatRoomInterface({
       formData.append('file', file);
       formData.append('room_id', roomId);
 
-      const response = await fetch('/api/synthchat/upload-image', {
+      const response = await fetch('/api/workchat/upload-image', {
         method: 'POST',
         body: formData,
       });
@@ -238,7 +264,7 @@ export function SynthChatRoomInterface({
       formData.append('file', file);
       formData.append('room_id', roomId);
 
-      const response = await fetch('/api/synthchat/upload-file', {
+      const response = await fetch('/api/workchat/upload-file', {
         method: 'POST',
         body: formData,
       });
@@ -279,7 +305,7 @@ export function SynthChatRoomInterface({
         payload.file_name = selectedFile.name;
       }
 
-      const response = await fetch('/api/synthchat/messages', {
+      const response = await fetch('/api/workchat/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -328,7 +354,7 @@ export function SynthChatRoomInterface({
   };
 
   if (loading) {
-    console.log('[SynthChatRoomInterface] Rendering loading state');
+    console.log('[WorkChatRoomInterface] Rendering loading state');
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg">

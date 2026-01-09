@@ -1,6 +1,6 @@
 /**
- * Get specific SynthChat room details
- * GET /api/synthchat/rooms/[roomId]
+ * Get specific WorkChat room details
+ * GET /api/workchat/rooms/[roomId]
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -47,13 +47,13 @@ export async function GET(
     // Check if current user is a participant
     let isConnected = participants?.some(p => p.user_email === user.email) || false;
 
-    console.log('[SynthChat Room] User:', user.email);
-    console.log('[SynthChat Room] Room:', roomId);
-    console.log('[SynthChat Room] Is connected:', isConnected);
+    console.log('[WorkChat Room] User:', user.email);
+    console.log('[WorkChat Room] Room:', roomId);
+    console.log('[WorkChat Room] Is connected:', isConnected);
 
     // If not connected, auto-add them as participant
     if (!isConnected) {
-      console.log('[SynthChat Room] Auto-adding user as participant');
+      console.log('[WorkChat Room] Auto-adding user as participant');
       
       const { data: userData, error: userError } = await supabase
         .from('users_table')
@@ -62,11 +62,11 @@ export async function GET(
         .single();
 
       if (userError) {
-        console.error('[SynthChat Room] Error fetching user role:', userError);
+        console.error('[WorkChat Room] Error fetching user role:', userError);
       }
 
       const userRole = userData?.role || 'contributor';
-      console.log('[SynthChat Room] User role:', userRole);
+      console.log('[WorkChat Room] User role:', userRole);
 
       const { error: addError, data: addedParticipant } = await supabase
         .from('chat_participants')
@@ -79,10 +79,10 @@ export async function GET(
         .single();
 
       if (addError) {
-        console.error('[SynthChat Room] Error adding participant:', addError);
-        console.error('[SynthChat Room] Add error details:', JSON.stringify(addError, null, 2));
+        console.error('[WorkChat Room] Error adding participant:', addError);
+        console.error('[WorkChat Room] Add error details:', JSON.stringify(addError, null, 2));
       } else {
-        console.log('[SynthChat Room] Successfully added participant:', addedParticipant);
+        console.log('[WorkChat Room] Successfully added participant:', addedParticipant);
         isConnected = true;
       }
     }

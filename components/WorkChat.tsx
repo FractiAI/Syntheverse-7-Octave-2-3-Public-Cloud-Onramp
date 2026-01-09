@@ -40,11 +40,11 @@ interface ChatMessage {
   sender_name?: string;
 }
 
-interface SynthChatProps {
+interface WorkChatProps {
   embedded?: boolean; // If true, render directly without dialog/button
 }
 
-export function SynthChat({ embedded = false }: SynthChatProps = {}) {
+export function WorkChat({ embedded = false }: WorkChatProps = {}) {
   const [isOpen, setIsOpen] = useState(embedded); // Auto-open if embedded
   const [rooms, setRooms] = useState<ChatRoom[]>([]);
   const [currentRoom, setCurrentRoom] = useState<ChatRoom | null>(null);
@@ -88,7 +88,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
 
   const joinRoom = useCallback(async (roomId: string) => {
     try {
-      await fetch('/api/synthchat/rooms', {
+      await fetch('/api/workchat/rooms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ room_id: roomId }),
@@ -101,7 +101,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
   const fetchRooms = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/synthchat/rooms');
+      const response = await fetch('/api/workchat/rooms');
       if (response.ok) {
         const data = await response.json();
         const roomsData = data.rooms || [];
@@ -131,7 +131,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
     if (!currentRoom) return;
 
     try {
-      const response = await fetch(`/api/synthchat/rooms/${currentRoom.id}/messages`);
+      const response = await fetch(`/api/workchat/rooms/${currentRoom.id}/messages`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
@@ -204,7 +204,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
     }
     setLeaving(roomId);
     try {
-      const response = await fetch(`/api/synthchat/rooms/${roomId}/leave`, {
+      const response = await fetch(`/api/workchat/rooms/${roomId}/leave`, {
         method: 'POST',
       });
       if (response.ok) {
@@ -224,7 +224,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/synthchat/upload-file', {
+      const response = await fetch('/api/workchat/upload-file', {
         method: 'POST',
         body: formData,
       });
@@ -267,7 +267,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
 
     setSending(true);
     try {
-      const response = await fetch(`/api/synthchat/rooms/${currentRoom.id}/messages`, {
+      const response = await fetch(`/api/workchat/rooms/${currentRoom.id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: newMessage.trim() || 'Shared a file' }),
@@ -303,7 +303,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
 
     setCreating(true);
     try {
-      const response = await fetch('/api/synthchat/rooms/create', {
+      const response = await fetch('/api/workchat/rooms/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -924,7 +924,7 @@ export function SynthChat({ embedded = false }: SynthChatProps = {}) {
           variant="outline"
         >
           <MessageCircle className="mr-2 inline h-4 w-4" />
-          SynthChat
+          WorkChat
         </Button>
       )}
 

@@ -1,6 +1,6 @@
 /**
- * Get messages for a specific SynthChat room
- * GET /api/synthchat/rooms/[roomId]/messages
+ * Get messages for a specific WorkChat room
+ * GET /api/workchat/rooms/[roomId]/messages
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -12,32 +12,32 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }
 ) {
-  console.log('[SynthChat Messages] === REQUEST START ===');
-  console.log('[SynthChat Messages] Request URL:', request.url);
+  console.log('[WorkChat Messages] === REQUEST START ===');
+  console.log('[WorkChat Messages] Request URL:', request.url);
   
   try {
     const supabase = createClient();
     
-    console.log('[SynthChat Messages] Supabase client created');
+    console.log('[WorkChat Messages] Supabase client created');
     
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
 
-    console.log('[SynthChat Messages] Auth check result:', { 
+    console.log('[WorkChat Messages] Auth check result:', { 
       hasUser: !!user, 
       email: user?.email,
       authError: authError?.message 
     });
 
     if (!user?.email) {
-      console.log('[SynthChat Messages] Unauthorized - no user');
+      console.log('[WorkChat Messages] Unauthorized - no user');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { roomId } = await params;
-    console.log('[SynthChat Messages] Processing room:', roomId);
+    console.log('[WorkChat Messages] Processing room:', roomId);
 
     // Check if room exists first
     const { data: room, error: roomError } = await supabase
@@ -58,14 +58,14 @@ export async function GET(
       .eq('user_email', user.email)
       .single();
 
-    console.log('[SynthChat Messages] User:', user.email);
-    console.log('[SynthChat Messages] Room:', roomId);
-    console.log('[SynthChat Messages] Is participant:', !!participant);
-    console.log('[SynthChat Messages] Participant check error:', participantCheckError);
+    console.log('[WorkChat Messages] User:', user.email);
+    console.log('[WorkChat Messages] Room:', roomId);
+    console.log('[WorkChat Messages] Is participant:', !!participant);
+    console.log('[WorkChat Messages] Participant check error:', participantCheckError);
 
     // If not a participant, auto-add them (room is accessible to authenticated users)
     if (!participant) {
-      console.log('[SynthChat Messages] Auto-adding user as participant');
+      console.log('[WorkChat Messages] Auto-adding user as participant');
       
       // Get user role from users_table
       const { data: userData, error: userError } = await supabase
@@ -75,11 +75,11 @@ export async function GET(
         .single();
 
       if (userError) {
-        console.error('[SynthChat Messages] Error fetching user role:', userError);
+        console.error('[WorkChat Messages] Error fetching user role:', userError);
       }
 
       const userRole = userData?.role || 'contributor';
-      console.log('[SynthChat Messages] User role:', userRole);
+      console.log('[WorkChat Messages] User role:', userRole);
 
       // Add user as participant
       const { error: addError, data: addedParticipant } = await supabase
@@ -93,16 +93,17 @@ export async function GET(
         .single();
 
       if (addError) {
-        console.error('[SynthChat Messages] Error adding participant:', addError);
-        console.error('[SynthChat Messages] Add error details:', JSON.stringify(addError, null, 2));
+        console.error('[WorkChat Messages] Error adding participant:', addError);
+        console.error('[WorkChat Messages] Add error details:', JSON.stringify(addError, null, 2));
         // Continue anyway - they might still be able to view
       } else {
-        console.log('[SynthChat Messages] Successfully added participant:', addedParticipant);
+        console.log('[WorkChat Messages] Successfully added participant:', addedParticipant);
       }
     }
 
-    // Fetch messages with sender information
-    const { data: messages, error: messagesError } = await supabase
+    // Fetch messages with sender information (optimized with JOIN to reduce queries)
+    // Changed from 500 to 50 for faster load and reduced bandwidth
+    const { data: rawMessages, error: messagesError } = await supabase
       .from('chat_messages')
       .select(`
         id,
@@ -113,28 +114,32 @@ export async function GET(
         image_url,
         file_url,
         file_name,
-        created_at
+        created_at,
+        users_table!chat_messages_sender_email_fkey (
+          name
+        )
       `)
       .eq('room_id', roomId)
       .order('created_at', { ascending: true })
-      .limit(500); // Limit to last 500 messages
+      .limit(50); // Optimized: reduced from 500 to 50 messages
 
     if (messagesError) {
       console.error('Error fetching messages:', messagesError);
       return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
     }
 
-    // Get sender names from users_table
-    const senderEmails = [...new Set(messages?.map(m => m.sender_email) || [])];
-    const { data: users } = await supabase
-      .from('users_table')
-      .select('email, name')
-      .in('email', senderEmails);
-
-    // Map sender names to messages
-    const messagesWithNames = messages?.map(msg => ({
-      ...msg,
-      sender_name: users?.find(u => u.email === msg.sender_email)?.name || null,
+    // Transform messages to include sender_name from the join
+    const messagesWithNames = rawMessages?.map(msg => ({
+      id: msg.id,
+      room_id: msg.room_id,
+      sender_email: msg.sender_email,
+      sender_role: msg.sender_role,
+      message: msg.message,
+      image_url: msg.image_url,
+      file_url: msg.file_url,
+      file_name: msg.file_name,
+      created_at: msg.created_at,
+      sender_name: (msg.users_table as any)?.name || null,
     }));
 
     return NextResponse.json({

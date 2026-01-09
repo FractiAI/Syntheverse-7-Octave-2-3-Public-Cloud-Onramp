@@ -1,8 +1,8 @@
-# SynthChat Setup - Storage Bucket RLS Policies
+# WorkChat Setup - Storage Bucket RLS Policies
 
 ## Overview
 
-The new WhatsApp-style SynthChat interface requires a Supabase storage bucket for image uploads.
+The new WhatsApp-style WorkChat interface requires a Supabase storage bucket for image uploads.
 
 ## Required Setup
 
@@ -10,12 +10,12 @@ The new WhatsApp-style SynthChat interface requires a Supabase storage bucket fo
 
 Go to Supabase Dashboard → **SQL Editor** and run the complete setup script:
 
-**Location:** `supabase/migrations/20260109000002_synthchat_setup.sql`
+**Location:** `supabase/migrations/20260109000002_workchat_setup.sql`
 
 This single SQL file creates:
 - ✅ All 3 chat tables (chat_rooms, chat_messages, chat_participants)
 - ✅ All 12 RLS policies
-- ✅ Storage bucket (synthchat-images) with policies
+- ✅ Storage bucket (workchat-images) with policies
 - ✅ Indexes for performance
 - ✅ Unique constraints
 
@@ -25,8 +25,8 @@ This single SQL file creates:
 -- Ensure bucket exists and is public
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
-  'synthchat-images', 
-  'synthchat-images', 
+  'workchat-images', 
+  'workchat-images', 
   true,
   5242880, -- 5MB limit for images
   ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
@@ -49,7 +49,7 @@ ON storage.objects
 FOR INSERT
 TO authenticated
 WITH CHECK (
-  bucket_id = 'synthchat-images'
+  bucket_id = 'workchat-images'
 );
 
 -- Policy 2: Allow public read access
@@ -58,7 +58,7 @@ ON storage.objects
 FOR SELECT
 TO public
 USING (
-  bucket_id = 'synthchat-images'
+  bucket_id = 'workchat-images'
 );
 
 -- Policy 3: Allow users to update their own images
@@ -67,11 +67,11 @@ ON storage.objects
 FOR UPDATE
 TO authenticated
 USING (
-  bucket_id = 'synthchat-images' AND
+  bucket_id = 'workchat-images' AND
   auth.uid() = owner
 )
 WITH CHECK (
-  bucket_id = 'synthchat-images' AND
+  bucket_id = 'workchat-images' AND
   auth.uid() = owner
 );
 
@@ -81,7 +81,7 @@ ON storage.objects
 FOR DELETE
 TO authenticated
 USING (
-  bucket_id = 'synthchat-images' AND
+  bucket_id = 'workchat-images' AND
   auth.uid() = owner
 );
 ```
@@ -89,7 +89,7 @@ USING (
 ### Step 3: Verify
 
 1. Go to **Storage** → **Policies**
-2. Filter by `synthchat-images`
+2. Filter by `workchat-images`
 3. You should see 4 policies:
    - ✅ Authenticated users can upload chat images
    - ✅ Public read access for chat images
@@ -143,9 +143,9 @@ USING (
 ### Navigating to Chat
 
 1. Go to any dashboard
-2. Find **SynthChat Navigator** section
+2. Find **WorkChat Navigator** section
 3. Click on any chat room row
-4. Automatically navigates to `/synthchat/[roomId]`
+4. Automatically navigates to `/workchat/[roomId]`
 5. If not connected, auto-joins room first
 
 ### Sending Messages
@@ -170,17 +170,17 @@ USING (
 
 All endpoints require authentication:
 
-1. **GET /api/synthchat/rooms/[roomId]**
+1. **GET /api/workchat/rooms/[roomId]**
    - Returns room details & participants
 
-2. **GET /api/synthchat/rooms/[roomId]/messages**
+2. **GET /api/workchat/rooms/[roomId]/messages**
    - Returns messages for room (500 most recent)
 
-3. **POST /api/synthchat/upload-image**
+3. **POST /api/workchat/upload-image**
    - Uploads image to storage
    - Returns public URL
 
-4. **POST /api/synthchat/upload-file** (existing)
+4. **POST /api/workchat/upload-file** (existing)
    - Uploads PDF file
    - Returns public URL
 
@@ -217,7 +217,7 @@ All endpoints require authentication:
 
 Once the SQL is run and bucket is set up:
 
-1. ✅ Navigate to a chat room from SynthChatNavigator
+1. ✅ Navigate to a chat room from WorkChatNavigator
 2. ✅ Try sending a text message
 3. ✅ Try uploading an image
 4. ✅ Try uploading a PDF

@@ -13,7 +13,7 @@ import { StatusPanel } from '@/components/StatusPanel';
 import { FrontierModule } from '@/components/FrontierModule';
 import { ActivityAnalytics } from '@/components/activity/ActivityAnalytics';
 import { SandboxNavigator } from '@/components/SandboxNavigator';
-import { SynthChatNavigator } from '@/components/SynthChatNavigator';
+import { SynthChatNavigator } from "@/components/WorkChat";
 import { BroadcastArchiveNavigator } from '@/components/BroadcastArchiveNavigator';
 import CockpitHeader from '@/components/CockpitHeader';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
@@ -127,7 +127,7 @@ export default async function OperatorDashboard() {
           <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-6" style={{color: 'hsl(var(--text-primary))'}}>
             <SandboxNavigator userEmail={userEmail} isCreator={false} isOperator={isOperator} />
             <FrontierModule userEmail={userEmail} />
-            <SynthChatNavigator />
+            <WorkChatNavigator />
             <BroadcastArchiveNavigator />
           </div>
         </details>

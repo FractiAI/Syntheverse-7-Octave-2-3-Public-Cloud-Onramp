@@ -1,6 +1,6 @@
 /**
- * Upload Image for SynthChat Messages
- * POST /api/synthchat/upload-image
+ * Upload Image for WorkChat Messages
+ * POST /api/workchat/upload-image
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const fileExt = file.name.split('.').pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    // Organize by room: synthchat-images/{room_id}/{filename}
+    // Organize by room: workchat-images/{room_id}/{filename}
     const roomFolder = roomId || 'general';
     const filePath = `${roomFolder}/${fileName}`;
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Supabase Storage
     const { data, error: uploadError } = await supabase.storage
-      .from('synthchat-images')
+      .from('workchat-images')
       .upload(filePath, buffer, {
         contentType: file.type,
         upsert: false,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from('synthchat-images').getPublicUrl(filePath);
+    } = supabase.storage.from('workchat-images').getPublicUrl(filePath);
 
     return NextResponse.json({
       url: publicUrl,

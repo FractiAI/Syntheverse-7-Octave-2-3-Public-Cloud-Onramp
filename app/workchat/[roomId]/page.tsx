@@ -1,14 +1,14 @@
 /**
- * SynthChat Room Page
+ * WorkChat Room Page
  * Dedicated page for WhatsApp/iPhone-style chat interface
- * Route: /synthchat/[roomId]
+ * Route: /workchat/[roomId]
  */
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
-import { SynthChatRoomInterface } from '@/components/SynthChatRoomInterface';
+import { WorkChatRoomInterface } from '@/components/WorkChatRoomInterface';
 
-interface SynthChatRoomPageProps {
+interface WorkChatRoomPageProps {
   params: Promise<{
     roomId: string;
   }>;
@@ -19,34 +19,34 @@ interface SynthChatRoomPageProps {
 
 export const dynamic = 'force-dynamic';
 
-export default async function SynthChatRoomPage({ params, searchParams }: SynthChatRoomPageProps) {
-  console.log('[SynthChat Page] === PAGE LOAD START ===');
+export default async function WorkChatRoomPage({ params, searchParams }: WorkChatRoomPageProps) {
+  console.log('[WorkChat Page] === PAGE LOAD START ===');
   
   try {
     const supabase = createClient();
-    console.log('[SynthChat Page] Supabase client created');
+    console.log('[WorkChat Page] Supabase client created');
 
     const { data, error } = await supabase.auth.getUser();
-    console.log('[SynthChat Page] Auth result:', { hasUser: !!data?.user, error: error?.message });
+    console.log('[WorkChat Page] Auth result:', { hasUser: !!data?.user, error: error?.message });
     
     if (error || !data?.user) {
-      console.log('[SynthChat Page] Redirecting to login');
+      console.log('[WorkChat Page] Redirecting to login');
       redirect('/login');
     }
 
     const resolvedParams = await params;
     const { roomId } = resolvedParams;
-    console.log('[SynthChat Page] Room ID:', roomId);
+    console.log('[WorkChat Page] Room ID:', roomId);
     
     const resolvedSearchParams = await searchParams;
     const searchTerm = resolvedSearchParams.search || '';
-    console.log('[SynthChat Page] Search term:', searchTerm);
+    console.log('[WorkChat Page] Search term:', searchTerm);
 
-    console.log('[SynthChat Page] Rendering SynthChatRoomInterface');
+    console.log('[WorkChat Page] Rendering WorkChatRoomInterface');
     
     return (
       <div className="min-h-screen" style={{ background: 'var(--background)' }}>
-        <SynthChatRoomInterface 
+        <WorkChatRoomInterface 
           roomId={roomId} 
           userEmail={data.user.email!}
           searchTerm={searchTerm}
@@ -54,7 +54,7 @@ export default async function SynthChatRoomPage({ params, searchParams }: SynthC
       </div>
     );
   } catch (err) {
-    console.error('[SynthChat Page] Error:', err);
+    console.error('[WorkChat Page] Error:', err);
     throw err;
   }
 }

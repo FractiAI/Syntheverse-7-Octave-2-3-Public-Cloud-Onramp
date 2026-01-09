@@ -363,7 +363,7 @@ export const auditLogTable = pgTable('audit_log', {
 export type InsertAuditLog = typeof auditLogTable.$inferInsert;
 export type SelectAuditLog = typeof auditLogTable.$inferSelect;
 
-// SynthChat: Collaborative Sandbox Chat System
+// WorkChat: Collaborative Sandbox Chat System
 // Chat Rooms Table (one per sandbox)
 export const chatRoomsTable = pgTable('chat_rooms', {
   id: text('id').primaryKey(),
