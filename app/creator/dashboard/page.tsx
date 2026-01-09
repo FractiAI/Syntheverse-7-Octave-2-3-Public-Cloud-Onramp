@@ -289,10 +289,10 @@ export default async function CreatorLab() {
           </div>
         </div>
 
-        {/* Cloud Channel - Right Sidebar */}
-        <aside className="flex border-l border-[var(--keyline-primary)] flex-shrink-0" style={{ width: 'auto', transition: 'all 0.3s ease' }}>
+        {/* Cloud Channel - Right Sidebar (Temporarily disabled for debugging) */}
+        {/* <aside className="hidden lg:flex border-l border-[var(--keyline-primary)] flex-shrink-0" style={{ width: 'auto', transition: 'all 0.3s ease' }}>
           <CloudChannel />
-        </aside>
+        </aside> */}
       </div>
     </div>
   );
