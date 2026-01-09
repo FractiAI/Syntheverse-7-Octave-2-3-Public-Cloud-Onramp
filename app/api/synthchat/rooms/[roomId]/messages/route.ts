@@ -10,11 +10,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { roomId: string } }
+  { params }: { params: Promise<{ roomId: string }> }
 ) {
   console.log('[SynthChat Messages] === REQUEST START ===');
   console.log('[SynthChat Messages] Request URL:', request.url);
-  console.log('[SynthChat Messages] Params:', params);
   
   try {
     const supabase = createClient();
@@ -37,7 +36,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { roomId } = params;
+    const { roomId } = await params;
     console.log('[SynthChat Messages] Processing room:', roomId);
 
     // Check if room exists first

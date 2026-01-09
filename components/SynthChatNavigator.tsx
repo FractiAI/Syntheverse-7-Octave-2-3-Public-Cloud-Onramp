@@ -302,7 +302,10 @@ export function SynthChatNavigator() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => router.push(`/synthchat/${room.id}`)}
+                              onClick={() => {
+                                console.log('[SynthChat] Opening chat room:', room.id);
+                                router.push(`/synthchat/${room.id}`);
+                              }}
                               className="h-7 px-3 text-xs cockpit-lever text-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-beta)]"
                             >
                               Open Chat →
