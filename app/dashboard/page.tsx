@@ -52,16 +52,15 @@ export default async function Dashboard() {
       {/* Quick Actions Panel - Top Bar with Account Icon */}
       <QuickActionsPanel isCreator={isCreator} isOperator={isOperator} showContributorDashboard={false} />
 
-      {/* Cloud Channel - Mobile (Fixed at top) */}
-      <div className="lg:hidden">
-        <CloudChannel />
-      </div>
-
       {/* Main Layout: Content + Cloud Channel */}
       <div className="flex flex-1 overflow-hidden">
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto">
-          <div className="container mx-auto px-4 max-w-[1400px] lg:py-6 pt-[440px] pb-6">
+          <div className="container mx-auto px-4 py-6 max-w-[1400px]">
+            {/* Cloud Channel - Mobile Banner (Top of Content) */}
+            <div className="lg:hidden mb-6">
+              <CloudChannel />
+            </div>
             {/* Mobile Status Indicators */}
             <div className="block md:hidden mb-6">
               <MobileStatusIndicators />

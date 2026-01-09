@@ -1002,23 +1002,17 @@ html {
    ========================================= */
 @media (max-width: 1024px) {
   .cloud-channel-container {
-    position: fixed;
-    top: 60px; /* Below navigation bar */
-    left: 0;
-    right: 0;
+    position: relative;
     width: 100% !important;
     min-width: 100% !important;
     height: auto !important;
     max-height: 420px;
-    z-index: 40;
     border-left: none;
     border-bottom: 3px solid hsl(var(--tropical-blue) / 0.5);
     box-shadow: 
       0 8px 32px hsl(var(--tropical-blue) / 0.3),
       0 0 80px hsl(var(--tropical-glow) / 0.2),
       inset 0 -2px 20px hsl(var(--tropical-blue) / 0.1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     background: linear-gradient(180deg, 
       rgba(var(--background), 0.98) 0%,
       rgba(var(--background), 0.96) 50%,
@@ -1026,22 +1020,17 @@ html {
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 0.3s ease,
                 border-color 0.3s ease;
-  }
-
-  /* iOS Safe Area Support */
-  @supports (padding-top: env(safe-area-inset-top)) {
-    .cloud-channel-container {
-      top: calc(60px + env(safe-area-inset-top));
-    }
+    margin-bottom: 1rem;
   }
 
   /* Collapsed State - Minimal but Present */
   .cloud-channel-container.collapsed {
-    max-height: 52px !important;
+    max-height: 60px !important;
     width: 100% !important;
     min-width: 100% !important;
     border-bottom: 2px solid hsl(var(--tropical-blue) / 0.3);
     box-shadow: 0 2px 12px hsl(var(--tropical-blue) / 0.2);
+    margin-bottom: 1rem;
   }
 
   .cloud-channel-container.collapsed .cloud-channel-feed,
@@ -1058,9 +1047,9 @@ html {
   /* Swipe-to-Collapse Button - Touch Optimized */
   .cloud-channel-collapse-btn {
     top: auto;
-    bottom: -14px;
+    bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(50%);
     width: 72px;
     height: 28px;
     border-radius: 0 0 14px 14px;
@@ -1078,21 +1067,21 @@ html {
   }
 
   .cloud-channel-container.collapsed .cloud-channel-collapse-btn {
-    bottom: -14px;
+    bottom: 0;
     left: 50%;
-    transform: translateX(-50%) rotate(180deg);
+    transform: translateX(-50%) translateY(50%) rotate(180deg);
   }
 
   /* Active/Touch State */
   .cloud-channel-collapse-btn:active {
-    transform: translateX(-50%) scale(0.95);
+    transform: translateX(-50%) translateY(50%) scale(0.95);
     box-shadow: 
       0 2px 8px hsl(var(--tropical-blue) / 0.6),
       0 0 20px hsl(var(--tropical-glow) / 0.6);
   }
 
   .cloud-channel-container.collapsed .cloud-channel-collapse-btn:active {
-    transform: translateX(-50%) rotate(180deg) scale(0.95);
+    transform: translateX(-50%) translateY(50%) rotate(180deg) scale(0.95);
   }
 
   /* Content Areas - Touch Friendly */
