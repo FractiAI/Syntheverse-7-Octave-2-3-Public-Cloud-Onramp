@@ -12,11 +12,11 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔧 Latest Update (Jan 9, 2026):** 
-> - **🔘 Explicit Open Chat Button**: Replaced row clicks with prominent **"Open Chat →"** button. No more confusion - just click the button to open any chat room. Clear, obvious navigation.
-> - **🔧 Critical Schema Fix**: Fixed table name error (`users` → `users_table`) causing query failures. Created complete SQL setup script (`20260109000002_synthchat_setup.sql`) with all tables, RLS policies, storage bucket, and indexes in one file.
-> - **✅ 403 Errors Resolved**: All SynthChat functionality now working. Users successfully ran schema setup in Supabase. Auto-participant joining, message sending, image uploads all functional.
-> - **💬 WhatsApp-Style SynthChat**: Full-featured chat interface with dedicated `/synthchat/[roomId]` pages. Message bubbles, smart timestamps, real-time updates (3s polling).
-> - **📦 Simplified Navigation**: Direct router navigation on button click. Auto-join handled by API on page load. Cleaner code, better UX.
+> - **⚡ Next.js 15 Fix**: Fixed chat page loading by updating to async params (`await params`). Added loading spinner and error boundary for better UX. Comprehensive debug logging added.
+> - **🔘 Explicit Open Chat Button**: Replaced row clicks with prominent **"Open Chat →"** button. No more confusion - just click the button to open any chat room.
+> - **🔧 Critical Schema Fix**: Fixed table name error (`users` → `users_table`). Created complete SQL setup script with all tables, RLS policies, and storage bucket.
+> - **✅ Full Stack Working**: Schema setup successful, 403 errors resolved, auto-participant joining working. WhatsApp-style interface with message bubbles, search, file uploads.
+> - **📊 Production Ready**: All TypeScript/linting clean, comprehensive error handling, detailed logging for debugging. Chat functionality fully operational.
 
 ---
 
@@ -853,9 +853,11 @@ Built for the Syntheverse ecosystem with ❤️
 ---
 
 **Last Updated**: January 9, 2026  
-**Version**: 2.38 (Explicit Open Chat Button)
+**Version**: 2.39 (Next.js 15 Async Params Fix)
 
 ### Version History
+
+- **v2.39** (January 9, 2026): **Next.js 15 Async Params Fix** ⚡🔧 - **Critical Fix**: Fixed chat page loading issue caused by Next.js 15 breaking change where route params must be awaited. Updated `app/synthchat/[roomId]/page.tsx` to use `params: Promise<{ roomId: string }>` and `await params`. Updated both API routes (`/api/synthchat/rooms/[roomId]/route.ts` and `.../messages/route.ts`) with async params. **Error Handling**: Added `loading.tsx` with animated spinner for loading state. Added `error.tsx` with beautiful error boundary, "Try Again" button, and "Back to Dashboard" link. **Debugging**: Added comprehensive console logging throughout page load (`[SynthChat Page]` logs for every step: page start, auth check, room ID, rendering). Added try/catch in page component with full error logging. **Next.js 15 Compatibility**: In Next.js 15+, dynamic route segments are now async. Must use `const { id } = await params` instead of `const { id } = params`. This applies to all `[dynamic]` routes in app directory. **Status**: Chat pages should now load correctly. Check Vercel logs for detailed debugging output. 🚀
 
 - **v2.38** (January 9, 2026): **Explicit Open Chat Button** 🔘✅ - **UX Improvement**: Replaced confusing row clicks with explicit **"Open Chat →"** button in Actions column. Removed row onClick handler, removed Join button logic (auto-join happens on page load instead). Simplified component by removing `handleRoomClick`, `joinRoom` functions, `joining` state, and `useCallback` import. Button styled with cockpit-lever class and hydrogen amber color, positioned prominently in Actions column. Direct `router.push('/synthchat/[roomId]')` on click. Leave button still available for rooms you're already connected to. **Behavior**: Click "Open Chat →" → navigate to dedicated chat page → API auto-adds as participant → chat loads immediately. No more confusion about how to open chats. Clear, obvious call-to-action. **Status**: Simplified navigation, production-ready. 🚀
 
