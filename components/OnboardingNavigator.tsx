@@ -65,15 +65,32 @@ interface ExerciseState {
   score?: number;
 }
 
+import { WingsTrackSelector, WingTrack } from './WingsTrackSelector';
+
 export function OnboardingNavigator() {
   const [currentModule, setCurrentModule] = useState(0);
   const [trainingPath, setTrainingPath] = useState<'contributor' | 'advanced' | 'operator' | null>(null);
+  const [wingTrack, setWingTrack] = useState<WingTrack | null>(null);
   const [moduleProgress, setModuleProgress] = useState<Record<number, ExerciseState>>({});
   const [showExercise, setShowExercise] = useState(false);
   const [showKnowledgeCheck, setShowKnowledgeCheck] = useState(false);
   const [knowledgeCheckAnswers, setKnowledgeCheckAnswers] = useState<Record<number, number>>({});
   const topRef = useRef<HTMLDivElement | null>(null);
   const lessonRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle wing track selection
+  const handleSelectWingTrack = (track: WingTrack) => {
+    setWingTrack(track);
+    setCurrentModule(0);
+    // Map wing tracks to existing training paths
+    if (track === 'candidate-copper') {
+      setTrainingPath('contributor');
+    } else if (track === 'operator-silver') {
+      setTrainingPath('operator');
+    } else if (track === 'creator-gold') {
+      setTrainingPath('advanced');
+    }
+  };
 
   // Scroll to top of page (ONBOARDING NAVIGATOR section) when onboarding page is first loaded
   useEffect(() => {
