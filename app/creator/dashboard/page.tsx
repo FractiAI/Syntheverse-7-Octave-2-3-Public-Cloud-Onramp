@@ -1,5 +1,5 @@
 /**
- * Creator Dashboard - Syntheverse Cockpit
+ * Creator Lab™ - Syntheverse Cockpit
  * Creator-controlled command center for PoC lifecycle and system administration
  * Only accessible to Creator (info@fractiai.com)
  */
@@ -32,7 +32,7 @@ import '../../control-lab.css';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CreatorDashboard() {
+export default async function CreatorLab() {
   const supabase = createClient();
 
   const { data, error } = await supabase.auth.getUser();
@@ -66,10 +66,10 @@ export default async function CreatorDashboard() {
               SYNTHEVERSE CLOUD LABORATORY
             </div>
             <h1 className="lab-title" style={{color: 'hsl(var(--hydrogen-gamma))'}}>
-              Creator Cloud Control
+              Creator Lab™
             </h1>
             <p className="lab-subtitle" style={{color: 'hsl(var(--text-secondary))'}}>
-              Precision Cloud Management · Enterprise Coordination · System Administration
+              Reality Worldbuilding · Infinite Materials · Frontier Creation
             </p>
           </div>
           <div className="lab-status-monitors">

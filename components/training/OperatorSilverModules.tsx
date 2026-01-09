@@ -842,7 +842,7 @@ export const operatorSilverModules = [
                 <div className="flex-1">
                   <div className="font-semibold text-blue-400 mb-2">Navigate to Operator Dashboard</div>
                   <div className="text-sm opacity-90">
-                    Go to <code className="bg-black/50 px-2 py-1 rounded">/operator/dashboard</code> 
+                    Go to <code className="bg-black/50 px-2 py-1 rounded">Operator Lab™</code> 
                     → Click "Enterprise Clouds" tab → "Create New Cloud Instance"
                   </div>
                 </div>
@@ -1577,7 +1577,7 @@ export const operatorSilverModules = [
           <h4 className="text-xl font-bold mb-4">📈 Operator Dashboard Analytics</h4>
           
           <p className="mb-4 opacity-90 leading-relaxed">
-            The Operator Dashboard (<code className="bg-black/50 px-2 py-1 rounded text-sm">/operator/dashboard</code>) 
+            The Operator Lab™ (<code className="bg-black/50 px-2 py-1 rounded text-sm">/operator/dashboard</code>) 
             provides real-time metrics for all Clouds you manage. Here's what to monitor:
           </p>
 

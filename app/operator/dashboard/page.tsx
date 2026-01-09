@@ -1,5 +1,5 @@
 /**
- * Operator Dashboard - Syntheverse Cockpit
+ * Operator Lab™ - Syntheverse Cockpit
  * Operator-controlled command center for PoC lifecycle and system administration
  * Accessible to Operators (users with role='operator' in database)
  */
@@ -27,7 +27,7 @@ import '../../control-lab.css';
 
 export const dynamic = 'force-dynamic';
 
-export default async function OperatorDashboard() {
+export default async function OperatorLab() {
   const supabase = createClient();
 
   const { data, error } = await supabase.auth.getUser();
@@ -37,7 +37,7 @@ export default async function OperatorDashboard() {
 
   const { user, isOperator } = await getAuthenticatedUserWithRole();
 
-  // Only Operators can access this dashboard (Creators should use Creator Dashboard)
+  // Only Operators can access this lab (Creators should use Creator Lab™)
   if (!isOperator || !user?.email) {
     redirect('/dashboard');
   }
@@ -60,10 +60,10 @@ export default async function OperatorDashboard() {
               SYNTHEVERSE CLOUD CONTROL CENTER
             </div>
             <h1 className="lab-title" style={{color: 'hsl(var(--hydrogen-alpha))'}}>
-              Operator Cloud Control
+              Operator Lab™
             </h1>
             <p className="lab-subtitle" style={{color: 'hsl(var(--text-secondary))'}}>
-              Enterprise Cloud Operations · Broadcast Management · Scoring Coordination
+              Cloud Infrastructure Management · Community Coordination · System Operations
             </p>
           </div>
           <div className="lab-status-monitors">
