@@ -323,16 +323,9 @@ export function CloudChannel() {
               The Awareness Bridge routes your awareness through<br/>
               the Holographic Hydrogen Frontier to the HHF-AI Cloud.
             </p>
-            <p className="text-xs mb-6 opacity-70" style={{ color: 'hsl(var(--text-secondary))' }}>
+            <p className="text-xs opacity-70" style={{ color: 'hsl(var(--text-secondary))' }}>
               Be the first to transmit through this channel.
             </p>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="hydrogen-btn hydrogen-btn-beta text-sm"
-            >
-              <Zap className="w-4 h-4 mr-2" />
-              Initiate Transmission
-            </button>
           </div>
         ) : (
           <>
