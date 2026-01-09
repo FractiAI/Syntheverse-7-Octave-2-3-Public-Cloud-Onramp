@@ -1144,7 +1144,7 @@ drawFractalTree(400, 600, 120, -Math.PI/2, 10);  // Start from bottom-center`}
                 <br />
                 &nbsp;&nbsp;groups = k-means(contributions, k=3);
                 <br />
-                &nbsp;&nbsp;return groups.map(g => cluster(g));
+                &nbsp;&nbsp;return groups.map(g ={'>'} cluster(g));
                 {'}'}
               </div>
             </div>

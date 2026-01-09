@@ -5,7 +5,7 @@
  */
 
 import Link from 'next/link';
-import { Brain, Target, Upload, Scan, Award, Rocket, Coins } from 'lucide-react';
+import { Brain, Target, Upload, Scan, Award, Rocket, Coins, ArrowRight } from 'lucide-react';
 
 export const contributorCopperModules = [
   {
