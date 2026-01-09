@@ -57,6 +57,12 @@ export default async function CreatorLab() {
   return (
     <div className="lab-bg holographic-grid min-h-screen relative flex flex-col">
       <div className="nebula-background" style={{opacity: 0.3}} />
+      
+      {/* Cloud Channel - Mobile Awareness Bridge */}
+      <div className="lg:hidden">
+        <CloudChannel />
+      </div>
+
       {/* Control Lab Header - Scientific Control Station */}
       <div className="lab-header relative z-10 flex-shrink-0">
         <div className="lab-header-grid">
@@ -99,7 +105,7 @@ export default async function CreatorLab() {
       <div className="flex flex-1 overflow-hidden relative z-10">
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto">
-          <div className="container mx-auto space-y-6 px-6 py-8">
+          <div className="container mx-auto space-y-6 px-6 lg:py-8 pt-[420px] pb-8">
         {/* Mobile Status Indicators - Top of mobile dashboards */}
         <div className="block md:hidden">
           <MobileStatusIndicators />

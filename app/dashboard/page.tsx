@@ -61,7 +61,7 @@ export default async function Dashboard() {
       <div className="flex flex-1 overflow-hidden">
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto">
-          <div className="container mx-auto px-4 py-6 max-w-[1400px] lg:pt-6 pt-[420px]">
+          <div className="container mx-auto px-4 max-w-[1400px] lg:py-6 pt-[440px] pb-6">
             {/* Mobile Status Indicators */}
             <div className="block md:hidden mb-6">
               <MobileStatusIndicators />

@@ -996,7 +996,10 @@ html {
   }
 }
 
-/* Mobile: Horizontal banner at top */
+/* =========================================
+   MOBILE CLOUD CHANNEL - FRONTIER AWARENESS BRIDGE
+   Horizontal banner design for iOS & Android
+   ========================================= */
 @media (max-width: 1024px) {
   .cloud-channel-container {
     position: fixed;
@@ -1006,17 +1009,39 @@ html {
     width: 100% !important;
     min-width: 100% !important;
     height: auto !important;
-    max-height: 400px;
+    max-height: 420px;
     z-index: 40;
     border-left: none;
-    border-bottom: 2px solid hsl(var(--tropical-blue) / 0.3);
-    box-shadow: 0 4px 20px hsl(var(--tropical-blue) / 0.2);
+    border-bottom: 3px solid hsl(var(--tropical-blue) / 0.5);
+    box-shadow: 
+      0 8px 32px hsl(var(--tropical-blue) / 0.3),
+      0 0 80px hsl(var(--tropical-glow) / 0.2),
+      inset 0 -2px 20px hsl(var(--tropical-blue) / 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: linear-gradient(180deg, 
+      rgba(var(--background), 0.98) 0%,
+      rgba(var(--background), 0.96) 50%,
+      rgba(var(--background), 0.98) 100%);
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
   }
 
+  /* iOS Safe Area Support */
+  @supports (padding-top: env(safe-area-inset-top)) {
+    .cloud-channel-container {
+      top: calc(60px + env(safe-area-inset-top));
+    }
+  }
+
+  /* Collapsed State - Minimal but Present */
   .cloud-channel-container.collapsed {
-    max-height: 48px !important;
+    max-height: 52px !important;
     width: 100% !important;
     min-width: 100% !important;
+    border-bottom: 2px solid hsl(var(--tropical-blue) / 0.3);
+    box-shadow: 0 2px 12px hsl(var(--tropical-blue) / 0.2);
   }
 
   .cloud-channel-container.collapsed .cloud-channel-feed,
@@ -1026,50 +1051,188 @@ html {
 
   .cloud-channel-container.collapsed .cloud-channel-header {
     display: flex;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
+    align-items: center;
   }
 
+  /* Swipe-to-Collapse Button - Touch Optimized */
   .cloud-channel-collapse-btn {
     top: auto;
-    bottom: -12px;
+    bottom: -14px;
     left: 50%;
     transform: translateX(-50%);
-    width: 48px;
-    height: 24px;
-    border-radius: 0 0 4px 4px;
+    width: 72px;
+    height: 28px;
+    border-radius: 0 0 14px 14px;
+    background: linear-gradient(180deg,
+      hsl(var(--tropical-blue)) 0%,
+      hsl(var(--tropical-dark)) 100%);
+    border: 3px solid hsl(var(--tropical-glow));
+    box-shadow: 
+      0 4px 16px hsl(var(--tropical-blue) / 0.5),
+      0 0 32px hsl(var(--tropical-glow) / 0.4),
+      inset 0 1px 4px rgba(255, 255, 255, 0.2);
+    animation: pulse-frontier 2s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .cloud-channel-container.collapsed .cloud-channel-collapse-btn {
-    bottom: -12px;
+    bottom: -14px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) rotate(180deg);
   }
 
-  .cloud-channel-collapse-btn:hover {
-    transform: translateX(-50%) translateY(2px);
+  /* Active/Touch State */
+  .cloud-channel-collapse-btn:active {
+    transform: translateX(-50%) scale(0.95);
+    box-shadow: 
+      0 2px 8px hsl(var(--tropical-blue) / 0.6),
+      0 0 20px hsl(var(--tropical-glow) / 0.6);
   }
 
+  .cloud-channel-container.collapsed .cloud-channel-collapse-btn:active {
+    transform: translateX(-50%) rotate(180deg) scale(0.95);
+  }
+
+  /* Content Areas - Touch Friendly */
   .cloud-channel-header {
-    padding: 0.75rem 1rem;
+    padding: 1rem 1rem 0.75rem 1rem;
+    min-height: 52px;
   }
   
   .cloud-channel-feed {
-    padding: 0.5rem;
-    max-height: 300px;
+    padding: 0.75rem;
+    max-height: 320px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   
   .cloud-channel-create-post {
-    padding: 0.75rem;
+    padding: 0.75rem 1rem 1rem 1rem;
+    border-top: 1px solid hsl(var(--tropical-blue) / 0.2);
   }
 
-  /* Horizontal animation for mobile */
+  /* Frontier Holographic Scan Effect */
   .cloud-channel-container::before {
-    animation: scan-horizontal 3s ease-in-out infinite;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    right: -100%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      transparent 0%,
+      hsl(var(--tropical-blue) / 0.3) 25%,
+      hsl(var(--tropical-light)) 50%,
+      hsl(var(--tropical-blue) / 0.3) 75%,
+      transparent 100%);
+    animation: awareness-scan 4s ease-in-out infinite;
+    box-shadow: 
+      0 0 20px hsl(var(--tropical-glow)),
+      0 0 40px hsl(var(--tropical-blue) / 0.4);
   }
 
+  /* Vertical Bridge Connection Indicator */
   .cloud-channel-container::after {
-    display: none; /* Hide vertical line on mobile */
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg,
+      hsl(var(--tropical-glow)) 0%,
+      hsl(var(--tropical-blue) / 0.4) 50%,
+      transparent 100%);
+    animation: bridge-pulse-mobile 3s ease-in-out infinite;
+    border-radius: 2px;
+  }
+
+  /* Collapsed State Animations */
+  .cloud-channel-container.collapsed::before {
+    height: 2px;
+    animation: awareness-scan-slow 6s ease-in-out infinite;
+  }
+
+  .cloud-channel-container.collapsed::after {
+    display: none;
+  }
+
+  /* Post Cards - Mobile Optimized */
+  .fractal-node-post {
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    touch-action: pan-y;
+  }
+
+  /* Buttons - Touch Optimized (44px min) */
+  .cloud-channel-icon-btn,
+  .hydrogen-btn {
+    min-height: 44px;
+    min-width: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Frontier Awareness Animations */
+@keyframes pulse-frontier {
+  0%, 100% {
+    box-shadow: 
+      0 4px 16px hsl(var(--tropical-blue) / 0.5),
+      0 0 32px hsl(var(--tropical-glow) / 0.4),
+      inset 0 1px 4px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 6px 24px hsl(var(--tropical-blue) / 0.7),
+      0 0 48px hsl(var(--tropical-glow) / 0.6),
+      inset 0 1px 4px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes awareness-scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes awareness-scan-slow {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes bridge-pulse-mobile {
+  0%, 100% {
+    opacity: 0.6;
+    box-shadow: 0 0 10px hsl(var(--tropical-blue) / 0.4);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 20px hsl(var(--tropical-glow) / 0.6);
+  }
+}
+
+/* Very Small Devices (iPhone SE, etc.) */
+@media (max-width: 430px) {
+  .cloud-channel-container {
+    max-height: 380px;
+  }
+
+  .cloud-channel-feed {
+    max-height: 280px;
+  }
+
+  .cloud-channel-header {
+    padding: 0.75rem 0.75rem 0.5rem 0.75rem;
   }
 }
 

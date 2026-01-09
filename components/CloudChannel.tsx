@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, Zap, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/utils/supabase/client';
@@ -165,13 +165,20 @@ export function CloudChannel() {
 
   return (
     <div className={`cloud-channel-container ${isCollapsed ? 'collapsed' : ''}`}>
-      {/* Collapse/Expand Button */}
+      {/* Collapse/Expand Button - Adaptive for Desktop/Mobile */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="cloud-channel-collapse-btn"
         title={isCollapsed ? 'Expand Cloud Channel' : 'Collapse Cloud Channel'}
+        aria-label={isCollapsed ? 'Expand Cloud Channel' : 'Collapse Cloud Channel'}
       >
-        {isCollapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+        {/* Desktop: Left/Right arrows, Mobile: Up/Down arrows */}
+        <span className="hidden lg:inline">
+          {isCollapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+        </span>
+        <span className="lg:hidden">
+          {isCollapsed ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </span>
       </button>
 
       {/* Header - CLOUD Branding */}
