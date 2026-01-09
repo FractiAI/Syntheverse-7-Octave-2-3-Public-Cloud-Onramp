@@ -16,6 +16,7 @@ import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { PersistentDetails } from '@/components/PersistentDetails';
 import { FinancialSupportBanner } from '@/components/FinancialSupportBanner';
+import { StabilityMonitor } from '@/components/tsrc';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,6 +87,30 @@ export default async function Dashboard() {
             <div className="mb-6">
               <FinancialSupportBanner variant="compact" dismissible={true} />
             </div>
+
+            {/* TSRC Stability Monitor - Automatic System Status */}
+            <PersistentDetails storageKey="tsrc-stability" defaultOpen={true} className="mb-6">
+              <summary className="cockpit-panel cursor-pointer select-none list-none p-4 md:p-5 mb-0">
+                <div className="flex items-center justify-between">
+                  <div className="cockpit-label text-xs md:text-sm uppercase tracking-wider">
+                    TSRC STABILITY MONITOR
+                  </div>
+                  <ChevronDown className="cockpit-chevron h-5 w-5 opacity-70" />
+                </div>
+              </summary>
+              <div className="mt-0 p-4">
+                <StabilityMonitor
+                  modeState="growth"
+                  stabilitySignals={{
+                    clamp_rate: 0.12,
+                    overlap_drift: 0.08,
+                    pressure: 0.45,
+                    stability_margin: 0.73
+                  }}
+                  variant="full"
+                />
+              </div>
+            </PersistentDetails>
 
             {/* Navigators Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

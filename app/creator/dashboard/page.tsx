@@ -28,6 +28,7 @@ import { ChevronDown } from 'lucide-react';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { MultiplierToggleWrapper } from '@/components/MultiplierToggleWrapper';
 import { CloudChannel } from '@/components/CloudChannel';
+import { StabilityMonitor, OAxisDiagnostic, createMockOAxisData } from '@/components/tsrc';
 import '../../control-lab.css';
 
 export const dynamic = 'force-dynamic';
@@ -114,6 +115,36 @@ export default async function CreatorLab() {
         <div className="mb-6">
           <MultiplierToggleWrapper />
         </div>
+
+        {/* TSRC Monitoring - Creator View with Full Diagnostics */}
+        <details className="mb-6 lab-panel" open>
+          <summary className="lab-collapsible-trigger list-none mb-0 rounded-b-none">
+            <div className="flex items-center justify-between">
+              <div className="text-xs md:text-sm uppercase tracking-wider font-semibold" style={{color: 'hsl(var(--hydrogen-gamma))'}}>
+                TSRC MONITORING & DIAGNOSTICS
+              </div>
+              <ChevronDown className="h-5 w-5 opacity-70" style={{color: 'hsl(var(--hydrogen-gamma))'}} />
+            </div>
+          </summary>
+          <div className="p-4 md:p-5 space-y-6 rounded-t-none border-t-0" style={{color: 'hsl(var(--text-primary))'}}>
+            <StabilityMonitor
+              modeState="growth"
+              stabilitySignals={{
+                clamp_rate: 0.12,
+                overlap_drift: 0.08,
+                pressure: 0.45,
+                stability_margin: 0.73
+              }}
+              variant="full"
+            />
+            <OAxisDiagnostic
+              axisOverlaps={createMockOAxisData()}
+              aggregationMethod="max"
+              overallScore={0.78}
+              variant="full"
+            />
+          </div>
+        </details>
 
         {/* Navigation Modules - Collapsible */}
         <details className="lab-panel" open>

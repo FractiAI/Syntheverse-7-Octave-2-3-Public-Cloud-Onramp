@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { SectionWrapper } from './landing/shared/SectionWrapper';
 import { Card } from './landing/shared/Card';
+import { SnapshotViewer, OAxisDiagnostic } from './tsrc';
 
 type EnterpriseContributionDetailProps = {
   submissionHash: string;
@@ -21,6 +22,7 @@ type Contribution = {
   status: string;
   category: string | null;
   metals: string[] | null;
+  snapshot_id?: string | null;
   metadata: {
     pod_score?: number;
     novelty?: number;
@@ -34,6 +36,16 @@ type Contribution = {
     metal_justification?: string;
     grok_evaluation_details?: any;
     raw_grok_response?: string;
+    tsrc?: {
+      determinism_contract?: any;
+      archive_snapshot?: {
+        snapshot_id: string;
+        item_count: number;
+        created_at: string;
+      };
+      operators?: any;
+      content_hash?: string;
+    };
   };
   created_at: string;
   updated_at: string;
@@ -275,6 +287,71 @@ export default function EnterpriseContributionDetail({
                 {contribution.metadata.redundancy_analysis}
               </p>
             </Card>
+          )}
+
+          {/* TSRC Snapshot - Automatic Reproducibility */}
+          {(contribution.snapshot_id || contribution.metadata?.tsrc?.archive_snapshot) && (
+            <div className="mb-8">
+              <SnapshotViewer
+                snapshotId={
+                  contribution.snapshot_id || 
+                  contribution.metadata?.tsrc?.archive_snapshot?.snapshot_id || 
+                  ''
+                }
+                itemCount={contribution.metadata?.tsrc?.archive_snapshot?.item_count}
+                createdAt={contribution.metadata?.tsrc?.archive_snapshot?.created_at}
+                contentHash={contribution.metadata?.tsrc?.content_hash}
+                promptHash={contribution.metadata?.tsrc?.determinism_contract?.llm_params?.prompt_hash}
+                modelVersion={contribution.metadata?.tsrc?.determinism_contract?.llm_params?.model}
+                temperature={contribution.metadata?.tsrc?.determinism_contract?.llm_params?.temperature}
+                variant="full"
+                showReproducibilityBadge={true}
+              />
+            </div>
+          )}
+
+          {/* O_axis Diagnostics - Per-Axis Overlap (Operator View) */}
+          {contribution.metadata?.tsrc?.operators?.axis_overlap_diagnostic && (
+            <div className="mb-8">
+              <OAxisDiagnostic
+                axisOverlaps={[
+                  {
+                    axis: 'N',
+                    label: 'Novelty',
+                    value: contribution.metadata.tsrc.operators.axis_overlap_diagnostic.N || 0,
+                    threshold: 0.70,
+                    flagged: (contribution.metadata.tsrc.operators.axis_overlap_diagnostic.N || 0) > 0.70,
+                    description: 'Semantic distance from existing contributions'
+                  },
+                  {
+                    axis: 'D',
+                    label: 'Depth',
+                    value: contribution.metadata.tsrc.operators.axis_overlap_diagnostic.D || 0,
+                    threshold: 0.70,
+                    flagged: (contribution.metadata.tsrc.operators.axis_overlap_diagnostic.D || 0) > 0.70,
+                    description: 'Rigor and evidence quality'
+                  },
+                  {
+                    axis: 'C',
+                    label: 'Coherence',
+                    value: contribution.metadata.tsrc.operators.axis_overlap_diagnostic.C || 0,
+                    threshold: 0.70,
+                    flagged: (contribution.metadata.tsrc.operators.axis_overlap_diagnostic.C || 0) > 0.70,
+                    description: 'Internal consistency and logical flow'
+                  },
+                  {
+                    axis: 'A',
+                    label: 'Applicability',
+                    value: contribution.metadata.tsrc.operators.axis_overlap_diagnostic.A || 0,
+                    threshold: 0.70,
+                    flagged: (contribution.metadata.tsrc.operators.axis_overlap_diagnostic.A || 0) > 0.70,
+                    description: 'Practical utility and implementability'
+                  }
+                ]}
+                aggregationMethod="max"
+                variant="full"
+              />
+            </div>
           )}
 
           {/* Full Submission Content */}
