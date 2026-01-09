@@ -1009,3 +1009,89 @@ html {
     padding: 0.75rem;
   }
 }
+
+/* =========================================
+   THEME PARK ENTRANCE ANIMATIONS
+   ========================================= */
+
+/* Gradient text animation for hero titles */
+@keyframes gradient {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient 3s ease infinite;
+}
+
+/* Floating particles animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10%, 90% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-100vh) translateX(20px);
+    opacity: 0.4;
+  }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+/* Slow pulse for holographic portals */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+/* Holographic text effect */
+.holographic-text {
+  position: relative;
+  text-shadow: 
+    0 0 10px rgba(100, 200, 255, 0.8),
+    0 0 20px rgba(100, 200, 255, 0.6),
+    0 0 30px rgba(100, 200, 255, 0.4),
+    0 0 40px rgba(100, 200, 255, 0.2);
+}
+
+/* Theme park land card hover effects */
+.cloud-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cloud-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Mobile responsiveness for theme park */
+@media (max-width: 768px) {
+  .holographic-text {
+    text-shadow: 
+      0 0 5px rgba(100, 200, 255, 0.6),
+      0 0 10px rgba(100, 200, 255, 0.4);
+  }
+  
+  .animate-float {
+    animation-duration: 12s; /* Slower on mobile for performance */
+  }
+}

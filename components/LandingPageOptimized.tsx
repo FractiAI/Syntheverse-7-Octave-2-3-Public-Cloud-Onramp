@@ -1,35 +1,29 @@
-import { HeroOptimized } from './landing/HeroOptimized';
-import { SectionExecutiveSummary } from './landing/SectionExecutiveSummary';
+/**
+ * Landing Page - Holographic Hydrogen Fractal Frontier Theme Park Entrance
+ * Transformed by Senior UI Designer into immersive entry experience
+ */
+
+import { ThemeParkEntrance } from './landing/ThemeParkEntrance';
 import { SectionWhy } from './landing/SectionWhy';
 import { SectionTechnical } from './landing/SectionTechnical';
-import { SectionMotherlode } from './landing/SectionMotherlode';
 import { SectionEngage } from './landing/SectionEngage';
-import { FinancialSupportBanner } from './FinancialSupportBanner';
 
 export default function LandingPageOptimized() {
   return (
-    <div className="cockpit-bg min-h-screen">
-      {/* Hero */}
-      <HeroOptimized />
+    <div className="cockpit-bg min-h-screen overflow-hidden">
+      {/* 🎢 THEME PARK ENTRANCE - Main immersive experience */}
+      <ThemeParkEntrance />
 
-      {/* Section 2: Executive Summary - Value Propositions */}
-      <SectionExecutiveSummary />
+      {/* 🌟 Additional Context Sections (Below the fold) */}
+      <div className="bg-gradient-to-b from-transparent to-black/50">
+        {/* Why It Matters */}
+        <SectionWhy />
 
-      {/* Section 3: Why It Matters */}
-      <SectionWhy />
+        {/* Technical Signals */}
+        <SectionTechnical />
 
-      {/* Section 5: Technical Signals */}
-      <SectionTechnical />
-
-      {/* Section 6: MOTHERLODE VAULT */}
-      <SectionMotherlode />
-
-      {/* Section 7: How to Engage */}
-      <SectionEngage />
-
-      {/* Financial Support Banner */}
-      <div className="container mx-auto px-6 py-12">
-        <FinancialSupportBanner variant="full" />
+        {/* How to Engage */}
+        <SectionEngage />
       </div>
 
       {/* Footer spacer */}

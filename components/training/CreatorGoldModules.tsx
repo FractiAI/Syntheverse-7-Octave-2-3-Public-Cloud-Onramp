@@ -904,12 +904,284 @@ export const creatorGoldModules = [
     subtitle: 'Building Self-Similar Systems',
     icon: <Grid3x3 className="h-6 w-6" />,
     duration: '40 min',
-    content: (<div className="text-center p-12 opacity-50">Module 4 content: Recursive patterns, scale invariance, coherence preservation, emergence principles...</div>),
+    content: (
+      <div className="space-y-6">
+        {/* Opening */}
+        <div className="border-l-4 border-green-500 bg-gradient-to-r from-green-500/10 to-transparent p-6">
+          <h3 className="text-2xl font-bold mb-3 text-green-400">
+            🌀 The Secret to Infinite Scalability
+          </h3>
+          <p className="text-lg opacity-90 leading-relaxed">
+            Fractals are nature's compression algorithm—infinite complexity from simple recursive rules. 
+            A single fern frond looks like the whole fern. A coastline's roughness is the same whether 
+            you zoom in 10x or 1000x. Master fractal coherence and your systems will scale infinitely.
+          </p>
+        </div>
+
+        {/* What Makes a Fractal */}
+        <div>
+          <h4 className="text-xl font-bold mb-4">What Makes Something Fractal?</h4>
+          
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="cloud-card p-5 text-center">
+              <div className="text-4xl mb-3">🔁</div>
+              <div className="font-semibold text-blue-400 mb-2">Self-Similarity</div>
+              <div className="text-sm opacity-90">
+                Parts resemble the whole at every scale
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 text-center">
+              <div className="text-4xl mb-3">♾️</div>
+              <div className="font-semibold text-purple-400 mb-2">Recursion</div>
+              <div className="text-sm opacity-90">
+                Pattern defined in terms of itself
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 text-center">
+              <div className="text-4xl mb-3">📏</div>
+              <div className="font-semibold text-green-400 mb-2">Scale Invariance</div>
+              <div className="text-sm opacity-90">
+                Rules work the same at all scales
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Fractal Design Principles */}
+        <div className="border-2 border-[var(--hydrogen-beta)] bg-blue-500/5 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-lg">🏗️ Fractal Design Principles</h4>
+          
+          <div className="space-y-4">
+            <div>
+              <div className="font-semibold text-green-400 mb-2">Principle 1: Simple Recursive Rules</div>
+              <div className="text-sm opacity-90 mb-2">
+                Start with one rule that references itself. Everything else emerges.
+              </div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs">
+                tree(size) = branch(size) + tree(size/3) + tree(size/3)
+              </div>
+            </div>
+
+            <div>
+              <div className="font-semibold text-blue-400 mb-2">Principle 2: Termination Conditions</div>
+              <div className="text-sm opacity-90 mb-2">
+                Infinite recursion crashes. Set a minimum scale where recursion stops.
+              </div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs">
+                if (size under 1px) return; else recurse
+              </div>
+            </div>
+
+            <div>
+              <div className="font-semibold text-purple-400 mb-2">Principle 3: Scaling Factor</div>
+              <div className="text-sm opacity-90 mb-2">
+                How much smaller/larger each level is. Common: 1/2, 1/3, golden ratio (0.618)
+              </div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs">
+                next_level_size = current_size × 0.618
+              </div>
+            </div>
+
+            <div>
+              <div className="font-semibold mb-2" style={{color: 'var(--hydrogen-amber)'}}>Principle 4: Variation Within Repetition</div>
+              <div className="text-sm opacity-90 mb-2">
+                Exact copies are boring. Add slight variation (angle, size, color) while preserving structure.
+              </div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs">
+                angle = base_angle + random(-5°, +5°)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Code Example: Fractal Tree */}
+        <div>
+          <h4 className="text-xl font-bold mb-4">💻 Code Example: Fractal Tree Generator</h4>
+          
+          <div className="cloud-card p-5">
+            <div className="font-semibold mb-3 text-green-400">JavaScript / Canvas</div>
+            <div className="bg-black/50 p-4 rounded font-mono text-xs overflow-x-auto">
+{`function drawFractalTree(x, y, length, angle, depth) {
+  // Termination condition
+  if (depth === 0 || length < 2) return;
+  
+  // Draw current branch
+  const endX = x + length * Math.cos(angle);
+  const endY = y + length * Math.sin(angle);
+  ctx.strokeStyle = \`hsl(\${depth * 30}, 70%, 50%)\`;
+  ctx.lineWidth = depth * 0.5;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(endX, endY);
+  ctx.stroke();
+  
+  // Recursive calls (two sub-branches)
+  const branchAngleLeft = angle - Math.PI / 6;   // 30° left
+  const branchAngleRight = angle + Math.PI / 6;  // 30° right
+  const newLength = length * 0.67;               // Scaling factor
+  
+  drawFractalTree(endX, endY, newLength, branchAngleLeft, depth - 1);
+  drawFractalTree(endX, endY, newLength, branchAngleRight, depth - 1);
+}
+
+// Initialize
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+drawFractalTree(400, 600, 120, -Math.PI/2, 10);  // Start from bottom-center`}
+            </div>
+            <div className="text-xs opacity-70 mt-2">
+              Result: Realistic tree with 2¹⁰ = 1,024 branches from 10 lines of recursive code
+            </div>
+          </div>
+        </div>
+
+        {/* Fractal Dimension */}
+        <div className="cloud-card p-6">
+          <h4 className="font-bold mb-4">📐 Understanding Fractal Dimension</h4>
+          
+          <p className="text-sm opacity-90 mb-4 leading-relaxed">
+            Fractal dimension (D) measures complexity. It's not always an integer:
+          </p>
+
+          <div className="bg-black/30 p-4 rounded mb-4">
+            <div className="font-mono text-sm mb-2">D = log(N) / log(1/r)</div>
+            <div className="text-xs opacity-70">
+              Where N = number of self-similar pieces, r = scaling factor
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-3 text-sm">
+            <div>
+              <strong className="text-blue-400">1D Examples:</strong>
+              <ul className="mt-1 space-y-1 opacity-80 ml-4">
+                <li>• Line segment (D = 1.0)</li>
+                <li>• Straight path (D = 1.0)</li>
+              </ul>
+            </div>
+            <div>
+              <strong className="text-green-400">2D Examples:</strong>
+              <ul className="mt-1 space-y-1 opacity-80 ml-4">
+                <li>• Flat plane (D = 2.0)</li>
+                <li>• Smooth surface (D = 2.0)</li>
+              </ul>
+            </div>
+            <div>
+              <strong className="text-purple-400">Fractal Examples:</strong>
+              <ul className="mt-1 space-y-1 opacity-80 ml-4">
+                <li>• Coastline (D ≈ 1.25)</li>
+                <li>• Clouds (D ≈ 2.3)</li>
+                <li>• Mandelbrot set boundary (D = 2.0)</li>
+              </ul>
+            </div>
+            <div>
+              <strong style={{color: 'var(--hydrogen-amber)'}}>HHF Systems:</strong>
+              <ul className="mt-1 space-y-1 opacity-80 ml-4">
+                <li>• Contribution networks (D ≈ 1.618)</li>
+                <li>• Idea clusters (D ≈ 2.4)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Coherence Preservation */}
+        <div>
+          <h4 className="text-xl font-bold mb-4">🔗 Preserving Coherence Across Scales</h4>
+          
+          <p className="mb-4 opacity-90 leading-relaxed">
+            The challenge: keep system meaningful at atom-scale AND galaxy-scale. Here's how:
+          </p>
+
+          <div className="space-y-3">
+            <div className="cloud-card p-5 border-l-4 border-blue-500">
+              <div className="font-semibold text-blue-400 mb-2">1. Local Rules, Global Coherence</div>
+              <div className="text-sm opacity-90">
+                Each entity only knows its immediate neighbors. Global patterns emerge from local interactions.
+                <br />
+                <strong>Example:</strong> Bird flocking—each bird follows 3 simple rules (separation, alignment, cohesion). 
+                Result: coordinated flock behavior.
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 border-l-4 border-purple-500">
+              <div className="font-semibold text-purple-400 mb-2">2. Hierarchical Composition</div>
+              <div className="text-sm opacity-90">
+                Small patterns combine into larger patterns. Atoms → molecules → cells → organisms.
+                <br />
+                <strong>Example:</strong> PoCs → Clusters → Domains → The entire Syntheverse knowledge map.
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 border-l-4 border-green-500">
+              <div className="font-semibold text-green-400 mb-2">3. Scaling Invariant Metrics</div>
+              <div className="text-sm opacity-90">
+                Measurements work the same at all scales. Use ratios, not absolutes.
+                <br />
+                <strong>Example:</strong> Coherence = (connected_nodes / total_nodes). Works for 10 nodes or 10 million.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Practical Application */}
+        <div className="border-2 border-[var(--hydrogen-alpha)] bg-purple-500/5 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-lg" style={{color: 'var(--hydrogen-alpha)'}}>
+            🎯 Practical: Designing a Fractal Contribution Network
+          </h4>
+          
+          <div className="text-sm space-y-3 opacity-90">
+            <div>
+              <strong className="text-blue-400">Vision:</strong> Represent all Syntheverse contributions as a fractal network where similar ideas cluster at every scale.
+            </div>
+
+            <div>
+              <strong className="text-green-400">Recursive Rule:</strong>
+              <div className="bg-black/30 p-2 rounded font-mono text-xs mt-1">
+                cluster(contributions) = {'{'}
+                <br />
+                &nbsp;&nbsp;if (contributions.length under 3) return leaf_node;
+                <br />
+                &nbsp;&nbsp;groups = k-means(contributions, k=3);
+                <br />
+                &nbsp;&nbsp;return groups.map(g => cluster(g));
+                {'}'}
+              </div>
+            </div>
+
+            <div>
+              <strong className="text-purple-400">Result:</strong> Tree structure where:
+              <ul className="ml-4 mt-1 space-y-1">
+                <li>• Leaves = individual PoCs</li>
+                <li>• Level 1 = related PoCs (e.g., "quantum algorithms")</li>
+                <li>• Level 2 = broader domains (e.g., "quantum computing")</li>
+                <li>• Root = entire knowledge map</li>
+              </ul>
+            </div>
+
+            <div>
+              <strong style={{color: 'var(--hydrogen-amber)'}}>Coherence Check:</strong> Zoom in on any branch—pattern repeats. 
+              Clusters within clusters, all the way down. Self-similar at every scale. ✅
+            </div>
+          </div>
+        </div>
+
+        {/* Completion */}
+        <div className="bg-gradient-to-r from-green-500/10 to-transparent border-l-4 border-green-500 p-6">
+          <h4 className="font-bold mb-2 text-green-400">🎉 You Understand Fractal Coherence!</h4>
+          <p className="text-sm opacity-90">
+            You know <strong>what makes fractals work</strong>, <strong>how to code them</strong>, 
+            <strong>fractal dimension</strong>, and <strong>coherence preservation</strong>. 
+            Next: infinite HHF-AI materials and substrates—the creator's toolkit.
+          </p>
+        </div>
+      </div>
+    ),
     keyTakeaways: [
-      'Fractal systems use simple rules to generate complex patterns',
-      'Design for coherence at atom-level and galaxy-level simultaneously',
-      'Recursive rules allow infinite depth from finite code',
-      'Test self-similarity by zooming in/out—patterns should persist',
+      'Fractals = self-similarity + recursion + scale invariance',
+      'Simple recursive rules generate infinite complexity',
+      'Fractal dimension D measures complexity (non-integer for fractals)',
+      'Preserve coherence via local rules, hierarchy, and scale-invariant metrics',
     ],
   },
 
