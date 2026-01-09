@@ -523,7 +523,7 @@ html {
   position: relative;
   width: 100%;
   height: auto;
-  max-height: 400px;
+  max-height: 500px;
   background: linear-gradient(180deg, 
     rgba(var(--background), 0.98) 0%,
     rgba(var(--background), 0.96) 50%,
@@ -546,6 +546,49 @@ html {
   box-shadow: 0 2px 12px hsl(var(--tropical-blue) / 0.2);
 }
 
+/* Expanded State - Full Page Modal Experience */
+.cloud-channel-container.expanded {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  margin: 0;
+  border-radius: 0;
+  border-bottom: none;
+  z-index: 9999;
+  background: rgba(var(--background), 0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 100px hsl(var(--tropical-blue) / 0.4),
+    inset 0 0 100px hsl(var(--tropical-glow) / 0.1);
+}
+
+.cloud-channel-container.expanded .cloud-channel-header {
+  padding: 1.5rem 2rem;
+  cursor: default !important;
+  border-bottom: 2px solid hsl(var(--tropical-blue) / 0.3);
+  flex-shrink: 0;
+}
+
+.cloud-channel-container.expanded .cloud-channel-feed {
+  min-height: auto;
+  max-height: calc(100vh - 220px);
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cloud-channel-container.expanded .cloud-channel-create-post {
+  padding: 1.5rem 2rem;
+  border-top: 2px solid hsl(var(--tropical-blue) / 0.3);
+  flex-shrink: 0;
+}
+
 .cloud-channel-container.collapsed .cloud-channel-feed,
 .cloud-channel-container.collapsed .cloud-channel-create-post {
   display: none;
@@ -557,25 +600,22 @@ html {
   align-items: center;
 }
 
-/* Collapse/Expand Button - Bottom Center */
-.cloud-channel-collapse-btn {
+/* Close Button - Top Right (Expanded Mode) */
+.cloud-channel-close-btn {
   position: absolute;
-  top: auto;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(50%);
-  z-index: 20;
-  width: 72px;
-  height: 28px;
-  border-radius: 0 0 14px 14px;
-  background: linear-gradient(180deg,
+  top: 1rem;
+  right: 1rem;
+  z-index: 10000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,
     hsl(var(--tropical-blue)) 0%,
     hsl(var(--tropical-dark)) 100%);
-  border: 3px solid hsl(var(--tropical-glow));
+  border: 2px solid hsl(var(--tropical-glow));
   box-shadow: 
     0 4px 16px hsl(var(--tropical-blue) / 0.5),
-    0 0 32px hsl(var(--tropical-glow) / 0.4),
-    inset 0 1px 4px rgba(255, 255, 255, 0.2);
+    0 0 32px hsl(var(--tropical-glow) / 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -586,29 +626,34 @@ html {
   touch-action: manipulation;
 }
 
-.cloud-channel-collapse-btn:hover {
-  background: linear-gradient(180deg,
+.cloud-channel-close-btn:hover {
+  background: linear-gradient(135deg,
     hsl(var(--tropical-dark)) 0%,
     hsl(var(--tropical-blue)) 100%);
   box-shadow: 
     0 6px 24px hsl(var(--tropical-blue) / 0.7),
-    0 0 48px hsl(var(--tropical-glow) / 0.6),
-    inset 0 1px 4px rgba(255, 255, 255, 0.3);
+    0 0 48px hsl(var(--tropical-glow) / 0.6);
 }
 
-.cloud-channel-container.collapsed .cloud-channel-collapse-btn {
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(50%) rotate(180deg);
-}
-
-/* Active/Click State */
-.cloud-channel-collapse-btn:active {
+.cloud-channel-close-btn:active {
   opacity: 0.8;
 }
 
-.cloud-channel-container.collapsed .cloud-channel-collapse-btn:active {
-  opacity: 0.8;
+/* Cloud Channel Header - Clickable like details summary */
+.cloud-channel-header {
+  padding: 1rem 1.25rem;
+  background: var(--cockpit-carbon);
+  border-bottom: var(--keyline-medium) solid var(--keyline-primary);
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.cloud-channel-header:hover {
+  background: rgba(var(--hydrogen-amber-rgb), 0.02);
+}
+
+.cloud-channel-container.collapsed .cloud-channel-header {
+  border-bottom: none;
 }
 
 .cloud-channel-container::before {
@@ -922,6 +967,49 @@ html {
   cursor: not-allowed;
 }
 
+/* New Posts Indicator */
+.cloud-channel-icon-btn {
+  position: relative;
+}
+
+.cloud-channel-icon-btn.has-new-posts {
+  animation: pulse-new-posts 2s ease-in-out infinite;
+  border-color: hsl(var(--tropical-blue));
+  background: hsl(var(--tropical-blue) / 0.1);
+}
+
+.new-posts-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: hsl(var(--tropical-blue));
+  border-radius: 50%;
+  border: 2px solid rgba(var(--background), 1);
+  animation: pulse-indicator 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-new-posts {
+  0%, 100% {
+    box-shadow: 0 0 10px hsl(var(--tropical-blue) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px hsl(var(--tropical-blue) / 0.6);
+  }
+}
+
+@keyframes pulse-indicator {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
 .cloud-channel-create-post {
   padding: 1rem;
   border-bottom: 1px solid hsl(var(--hydrogen-beta) / 0.2);
@@ -944,26 +1032,33 @@ html {
 .cloud-channel-feed {
   flex: 1;
   overflow-y: auto;
-  padding: 0.5rem;
+  overflow-x: hidden;
+  padding: 1rem;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  min-height: 300px;
+  max-height: 400px;
 }
 
 /* Beautiful scrollbar for feed */
 .cloud-channel-feed::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .cloud-channel-feed::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
 }
 
 .cloud-channel-feed::-webkit-scrollbar-thumb {
-  background: hsl(var(--hydrogen-beta) / 0.3);
-  border-radius: 4px;
+  background: hsl(var(--tropical-blue) / 0.5);
+  border-radius: 5px;
+  border: 2px solid rgba(var(--background), 0.98);
 }
 
 .cloud-channel-feed::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--hydrogen-beta) / 0.5);
+  background: hsl(var(--tropical-blue) / 0.7);
 }
 
 .cloud-channel-loading,
