@@ -12,11 +12,15 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔬 Latest Major Updates (Jan 10, 2026):** 
+> - **🎨 Public Solution Pages**: Three new comprehensive public pages (no auth required) explaining executive problems, value propositions, and use cases:
+>   - `/solutions/research` - Contributor Copper Wings (R&D path with telescope icon)
+>   - `/solutions/enterprise` - Operator Silver Wings (Enterprise clouds with cloud icon)
+>   - `/solutions/creators` - Creator Gold Wings (Reality worldbuilding with wings icon)
+> - **✨ Wings-Based Landing Page**: Complete redesign with Wings branding, metal tokenomics colors (Copper #C77C5D, Silver #C0C0C0, Gold #FFD700), condensed content for mobile/desktop, professional spacing. "Choose Your Adventure" section now links to public solution pages.
+> - **🧹 Dashboard Cleanup**: Removed TSRC mock data displays from Creator Lab™ and Operator Lab™ (backend integration remains intact for real data). FractiAI page streamlined with Support Plans & Access section added, FRONTIER STATUS module removed.
 > - **🎯 TSRC Complete (Phases 1-3)**: Trinary Self-Regulating Core fully implemented and live in production! Every evaluation is now deterministic, auditable, and reproducible. Complete implementation report for reviewers Marek & Simba available in `docs/TSRC_COMPLETION_REPORT_FOR_MAREK_SIMBA.md`.
-> - **🎯 Phase 3 - UI Components**: StabilityMonitor (mode states, triggers, stability signals), SnapshotViewer (automatic snapshot display), OAxisDiagnostic (per-axis overlap visualization). All dashboards (User, Operator, Creator) now display real-time TSRC monitoring - zero user action required, completely automatic.
 > - **🎯 Phase 2 - Production Integration**: Content-addressed snapshots created before each evaluation, snapshot_id stored in database, determinism contracts enforced (temperature=0, prompt hashing, operator logging), full TSRC metadata in llm_metadata field. Every evaluation is now reproducible via snapshot_id.
 > - **🎯 Phase 1 - Infrastructure**: Content-addressed archive snapshots (immutable, verifiable), operator hygiene (O_kiss + O_axis), determinism contracts, stability monitoring (mode states, triggers, anti-thrashing). Complete documentation (1,100+ lines).
-> - **🎨 Theme Park Entrance**: Landing page transformed into immersive holographic hydrogen fractal frontier theme park with grand entrance gates, three themed lands (R&D/Enterprises/Creators), ticket booth, guide characters, MOTHERLODE teaser, and full animations.
 > - **🏷️ Professional Lab™ Rebranding**: Creator Dashboard → Creator Lab™, Operator Dashboard → Operator Lab™ with SynthScan™-style professional branding and taglines.
 > - **🎓 Wings Training System**: Complete world-class pedagogical transformation with Contributor Copper Wings (6 modules), Operator Silver Wings (7 modules), and Creator Gold Wings (8 modules). Real training content, not white papers.
 > - **💬 WorkChat Performance**: 80-85% faster load times, optimized queries, request timeouts, database indexes, polling frequency optimization.
@@ -178,6 +182,35 @@ See [Environment Variables](#environment-variables) section for complete configu
 - **Genesis Info**: On-chain transaction information display
 - **Submission Limits**: 4000 character limit (abstract, equations, constants only) with automatic truncation
 - **Scalability**: Vector-based redundancy detection scales to 10,000+ submissions without performance degradation
+
+### 🎨 Public Solution Pages (No Auth Required)
+
+**Executive-Level Information Architecture**
+
+Three comprehensive public pages explaining problems, solutions, and value propositions for each path:
+
+#### 📡 **Research & Discovery** (`/solutions/research`)
+**Contributor Copper Wings Path** - For researchers, engineers, and innovators
+- **Problems Solved**: Gatekeeping & bias, months of waiting, zero ownership, no proof of originality
+- **Value Props**: 10-minute AI evaluation, blockchain proof-of-contribution, SYNTH rewards
+- **Who It's For**: Independent researchers, garage AI builders, engineers, academic researchers
+- **CTAs**: Submit Research, Create Free Account
+
+#### ☁️ **Enterprise Clouds** (`/solutions/enterprise`)
+**Operator Silver Wings Path** - For companies, teams, and organizations
+- **Problems Solved**: Innovation bottlenecks (3-12 month delays), 38-58% overhead waste, no transparency, limited engagement
+- **Value Props**: 1.5-1.8× higher output, 38-58% lower overhead, transparent & auditable
+- **Who It's For**: R&D-intensive enterprises, innovation-focused companies, government/defense, universities
+- **Pricing**: Custom pricing ($10K-$50K/month typical)
+
+#### 🎨 **Reality Worldbuilding** (`/solutions/creators`)
+**Creator Gold Wings Path** - For artists, builders, and visionaries
+- **Problems Solved**: Material scarcity, proprietary lock-in, disconnected workflows, no fractal substrate
+- **Value Props**: Infinite creative materials, integrated fractal framework, living recursive worlds
+- **Who It's For**: Game developers, VR/AR architects, digital artists, reality engineers
+- **Use Cases**: Living game worlds, VR spaces, generative art, simulation universes, digital architecture
+
+**Design Features**: Professional executive presentation, problem-first framing, quantified value propositions, clear CTAs, mobile-optimized, Wings-branded color scheme (Copper #C77C5D, Silver #C0C0C0, Gold #FFD700).
 
 ### 🎓 Wings-Based Training System
 

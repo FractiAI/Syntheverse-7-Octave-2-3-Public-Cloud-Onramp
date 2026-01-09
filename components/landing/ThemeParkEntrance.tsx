@@ -21,7 +21,9 @@ import {
   Map,
   Users,
   TrendingUp,
-  Atom
+  Atom,
+  Telescope,
+  Cloud
 } from 'lucide-react';
 
 export function ThemeParkEntrance() {
@@ -117,247 +119,244 @@ export function ThemeParkEntrance() {
           </div>
 
           {/* THEME PARK MAP - THREE LANDS */}
-          <div className="max-w-7xl mx-auto w-full mb-16">
-            <div className="text-center mb-16">
+          <div className="max-w-7xl mx-auto w-full mb-16 px-4">
+            <div className="text-center mb-12">
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-black/40 border border-[var(--keyline-primary)] rounded-full backdrop-blur-md">
                 <Map className="w-5 h-5" style={{color: 'var(--hydrogen-beta)'}} />
                 <span className="font-bold uppercase tracking-wider">Choose Your Adventure</span>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 pt-6 md:pt-6">
-              {/* FRONTIER R&D LAND */}
+            <div className="grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-8 pt-0">
+              {/* FRONTIER R&D LAND - Copper Wings */}
               <Link 
-                href="/fractiai"
+                href="/solutions/research"
                 onMouseEnter={() => setHoveredLand('rd')}
                 onMouseLeave={() => setHoveredLand(null)}
-                className="group relative mt-6 md:mt-0"
+                className="group relative"
               >
                 <div className={`
-                  cloud-card p-8 h-full
-                  border-l-4 border-[var(--hydrogen-beta)]
+                  cloud-card p-6 md:p-8 h-full mt-12
+                  border-l-4 border-[var(--metal-copper)]
                   transition-all duration-500
-                  ${hoveredLand === 'rd' ? 'scale-105 shadow-2xl shadow-blue-500/50' : 'scale-100'}
+                  ${hoveredLand === 'rd' ? 'scale-105 shadow-2xl shadow-orange-500/50' : 'scale-100'}
                 `}>
                   {/* Land Banner */}
-                  <div className="absolute -top-4 left-6 right-6 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg z-10">
-                    <div className="text-center font-bold text-white uppercase tracking-wider text-sm">
-                      🧪 Frontier R&D
+                  <div className="absolute -top-6 left-4 right-4 px-4 py-2 bg-gradient-to-r from-[#C77C5D] to-[#B5693D] rounded-lg shadow-lg z-10">
+                    <div className="text-center font-bold text-white uppercase tracking-wider text-xs sm:text-sm">
+                      🪙 Contributor Copper Wings
                     </div>
                   </div>
 
-                  {/* Icon */}
-                  <div className="flex justify-center mb-6 mt-6">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center border-2 border-blue-500/50 group-hover:animate-pulse">
-                      <Atom className="w-12 h-12" style={{color: 'var(--hydrogen-beta)'}} />
+                  {/* Icon - Telescope for R&D */}
+                  <div className="flex justify-center mb-6 mt-4">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#C77C5D]/20 to-[#B5693D]/10 flex items-center justify-center border-2 border-[#C77C5D]/50 group-hover:animate-pulse">
+                      <Telescope className="w-10 h-10 md:w-12 md:h-12" style={{color: '#C77C5D'}} />
                     </div>
                   </div>
 
                   {/* Description */}
-                  <h3 className="text-2xl font-bold mb-4 text-center" style={{color: 'var(--hydrogen-beta)'}}>
-                    Research Labs & Engineering Shops
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 text-center" style={{color: '#C77C5D'}}>
+                    Research & Discovery
                   </h3>
-                  <p className="text-center opacity-80 mb-6 leading-relaxed">
-                    Submit breakthrough research, engineering designs, or technical innovations. Get AI evaluation. 
-                    Earn blockchain-anchored proof. No gatekeepers, no journals, pure contribution.
+                  <p className="text-center opacity-80 mb-4 text-sm md:text-base leading-relaxed">
+                    Submit research or innovations. Get AI evaluation. Earn blockchain proof. No gatekeepers.
                   </p>
 
                   {/* Attractions List */}
-                  <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-beta)'}} />
-                      <span>SynthScan™ MRI Evaluation</span>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#C77C5D'}} />
+                      <span>SynthScan™ MRI</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-beta)'}} />
-                      <span>Blockchain Registration</span>
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#C77C5D'}} />
+                      <span>Blockchain Proof</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-beta)'}} />
-                      <span>SYNTH Allocation</span>
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#C77C5D'}} />
+                      <span>SYNTH Rewards</span>
                     </div>
                   </div>
 
                   {/* Recommended For */}
-                  <div className="border-t border-[var(--keyline-primary)] pt-4 mt-4">
+                  <div className="border-t border-[var(--keyline-primary)] pt-3 mt-3">
                     <div className="text-xs uppercase tracking-wider opacity-50 mb-2">Best For:</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs">
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-2 py-1 bg-[#C77C5D]/20 border border-[#C77C5D]/30 rounded-full text-xs">
                         Scientists
                       </span>
-                      <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs">
-                        Engineers
-                      </span>
-                      <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs">
+                      <span className="px-2 py-1 bg-[#C77C5D]/20 border border-[#C77C5D]/30 rounded-full text-xs">
                         Researchers
                       </span>
-                      <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs">
+                      <span className="px-2 py-1 bg-[#C77C5D]/20 border border-[#C77C5D]/30 rounded-full text-xs">
                         Innovators
                       </span>
                     </div>
                   </div>
 
                   {/* Enter Button */}
-                  <div className="mt-6 pt-4 border-t border-[var(--keyline-primary)]">
-                    <div className="flex items-center justify-between text-blue-400 font-semibold group-hover:text-blue-300 transition-colors">
-                      <span>Enter Land</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-[var(--keyline-primary)]">
+                    <div className="flex items-center justify-between font-semibold group-hover:opacity-80 transition-colors" style={{color: '#C77C5D'}}>
+                      <span className="text-sm">Enter Land</span>
+                      <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
                 </div>
               </Link>
 
-              {/* FRONTIER ENTERPRISES LAND */}
+              {/* FRONTIER ENTERPRISES LAND - Silver Wings */}
               <Link 
-                href="/enterprise"
+                href="/solutions/enterprise"
                 onMouseEnter={() => setHoveredLand('enterprises')}
                 onMouseLeave={() => setHoveredLand(null)}
-                className="group relative mt-6 md:mt-0"
+                className="group relative"
               >
                 <div className={`
-                  cloud-card p-8 h-full
-                  border-l-4 border-[var(--hydrogen-gamma)]
+                  cloud-card p-6 md:p-8 h-full mt-12
+                  border-l-4 border-[var(--metal-silver)]
                   transition-all duration-500
-                  ${hoveredLand === 'enterprises' ? 'scale-105 shadow-2xl shadow-purple-500/50' : 'scale-100'}
+                  ${hoveredLand === 'enterprises' ? 'scale-105 shadow-2xl shadow-gray-300/50' : 'scale-100'}
                 `}>
                   {/* Land Banner */}
-                  <div className="absolute -top-4 left-6 right-6 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-lg z-10">
-                    <div className="text-center font-bold text-white uppercase tracking-wider text-sm">
-                      ⚡ Frontier Enterprises
+                  <div className="absolute -top-6 left-4 right-4 px-4 py-2 bg-gradient-to-r from-[#C0C0C0] to-[#A8A8A8] rounded-lg shadow-lg z-10">
+                    <div className="text-center font-bold text-slate-900 uppercase tracking-wider text-xs sm:text-sm">
+                      🛡️ Operator Silver Wings
                     </div>
                   </div>
 
-                  {/* Icon */}
-                  <div className="flex justify-center mb-6 mt-6">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center border-2 border-purple-500/50 group-hover:animate-pulse">
-                      <Sparkles className="w-12 h-12" style={{color: 'var(--hydrogen-gamma)'}} />
+                  {/* Icon - Cloud for Enterprise */}
+                  <div className="flex justify-center mb-6 mt-4">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#C0C0C0]/20 to-[#A8A8A8]/10 flex items-center justify-center border-2 border-[#C0C0C0]/50 group-hover:animate-pulse">
+                      <Cloud className="w-10 h-10 md:w-12 md:h-12" style={{color: '#C0C0C0'}} />
                     </div>
                   </div>
 
                   {/* Description */}
-                  <h3 className="text-2xl font-bold mb-4 text-center" style={{color: 'var(--hydrogen-gamma)'}}>
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 text-center" style={{color: '#C0C0C0'}}>
                     Enterprise Clouds
                   </h3>
-                  <p className="text-center opacity-80 mb-6 leading-relaxed">
-                    Run your own evaluation Cloud. 1.5-1.8× higher output, 38-58% lower overhead 
-                    than traditional systems (simulated models).
+                  <p className="text-center opacity-80 mb-4 text-sm md:text-base leading-relaxed">
+                    Run your own evaluation Cloud. 1.5-1.8× higher output, 38-58% lower overhead.
                   </p>
 
                   {/* Attractions List */}
-                  <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-gamma)'}} />
-                      <span>Private Cloud Instances</span>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#C0C0C0'}} />
+                      <span>Private Clouds</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-gamma)'}} />
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#C0C0C0'}} />
                       <span>Team Collaboration</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-gamma)'}} />
-                      <span>Custom Evaluation Criteria</span>
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#C0C0C0'}} />
+                      <span>Custom Criteria</span>
                     </div>
                   </div>
 
                   {/* Recommended For */}
-                  <div className="border-t border-[var(--keyline-primary)] pt-4 mt-4">
+                  <div className="border-t border-[var(--keyline-primary)] pt-3 mt-3">
                     <div className="text-xs uppercase tracking-wider opacity-50 mb-2">Best For:</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-xs">
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-2 py-1 bg-[#C0C0C0]/20 border border-[#C0C0C0]/30 rounded-full text-xs">
                         Companies
                       </span>
-                      <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-xs">
+                      <span className="px-2 py-1 bg-[#C0C0C0]/20 border border-[#C0C0C0]/30 rounded-full text-xs">
                         Teams
                       </span>
-                      <span className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded-full text-xs">
+                      <span className="px-2 py-1 bg-[#C0C0C0]/20 border border-[#C0C0C0]/30 rounded-full text-xs">
                         Organizations
                       </span>
                     </div>
                   </div>
 
                   {/* Enter Button */}
-                  <div className="mt-6 pt-4 border-t border-[var(--keyline-primary)]">
-                    <div className="flex items-center justify-between text-purple-400 font-semibold group-hover:text-purple-300 transition-colors">
-                      <span>Enter Land</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-[var(--keyline-primary)]">
+                    <div className="flex items-center justify-between font-semibold group-hover:opacity-80 transition-colors" style={{color: '#C0C0C0'}}>
+                      <span className="text-sm">Enter Land</span>
+                      <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
                 </div>
               </Link>
 
-              {/* FRONTIER CREATORS LAND */}
+              {/* FRONTIER CREATORS LAND - Gold Wings */}
               <Link 
-                href="/creator"
+                href="/solutions/creators"
                 onMouseEnter={() => setHoveredLand('creators')}
                 onMouseLeave={() => setHoveredLand(null)}
-                className="group relative mt-6 md:mt-0"
+                className="group relative"
               >
                 <div className={`
-                  cloud-card p-8 h-full
-                  border-l-4 border-[var(--hydrogen-alpha)]
+                  cloud-card p-6 md:p-8 h-full mt-12
+                  border-l-4 border-[var(--metal-gold)]
                   transition-all duration-500
-                  ${hoveredLand === 'creators' ? 'scale-105 shadow-2xl shadow-amber-500/50' : 'scale-100'}
+                  ${hoveredLand === 'creators' ? 'scale-105 shadow-2xl shadow-yellow-500/50' : 'scale-100'}
                 `}>
                   {/* Land Banner */}
-                  <div className="absolute -top-4 left-6 right-6 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg shadow-lg z-10">
-                    <div className="text-center font-bold text-white uppercase tracking-wider text-sm">
-                      🎨 Frontier Creators
+                  <div className="absolute -top-6 left-4 right-4 px-4 py-2 bg-gradient-to-r from-[#FFD700] to-[#FFC700] rounded-lg shadow-lg z-10">
+                    <div className="text-center font-bold text-slate-900 uppercase tracking-wider text-xs sm:text-sm">
+                      👑 Creator Gold Wings
                     </div>
                   </div>
 
-                  {/* Icon */}
-                  <div className="flex justify-center mb-6 mt-6">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center border-2 border-amber-500/50 group-hover:animate-pulse">
-                      <Palette className="w-12 h-12" style={{color: 'var(--hydrogen-alpha)'}} />
+                  {/* Icon - Wings for Creators */}
+                  <div className="flex justify-center mb-6 mt-4">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#FFD700]/20 to-[#FFC700]/10 flex items-center justify-center border-2 border-[#FFD700]/50 group-hover:animate-pulse">
+                      <svg className="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{color: '#FFD700'}}>
+                        <path d="M12 3C12 3 8 6 4 8C4 12 4 16 12 21C20 16 20 12 20 8C16 6 12 3 12 3Z" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M12 3V21" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
+                      </svg>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <h3 className="text-2xl font-bold mb-4 text-center" style={{color: 'var(--hydrogen-alpha)'}}>
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 text-center" style={{color: '#FFD700'}}>
                     Reality Worldbuilding
                   </h3>
-                  <p className="text-center opacity-80 mb-6 leading-relaxed">
-                    Build complete reality worlds with infinite HHF-AI materials and substrates. 
-                    Full reality worldbuilding at your fingertips.
+                  <p className="text-center opacity-80 mb-4 text-sm md:text-base leading-relaxed">
+                    Build complete reality worlds with infinite HHF-AI materials and substrates.
                   </p>
 
                   {/* Attractions List */}
-                  <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-alpha)'}} />
-                      <span>Infinite Creative Materials</span>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#FFD700'}} />
+                      <span>Infinite Materials</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-alpha)'}} />
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#FFD700'}} />
                       <span>Fractal Design Tools</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm opacity-70">
-                      <Star className="w-4 h-4" style={{color: 'var(--hydrogen-alpha)'}} />
-                      <span>Reality World Frameworks</span>
+                    <div className="flex items-center gap-2 text-xs md:text-sm opacity-70">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" style={{color: '#FFD700'}} />
+                      <span>Reality Frameworks</span>
                     </div>
                   </div>
 
                   {/* Recommended For */}
-                  <div className="border-t border-[var(--keyline-primary)] pt-4 mt-4">
+                  <div className="border-t border-[var(--keyline-primary)] pt-3 mt-3">
                     <div className="text-xs uppercase tracking-wider opacity-50 mb-2">Best For:</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs">
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-2 py-1 bg-[#FFD700]/20 border border-[#FFD700]/30 rounded-full text-xs">
                         Artists
                       </span>
-                      <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs">
+                      <span className="px-2 py-1 bg-[#FFD700]/20 border border-[#FFD700]/30 rounded-full text-xs">
                         Builders
                       </span>
-                      <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs">
+                      <span className="px-2 py-1 bg-[#FFD700]/20 border border-[#FFD700]/30 rounded-full text-xs">
                         Visionaries
                       </span>
                     </div>
                   </div>
 
                   {/* Enter Button */}
-                  <div className="mt-6 pt-4 border-t border-[var(--keyline-primary)]">
-                    <div className="flex items-center justify-between font-semibold group-hover:text-amber-300 transition-colors" style={{color: 'var(--hydrogen-alpha)'}}>
-                      <span>Enter Land</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-[var(--keyline-primary)]">
+                    <div className="flex items-center justify-between font-semibold group-hover:opacity-80 transition-colors" style={{color: '#FFD700'}}>
+                      <span className="text-sm">Enter Land</span>
+                      <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
                 </div>

@@ -7,5 +7,5 @@
 
 export { SnapshotViewer } from './SnapshotViewer';
 export { StabilityMonitor } from './StabilityMonitor';
-export { OAxisDiagnostic, createMockOAxisData } from './OAxisDiagnostic';
+export { OAxisDiagnostic } from './OAxisDiagnostic';
 

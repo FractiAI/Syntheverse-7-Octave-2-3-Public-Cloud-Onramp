@@ -23,7 +23,6 @@ import { Settings, Activity, FileText, BookOpen, Shield, ChevronDown } from 'luc
 import Link from 'next/link';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { MultiplierToggleWrapper } from '@/components/MultiplierToggleWrapper';
-import { StabilityMonitor, OAxisDiagnostic, createMockOAxisData } from '@/components/tsrc';
 import '../../control-lab.css';
 
 export const dynamic = 'force-dynamic';
@@ -109,37 +108,6 @@ export default async function OperatorLab() {
         <div className="mb-6">
           <MultiplierToggleWrapper />
         </div>
-
-        {/* TSRC Monitoring - Operator View with Full Diagnostics */}
-        <details className="mb-6 frontier-panel relative" open>
-          <div className="scan-line" />
-          <summary className="cursor-pointer select-none list-none p-4 md:p-5 mb-0 border-b" style={{borderColor: 'hsl(var(--hydrogen-beta) / 0.1)'}}>
-            <div className="flex items-center justify-between">
-              <div className="text-xs md:text-sm uppercase tracking-wider font-semibold" style={{color: 'hsl(var(--hydrogen-alpha))'}}>
-                TSRC MONITORING & DIAGNOSTICS
-              </div>
-              <ChevronDown className="h-5 w-5 opacity-70" style={{color: 'hsl(var(--hydrogen-alpha))'}} />
-            </div>
-          </summary>
-          <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-6" style={{color: 'hsl(var(--text-primary))'}}>
-            <StabilityMonitor
-              modeState="growth"
-              stabilitySignals={{
-                clamp_rate: 0.12,
-                overlap_drift: 0.08,
-                pressure: 0.45,
-                stability_margin: 0.73
-              }}
-              variant="full"
-            />
-            <OAxisDiagnostic
-              axisOverlaps={createMockOAxisData()}
-              aggregationMethod="max"
-              overallScore={0.78}
-              variant="full"
-            />
-          </div>
-        </details>
 
         {/* Navigation Modules - Collapsible */}
         <details className="mb-6 frontier-panel relative" open>
