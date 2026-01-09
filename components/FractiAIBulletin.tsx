@@ -47,35 +47,6 @@ function formatTokens(tokens: number): string {
 export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBulletinProps) {
   const [epochInfo, setEpochInfo] = useState<EpochInfo | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  
-  // Countdown to SYNTH90T MOTHERLODE VAULT opening - Spring Equinox 2026
-  const vaultOpeningDate = new Date('2026-03-20T00:00:00Z');
-  const [timeUntilVault, setTimeUntilVault] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
-
-  useEffect(() => {
-    const calculateTimeRemaining = () => {
-      const now = new Date();
-      const difference = vaultOpeningDate.getTime() - now.getTime();
-      
-      if (difference > 0) {
-        setTimeUntilVault({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60)
-        });
-      }
-    };
-
-    calculateTimeRemaining();
-    const interval = setInterval(calculateTimeRemaining, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     // Update time every minute
@@ -135,46 +106,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 HOLOGRAPHIC HYDROGEN FRACTAL SYNTHEVERSE- OUTCAST HERO'S RETURN WITH FIRE AND BISON
               </div>
             </div>
-            <div className="flex flex-col w-full md:w-auto">
-              <div className="text-left">
-                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-400">
-                  🔓 MOTHERLODE VAULT OPENING
-                </div>
-                <div className="grid grid-cols-4 gap-2 md:gap-3">
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
-                      {timeUntilVault.days}
-                    </div>
-                    <div className="text-xs text-slate-400 uppercase">Days</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
-                      {String(timeUntilVault.hours).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs text-slate-400 uppercase">Hrs</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
-                      {String(timeUntilVault.minutes).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs text-slate-400 uppercase">Min</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-[var(--hydrogen-amber)]" style={{ fontFamily: 'monospace' }}>
-                      {String(timeUntilVault.seconds).padStart(2, '0')}
-                    </div>
-                    <div className="text-xs text-slate-400 uppercase">Sec</div>
-                  </div>
-                </div>
-                <div className="text-xs text-slate-400 mt-2 flex items-center gap-2">
-                  <div
-                    className="h-2 w-2 animate-pulse rounded-full bg-green-500"
-                    style={{ boxShadow: '0 0 10px #22c55e' }}
-                  />
-                  <span>Spring Equinox 2026 • All Systems LIVE</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Message from Creator - Command Center Transmission */}
@@ -188,9 +119,8 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 awareness ecosystem—one where contributions become measurable, verifiable, and permanently anchored infrastructure.
               </p>
               <p>
-                The <strong>SYNTH90T MOTHERLODE VAULT</strong> opens Spring Equinox, March 20, 2026. All systems are LIVE. 
-                Launch windows are open for qualified contributions. Your work becomes part of the permanent record—visible, 
-                demonstrable, and liberated from traditional gatekeeping.
+                All systems are LIVE. Launch windows are open for qualified contributions. Your work becomes part of the 
+                permanent record—visible, demonstrable, and liberated from traditional gatekeeping.
               </p>
               <p className="border-l-4 border-[var(--hydrogen-amber)] pl-4 text-sm italic text-slate-300">
                 "We're not building another system. We're launching the first awareness router that lets coherent 
@@ -206,42 +136,8 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
             </div>
           </div>
 
-          {/* Quick Navigation - Mission Control Console */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-[var(--hydrogen-amber)]/30 pt-4">
-            <div className="flex flex-wrap items-center gap-3">
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="inline-flex items-center gap-2 border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)] px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-950 transition-all hover:bg-transparent hover:text-[var(--hydrogen-amber)]"
-                  >
-                    <LayoutDashboard className="h-4 w-4" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/submit"
-                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-amber)]"
-                  >
-                    Submit PoC
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/signup"
-                    className="inline-flex items-center gap-2 border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)] px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-950 transition-all hover:bg-transparent hover:text-[var(--hydrogen-amber)]"
-                  >
-                    Join Mission
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center gap-2 border-2 border-slate-600 bg-slate-800 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-100 transition-all hover:border-[var(--hydrogen-amber)] hover:text-[var(--hydrogen-amber)]"
-                  >
-                    Access Portal
-                  </Link>
-                </>
-              )}
-            </div>
+          {/* System Status - Mission Control Console */}
+          <div className="flex flex-wrap items-center justify-end gap-4 border-t-2 border-[var(--hydrogen-amber)]/30 pt-4">
             <div className="flex items-center gap-2">
               <div className="text-xs font-bold uppercase tracking-wider text-slate-500">All Systems</div>
               <StatusIndicators />
@@ -362,65 +258,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
           </div>
         </div>
 
-        {/* Services */}
-        <div className="mb-4 md:mb-8 border-4 border-[var(--hydrogen-amber)] bg-slate-900 p-4 md:p-8 shadow-[0_0_20px_rgba(255,184,77,0.2)]">
-          <div className="mb-6 border-b-2 border-[var(--hydrogen-amber)]/30 pb-3">
-            <div className="text-2xl font-bold text-white" style={{ fontFamily: 'monospace' }}>SERVICES</div>
-          </div>
-          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-            {/* SynthScan Monthly Access */}
-            <Link href="/subscribe?product=synthscan-monthly" className="block h-full">
-              <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
-                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)]">
-                  SOFTWARE LICENSE
-                </div>
-                <div className="mb-3 text-lg font-bold text-white" style={{ fontFamily: 'monospace' }}>Monthly Access</div>
-                <div className="mb-4 flex-1 text-sm text-slate-300">
-                  SynthScan™ MRI system access
-                </div>
-                <div className="flex items-center justify-center border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/10 py-3 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)] transition-all hover:bg-[var(--hydrogen-amber)] hover:text-slate-950">
-                  View Plans
-                  <ArrowRight className="ml-2 inline h-3 w-3" />
-                </div>
-              </div>
-            </Link>
-
-            {/* Field Support */}
-            <Link href="/fractiai/synthscan-field-imaging" className="block h-full">
-              <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
-                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)]">
-                  FIELD OPERATIONS
-                </div>
-                <div className="mb-3 text-lg font-bold text-white" style={{ fontFamily: 'monospace' }}>Expert Support</div>
-                <div className="mb-4 flex-1 text-sm text-slate-300">
-                  Full-service FractiAI imaging
-                </div>
-                <div className="flex items-center justify-center border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/10 py-3 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)] transition-all hover:bg-[var(--hydrogen-amber)] hover:text-slate-950">
-                  View Pricing
-                  <ArrowRight className="ml-2 inline h-3 w-3" />
-                </div>
-              </div>
-            </Link>
-
-            {/* Enterprise Dashboard */}
-            <Link href="/fractiai/enterprise-dashboard" className="block h-full">
-              <div className="flex h-full flex-col border-2 border-slate-600 bg-slate-800/50 p-6 transition-all hover:border-[var(--hydrogen-amber)] hover:bg-slate-800 hover:shadow-[0_0_15px_rgba(255,184,77,0.3)]">
-                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)]">
-                  SANDBOX DEPLOYMENT
-                </div>
-                <div className="mb-3 text-lg font-bold text-white" style={{ fontFamily: 'monospace' }}>Creator Access</div>
-                <div className="mb-4 flex-1 text-sm text-slate-300">
-                  Customized HHF-AI sandbox
-                </div>
-                <div className="flex items-center justify-center border-2 border-[var(--hydrogen-amber)] bg-[var(--hydrogen-amber)]/10 py-3 text-xs font-bold uppercase tracking-wider text-[var(--hydrogen-amber)] transition-all hover:bg-[var(--hydrogen-amber)] hover:text-slate-950">
-                  Deploy Sandbox
-                  <ArrowRight className="ml-2 inline h-3 w-3" />
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-
         {/* Main Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Left Column - Main Announcements */}
@@ -432,20 +269,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                 TODAY&apos;S HIGHLIGHTS
               </div>
               <div className="space-y-4">
-                <div className="border-l-4 border-[var(--hydrogen-amber)] bg-[rgba(255,184,77,0.05)] p-4">
-                  <div className="cockpit-title mb-2 text-lg">
-                    SYNTH90T MOTHERLODE VAULT Opening
-                  </div>
-                  <div className="cockpit-text mb-2 text-sm opacity-90">
-                    <strong>Spring Equinox, March 20, 2026</strong> — All qualifying PoCs will be
-                    registered on-chain and allocated SYNTH by score.
-                  </div>
-                  <div className="cockpit-text text-xs opacity-75">
-                    ⏰ Submit your best work by <strong>March 19, 2026</strong> to qualify for the
-                    vault opening allocation.
-                  </div>
-                </div>
-
                 <div className="border-l-4 border-blue-500/50 bg-blue-500/5 p-4">
                   <div className="cockpit-title mb-2 text-base">Proof-of-Contribution System</div>
                   <div className="cockpit-text text-sm opacity-90">
@@ -467,8 +290,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   <div className="cockpit-text text-sm opacity-90">
                     Define and build your <strong>customized HHF-AI sandbox and ecosystem</strong>, nested within
                     Syntheverse. Carefully configure your sandbox with intuitive guidance, then broadcast to your contributor channels with{' '}
-                    <strong>clear, transparent scoring</strong> and tokenomics aligned with the{' '}
-                    <strong>SYNTH90T ERC-20 MOTHERLODE VAULT</strong>. Self-similar, tokenized, and
+                    <strong>clear, transparent scoring</strong> and tokenomics. Self-similar, tokenized, and
                     scalable.
                   </div>
                   <div className="cockpit-text mt-2 text-xs opacity-75">
@@ -480,7 +302,7 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
 
             {/* Main Transmission */}
             <div className="border-2 border-[var(--hydrogen-amber)]/30 bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 shadow-lg">
-              <div className="cockpit-label mb-6">TRANSMISSION MODULE</div>
+              <div className="cockpit-label mb-6">SPIRAL PONG STORY</div>
               <h1 className="cockpit-title mb-6 text-3xl">Our Spiral Pong Story</h1>
               <div
                 className="cockpit-text space-y-6"
@@ -568,42 +390,6 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   </div>
                   <div className="cockpit-label mt-1 text-xs">ARCHITECT OF SYNTHEVERSE</div>
                 </div>
-              </div>
-            </div>
-
-            {/* SYNTH90T MOTHERLODE VAULT Opening Announcement */}
-            <div className="cockpit-panel border-l-4 border-amber-500 bg-gradient-to-r from-orange-900/50 to-amber-900/50 p-8 shadow-[0_0_12px_rgba(255,165,0,0.7)]">
-              <div className="cockpit-label mb-6" style={{ color: '#ffb84d' }}>
-                SYNTH90T MOTHERLODE VAULT OPENING
-              </div>
-              <div className="mb-6 border-l-2 border-amber-500 bg-amber-500/20 px-4 py-2 text-xs text-amber-300">
-                <strong>ERC-20 BOUNDARY:</strong> SYNTH tokens are ERC-20 internal coordination
-                units for protocol accounting only. Not an investment, security, or financial
-                instrument. No guaranteed value, no profit expectation.
-              </div>
-              <div
-                className="cockpit-text space-y-6"
-                style={{ fontSize: '0.95rem', lineHeight: 1.8 }}
-              >
-                <p className="text-lg font-semibold text-amber-200">
-                  Welcome to Syntheverse! The <strong>SYNTH90T MOTHERLODE VAULT</strong> opens{' '}
-                  <strong>Spring Equinox, March 20, 2026</strong>.
-                </p>
-                <p className="text-amber-100">
-                  All qualifying PoCs will be registered on-chain and allocated{' '}
-                  <strong>SYNTH, by score</strong>. This represents the on-chain allocation
-                  mechanism for the fixed-supply 90 trillion SYNTH ERC-20 token system.
-                </p>
-                <p className="font-semibold text-amber-200">
-                  ⏰ <strong>Be sure to get your best work in by March 19, 2026</strong> to qualify
-                  for the vault opening allocation.
-                </p>
-                <p className="text-sm text-amber-100">
-                  The MOTHERLODE VAULT represents the culmination of the Syntheverse protocol—where
-                  contributions become measurable, verifiable, and permanently anchored on-chain.
-                  Every qualifying PoC submitted before the deadline will be evaluated, scored, and
-                  allocated SYNTH tokens based on their SynthScan™ MRI evaluation.
-                </p>
               </div>
             </div>
 
