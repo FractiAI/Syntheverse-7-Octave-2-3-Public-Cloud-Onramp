@@ -305,6 +305,13 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                   <div className="cockpit-text mt-2 text-xs opacity-75">
                     <strong>SYNTH Token-Based:</strong> Free to create and test. Activate with SYNTH tokens based on reach and activity.
                   </div>
+                  <Link
+                    href="/subscribe"
+                    className="cockpit-lever mt-3 inline-flex items-center text-xs"
+                  >
+                    VIEW PLANS
+                    <ArrowRight className="ml-2 h-3 w-3" />
+                  </Link>
                 </div>
               </div>
             </div>
