@@ -408,7 +408,7 @@ export function ThemeParkEntrance() {
                   <div className="text-sm opacity-70 mb-4">
                     ⏱️ 6 modules • ~2 hours
                   </div>
-                  <div className="cockpit-lever inline-flex items-center gap-2 px-6 py-3" style={{backgroundColor: 'var(--metal-copper)', color: '#000'}}>
+                  <div className="cockpit-lever inline-flex items-center gap-2 px-6 py-3" style={{backgroundColor: 'var(--metal-copper)', color: '#fff'}}>
                     <span>Start Training</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
