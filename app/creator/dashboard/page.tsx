@@ -101,11 +101,6 @@ export default async function CreatorLab() {
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto">
           <div className="container mx-auto space-y-6 px-6 py-8">
-        {/* Cloud Channel - Mobile Banner (Top of Content) */}
-        <div className="lg:hidden">
-          <CloudChannel />
-        </div>
-        
         {/* Mobile Status Indicators - Top of mobile dashboards */}
         <div className="block md:hidden">
           <MobileStatusIndicators />
