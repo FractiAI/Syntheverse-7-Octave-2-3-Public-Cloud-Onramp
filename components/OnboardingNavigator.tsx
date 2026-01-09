@@ -83,7 +83,7 @@ export function OnboardingNavigator() {
     setWingTrack(track);
     setCurrentModule(0);
     // Map wing tracks to existing training paths
-    if (track === 'candidate-copper') {
+    if (track === 'contributor-copper') {
       setTrainingPath('contributor');
     } else if (track === 'operator-silver') {
       setTrainingPath('operator');

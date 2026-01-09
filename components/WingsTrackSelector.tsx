@@ -1,6 +1,6 @@
 /**
  * Wings Track Selector - Choose your onboarding path
- * Candidate Copper Wings | Operator Silver Wings | Creator Gold Wings
+ * Contributor Copper Wings | Operator Silver Wings | Creator Gold Wings
  */
 
 'use client';
@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { Award, Shield, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-export type WingTrack = 'candidate-copper' | 'operator-silver' | 'creator-gold';
+export type WingTrack = 'contributor-copper' | 'operator-silver' | 'creator-gold';
 
 interface WingsTrackSelectorProps {
   onSelectTrack: (track: WingTrack) => void;
@@ -20,8 +20,8 @@ export function WingsTrackSelector({ onSelectTrack, currentTrack }: WingsTrackSe
 
   const tracks = [
     {
-      id: 'candidate-copper' as WingTrack,
-      name: 'Candidate',
+      id: 'contributor-copper' as WingTrack,
+      name: 'Contributor',
       wings: 'Copper Wings',
       icon: Award,
       color: 'var(--metal-copper)',
