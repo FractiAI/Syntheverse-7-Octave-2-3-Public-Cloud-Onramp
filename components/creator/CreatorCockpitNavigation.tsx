@@ -66,7 +66,9 @@ export function CreatorCockpitNavigation() {
                         backgroundColor: `rgba(${tab.color === 'amber' ? '255,184,77' : tab.color === 'purple' ? '147,51,234' : tab.color === 'blue' ? '59,130,246' : tab.color === 'green' ? '34,197,94' : '6,182,212'}, 0.1)`,
                         color: `var(--${tab.color === 'amber' ? 'hydrogen-amber' : tab.color === 'purple' ? 'purple-400' : tab.color === 'blue' ? 'blue-400' : tab.color === 'green' ? 'green-400' : 'cyan-400'})`,
                       }
-                    : {}
+                    : {
+                        color: 'var(--text-primary)',
+                      }
                 }
               >
                 <Icon className="h-4 w-4" />
