@@ -571,19 +571,25 @@ export const contributorCopperModules = [
           <h4 className="font-bold mb-3 text-lg">📋 Copy-Paste Template (Start Here!)</h4>
           <div className="bg-black/50 p-4 rounded font-mono text-sm">
             <div className="text-green-400 mb-2"># [Your Title Here]</div>
-            <div className="opacity-70 mb-3">Brief 1-sentence summary of your contribution</div>
+            <div className="opacity-70 mb-3 text-xs">Specific and descriptive (10-80 characters)</div>
             
-            <div className="text-blue-400 mb-2">## Context</div>
-            <div className="opacity-70 mb-3">What problem are you solving? Why does it matter?</div>
+            <div className="text-blue-400 mb-2">## Abstract</div>
+            <div className="opacity-70 mb-3">One paragraph summary (200-400 chars): What you did, why it matters, key finding</div>
             
-            <div className="text-blue-400 mb-2">## Approach</div>
-            <div className="opacity-70 mb-3">How did you solve it? What methods did you use?</div>
+            <div className="text-blue-400 mb-2">## Predictions</div>
+            <div className="opacity-70 mb-3">What you hypothesized or predicted would happen before starting</div>
             
-            <div className="text-blue-400 mb-2">## Results</div>
-            <div className="opacity-70 mb-3">What did you discover? What works?</div>
+            <div className="text-blue-400 mb-2">## Findings</div>
+            <div className="opacity-70 mb-3">What you actually discovered or observed in your work</div>
             
-            <div className="text-blue-400 mb-2">## Evidence</div>
-            <div className="opacity-70">Links to code, data, or detailed explanation</div>
+            <div className="text-blue-400 mb-2">## Novel Equations/Constants</div>
+            <div className="opacity-70 mb-3">(If any) New formulas with derivation summary, or new constants with measured values</div>
+            
+            <div className="text-blue-400 mb-2">## Links</div>
+            <div className="opacity-70">(Optional) GitHub, IPFS, Arxiv, or other references for full details</div>
+          </div>
+          <div className="mt-3 text-xs bg-red-500/20 border border-red-500/30 p-3 rounded">
+            ⚠️ <strong>Remember:</strong> Maximum 4,000 characters. System will truncate. Focus on abstract + predictions + findings + discoveries!
           </div>
         </div>
 
