@@ -402,6 +402,94 @@ export const contributorCopperModules = [
           </div>
         </div>
 
+        {/* CRITICAL: 4000 Character Limit */}
+        <div className="border-4 border-red-500 bg-red-500/10 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-2xl text-red-400 flex items-center gap-3">
+            ⚠️ CRITICAL: 4,000 Character Limit
+          </h4>
+          
+          <div className="space-y-4">
+            <div className="bg-red-500/20 border-2 border-red-400 p-4 rounded-lg">
+              <div className="font-bold mb-2 text-lg text-white">What to Submit (ONLY):</div>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="text-green-400 font-bold">✓</span>
+                  <div><strong>Abstract:</strong> Concise summary of your work (200-400 chars)</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-green-400 font-bold">✓</span>
+                  <div><strong>Predictions:</strong> What you predicted would happen</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-green-400 font-bold">✓</span>
+                  <div><strong>Findings:</strong> What you actually discovered/observed</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-green-400 font-bold">✓</span>
+                  <div><strong>Novel Equations:</strong> Any new mathematical formulas (with derivation summary)</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-green-400 font-bold">✓</span>
+                  <div><strong>Novel Constants:</strong> Any new physical/mathematical constants with values</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-black/40 border-2 border-amber-400 p-4 rounded-lg">
+              <div className="font-bold mb-2 text-lg text-amber-400">What NOT to Submit:</div>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="text-red-400 font-bold">✗</span>
+                  <div><strong>Full papers or manuscripts</strong> - Submit abstract + key findings only</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-red-400 font-bold">✗</span>
+                  <div><strong>Complete code implementations</strong> - Link to repo, summarize algorithm</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-red-400 font-bold">✗</span>
+                  <div><strong>Lengthy methodologies</strong> - Brief approach + results, not every step</div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-red-400 font-bold">✗</span>
+                  <div><strong>Raw data dumps</strong> - Link to data, summarize key findings only</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-500/20 border-2 border-blue-400 p-4 rounded-lg">
+              <div className="font-bold mb-2 text-blue-400">Why 4,000 Characters?</div>
+              <div className="text-sm opacity-90 space-y-2">
+                <div>
+                  • <strong>Focus:</strong> Forces you to distill your work to its essence
+                </div>
+                <div>
+                  • <strong>Evaluation Speed:</strong> AI can deeply analyze concise submissions (~10 min)
+                </div>
+                <div>
+                  • <strong>Signal over Noise:</strong> Predictions + findings + discoveries are what matter
+                </div>
+                <div>
+                  • <strong>Fairness:</strong> Everyone gets evaluated on signal, not verbosity
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-purple-500/20 border-2 border-purple-400 p-4 rounded-lg">
+              <div className="font-bold mb-2 text-purple-400">💡 Pro Tip: The "Elevator Pitch" Format</div>
+              <div className="text-sm opacity-90">
+                Imagine you have 2 minutes in an elevator with a top scientist. What would you tell them?
+                <strong> Abstract → What I predicted → What I found → The equation/constant (if any).</strong>
+                That's your PoC. Link to full work externally if needed.
+              </div>
+            </div>
+
+            <div className="text-center text-xs opacity-70 pt-3 border-t border-red-500/30">
+              ⚡ The system will truncate at 4,000 characters. Make every character count!
+            </div>
+          </div>
+        </div>
+
         {/* Step-by-Step Submission Process */}
         <div>
           <h4 className="text-xl font-bold mb-4">Step-by-Step Submission Process</h4>
@@ -444,26 +532,17 @@ export const contributorCopperModules = [
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold flex-shrink-0">3</div>
                 <div className="flex-1">
-                  <h5 className="font-bold mb-2 text-green-400">Format Your Content</h5>
-                  <p className="text-sm opacity-90 mb-3">Use this proven structure:</p>
+                  <h5 className="font-bold mb-2 text-green-400">Format Your Content (Max 4,000 Characters)</h5>
+                  <p className="text-sm opacity-90 mb-3">Use this concise structure - focus on signal, not length:</p>
                   <div className="bg-black/30 p-3 rounded text-xs font-mono space-y-2">
-                    <div><span className="text-amber-400">## Context</span> - What problem does this solve?</div>
-                    <div><span className="text-amber-400">## Approach</span> - How did you solve it?</div>
-                    <div><span className="text-amber-400">## Results</span> - What did you discover?</div>
-                    <div><span className="text-amber-400">## Evidence</span> - Code, data, or proof</div>
+                    <div><span className="text-amber-400">## Abstract</span> - One paragraph summary (200-400 chars)</div>
+                    <div><span className="text-amber-400">## Predictions</span> - What you hypothesized would happen</div>
+                    <div><span className="text-amber-400">## Findings</span> - What you actually discovered</div>
+                    <div><span className="text-amber-400">## Novel Equations/Constants</span> - New formulas or values (if any)</div>
+                    <div><span className="text-amber-400">## Links</span> - GitHub/IPFS/Arxiv for full details (optional)</div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="cloud-card p-5 border-l-4 border-amber-500">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold flex-shrink-0" style={{backgroundColor: 'var(--hydrogen-amber)'}}>4</div>
-                <div className="flex-1">
-                  <h5 className="font-bold mb-2" style={{color: 'var(--hydrogen-amber)'}}>Add Category (Optional)</h5>
-                  <p className="text-sm opacity-90 mb-2">Help us route your contribution: Research, Engineering, Creative, etc.</p>
-                  <div className="text-xs opacity-70">
-                    This is optional but helps the system understand your work better
+                  <div className="mt-2 text-xs bg-red-500/20 border border-red-500/30 p-2 rounded">
+                    ⚠️ Submissions truncated at 4,000 characters. Be concise!
                   </div>
                 </div>
               </div>
@@ -471,10 +550,13 @@ export const contributorCopperModules = [
 
             <div className="cloud-card p-5 border-l-4 border-red-500">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center font-bold flex-shrink-0">5</div>
+                <div className="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center font-bold flex-shrink-0">4</div>
                 <div className="flex-1">
                   <h5 className="font-bold mb-2 text-red-400">Review & Submit</h5>
                   <p className="text-sm opacity-90 mb-2">Double-check for typos, then click "Submit for Evaluation"</p>
+                  <div className="text-xs opacity-70 bg-blue-500/10 border border-blue-500/30 p-2 rounded mb-2">
+                    💡 SynthScan™ MRI automatically determines category during evaluation—no need to specify
+                  </div>
                   <div className="text-xs opacity-70 bg-amber-500/10 border border-amber-500/30 p-2 rounded">
                     ⚠️ $500 submission fee applies. Qualified PoCs get free blockchain registration.
                   </div>
