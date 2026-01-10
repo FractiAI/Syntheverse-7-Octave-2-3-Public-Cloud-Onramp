@@ -27,12 +27,12 @@ export function WingsTrackSelector({ onSelectTrack, currentTrack }: WingsTrackSe
       color: '#C77C5D', // Copper
       description: 'Learn the fundamentals of Syntheverse and earn your Copper Wings',
       modules: [
-        'Welcome to Syntheverse',
+        'Welcome to the Frontier',
         'Understanding Proof-of-Contribution',
         'Submitting Your First PoC',
-        'SynthScan™ MRI Evaluation',
+        'Reading Your Evaluation Results',
         'SYNTH Token Basics',
-        'Getting Started on the Frontier',
+        'Earning Your Copper Wings',
       ],
       duration: '2-3 hours',
       level: 'Beginner',
@@ -45,15 +45,15 @@ export function WingsTrackSelector({ onSelectTrack, currentTrack }: WingsTrackSe
       color: '#C0C0C0', // Silver
       description: 'Master sandbox operations and ecosystem coordination',
       modules: [
-        'Sandbox Architecture & Setup',
-        'Contribution Evaluation Systems',
-        'Scoring Configuration & Tuning',
-        'Participant Management',
-        'Broadcast & Communication',
-        'Advanced Analytics & Reporting',
-        'Enterprise Integration',
+        'Welcome to Cloud Operations',
+        'Enterprise Cloud Architecture',
+        'SynthScan™ MRI Deep Dive',
+        'Managing Cloud Instances',
+        'Community Coordination',
+        'Monitoring & Analytics',
+        'Earning Your Silver Wings',
       ],
-      duration: '4-6 hours',
+      duration: '3-4 hours',
       level: 'Intermediate',
     },
     {
@@ -64,16 +64,25 @@ export function WingsTrackSelector({ onSelectTrack, currentTrack }: WingsTrackSe
       color: '#FFD700', // Gold
       description: 'Architect complete ecosystems and define the frontier',
       modules: [
-        'System Architecture & Design',
+        'Welcome to Reality Worldbuilding',
+        'Holographic Hydrogen Fractal Principles',
+        'Designing Reality Worlds',
+        'Fractal Coherence Architecture',
+        'Infinite Materials & Substrates',
+        'Creative Implementation Techniques',
+        'Publishing High-Impact PoCs',
+        'Earning Your Gold Wings',
+        'The Fractal General Contractor',
+        'From Abacus to Quantum Evaluation',
+        'Advanced System Architecture',
         'Multi-Sandbox Orchestration',
         'Custom Scoring Lenses',
-        'Tokenomics Configuration',
-        'Blockchain Anchoring',
-        'Full-Stack Creator Dashboard',
-        'Advanced HHF-AI Integration',
+        'Tokenomics & Economic Design',
+        'Blockchain Integration',
         'Ecosystem Strategy & Scaling',
+        'Frontier Leadership & Vision',
       ],
-      duration: '6-8 hours',
+      duration: '10-12 hours',
       level: 'Advanced',
     },
   ];
@@ -151,12 +160,30 @@ export function WingsTrackSelector({ onSelectTrack, currentTrack }: WingsTrackSe
 
               {/* Modules List */}
               <div className="mb-4">
-                <div className="text-xs font-semibold mb-2 opacity-70">Modules ({track.modules.length})</div>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
+                <div className="text-xs font-semibold mb-2 flex items-center justify-between">
+                  <span style={{color: track.color}}>
+                    {track.modules.length} Comprehensive Modules
+                  </span>
+                  {track.modules.length > 10 && (
+                    <span className="text-[10px] opacity-50">scroll ↓</span>
+                  )}
+                </div>
+                <div 
+                  className="space-y-1 overflow-y-auto pr-2 border border-opacity-20 rounded p-2" 
+                  style={{
+                    maxHeight: track.modules.length > 10 ? '280px' : '160px',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: `${track.color}80 ${track.color}20`,
+                    borderColor: track.color,
+                    backgroundColor: `${track.color}05`
+                  }}
+                >
                   {track.modules.map((module, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs opacity-70">
-                      <span className="text-[10px] mt-0.5">▸</span>
-                      <span>{module}</span>
+                    <div key={idx} className="flex items-start gap-2 text-xs opacity-80 leading-relaxed hover:opacity-100 transition-opacity">
+                      <span className="font-bold flex-shrink-0" style={{color: track.color}}>
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <span className="flex-1">{module}</span>
                     </div>
                   ))}
                 </div>

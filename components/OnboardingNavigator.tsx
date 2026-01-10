@@ -6215,63 +6215,13 @@ export function OnboardingNavigator() {
           </p>
         </div>
 
-        {/* Flight Path Selection */}
-        {!trainingPath && (
-          <div className="academy-module mb-6 p-6">
-            <h2 className="text-xl font-bold text-academy-text-primary mb-2">Select Your Flight Path</h2>
-            <p className="text-academy-text-secondary mb-6">Choose your training trajectory based on your mission objectives</p>
-            <div className="grid gap-4 md:grid-cols-3">
-              <button
-                onClick={() => setTrainingPath('contributor')}
-                className="academy-module academy-module-active p-6 text-left"
-              >
-                <div className="academy-module-title mb-2">Cadet Track</div>
-                <div className="text-sm text-academy-text-label mb-4">Foundation • 6-8 flight hours</div>
-                <ul className="academy-text space-y-2 text-sm">
-                  <li>• Syntheverse Fundamentals</li>
-                  <li>• PoC Basics & Submission</li>
-                  <li>• SynthScan™ MRI Evaluation</li>
-                  <li>• Scoring & Qualification</li>
-                  <li>• Blockchain & SYNTH Tokens</li>
-                </ul>
-                <div className="mt-4 text-[var(--academy-accent-gold)]">→ Start Training</div>
-              </button>
-              <button
-                onClick={() => setTrainingPath('advanced')}
-                className="border-2 border-[var(--academy-border)] bg-[var(--academy-panel-bg)] p-6 text-left transition-all hover:border-[var(--academy-accent-gold)]"
-              >
-                <div className="academy-title mb-2 text-xl">Advanced Track</div>
-                <div className="academy-text mb-4 text-sm">Mastery • 8-12 hours</div>
-                <ul className="academy-text space-y-2 text-sm">
-                  <li>• All Contributor modules</li>
-                  <li>• Advanced Scoring Strategies</li>
-                  <li>• Redundancy & Sweet Spots</li>
-                  <li>• Seed Information Theory</li>
-                  <li>• Enterprise Sandboxes</li>
-                </ul>
-                <div className="mt-4 text-[var(--academy-accent-gold)]">→ Start Training</div>
-              </button>
-              <button
-                onClick={() => setTrainingPath('operator')}
-                className="border-2 border-[var(--academy-border)] bg-[var(--academy-panel-bg)] p-6 text-left transition-all hover:border-[var(--academy-accent-gold)]"
-              >
-                <div className="academy-title mb-2 text-xl">Operator Track</div>
-                <div className="academy-text mb-4 text-sm">Enterprise • 10-15 hours</div>
-                <ul className="academy-text space-y-2 text-sm">
-                  <li>• All Advanced modules</li>
-                  <li>• Sandbox Management</li>
-                  <li>• SYNTH Token Economics</li>
-                  <li>• Analytics & Metrics</li>
-                  <li>• Governance & Operations</li>
-                </ul>
-                <div className="mt-4 text-[var(--academy-accent-gold)]">→ Start Training</div>
-              </button>
-            </div>
-            <div className="mt-6 border-t border-[var(--academy-border)] pt-4">
-              <div className="academy-text text-sm" style={{ opacity: 0.8 }}>
-                <strong>Training Philosophy:</strong> Each module includes learning objectives, hands-on exercises, knowledge checks, and real-world applications. Progress through modules sequentially or jump to specific topics. Complete exercises and pass knowledge checks (80%+) to advance.
-              </div>
-            </div>
+        {/* Wings Track Selection - NEW UPGRADED UI */}
+        {!trainingPath && !wingTrack && (
+          <div className="mb-6">
+            <WingsTrackSelector 
+              onSelectTrack={handleSelectWingTrack}
+              currentTrack={wingTrack}
+            />
           </div>
         )}
 
@@ -6280,18 +6230,29 @@ export function OnboardingNavigator() {
           <div className="academy-panel mb-6 p-6">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <div className="academy-label">TRAINING PATH: {trainingPath.toUpperCase()}</div>
+                <div className="academy-label">
+                  {wingTrack === 'contributor-copper' && '🪙 CONTRIBUTOR COPPER WINGS'}
+                  {wingTrack === 'operator-silver' && '🛡️ OPERATOR SILVER WINGS'}
+                  {wingTrack === 'creator-gold' && '👑 CREATOR GOLD WINGS'}
+                  {!wingTrack && `TRAINING PATH: ${trainingPath.toUpperCase()}`}
+                </div>
                 <div className="academy-text mt-2">
-                  {trainingPath === 'contributor' && 'Foundation track for new contributors'}
-                  {trainingPath === 'advanced' && 'Mastery track for experienced contributors'}
-                  {trainingPath === 'operator' && 'Enterprise track for sandbox operators'}
+                  {wingTrack === 'contributor-copper' && 'Learn the fundamentals of Syntheverse and earn your Copper Wings'}
+                  {wingTrack === 'operator-silver' && 'Master sandbox operations and ecosystem coordination'}
+                  {wingTrack === 'creator-gold' && 'Architect complete ecosystems and define the frontier'}
+                  {!wingTrack && trainingPath === 'contributor' && 'Foundation track for new contributors'}
+                  {!wingTrack && trainingPath === 'advanced' && 'Mastery track for experienced contributors'}
+                  {!wingTrack && trainingPath === 'operator' && 'Enterprise track for sandbox operators'}
                 </div>
               </div>
               <button
-                onClick={() => setTrainingPath(null)}
+                onClick={() => {
+                  setTrainingPath(null);
+                  setWingTrack(null);
+                }}
                 className="academy-button text-sm"
               >
-                Change Path
+                Change Wings
               </button>
             </div>
             <div className="academy-text space-y-3 text-sm">
