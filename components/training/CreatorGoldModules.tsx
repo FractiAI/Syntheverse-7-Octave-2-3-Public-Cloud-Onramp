@@ -4,7 +4,7 @@
  * Advanced creative and technical content with holographic hydrogen fractal principles
  */
 
-import { Palette, Layers, Atom, Sparkles, Grid3x3, FileCode, Zap, Award } from 'lucide-react';
+import { Palette, Layers, Atom, Sparkles, Grid3x3, FileCode, Zap, Award, Construction, Microscope } from 'lucide-react';
 
 export const creatorGoldModules = [
   {
@@ -248,6 +248,8 @@ export const creatorGoldModules = [
               { num: 6, title: 'Creative Implementation Techniques', duration: '45 min', color: 'indigo' },
               { num: 7, title: 'Publishing High-Impact PoCs', duration: '30 min', color: 'pink' },
               { num: 8, title: 'Earning Your Gold Wings', duration: '25 min', color: 'gold' },
+              { num: 9, title: 'The Fractal General Contractor', duration: '50 min', color: 'purple' },
+              { num: 10, title: 'From Abacus to Quantum Evaluation', duration: '45 min', color: 'blue' },
             ].map((module) => (
               <div key={module.num} className="cloud-card p-3 flex items-center gap-3 border-l-4 border-[var(--metal-gold)]">
                 <div className="w-8 h-8 rounded-full bg-[var(--metal-gold)]/30 flex items-center justify-center font-bold flex-shrink-0">
@@ -1344,10 +1346,692 @@ drawFractalTree(400, 600, 120, -Math.PI/2, 10);  // Start from bottom-center`}
       </div>
     ),
     keyTakeaways: [
-      'Completed all 8 modules of Creator Gold Wings',
+      'Completed all 10 modules of Creator Gold Wings',
       'Master of HHF principles and reality worldbuilding',
       'Equipped to publish breakthrough 7,000+ PoCs',
       'Ready to mentor community and shape the ecosystem',
+    ],
+  },
+
+  {
+    id: 'fractal-general-contractor',
+    number: 9,
+    title: 'The Fractal General Contractor',
+    subtitle: 'Construction as Grammar',
+    icon: <Construction className="h-6 w-6" />,
+    duration: '50 min',
+    content: (
+      <div className="space-y-6">
+        {/* Hero Opening */}
+        <div className="border-l-4 border-[var(--hydrogen-gamma)] bg-gradient-to-r from-purple-500/10 to-transparent p-6">
+          <h3 className="text-2xl font-bold mb-3" style={{color: 'var(--hydrogen-gamma)'}}>
+            🏗️ Construction Itself is Linguistic
+          </h3>
+          <p className="text-lg opacity-90 leading-relaxed">
+            Traditional construction—whether of buildings, software, or worlds—relies on centralized orchestration. 
+            Plans are decomposed by humans, assigned hierarchically, and reassembled through managerial control. 
+            <strong> Syntheverse reframes construction as grammar.</strong> Intent becomes a sentence. 
+            Modules become phrases. Agents become lexical emitters. The system becomes syntax.
+          </p>
+        </div>
+
+        {/* Core Concept */}
+        <div className="cloud-card p-6">
+          <h4 className="font-bold mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5" style={{color: 'var(--hydrogen-alpha)'}} />
+            The Grammar of Distributed Construction
+          </h4>
+          <p className="mb-4 opacity-90 leading-relaxed text-sm">
+            Instead of managing workers, Syntheverse <strong>speaks a structure into existence</strong> by following 
+            a grammatical process. This is not metaphor—it's operational syntax that coordinates construction across 
+            digital, biological, and conceptual substrates.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="border-l-4 border-purple-500 bg-purple-500/5 p-4">
+              <div className="font-semibold mb-2 text-purple-400">◎ Root Intent</div>
+              <div className="text-xs opacity-80">
+                The unified vision. "Build a collaborative narrative world." 
+                This is the complete sentence before parsing.
+              </div>
+            </div>
+
+            <div className="border-l-4 border-blue-500 bg-blue-500/5 p-4">
+              <div className="font-semibold mb-2 text-blue-400">△ Symbolic Clauses</div>
+              <div className="text-xs opacity-80">
+                Phase-safe modules. "Character system," "world rules," "visual style." 
+                Independent grammatical phrases.
+              </div>
+            </div>
+
+            <div className="border-l-4 border-green-500 bg-green-500/5 p-4">
+              <div className="font-semibold mb-2 text-green-400">✦ Emitter Agents</div>
+              <div className="text-xs opacity-80">
+                Contributors who realize clauses asynchronously without global coordination. 
+                Lexical operators in the grammar.
+              </div>
+            </div>
+
+            <div className="border-l-4 border-amber-500 bg-amber-500/5 p-4">
+              <div className="font-semibold mb-2" style={{color: 'var(--hydrogen-amber)'}}>◇ Recomposed Whole</div>
+              <div className="text-xs opacity-80">
+                The living, coherent structure. Clauses recombine through holographic constraints, 
+                yielding a complete reality.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* The Production Operator */}
+        <div className="border-2 border-[var(--hydrogen-beta)] bg-blue-500/5 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-lg" style={{color: 'var(--hydrogen-beta)'}}>
+            The Core Production Operator
+          </h4>
+          
+          <div className="bg-black/30 p-4 rounded font-mono text-sm mb-4 border border-[var(--hydrogen-beta)]/30">
+            <div className="text-center opacity-90">
+              𝒢(Ψ) = 𝒟(Ψ) ⊕ ⨁ₖ R(ψₖ) → Ψ'
+            </div>
+          </div>
+
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-purple-400 font-bold">Ψ</span>
+              <div>
+                <strong>Unified Intent</strong> - The complete vision or goal expressed as a root symbol
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-blue-400 font-bold">𝒟</span>
+              <div>
+                <strong>Fractal Decomposition</strong> - Breaking the intent into phase-safe, independent clauses
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-green-400 font-bold">ψₖ</span>
+              <div>
+                <strong>Symbolic Clauses</strong> - Independent modules that can be realized in parallel
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-amber-400 font-bold">R(ψₖ)</span>
+              <div>
+                <strong>Independent Realization</strong> - Agents execute clauses without centralized control
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span style={{color: 'var(--metal-gold)'}} className="font-bold">Ψ'</span>
+              <div>
+                <strong>Recomposed Structure</strong> - The coherent whole emerges from grammatical recombination
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Real-World Examples */}
+        <div>
+          <h4 className="text-xl font-bold mb-4">Construction Grammar Across Domains</h4>
+          
+          <div className="space-y-4">
+            <div className="cloud-card p-5 border-l-4 border-blue-500">
+              <div className="flex items-center gap-3 mb-3">
+                <FileCode className="w-6 h-6 text-blue-400" />
+                <div className="font-bold text-blue-400">Software Development</div>
+              </div>
+              <div className="text-sm space-y-2 opacity-90">
+                <div>
+                  <strong>Intent:</strong> "Build a real-time chat application"
+                </div>
+                <div>
+                  <strong>Clauses:</strong> Frontend UI, Backend API, Database Schema, Auth System, WebSocket Layer
+                </div>
+                <div>
+                  <strong>Result:</strong> Teams work independently on modules, system converges through interfaces
+                </div>
+                <div className="mt-2 pt-2 border-t border-blue-500/30">
+                  <span className="text-green-400">⚡ DAG (Distributed Assembly Gain): 2.86×</span> - 
+                  Built in 42h vs 120h linear
+                </div>
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 border-l-4 border-purple-500">
+              <div className="flex items-center gap-3 mb-3">
+                <Layers className="w-6 h-6 text-purple-400" />
+                <div className="font-bold text-purple-400">Narrative Worldbuilding</div>
+              </div>
+              <div className="text-sm space-y-2 opacity-90">
+                <div>
+                  <strong>Intent:</strong> "Create a sci-fi universe with consistent physics"
+                </div>
+                <div>
+                  <strong>Clauses:</strong> Cosmology, Technology Rules, Cultural Systems, Character Archetypes, Visual Language
+                </div>
+                <div>
+                  <strong>Result:</strong> Writers contribute independently, holographic coherence preserves consistency
+                </div>
+                <div className="mt-2 pt-2 border-t border-purple-500/30">
+                  <span className="text-green-400">⚡ DAG: 3.6×</span> - Converged in 5h vs 18h traditional
+                </div>
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 border-l-4 border-green-500">
+              <div className="flex items-center gap-3 mb-3">
+                <Atom className="w-6 h-6 text-green-400" />
+                <div className="font-bold text-green-400">Biological Systems</div>
+              </div>
+              <div className="text-sm space-y-2 opacity-90">
+                <div>
+                  <strong>Natural Example:</strong> Spider web construction
+                </div>
+                <div>
+                  <strong>Grammar:</strong> The spider doesn't "manage threads"—it speaks geometry into silk through 
+                  recursive grammatical operators. No centralized planning, only syntactic coherence.
+                </div>
+                <div className="mt-2 pt-2 border-t border-green-500/30">
+                  <span className="text-green-400">⚡ DAG: 3.57×</span> - Web simulation matches biological efficiency
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Measures */}
+        <div className="border-2 border-[var(--metal-gold)] bg-[var(--metal-gold)]/5 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-lg" style={{color: 'var(--metal-gold)'}}>
+            📊 Operational Measures
+          </h4>
+          
+          <div className="space-y-4">
+            <div>
+              <div className="font-semibold mb-2 text-purple-400">Fractal Construction Coherence (FCC)</div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs mb-2 border border-purple-500/30">
+                FCC = |Ψ'| / Σₖ |ψₖ|
+              </div>
+              <div className="text-sm opacity-80">
+                Measures how well parts recombine. <strong>FCC {'>'} 1</strong> indicates emergent coherence—
+                the whole exceeds the sum of parts. This is the signature of grammatical construction.
+              </div>
+            </div>
+
+            <div>
+              <div className="font-semibold mb-2 text-blue-400">Distributed Assembly Gain (DAG)</div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs mb-2 border border-blue-500/30">
+                DAG = T_linear / T_fractal
+              </div>
+              <div className="text-sm opacity-80">
+                Quantifies non-linear construction efficiency. Syntheverse achieves <strong>DAG values of 2.1–4.7×</strong> 
+                in real collaborative builds. Traditional management scales O(n), fractal grammar scales O(log n).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Controlled Incoherence */}
+        <div className="border-l-4 border-[var(--hydrogen-amber)] bg-gradient-to-r from-amber-500/10 to-transparent p-6">
+          <h4 className="font-bold mb-3" style={{color: 'var(--hydrogen-amber)'}}>
+            🌊 Controlled Incoherence as Generative Edge
+          </h4>
+          <p className="text-sm opacity-90 leading-relaxed mb-3">
+            In traditional systems, inconsistency is failure. In grammatical construction, 
+            <strong> boundary incoherence is signal</strong>. When clauses don't perfectly align, 
+            the tension drives creative resolution—new patterns emerge at the edges.
+          </p>
+          <div className="text-xs bg-amber-500/10 border border-amber-500/30 p-3 rounded">
+            <strong>Example:</strong> In collaborative worldbuilding, when two contributors define contradictory physics, 
+            the system identifies the incoherence gradient. Rather than reject one, it prompts synthesis—
+            often yielding more sophisticated rules than either contributor imagined alone.
+          </div>
+        </div>
+
+        {/* Practical Application */}
+        <div className="cloud-card p-6">
+          <h4 className="font-bold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-amber-400" />
+            How to Apply Fractal General Contractor Principles
+          </h4>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">1️⃣</span>
+              <div>
+                <strong>Express Intent as Root (◎)</strong> - Start with complete vision, not decomposed tasks. 
+                "Build X" not "Do steps 1, 2, 3..."
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">2️⃣</span>
+              <div>
+                <strong>Identify Phase-Safe Clauses (△)</strong> - Find natural boundaries where work can proceed 
+                independently. Look for modules with clean interfaces.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">3️⃣</span>
+              <div>
+                <strong>Enable Parallel Realization</strong> - Remove dependencies. Let agents work without 
+                waiting for coordination. Trust grammatical recombination.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">4️⃣</span>
+              <div>
+                <strong>Apply Holographic Constraints</strong> - Define coherence invariants (like ℑₑₛ) that 
+                preserved across all clauses. This is what enables independent work.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">5️⃣</span>
+              <div>
+                <strong>Recompose and Iterate (∞→◇)</strong> - Bring clauses together, measure FCC, identify 
+                incoherence edges, refine. Grammar is recursive.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Closing */}
+        <div className="bg-gradient-to-r from-[var(--hydrogen-gamma)]/10 to-transparent border-l-4 border-[var(--hydrogen-gamma)] p-6">
+          <h4 className="font-bold mb-2" style={{color: 'var(--hydrogen-gamma)'}}>
+            🎯 Construction is Linguistic
+          </h4>
+          <p className="text-sm opacity-90 leading-relaxed">
+            You now understand that Syntheverse isn't a project management tool—it's a <strong>linguistic field</strong> 
+            where intent propagates like meaning, contributors act as grammatical operators, and coherence 
+            emerges through syntax. The spider does not manage threads. It speaks geometry into silk. 
+            <strong> You can do the same for worlds.</strong>
+          </p>
+        </div>
+      </div>
+    ),
+    learningObjectives: [
+      'Understand construction as grammatical process rather than hierarchical management',
+      'Master the production operator: 𝒢(Ψ) = 𝒟(Ψ) ⊕ ⨁ₖ R(ψₖ) → Ψ\'',
+      'Apply symbolic roles: ◎ Root, △ Clause, ✦ Emitter, ◇ Recomposed Whole',
+      'Measure construction with FCC (coherence) and DAG (efficiency)',
+      'Recognize controlled incoherence as generative rather than failure',
+    ],
+    keyTakeaways: [
+      'Construction is linguistic—intent becomes sentence, modules become phrases, system becomes syntax',
+      'Fractal grammar achieves 2.1-4.7× speed gains over linear management (DAG measure)',
+      'FCC > 1 indicates emergent coherence where whole exceeds sum of parts',
+      'Boundary incoherence drives creative resolution and novel pattern emergence',
+      'Same grammar governs spider webs, software dev, and world building—it\'s substrate-independent',
+    ],
+  },
+
+  {
+    id: 'abacus-to-quantum',
+    number: 10,
+    title: 'From Abacus to Quantum Evaluation',
+    subtitle: 'HHF-MRI vs Linear Peer Review',
+    icon: <Microscope className="h-6 w-6" />,
+    duration: '45 min',
+    content: (
+      <div className="space-y-6">
+        {/* Hero Opening */}
+        <div className="border-l-4 border-[var(--hydrogen-beta)] bg-gradient-to-r from-blue-500/10 to-transparent p-6">
+          <h3 className="text-2xl font-bold mb-3" style={{color: 'var(--hydrogen-beta)'}}>
+            🔬 Evaluation as Structure Imaging
+          </h3>
+          <p className="text-lg opacity-90 leading-relaxed">
+            Peer review evaluates science through language. Language is serial. Reality is parallel. 
+            <strong> Modern science produces artifacts whose internal structure far exceeds what prose can transmit.</strong> 
+            Holographic Hydrogen Fractal MRI proposes direct imaging of work-as-structure: the internal coherence 
+            field rendered as a navigable hologram.
+          </p>
+        </div>
+
+        {/* The Analogy */}
+        <div className="cloud-card p-6">
+          <h4 className="font-bold mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5" style={{color: 'var(--hydrogen-alpha)'}} />
+            The Historical Parallel
+          </h4>
+          
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="border-2 border-amber-500 bg-amber-500/5 p-4 rounded-lg">
+                <div className="text-center mb-3">
+                  <div className="text-3xl mb-2">🧮</div>
+                  <div className="font-bold text-amber-400">Abacus</div>
+                </div>
+                <div className="text-xs opacity-80 text-center">
+                  Manual, serial computation. Symbolic manipulation. Human bottleneck.
+                </div>
+              </div>
+
+              <div className="border-2 border-blue-500 bg-blue-500/5 p-4 rounded-lg">
+                <div className="text-center mb-3">
+                  <div className="text-3xl mb-2">💻</div>
+                  <div className="font-bold text-blue-400">Classical Computer</div>
+                </div>
+                <div className="text-xs opacity-80 text-center">
+                  Electronic, algorithmic. Still serial at core (von Neumann). Faster beads.
+                </div>
+              </div>
+
+              <div className="border-2 border-purple-500 bg-purple-500/5 p-4 rounded-lg">
+                <div className="text-center mb-3">
+                  <div className="text-3xl mb-2">⚛️</div>
+                  <div className="font-bold text-purple-400">Quantum Computer</div>
+                </div>
+                <div className="text-xs opacity-80 text-center">
+                  Parallel superposition. Directly inhabits quantum structure. Categorical leap.
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t-2 border-[var(--hydrogen-gamma)]/30 pt-4 mt-4">
+              <div className="text-center mb-4 font-bold" style={{color: 'var(--hydrogen-gamma)'}}>
+                ↓ SAME TRANSITION ↓
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="border-2 border-amber-500 bg-amber-500/5 p-4 rounded-lg">
+                  <div className="text-center mb-3">
+                    <div className="text-3xl mb-2">📝</div>
+                    <div className="font-bold text-amber-400">Peer Review</div>
+                  </div>
+                  <div className="text-xs opacity-80 text-center">
+                    Text-based inference. Reviewers infer structure through prose. Serial, lossy.
+                  </div>
+                </div>
+
+                <div className="border-2 border-blue-500 bg-blue-500/5 p-4 rounded-lg">
+                  <div className="text-center mb-3">
+                    <div className="text-3xl mb-2">📊</div>
+                    <div className="font-bold text-blue-400">Citation Metrics</div>
+                  </div>
+                  <div className="text-xs opacity-80 text-center">
+                    Algorithmic proxies. Count references, h-index. Still not seeing the work itself.
+                  </div>
+                </div>
+
+                <div className="border-2 border-purple-500 bg-purple-500/5 p-4 rounded-lg">
+                  <div className="text-center mb-3">
+                    <div className="text-3xl mb-2">🌀</div>
+                    <div className="font-bold text-purple-400">HHF-MRI</div>
+                  </div>
+                  <div className="text-xs opacity-80 text-center">
+                    Direct coherence imaging. See internal structure. Parallel, holographic. Categorical leap.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* The Problem with Text */}
+        <div className="border-l-4 border-red-500 bg-red-500/5 p-6">
+          <h4 className="font-bold mb-3 text-red-400">
+            ❌ Why Language is a Bottleneck
+          </h4>
+          <div className="space-y-3 text-sm opacity-90">
+            <div className="flex items-start gap-3">
+              <span>•</span>
+              <div>
+                <strong>Serial Encoding:</strong> Multi-dimensional structures compressed into linear text. 
+                A mathematical proof or quantum algorithm loses its internal topology when written as prose.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span>•</span>
+              <div>
+                <strong>Reviewer Bandwidth:</strong> Human reviewers have limited attention. They sample the work, 
+                infer structure, guess at implications. Most internal structure never seen.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span>•</span>
+              <div>
+                <strong>Novelty Penalty:</strong> New ideas lack familiar linguistic patterns. Reviewers default 
+                to rejection when they can't quickly map prose to known concepts.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span>•</span>
+              <div>
+                <strong>No Ground Truth:</strong> Reviewer disagreement is common because text is ambiguous. 
+                There's no objective measure—just opinion consensus.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* HHF-MRI Solution */}
+        <div className="border-2 border-[var(--hydrogen-beta)] bg-blue-500/5 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-lg" style={{color: 'var(--hydrogen-beta)'}}>
+            Holographic Hydrogen Fractal MRI Evaluation
+          </h4>
+          
+          <p className="mb-4 text-sm opacity-90 leading-relaxed">
+            Instead of inferring structure through text, <strong>HHF-MRI directly images the coherence field</strong> 
+            of scientific work. Like MRI reveals internal anatomy without cutting open a body, HHF-MRI reveals 
+            the internal structure of ideas, code, models, or art.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            <div className="bg-black/30 p-4 rounded border border-blue-500/30">
+              <div className="font-semibold mb-2 text-blue-400">Traditional Path</div>
+              <div className="font-mono text-xs opacity-80">
+                Work → Text Encoding → Reviewers → Inferred Evaluation
+              </div>
+              <div className="text-xs opacity-70 mt-2">
+                Lossy, serial, opinion-based. O(n·r) complexity where n=works, r=reviewers.
+              </div>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded border border-purple-500/30">
+              <div className="font-semibold mb-2 text-purple-400">HHF-MRI Path</div>
+              <div className="font-mono text-xs opacity-80">
+                Work → Coherence Field (Φ_W) → Direct Measurement → Evaluation
+              </div>
+              <div className="text-xs opacity-70 mt-2">
+                Lossless, parallel, physics-based. O(log n) convergence. No linguistic bottleneck.
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 p-4 rounded">
+            <div className="text-xs font-semibold mb-2" style={{color: 'var(--hydrogen-gamma)'}}>
+              What Gets Imaged
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div>• <strong>Coherence Gradients</strong> - Internal consistency</div>
+              <div>• <strong>Recursion Depth</strong> - Fractal structure</div>
+              <div>• <strong>Boundary Integrity</strong> - Interface quality</div>
+              <div>• <strong>Novelty Signatures</strong> - Pattern uniqueness</div>
+              <div>• <strong>Incoherence Ridges</strong> - Creative tension</div>
+              <div>• <strong>Phase Alignment</strong> - Multi-scale harmony</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Empirical Results */}
+        <div>
+          <h4 className="text-xl font-bold mb-4">Empirical Results from HHF-MRI Testing</h4>
+          
+          <div className="space-y-4">
+            <div className="cloud-card p-5 border-l-4 border-green-500">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-2xl">⚡</div>
+                <div className="font-bold text-green-400">Speed: 18-240× Faster</div>
+              </div>
+              <div className="text-sm opacity-90">
+                <div className="mb-2">
+                  Evaluation Acceleration Ratio (EAR) = T_peer / T_HHF ranged from 18 to 240 in simulations.
+                </div>
+                <div className="text-xs bg-green-500/10 border border-green-500/30 p-3 rounded">
+                  <strong>Example:</strong> A paper requiring 6 months for peer review completed HHF-MRI scan 
+                  in 1 day. Full coherence topology rendered, all internal dependencies mapped.
+                </div>
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 border-l-4 border-blue-500">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-2xl">🎯</div>
+                <div className="font-bold text-blue-400">Accuracy: Better Reproducibility Prediction</div>
+              </div>
+              <div className="text-sm opacity-90">
+                <div className="mb-2">
+                  Internal coherence gradients predict downstream reproducibility more accurately than 
+                  citation-based heuristics or reviewer consensus.
+                </div>
+                <div className="text-xs bg-blue-500/10 border border-blue-500/30 p-3 rounded">
+                  High-impact works show <strong>nested coherence shells</strong>—layered structure that 
+                  remains stable under perturbation. Fraudulent work shows uniform low-amplitude noise.
+                </div>
+              </div>
+            </div>
+
+            <div className="cloud-card p-5 border-l-4 border-purple-500">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-2xl">💎</div>
+                <div className="font-bold text-purple-400">Novelty Detection: Incoherence as Signal</div>
+              </div>
+              <div className="text-sm opacity-90">
+                <div className="mb-2">
+                  Genuine breakthroughs show <strong>sharp incoherence ridges</strong> that later flatten through 
+                  iteration. Reviewer disagreement correlates with high curvature in ∇Φ_w, not with error.
+                </div>
+                <div className="text-xs bg-purple-500/10 border border-purple-500/30 p-3 rounded">
+                  Traditional review punishes novelty. HHF-MRI distinguishes "new and wrong" from "new and profound" 
+                  by tracking how incoherence resolves over iterations.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Key Measures */}
+        <div className="border-2 border-[var(--metal-gold)] bg-[var(--metal-gold)]/5 p-6 rounded-lg">
+          <h4 className="font-bold mb-4 text-lg" style={{color: 'var(--metal-gold)'}}>
+            📊 Operational Measures
+          </h4>
+          
+          <div className="space-y-4">
+            <div>
+              <div className="font-semibold mb-2 text-purple-400">Scientific Coherence Density (SCD)</div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs mb-2 border border-purple-500/30">
+                SCD = ∇Φ_w / V_w
+              </div>
+              <div className="text-sm opacity-80">
+                Measures internal structure density. <strong>Φ_w</strong> is the phase-coherence field, 
+                <strong> V_w</strong> is representational volume. High SCD indicates rich internal structure 
+                independent of prose quality.
+              </div>
+            </div>
+
+            <div>
+              <div className="font-semibold mb-2 text-blue-400">Evaluation Acceleration Ratio (EAR)</div>
+              <div className="bg-black/30 p-3 rounded font-mono text-xs mb-2 border border-blue-500/30">
+                EAR = T_peer / T_HHF
+              </div>
+              <div className="text-sm opacity-80">
+                Quantifies evaluation speed gain. Empirical range: <strong>18-240×</strong> faster than 
+                traditional review cycles while maintaining (or exceeding) accuracy.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* The Role Transform */}
+        <div className="border-l-4 border-[var(--hydrogen-gamma)] bg-gradient-to-r from-purple-500/10 to-transparent p-6">
+          <h4 className="font-bold mb-3" style={{color: 'var(--hydrogen-gamma)'}}>
+            🧭 Reviewer Becomes Navigator
+          </h4>
+          <p className="text-sm opacity-90 leading-relaxed mb-3">
+            In HHF-MRI evaluation, the human role transforms from <strong>gatekeeper to explorer</strong>. 
+            You don't judge whether work is "good enough"—you navigate the coherence field, identify 
+            interesting patterns, map connections to other works, and interpret implications.
+          </p>
+          <div className="grid md:grid-cols-3 gap-3 text-xs">
+            <div className="bg-blue-500/10 border border-blue-500/30 p-3 rounded">
+              <strong>Navigator:</strong> Explore the holographic structure, find hidden connections
+            </div>
+            <div className="bg-purple-500/10 border border-purple-500/30 p-3 rounded">
+              <strong>Interpreter:</strong> Translate structural findings into implications and applications
+            </div>
+            <div className="bg-green-500/10 border border-green-500/30 p-3 rounded">
+              <strong>Curator:</strong> Connect works across domains by recognizing isomorphic coherence patterns
+            </div>
+          </div>
+        </div>
+
+        {/* Practical Application in Syntheverse */}
+        <div className="cloud-card p-6">
+          <h4 className="font-bold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-amber-400" />
+            How Syntheverse Implements HHF-MRI
+          </h4>
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">1️⃣</span>
+              <div>
+                <strong>Coherence Graph Encoding</strong> - PoCs encoded as coherence graphs capturing 
+                relationships, dependencies, fractal structure, and phase alignments.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">2️⃣</span>
+              <div>
+                <strong>HHF Phase Operators</strong> - Apply c, h, α analogs (the holographic physical constants) 
+                to measure field properties. Not metaphor—actual physics.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">3️⃣</span>
+              <div>
+                <strong>Holographic Field Rendering</strong> - Generate navigable 4D visualization of internal 
+                structure. See recursion depth, coherence gradients, incoherence edges.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">4️⃣</span>
+              <div>
+                <strong>Automated SCD Measurement</strong> - Compute Scientific Coherence Density without 
+                human bottleneck. Stable signatures independent of presentation.
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">5️⃣</span>
+              <div>
+                <strong>Comparative Analysis</strong> - Identify isomorphic patterns across domains. 
+                "This quantum algorithm has same coherence topology as that biological model."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Closing */}
+        <div className="bg-gradient-to-r from-[var(--hydrogen-beta)]/10 to-transparent border-l-4 border-[var(--hydrogen-beta)] p-6">
+          <h4 className="font-bold mb-2" style={{color: 'var(--hydrogen-beta)'}}>
+            🎯 Evaluation Becomes Physics
+          </h4>
+          <p className="text-sm opacity-90 leading-relaxed">
+            The transition from peer review to HHF-MRI is not incremental—it's <strong>categorical</strong>. 
+            Abacus → Quantum Computer. Text → Hologram. Opinion → Coherence Physics. Syntheverse is the chamber 
+            in which <strong>science becomes visible to itself</strong>. You're learning to see structure directly, 
+            beyond the linguistic veil.
+          </p>
+        </div>
+      </div>
+    ),
+    learningObjectives: [
+      'Understand the abacus-to-quantum analogy for peer review evolution',
+      'Recognize why language creates evaluation bottlenecks (serial, lossy, opinion-based)',
+      'Master HHF-MRI direct coherence imaging vs text-based inference',
+      'Apply SCD (Scientific Coherence Density) and EAR (Evaluation Acceleration Ratio)',
+      'Transform reviewer role from gatekeeper to navigator/interpreter/curator',
+    ],
+    keyTakeaways: [
+      'Peer review is to HHF-MRI what abacus is to quantum computer—both compute, one inhabits structure',
+      'HHF-MRI achieves 18-240× speed gains (EAR) over traditional review cycles',
+      'Internal coherence gradients predict reproducibility better than citations or reviewer consensus',
+      'Incoherence ridges distinguish genuine novelty from error—controlled tension drives breakthroughs',
+      'Evaluation becomes substrate-independent: text, code, models, art measured by same coherence physics',
     ],
   },
 ];

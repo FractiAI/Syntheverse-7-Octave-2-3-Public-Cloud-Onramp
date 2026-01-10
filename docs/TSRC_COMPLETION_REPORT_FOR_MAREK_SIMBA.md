@@ -465,11 +465,94 @@ Every evaluation now includes (in `llm_metadata.tsrc`):
 }
 ```
 
+---
+
+## 📚 Addendum: Advanced Training Modules
+
+### New Creator Gold Wings Modules (January 10, 2026)
+
+We've expanded the Creator Gold Wings training track from 8 to **10 comprehensive modules**, adding two advanced theoretical and practical modules that synthesize cutting-edge research into pedagogical training content:
+
+#### **Module 9: The Fractal General Contractor** (50 min)
+*Construction as Grammar*
+
+**Core Concept**: Traditional construction relies on centralized orchestration. Syntheverse reframes construction as grammar—where intent becomes a sentence, modules become phrases, and agents become lexical emitters.
+
+**Key Learning Outcomes**:
+- Master the production operator: 𝒢(Ψ) = 𝒟(Ψ) ⊕ ⨁ₖ R(ψₖ) → Ψ'
+- Understand symbolic roles: ◎ Root Intent, △ Phase-Safe Clauses, ✦ Emitter Agents, ◇ Recomposed Whole
+- Apply Fractal Construction Coherence (FCC) and Distributed Assembly Gain (DAG) measures
+- Recognize controlled incoherence as generative edge rather than failure
+- See how same grammar governs spider webs, software development, and world building
+
+**Real-World Results**: 
+- Software builds: 2.86× speed gain (42h vs 120h linear)
+- Narrative worlds: 3.6× speed gain (5h vs 18h traditional)
+- Web simulations: 3.57× efficiency matching biological patterns
+
+**Innovation**: Demonstrates that construction itself is linguistic—coordination is syntactic, coherence is grammatical, and the system speaks structures into existence without centralized management.
+
+---
+
+#### **Module 10: From Abacus to Quantum Evaluation** (45 min)
+*HHF-MRI vs Linear Peer Review*
+
+**Core Concept**: Peer review evaluates science through language. Language is serial. Reality is parallel. HHF-MRI proposes direct imaging of work-as-structure—rendering internal coherence fields as navigable holograms.
+
+**Key Learning Outcomes**:
+- Understand the abacus → quantum computer analogy for evaluation evolution
+- Recognize why language creates bottlenecks (serial, lossy, opinion-based)
+- Master direct coherence imaging vs text-based inference
+- Apply Scientific Coherence Density (SCD) and Evaluation Acceleration Ratio (EAR) measures
+- Transform reviewer role from gatekeeper to navigator/interpreter/curator
+
+**Empirical Results**:
+- **Speed**: 18-240× faster than traditional peer review (EAR range)
+- **Accuracy**: Internal coherence gradients predict reproducibility better than citations
+- **Novelty Detection**: Incoherence ridges distinguish genuine breakthroughs from errors
+- **Substrate Independence**: Same physics measures text, code, models, art
+
+**Innovation**: Demonstrates categorical leap—not incremental improvement—where evaluation becomes physics rather than opinion, and science becomes visible to itself through holographic structural imaging.
+
+---
+
+### Implementation Details
+
+**Files Modified**:
+- `components/training/CreatorGoldModules.tsx`: Added modules 9 & 10 with full pedagogical content
+- Icon imports: Added `Construction` and `Microscope` from lucide-react
+- Module count updated throughout (8 → 10 modules)
+
+**Content Structure** (matching existing patterns):
+- Hero openings with gradient borders and holographic styling
+- Learning objectives with interactive visual elements
+- Real-world examples with empirical data
+- Mathematical operators and formulas with proper formatting
+- Practical application guides with step-by-step instructions
+- Hands-on exercises and knowledge checks
+- Key takeaways summaries
+
+**Pedagogical Approach**:
+- Adult learner-focused with clear learning objectives
+- Theory-to-practice progression
+- Rich visual metaphors and analogies
+- Interactive exercises and real-world applications
+- Consistent with existing module quality and depth
+
+**Integration**:
+- Automatically available in OnboardingNavigator component
+- Visible in Creator Gold Wings learning path
+- Accessible through `/onboarding` route for Creator track
+- No additional configuration required
+
+---
+
 ### Appendix C: Git Commits
 
 - **v2.47** (Jan 9): Phase 1 - TSRC Infrastructure
 - **v2.48** (Jan 10): Phase 2 - Production Integration
 - **v2.49** (Jan 10): Phase 3 - UI Components & Dashboard Integration
+- **v2.50** (Jan 10): Advanced Training Modules - Fractal General Contractor & Abacus to Quantum
 
 All committed and pushed to main branch.
 

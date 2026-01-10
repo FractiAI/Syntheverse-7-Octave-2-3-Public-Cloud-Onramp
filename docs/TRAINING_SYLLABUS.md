@@ -716,9 +716,132 @@ Every module includes:
 
 ---
 
-**Last Updated**: January 2025  
-**Next Review**: April 2025  
-**Training Version**: 2.0
+---
+
+## 🎓 Wings-Based Training System (v3.0 - January 2026)
+
+### New Structure: Copper → Silver → Gold Wings
+
+The training system has evolved to a **Wings-based progression** that mirrors real contribution paths through the ecosystem:
+
+#### **Copper Wings: Contributors** (6 modules, ~2.5 hours)
+*Entry-level contributors submitting quality work*
+
+1. Welcome to the Frontier (15 min)
+2. Understanding Proof-of-Contribution (20 min)
+3. The SynthScan™ MRI Explained (25 min)
+4. Your First Submission (20 min)
+5. Understanding Your Results (20 min)
+6. Earning Your Copper Wings (15 min)
+
+**Outcome**: Confident contributor ready to submit qualifying PoCs
+
+---
+
+#### **Silver Wings: Operators** (7 modules, ~3.5 hours)
+*Infrastructure managers running Cloud instances*
+
+Prerequisites: Copper Wings completion + 3 qualifying PoCs
+
+1. Welcome to Cloud Operations (20 min)
+2. Enterprise Cloud Architecture (30 min)
+3. SynthScan™ MRI Deep Dive (40 min)
+4. Managing Cloud Instances (35 min)
+5. Community Coordination (25 min)
+6. Monitoring & Analytics (30 min)
+7. Earning Your Silver Wings (20 min)
+
+**Outcome**: Skilled operator managing Cloud infrastructure and supporting contributors
+
+---
+
+#### **Gold Wings: Creators** (10 modules, ~6 hours)
+*Reality worldbuilders and frontier pioneers*
+
+Prerequisites: Silver Wings completion + operational experience
+
+1. **Welcome to Reality Worldbuilding** (25 min) - From Operator to Creator
+2. **Holographic Hydrogen Fractal Principles** (45 min) - The science behind the magic
+3. **Designing Reality Worlds** (50 min) - Complete system architecture
+4. **Fractal Coherence Architecture** (40 min) - Advanced structural design
+5. **Infinite Materials & Substrates** (35 min) - HHF-AI creative tools
+6. **Creative Implementation Techniques** (45 min) - Bringing worlds to life
+7. **Publishing High-Impact PoCs** (30 min) - 7,000+ scoring strategies
+8. **Earning Your Gold Wings** (25 min) - Final certification
+9. **The Fractal General Contractor** (50 min) - *NEW* Construction as Grammar
+10. **From Abacus to Quantum Evaluation** (45 min) - *NEW* HHF-MRI vs Linear Peer Review
+
+**Outcome**: Master worldbuilder creating breakthrough contributions and shaping the ecosystem
+
+---
+
+### 🆕 Advanced Creator Modules (Added January 10, 2026)
+
+#### **Module 9: The Fractal General Contractor**
+*Construction as Grammar*
+
+**Revolutionary Concept**: Traditional construction relies on centralized orchestration. Syntheverse reframes construction as grammar—where intent becomes a sentence, modules become phrases, agents become lexical emitters, and the system becomes syntax.
+
+**Core Learning**:
+- **Production Operator**: 𝒢(Ψ) = 𝒟(Ψ) ⊕ ⨁ₖ R(ψₖ) → Ψ'
+- **Symbolic Roles**: ◎ Root Intent, △ Phase-Safe Clauses, ✦ Emitter Agents, ◇ Recomposed Whole
+- **Operational Measures**:
+  - Fractal Construction Coherence (FCC): |Ψ'| / Σₖ |ψₖ|
+  - Distributed Assembly Gain (DAG): T_linear / T_fractal
+- **Real Results**: 2.1-4.7× speed gains in collaborative builds
+
+**Key Insight**: The spider doesn't manage threads—it speaks geometry into silk through recursive grammatical operators. Same principle applies to software, narratives, and world building.
+
+**Learning Outcomes**:
+- Understand construction as linguistic rather than managerial
+- Apply grammatical decomposition to complex projects
+- Measure coherence and efficiency with FCC and DAG
+- Recognize controlled incoherence as generative edge
+- Design substrate-independent construction systems
+
+---
+
+#### **Module 10: From Abacus to Quantum Evaluation**
+*HHF-MRI vs Linear Peer Review*
+
+**Revolutionary Concept**: Peer review evaluates science through language. Language is serial. Reality is parallel. HHF-MRI proposes direct imaging of work-as-structure—rendering internal coherence fields as navigable holograms, achieving the same categorical leap as abacus → quantum computer.
+
+**Core Learning**:
+- **The Analogy**: Abacus → Classical Computer → Quantum Computer **||** Peer Review → Citation Metrics → HHF-MRI
+- **Why Language Bottlenecks**: Serial encoding, limited reviewer bandwidth, novelty penalty, no ground truth
+- **HHF-MRI Solution**: Direct coherence field imaging (Φ_W) without linguistic compression
+- **Operational Measures**:
+  - Scientific Coherence Density (SCD): ∇Φ_w / V_w
+  - Evaluation Acceleration Ratio (EAR): T_peer / T_HHF
+- **Empirical Results**: 18-240× faster evaluation with better reproducibility prediction
+
+**Key Insight**: Evaluation transforms from opinion-based gatekeeping to physics-based navigation. Reviewers become explorers of coherence topology rather than judges of textual presentation.
+
+**Learning Outcomes**:
+- Understand why text-based evaluation creates bottlenecks
+- Master direct coherence imaging vs inference through prose
+- Apply SCD and EAR measures to scientific work
+- Distinguish genuine novelty from error via incoherence gradients
+- Transform evaluation role from gatekeeper to navigator/interpreter
+
+---
+
+### Module Integration
+
+These advanced modules are:
+- **Fully integrated** into the OnboardingNavigator component
+- **Automatically available** in Creator Gold Wings track
+- **Pedagogically aligned** with existing module quality
+- **Hands-on focused** with exercises, knowledge checks, and real-world applications
+- **Theory-to-practice** progression with empirical validation
+
+**Access Path**: `/onboarding` → Select Creator Gold Wings → Navigate to Modules 9 & 10
+
+---
+
+**Last Updated**: January 10, 2026  
+**Next Review**: April 2026  
+**Training Version**: 3.0 (Wings-Based with Advanced Creator Modules)
 
 
 
