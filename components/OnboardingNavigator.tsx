@@ -35,6 +35,9 @@ import {
   ArrowRight,
   Sprout,
   Calculator,
+  X,
+  RefreshCw,
+  Maximize2,
 } from 'lucide-react';
 import Link from 'next/link';
 import '../app/academy.css';
@@ -81,6 +84,7 @@ export function OnboardingNavigator() {
   const [showExercise, setShowExercise] = useState(false);
   const [showKnowledgeCheck, setShowKnowledgeCheck] = useState(false);
   const [knowledgeCheckAnswers, setKnowledgeCheckAnswers] = useState<Record<number, number>>({});
+  const [fullView, setFullView] = useState(false);
   const topRef = useRef<HTMLDivElement | null>(null);
   const lessonRef = useRef<HTMLDivElement | null>(null);
 
@@ -112,6 +116,17 @@ export function OnboardingNavigator() {
   useEffect(() => {
     lessonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [currentModule]);
+
+  // Handle ESC key to close full view
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && fullView) {
+        setFullView(false);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [fullView]);
 
   // Select modules based on wing track
   const modules: TrainingModule[] = 
@@ -6337,7 +6352,12 @@ export function OnboardingNavigator() {
         </div>
 
         {/* Current Module Content */}
-        <div ref={lessonRef} className="academy-module academy-panel mb-6 p-8">
+        <div 
+          ref={lessonRef} 
+          className="academy-module academy-panel mb-6 p-8 cursor-pointer transition-all hover:border-[var(--academy-accent-gold)]"
+          onClick={() => setFullView(true)}
+          title="Click to expand to full view"
+        >
           <div className="mb-6 flex items-center gap-4">
             <div style={{ color: '#ffb84d' }}>{modules[currentModule].icon}</div>
             <div className="flex-1 border-b border-[var(--academy-border)] pb-4">
@@ -6345,6 +6365,10 @@ export function OnboardingNavigator() {
                 {modules[currentModule].label || `MODULE ${modules[currentModule].number || currentModule + 1}`}
               </div>
               <div className="academy-title mt-1 text-2xl">{modules[currentModule].title}</div>
+            </div>
+            <div className="flex items-center gap-2 text-xs opacity-60">
+              <Maximize2 className="h-4 w-4" />
+              <span>Click to expand</span>
             </div>
           </div>
           <div className="min-h-[400px]">{modules[currentModule].content}</div>
@@ -6357,8 +6381,22 @@ export function OnboardingNavigator() {
             Previous
           </button>
 
-          <div className="academy-text text-sm">
-            Module {currentModule + 1} of {modules.length}
+          <div className="flex items-center gap-4">
+            <div className="academy-text text-sm">
+              Module {currentModule + 1} of {modules.length}
+            </div>
+            <button 
+              onClick={() => {
+                setWingTrack(null);
+                setTrainingPath(null);
+                setCurrentModule(0);
+              }}
+              className="academy-button flex items-center gap-2 bg-[var(--academy-accent-gold)]/10 border-[var(--academy-accent-gold)] hover:bg-[var(--academy-accent-gold)]/20"
+              title="Start a new training transmission"
+            >
+              <RefreshCw className="h-4 w-4" />
+              NEW TRANSMISSION
+            </button>
           </div>
 
           <button onClick={nextModule} className="academy-button flex items-center gap-2">
@@ -6367,6 +6405,67 @@ export function OnboardingNavigator() {
           </button>
         </div>
       </div>
+
+      {/* Full View Modal */}
+      {fullView && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setFullView(false);
+            }
+          }}
+        >
+          <div className="container mx-auto px-4 py-8 relative">
+            {/* Close Button */}
+            <button
+              onClick={() => setFullView(false)}
+              className="sticky top-4 float-right academy-button flex items-center gap-2 bg-red-500/20 border-red-500 hover:bg-red-500/30 text-red-400 z-10 mb-4"
+              title="Close full view (ESC)"
+            >
+              <X className="h-5 w-5" />
+              CLOSE
+            </button>
+
+            {/* Full View Content */}
+            <div className="academy-module academy-panel p-8 clear-both">
+              <div className="mb-6 flex items-center gap-4">
+                <div style={{ color: '#ffb84d' }} className="text-4xl">{modules[currentModule].icon}</div>
+                <div className="flex-1 border-b border-[var(--academy-border)] pb-4">
+                  <div className="academy-label text-lg">
+                    {modules[currentModule].label || `MODULE ${modules[currentModule].number || currentModule + 1}`}
+                  </div>
+                  <div className="academy-title mt-2 text-4xl">{modules[currentModule].title}</div>
+                  {modules[currentModule].subtitle && (
+                    <div className="text-xl opacity-70 mt-2">{modules[currentModule].subtitle}</div>
+                  )}
+                  {modules[currentModule].duration && (
+                    <div className="text-sm opacity-60 mt-2">⏱️ {modules[currentModule].duration}</div>
+                  )}
+                </div>
+              </div>
+              <div className="text-lg leading-relaxed">{modules[currentModule].content}</div>
+            </div>
+
+            {/* Full View Navigation */}
+            <div className="flex items-center justify-between mt-6 sticky bottom-4 academy-panel p-4">
+              <button onClick={prevModule} className="academy-button flex items-center gap-2">
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </button>
+
+              <div className="academy-text text-sm">
+                Module {currentModule + 1} of {modules.length}
+              </div>
+
+              <button onClick={nextModule} className="academy-button flex items-center gap-2">
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

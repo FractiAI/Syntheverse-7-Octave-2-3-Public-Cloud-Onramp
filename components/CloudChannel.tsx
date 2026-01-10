@@ -258,11 +258,18 @@ export function CloudChannel() {
       {isExpanded && (
         <button
           onClick={() => setIsExpanded(false)}
-          className="cloud-channel-close-btn"
-          title="Close full view"
+          className="cloud-channel-close-btn hydrogen-btn hydrogen-btn-alpha flex items-center gap-2 px-4 py-2 text-sm font-semibold"
+          title="Close full view (ESC)"
           aria-label="Close full view"
+          style={{
+            position: 'fixed',
+            top: '1rem',
+            right: '1rem',
+            zIndex: 1000
+          }}
         >
           <X className="w-5 h-5" />
+          CLOSE
         </button>
       )}
 
@@ -340,10 +347,11 @@ export function CloudChannel() {
                   handleRefresh();
                 }}
                 disabled={loading}
-                className={`cloud-channel-icon-btn ${hasNewPosts ? 'has-new-posts' : ''}`}
-                title={hasNewPosts ? 'New posts available - Click to refresh' : 'Refresh feed'}
+                className={`hydrogen-btn hydrogen-btn-alpha flex items-center gap-2 px-3 py-1.5 text-xs font-semibold ${hasNewPosts ? 'has-new-posts' : ''}`}
+                title={hasNewPosts ? 'New posts available - Reload' : 'New transmission - Reload feed'}
               >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                NEW TRANSMISSION
                 {hasNewPosts && (
                   <span className="new-posts-indicator" />
                 )}
@@ -357,18 +365,7 @@ export function CloudChannel() {
                   className="hydrogen-btn hydrogen-btn-beta flex items-center gap-2 px-3 py-1.5 text-xs font-semibold"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  New Transmission
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsExpanded(true);
-                  }}
-                  className="hydrogen-btn hydrogen-btn-gamma flex items-center gap-2 px-3 py-1.5 text-xs font-semibold"
-                  title="Expand to full view"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Full View
+                  Post
                 </button>
               </div>
             </div>
@@ -388,7 +385,25 @@ export function CloudChannel() {
       )}
 
       {/* Feed */}
-      <div className="cloud-channel-feed">
+      <div 
+        className={`cloud-channel-feed transition-all relative ${!isExpanded ? 'cursor-pointer hover:border-tropical-blue/50' : ''}`}
+        onClick={() => {
+          if (!isExpanded) {
+            setIsExpanded(true);
+          }
+        }}
+        title={!isExpanded ? "Click anywhere to expand to full view" : ""}
+        style={{
+          border: !isExpanded ? '2px dashed hsl(var(--tropical-blue) / 0.2)' : 'none',
+          borderRadius: !isExpanded ? '8px' : '0'
+        }}
+      >
+        {!isExpanded && posts.length > 0 && (
+          <div className="absolute top-3 right-3 text-xs opacity-60 pointer-events-none flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded" style={{ color: 'hsl(var(--tropical-blue))' }}>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="font-semibold">Click to expand</span>
+          </div>
+        )}
         {loading && posts.length === 0 ? (
           <div className="cloud-channel-loading">
             <div className="relative mb-4">
