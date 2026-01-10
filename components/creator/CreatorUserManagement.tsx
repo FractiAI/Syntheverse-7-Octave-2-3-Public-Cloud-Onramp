@@ -100,6 +100,10 @@ export function CreatorUserManagement() {
     setDeleting(true);
     setError(null);
 
+    // Create an AbortController with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     try {
       const response = await fetch(
         `/api/creator/users/${encodeURIComponent(deleteMode.email)}/delete`,
@@ -110,8 +114,11 @@ export function CreatorUserManagement() {
             mode: 'hard',
             confirmation_phrase: confirmationPhrase,
           }),
+          signal: controller.signal,
         }
       );
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
@@ -123,9 +130,20 @@ export function CreatorUserManagement() {
         alert(`User deleted successfully.`);
       } else {
         setError(data.error || 'Failed to delete user');
+        alert(`Error: ${data.error || 'Failed to delete user'}`);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete user');
+      clearTimeout(timeoutId);
+      if (err instanceof Error && err.name === 'AbortError') {
+        const timeoutError = 'Delete request timed out after 30 seconds. Please check your connection and try again.';
+        setError(timeoutError);
+        alert(timeoutError);
+      } else {
+        const errorMsg = err instanceof Error ? err.message : 'Failed to delete user';
+        setError(errorMsg);
+        alert(`Error: ${errorMsg}`);
+      }
+      console.error('User deletion error:', err);
     } finally {
       setDeleting(false);
     }
@@ -343,7 +361,11 @@ export function CreatorUserManagement() {
                       disabled={deleting}
                       className="cockpit-lever bg-red-600 hover:bg-red-700"
                     >
-                      <Trash2 className="mr-1 h-3 w-3" />
+                      {deleting && deleteMode.email === user.email ? (
+                        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                      ) : (
+                        <Trash2 className="mr-1 h-3 w-3" />
+                      )}
                       Delete User
                     </Button>
                   </>
@@ -452,6 +474,9 @@ export function CreatorUserManagement() {
               disabled={deleting || !safetyConfirmed || confirmationPhrase !== 'DELETE USER'}
               className="bg-red-600 hover:bg-red-700"
             >
+              {deleting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {deleting ? 'Deleting...' : 'Confirm Delete User'}
             </Button>
           </DialogFooter>
