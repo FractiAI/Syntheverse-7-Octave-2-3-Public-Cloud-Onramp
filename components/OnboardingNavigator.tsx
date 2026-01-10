@@ -38,6 +38,7 @@ import {
   X,
   RefreshCw,
   Maximize2,
+  CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
 import '../app/academy.css';
@@ -6227,16 +6228,16 @@ export function OnboardingNavigator() {
 
         {/* Training Overview */}
         {trainingPath && (
-          <div className="academy-panel mb-6 p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <div className="academy-label">
+          <div className="academy-module academy-module-active mb-6 p-6">
+            <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex-1">
+                <div className="academy-label text-lg mb-2">
                   {wingTrack === 'contributor-copper' && '🪙 CONTRIBUTOR COPPER WINGS'}
                   {wingTrack === 'operator-silver' && '🛡️ OPERATOR SILVER WINGS'}
                   {wingTrack === 'creator-gold' && '👑 CREATOR GOLD WINGS'}
                   {!wingTrack && `TRAINING PATH: ${trainingPath.toUpperCase()}`}
                 </div>
-                <div className="academy-text mt-2">
+                <div className="academy-text">
                   {wingTrack === 'contributor-copper' && 'Learn the fundamentals of Syntheverse and earn your Copper Wings'}
                   {wingTrack === 'operator-silver' && 'Master sandbox operations and ecosystem coordination'}
                   {wingTrack === 'creator-gold' && 'Architect complete ecosystems and define the frontier'}
@@ -6244,70 +6245,110 @@ export function OnboardingNavigator() {
                   {!wingTrack && trainingPath === 'advanced' && 'Mastery track for experienced contributors'}
                   {!wingTrack && trainingPath === 'operator' && 'Enterprise track for sandbox operators'}
                 </div>
+                <div className="mt-3 flex items-center gap-4 text-sm">
+                  <div className="academy-badge">
+                    {wingTrack === 'contributor-copper' && '6 MODULES'}
+                    {wingTrack === 'operator-silver' && '7 MODULES'}
+                    {wingTrack === 'creator-gold' && '17 MODULES'}
+                    {!wingTrack && `${modules.length} MODULES`}
+                  </div>
+                  <div className="academy-text opacity-70">
+                    {wingTrack === 'contributor-copper' && '2-3 hours'}
+                    {wingTrack === 'operator-silver' && '3-4 hours'}
+                    {wingTrack === 'creator-gold' && '10-12 hours'}
+                  </div>
+                </div>
               </div>
               <button
                 onClick={() => {
                   setTrainingPath(null);
                   setWingTrack(null);
                 }}
-                className="academy-button text-sm"
+                className="academy-button text-sm whitespace-nowrap"
               >
                 Change Wings
               </button>
             </div>
-            <div className="academy-text space-y-3 text-sm">
-              <p>
-                Welcome to the Syntheverse Academy. This <strong>interactive training system</strong> guides you through core concepts, hands-on exercises, and real-world applications.
-              </p>
-              <p>
-                Each module includes: <strong>Learning Objectives</strong> → <strong>Core Content</strong> → <strong>Hands-On Exercise</strong> → <strong>Knowledge Check</strong> → <strong>Real-World Application</strong>
-              </p>
-              <p>
-                Complete exercises and pass knowledge checks (80%+) to advance. Use the Module Overview below to navigate, or proceed sequentially.
-              </p>
+            <div className="academy-info">
+              <div className="academy-info-title">TRAINING PHILOSOPHY</div>
+              <div className="academy-info-content space-y-2">
+                <p>
+                  This <strong>interactive training system</strong> guides you through core concepts, hands-on exercises, and real-world applications.
+                </p>
+                <p>
+                  Each module includes: <strong>Learning Objectives</strong> → <strong>Core Content</strong> → <strong>Hands-On Exercise</strong> → <strong>Knowledge Check</strong> → <strong>Real-World Application</strong>
+                </p>
+                <p>
+                  Complete exercises and pass knowledge checks (80%+) to advance. Use the Module Overview below to navigate, or proceed sequentially.
+                </p>
+              </div>
             </div>
           </div>
         )}
 
         {/* Module Navigation List */}
-        <div className="academy-panel mb-6 p-6">
-          <div className="academy-label mb-4">MODULE OVERVIEW</div>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="academy-module mb-6 p-6">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <div className="academy-label">MODULE OVERVIEW</div>
+              <div className="academy-text mt-1 text-sm opacity-80">
+                {wingTrack === 'contributor-copper' && '6 Foundation Modules'}
+                {wingTrack === 'operator-silver' && '7 Operations Modules'}
+                {wingTrack === 'creator-gold' && '17 Comprehensive Modules'}
+                {!wingTrack && `${modules.length} Training Modules`}
+              </div>
+            </div>
+            <div className="academy-wings-progress">
+              <div className="academy-wings-label">PROGRESS</div>
+              <div className="academy-wings-value">
+                {currentModule + 1}/{modules.length}
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {modules.map((module, idx) => (
               <button
                 key={module.id}
                 onClick={() => goToModule(idx)}
-                className={`border p-4 text-left transition-all ${
+                className={`academy-module border-2 p-4 text-left transition-all ${
                   idx === currentModule
-                    ? 'border-[var(--academy-accent-gold)] bg-[rgba(255,184,77,0.1)]'
-                    : 'border-[var(--academy-border)] bg-[var(--academy-panel-bg)] hover:border-[var(--academy-accent-blue)]'
+                    ? 'academy-module-active'
+                    : moduleProgress[idx]?.completed
+                      ? 'academy-module-completed'
+                      : ''
                 }`}
               >
-                <div className="mb-2 flex items-start gap-2">
-                  <div
-                    className="text-[var(--academy-accent-gold)]"
-                    style={{ opacity: idx === currentModule ? 1 : 0.7 }}
-                  >
-                    {module.icon}
+                <div className="mb-3 flex items-start justify-between gap-2">
+                  <div className="academy-module-number text-sm">
+                    {String(idx + 1).padStart(2, '0')}
                   </div>
-                  <div className="flex-1">
-                    <div className="academy-label text-xs">
-                      {module.label || `MODULE ${module.number || idx + 1}`}
-                    </div>
-                    <div
-                      className={`academy-text mt-1 text-sm ${idx === currentModule ? 'font-semibold' : ''}`}
-                    >
-                      {module.title}
-                    </div>
-                  </div>
+                  {moduleProgress[idx]?.completed && (
+                    <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0" />
+                  )}
                 </div>
+                <div
+                  className="text-[var(--academy-accent-gold)] mb-2"
+                  style={{ opacity: idx === currentModule ? 1 : 0.6 }}
+                >
+                  {module.icon}
+                </div>
+                <div className="academy-module-title text-xs mb-1">
+                  {module.label || `MODULE ${module.number || idx + 1}`}
+                </div>
+                <div className="academy-text text-xs leading-tight">
+                  {module.title}
+                </div>
+                {module.duration && (
+                  <div className="text-[10px] opacity-50 mt-2">⏱ {module.duration}</div>
+                )}
               </button>
             ))}
           </div>
-          <div className="mt-4 border-t border-[var(--academy-border)] pt-4">
-            <div className="academy-text text-xs" style={{ opacity: 0.8 }}>
-              Click any module above to jump directly to that section, or use Previous/Next buttons
-              to navigate sequentially.
+          
+          <div className="mt-6 border-t border-[var(--academy-border)] pt-4 academy-info">
+            <div className="academy-info-content text-xs">
+              <strong>Navigation:</strong> Click any module above to jump directly to that section, or use Previous/Next buttons below to proceed sequentially.
             </div>
           </div>
         </div>
