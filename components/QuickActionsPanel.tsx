@@ -49,7 +49,7 @@ export function QuickActionsPanel({
             >
               <BookOpen className="mr-1.5 h-3 w-3" />
               <span className="hidden sm:inline">Onboarding</span>
-              <span className="sm:hidden">Learn</span>
+              <span className="sm:hidden">Onboarding</span>
             </Link>
             <Link 
               href="/submit" 
