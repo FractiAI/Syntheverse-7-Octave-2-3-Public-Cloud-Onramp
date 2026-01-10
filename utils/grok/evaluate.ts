@@ -1434,9 +1434,27 @@ ${answer}`;
     
     // Legacy: keep redundancyOverlapPercent for backward compatibility in metadata
     // But DO NOT use it for score calculation - use penaltyPercent and bonusMultiplier directly
-    const redundancyOverlapPercent = calculatedRedundancy
+    let redundancyOverlapPercent = calculatedRedundancy
       ? calculatedRedundancy.overlap_percent
       : Math.max(0, Math.min(100, Number(evaluation.redundancy_overlap_percent ?? 0)));
+    
+    // MAREK/SIMBA FIX: Prevent negative overlap (impossible value, indicates bug)
+    // Also prevent overlap > 100% (also impossible)
+    if (redundancyOverlapPercent < 0) {
+      debugError('EvaluateWithGroq', '[SCORER BUG] redundancy_overlap_percent is negative - clamping to 0', {
+        redundancyOverlapPercent,
+        calculatedRedundancy,
+        evaluation_redundancy_overlap_percent: evaluation.redundancy_overlap_percent,
+      });
+      redundancyOverlapPercent = 0; // Clamp to 0
+    } else if (redundancyOverlapPercent > 100) {
+      debugError('EvaluateWithGroq', '[SCORER BUG] redundancy_overlap_percent exceeds 100% - clamping to 100', {
+        redundancyOverlapPercent,
+        calculatedRedundancy,
+        evaluation_redundancy_overlap_percent: evaluation.redundancy_overlap_percent,
+      });
+      redundancyOverlapPercent = 100; // Clamp to 100
+    }
 
     // Use final_score if provided, otherwise use base score
     // Individual category scores are NOT penalized - penalty is applied to total composite score
@@ -1573,16 +1591,54 @@ ${answer}`;
     const isSeedFromAI = evaluation.is_seed_submission === true; // Trust AI's content-based determination
     const isEdgeFromAI = evaluation.is_edge_submission === true; // Trust AI's content-based determination
     
-    // Apply multipliers only if enabled by config
-    const seedMultiplier = (isSeedFromAI && seedMultiplierEnabled) ? SEED_MULTIPLIER : 1.0;
-    const edgeMultiplier = (isEdgeFromAI && edgeMultiplierEnabled) ? EDGE_MULTIPLIER : 1.0;
+    // Note: seedMultiplier and edgeMultiplier are now computed below after toggle validation
+
+    // Apply overlap adjustments (penalty/bonus) only if enabled by config
+    let effectivePenaltyPercent = overlapAdjustmentsEnabled ? penaltyPercent : 0;
+    let effectiveBonusMultiplier = overlapAdjustmentsEnabled ? bonusMultiplier : 1.0;
+    
+    // MAREK/SIMBA FIX: Validate toggle enforcement (prevent bugs where toggles are OFF but still applying)
+    if (!overlapAdjustmentsEnabled) {
+      if (effectivePenaltyPercent !== 0) {
+        debugError('EvaluateWithGroq', '[SCORER BUG] overlap_on=false but penalty applied - forcing to 0', {
+          effectivePenaltyPercent,
+          overlapAdjustmentsEnabled,
+        });
+        effectivePenaltyPercent = 0; // Force to 0
+      }
+      if (effectiveBonusMultiplier !== 1.0) {
+        debugError('EvaluateWithGroq', '[SCORER BUG] overlap_on=false but bonus applied - forcing to 1.0', {
+          effectiveBonusMultiplier,
+          overlapAdjustmentsEnabled,
+        });
+        effectiveBonusMultiplier = 1.0; // Force to 1.0
+      }
+    }
+    
+    let seedMultiplier = (isSeedFromAI && seedMultiplierEnabled) ? SEED_MULTIPLIER : 1.0;
+    let edgeMultiplier = (isEdgeFromAI && edgeMultiplierEnabled) ? EDGE_MULTIPLIER : 1.0;
+    
+    // MAREK/SIMBA FIX: Validate seed/edge multiplier enforcement
+    if (!seedMultiplierEnabled && seedMultiplier !== 1.0) {
+      debugError('EvaluateWithGroq', '[SCORER BUG] seed_on=false but multiplier applied - forcing to 1.0', {
+        seedMultiplier,
+        seedMultiplierEnabled,
+        isSeedFromAI,
+      });
+      seedMultiplier = 1.0; // Force to 1.0
+    }
+    
+    if (!edgeMultiplierEnabled && edgeMultiplier !== 1.0) {
+      debugError('EvaluateWithGroq', '[SCORER BUG] edge_on=false but multiplier applied - forcing to 1.0', {
+        edgeMultiplier,
+        edgeMultiplierEnabled,
+        isEdgeFromAI,
+      });
+      edgeMultiplier = 1.0; // Force to 1.0
+    }
     
     // Combined multiplier: if both seed AND edge (and both enabled), multiply both (1.15 × 1.15 = 1.3225 = 32.25% bonus)
     const combinedMultiplier = seedMultiplier * edgeMultiplier;
-
-    // Apply overlap adjustments (penalty/bonus) only if enabled by config
-    const effectivePenaltyPercent = overlapAdjustmentsEnabled ? penaltyPercent : 0;
-    const effectiveBonusMultiplier = overlapAdjustmentsEnabled ? bonusMultiplier : 1.0;
 
     const afterPenalty = basePodScore * (1 - effectivePenaltyPercent / 100);
     const afterBonus = afterPenalty * effectiveBonusMultiplier;
@@ -1655,13 +1711,17 @@ ${answer}`;
       
       // Seed multiplier calculation and application (content-based, not timing-based)
       seed_multiplier: seedMultiplier,
-      seed_multiplier_applied: isSeedFromAI,
+      seed_multiplier_applied: (isSeedFromAI && seedMultiplierEnabled), // MAREK/SIMBA FIX: Show actual application, not just AI detection
+      seed_detected_by_ai: isSeedFromAI, // Separate field for AI detection
+      seed_toggle_enabled: seedMultiplierEnabled, // Separate field for toggle state
       seed_applied_to: 'post_bonus',
       seed_justification: evaluation.seed_justification || (isSeedFromAI ? 'AI determined seed characteristics' : 'Not a seed contribution'),
       
       // Edge multiplier calculation and application (content-based boundary operator detection)
       edge_multiplier: edgeMultiplier,
-      edge_multiplier_applied: isEdgeFromAI,
+      edge_multiplier_applied: (isEdgeFromAI && edgeMultiplierEnabled), // MAREK/SIMBA FIX: Show actual application, not just AI detection
+      edge_detected_by_ai: isEdgeFromAI, // Separate field for AI detection
+      edge_toggle_enabled: edgeMultiplierEnabled, // Separate field for toggle state
       edge_applied_to: 'post_bonus',
       edge_justification: evaluation.edge_justification || (isEdgeFromAI ? 'AI determined edge characteristics' : 'Not an edge contribution'),
       
@@ -1686,23 +1746,25 @@ ${answer}`;
       
       // Formula used (APPLIED values only - Marek/Simba fix for trace consistency)
       // CRITICAL: Use effectivePenaltyPercent and effectiveBonusMultiplier (APPLIED) not computed values
-      formula: (isSeedFromAI && isEdgeFromAI)
+      // CRITICAL: Only show seed/edge in formula if BOTH detected AND toggle enabled
+      formula: (isSeedFromAI && seedMultiplierEnabled && isEdgeFromAI && edgeMultiplierEnabled)
         ? `Final = (Composite=${compositeScore} × (1 - ${effectivePenaltyPercent}%/100)) × ${effectiveBonusMultiplier.toFixed(3)} × ${seedMultiplier.toFixed(2)} (seed) × ${edgeMultiplier.toFixed(2)} (edge) = ${pod_score}`
-        : isSeedFromAI
+        : (isSeedFromAI && seedMultiplierEnabled)
         ? `Final = (Composite=${compositeScore} × (1 - ${effectivePenaltyPercent}%/100)) × ${effectiveBonusMultiplier.toFixed(3)} × ${seedMultiplier.toFixed(2)} (seed) = ${pod_score}`
-        : isEdgeFromAI
+        : (isEdgeFromAI && edgeMultiplierEnabled)
         ? `Final = (Composite=${compositeScore} × (1 - ${effectivePenaltyPercent}%/100)) × ${effectiveBonusMultiplier.toFixed(3)} × ${edgeMultiplier.toFixed(2)} (edge) = ${pod_score}`
         : `Final = (Composite=${compositeScore} × (1 - ${effectivePenaltyPercent}%/100)) × ${effectiveBonusMultiplier.toFixed(3)} = ${pod_score}`,
       
       // Step-by-step formula breakdown (for UI display) - APPLIED values only
+      // MAREK/SIMBA FIX: Only show seed/edge steps if BOTH detected AND toggle enabled
       formula_steps: [
         `Step 1: Composite = N(${finalNoveltyScore}) + D(${densityFinal}) + C(${coherenceScore}) + A(${alignmentScore}) = ${compositeScore}`,
         `Step 2: After Penalty = ${compositeScore} × (1 - ${effectivePenaltyPercent}/100) = ${afterPenalty.toFixed(2)}${effectivePenaltyPercent !== penaltyPercent ? ` [Computed: ${penaltyPercent}%, Applied: ${effectivePenaltyPercent}%]` : ''}`,
         `Step 3: After Bonus = ${afterPenalty.toFixed(2)} × ${effectiveBonusMultiplier.toFixed(3)} = ${afterBonus.toFixed(2)}${effectiveBonusMultiplier !== bonusMultiplier ? ` [Computed: ${bonusMultiplier.toFixed(3)}, Applied: ${effectiveBonusMultiplier.toFixed(3)}]` : ''}`,
-        (isSeedFromAI || isEdgeFromAI)
-          ? `Step 4: After Multipliers = ${afterBonus.toFixed(2)} × ${combinedMultiplier.toFixed(4)} ${isSeedFromAI && isEdgeFromAI ? '(seed × edge)' : isSeedFromAI ? '(seed)' : '(edge)'} = ${afterSeedAndEdge.toFixed(2)}`
+        ((isSeedFromAI && seedMultiplierEnabled) || (isEdgeFromAI && edgeMultiplierEnabled))
+          ? `Step 4: After Multipliers = ${afterBonus.toFixed(2)} × ${combinedMultiplier.toFixed(4)} ${(isSeedFromAI && seedMultiplierEnabled && isEdgeFromAI && edgeMultiplierEnabled) ? '(seed × edge)' : (isSeedFromAI && seedMultiplierEnabled) ? '(seed)' : '(edge)'} = ${afterSeedAndEdge.toFixed(2)}`
           : null,
-        `Step ${(isSeedFromAI || isEdgeFromAI) ? '5' : '4'}: Final (clamped 0-10000) = ${pod_score}`,
+        `Step ${((isSeedFromAI && seedMultiplierEnabled) || (isEdgeFromAI && edgeMultiplierEnabled)) ? '5' : '4'}: Final (clamped 0-10000) = ${pod_score}`,
       ].filter(Boolean),
       
       // === Multipliers Applied (Structured Array) - Marek/Simba requirement ===
@@ -1743,6 +1805,21 @@ ${answer}`;
       evaluation_timestamp: new Date().toISOString(),
     };
 
+    // MAREK/SIMBA FIX: Validate timestamp isn't a placeholder (catch test fixtures with wrong years)
+    // Current year is 2026, so any timestamp from before current year is suspicious
+    const currentYear = new Date().getFullYear();
+    const timestampYear = parseInt(scoringMetadata.evaluation_timestamp.substring(0, 4));
+    if (timestampYear < currentYear) {
+      const oldTimestamp = scoringMetadata.evaluation_timestamp;
+      scoringMetadata.evaluation_timestamp = new Date().toISOString();
+      debugError('EvaluateWithGroq', '[SCORER WARNING] evaluation_timestamp uses old year (placeholder), replacing with actual time', {
+        oldTimestamp,
+        newTimestamp: scoringMetadata.evaluation_timestamp,
+        expectedYear: currentYear,
+        foundYear: timestampYear,
+      });
+    }
+
     // Marek/Simba fix: Use APPLIED values only in pod_composition (trace consistency)
     const podComposition = evaluation.pod_composition || {
       sum_dims: {
@@ -1761,6 +1838,12 @@ ${answer}`;
       penalties: {
         overlap_penalty_percent: effectivePenaltyPercent, // APPLIED value
         total_penalty_percent: effectivePenaltyPercent, // APPLIED value
+      },
+      // MAREK/SIMBA FIX: Add explicit toggle states (P0 requirement)
+      toggles: {
+        overlap_on: overlapAdjustmentsEnabled,
+        seed_on: seedMultiplierEnabled,
+        edge_on: edgeMultiplierEnabled,
       },
       // Show computed vs applied for transparency
       computed_vs_applied: {
@@ -1931,12 +2014,29 @@ ${answer}`;
       },
     };
 
+    // ============================================================================
+    // MAREK/SIMBA CRITICAL FIX: SINGLE SOURCE OF TRUTH FOR SCORING
+    // ============================================================================
+    // The `pod_score` field below is the AUTHORITATIVE final score.
+    // DO NOT use evaluation.total_score from the LLM - it may have penalties
+    // baked in that don't respect our toggle configuration.
+    // 
+    // Our scoring pipeline:
+    //   1. Calculate composite = N + D + C + A (dimensions)
+    //   2. Apply penalty (if overlap > 30% AND overlap_on toggle is TRUE)
+    //   3. Apply bonus (if in sweet spot AND overlap_on toggle is TRUE)
+    //   4. Apply seed/edge multipliers (if detected AND respective toggle is TRUE)
+    //   5. Clamp to [0, 10000]
+    // 
+    // The score_trace object contains the complete step-by-step calculation
+    // and is the source of truth for reproducibility and auditing.
+    // ============================================================================
     return {
       coherence: finalCoherence,
       density: finalDensity,
       // "redundancy" is now the overlap % (display metric). Penalty is stored separately.
       redundancy: finalOverlap,
-      pod_score: finalPodScore,
+      pod_score: finalPodScore, // AUTHORITATIVE FINAL SCORE (see comment above)
       metals,
       qualified,
       qualified_epoch: qualifiedEpoch, // Epoch this PoC qualifies for based on density

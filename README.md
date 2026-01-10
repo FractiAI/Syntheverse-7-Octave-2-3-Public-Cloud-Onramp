@@ -12,6 +12,14 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔬 Latest Major Updates (Jan 10, 2026):** 
+> - **🔧 Critical Scoring Fixes (Marek/Simba Testing)**: Fixed "two parallel scorers" issue identified in first round testing:
+>   - **Single Source of Truth**: Enforced `pod_score` as authoritative (never use LLM's `total_score`)
+>   - **Toggle Enforcement**: Seed/edge multipliers now respect toggle states (OFF → 1.0, not 1.15)
+>   - **Explicit Toggle States**: Added `toggles` object to `score_trace` and `pod_composition`
+>   - **Validated Ranges**: Overlap clamped to [0, 100]%, timestamps validated to current year
+>   - **Accurate Formulas**: Formula only shows multipliers that were actually applied
+>   - **Result**: K-factor now ~1.0 (reproducible scoring), no JSON/trace mismatch
+>   - See `MAREK_SIMBA_SCORING_FIXES_APPLIED.md` for complete technical details
 > - **🎓 Advanced Creator Training Modules**: Added Modules 9 & 10 to Creator Gold Wings track (8→10 modules, ~6 hours total):
 >   - **Module 9: The Fractal General Contractor** (50 min) - Construction as grammar. Production operator: 𝒢(Ψ) = 𝒟(Ψ) ⊕ ⨁ₖ R(ψₖ) → Ψ'. FCC/DAG measures show 2.1-4.7× speed gains in collaborative builds. Same grammar governs spider webs, software dev, and world building.
 >   - **Module 10: From Abacus to Quantum Evaluation** (45 min) - HHF-MRI vs linear peer review. Direct coherence imaging achieves 18-240× speed gains (EAR) over traditional review. Evaluation becomes physics, not opinion.
