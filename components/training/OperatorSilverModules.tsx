@@ -13,7 +13,7 @@ export const operatorSilverModules = [
     title: 'Welcome to Cloud Operations',
     subtitle: 'From Contributor to Operator',
     icon: <Server className="h-6 w-6" />,
-    duration: '20 min',
+    duration: '30 min',
     content: (
       <div className="space-y-6">
         {/* Hero Opening */}
