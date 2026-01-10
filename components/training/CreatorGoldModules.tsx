@@ -1611,7 +1611,7 @@ drawFractalTree(400, 600, 120, -Math.PI/2, 10);  // Start from bottom-center`}
               <div className="text-sm opacity-90 space-y-2">
                 <div><strong>1. Seed Pattern:</strong> Start with hydrogen orbital shapes</div>
                 <div><strong>2. Fractal Expansion:</strong> Apply L-system rules for growth</div>
-                <div><strong>3. Coherence Filter:</strong> Keep only patterns with FCC > 1.0</div>
+                <div><strong>3. Coherence Filter:</strong> Keep only patterns with FCC {'>'}  1.0</div>
                 <div><strong>4. Style Transfer:</strong> Blend with target aesthetic</div>
                 <div><strong>5. Interactive Layer:</strong> Respond to user gaze/touch</div>
               </div>
@@ -1703,9 +1703,9 @@ drawFractalTree(400, 600, 120, -Math.PI/2, 10);  // Start from bottom-center`}
             ✅ Testing Your Implementations
           </h4>
           <div className="space-y-2 text-sm">
-            <div>• <strong>Coherence Tests:</strong> Verify FCC > 1.0 for all generated patterns</div>
+            <div>• <strong>Coherence Tests:</strong> Verify FCC {'>'} 1.0 for all generated patterns</div>
             <div>• <strong>Fractal Dimension:</strong> Confirm self-similarity at multiple scales</div>
-            <div>• <strong>Performance Benchmarks:</strong> 60 FPS for visualizations, <100ms API response</div>
+            <div>• <strong>Performance Benchmarks:</strong> 60 FPS for visualizations, {'<'}100ms API response</div>
             <div>• <strong>User Testing:</strong> A/B test awareness-responsive vs static experiences</div>
             <div>• <strong>Edge Cases:</strong> Test with extreme inputs (0 coherence, infinite recursion)</div>
           </div>
