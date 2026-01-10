@@ -1,12 +1,16 @@
 /**
  * Onboarding AI Instructor API
  * Provides context-aware tutoring for training modules
+ * Uses same Groq API configuration as submission evaluation system
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Use same API key as submission system
+const groq = new Groq({ 
+  apiKey: process.env.GROQ_API_KEY || process.env.GROK_API_KEY || ''
+});
 
 export async function POST(request: NextRequest) {
   try {
