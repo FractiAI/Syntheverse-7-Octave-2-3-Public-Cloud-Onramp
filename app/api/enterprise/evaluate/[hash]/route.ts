@@ -218,6 +218,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         alignment: finalAlignment,
         qualified,
         metals: evaluation.metals,
+        // 🔥 THALET Protocol: Include atomic_score in response
+        atomic_score: atomicScore,
       },
     });
   } catch (error) {

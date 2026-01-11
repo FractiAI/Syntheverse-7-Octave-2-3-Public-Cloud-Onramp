@@ -470,6 +470,8 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           alignment: evaluation.alignment,
           metals: evaluation.metals,
           pod_score: evaluation.pod_score,
+          // 🔥 THALET Protocol: Include atomic_score in response
+          atomic_score: atomicScore,
           status: qualified ? 'qualified' : 'unqualified',
           qualified_founder: qualified,
           qualified_epoch: displayEpoch, // Epoch this submission qualifies for (based on pod_score)
