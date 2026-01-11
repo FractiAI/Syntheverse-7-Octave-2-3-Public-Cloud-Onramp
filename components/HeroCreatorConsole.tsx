@@ -609,6 +609,7 @@ Always prioritize user experience and goal achievement.`;
                   )}
                 </div>
               </div>
+              </div>
             </div>
           </div>
           
@@ -784,6 +785,7 @@ Always prioritize user experience and goal achievement.`;
                     </button>
                   )}
                 </div>
+              </div>
               </div>
             </div>
           </div>
@@ -964,7 +966,6 @@ Always prioritize user experience and goal achievement.`;
               </div>
             </div>
           </div>
-        </div>
       )}
     </div>
   );
