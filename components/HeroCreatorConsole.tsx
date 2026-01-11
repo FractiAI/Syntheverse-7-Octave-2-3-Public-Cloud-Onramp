@@ -611,7 +611,6 @@ Always prioritize user experience and goal achievement.`;
               </div>
             </div>
           </div>
-          </div>
           
           {/* Heroes List */}
           <div className="lg:col-span-2">
@@ -787,7 +786,6 @@ Always prioritize user experience and goal achievement.`;
                 </div>
               </div>
             </div>
-          </div>
           </div>
           
           {/* Stories List */}
