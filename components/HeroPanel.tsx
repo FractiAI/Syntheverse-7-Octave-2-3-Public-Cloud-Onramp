@@ -162,11 +162,14 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     setMessages([]);
     initializeChat(hero);
     
-    trackHeroInteraction(userEmail, 'select_hero', {
-      heroId: hero.id,
-      heroName: hero.name,
-      pageContext,
-      pillarContext,
+    trackHeroInteraction({
+      hero_id: hero.id,
+      event_type: 'hero_viewed',
+      event_metadata: {
+        heroName: hero.name,
+        pageContext,
+        pillarContext,
+      },
     });
   };
 
@@ -182,13 +185,7 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     setMessages(prev => [...prev, storyMessage]);
     createSession(selectedHero!.id, story.id);
     
-    trackStorySelection(userEmail, 'start_story', {
-      storyId: story.id,
-      storyTitle: story.title,
-      heroId: selectedHero?.id,
-      pageContext,
-      pillarContext,
-    });
+    trackStorySelection(selectedHero!.id, story.id, sessionId);
     
     // Focus input after story selection
     setTimeout(() => inputRef.current?.focus(), 100);
@@ -207,12 +204,9 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     setInputMessage('');
     setIsLoading(true);
 
-    trackMessageSent(userEmail, 'send_message', {
-      sessionId,
-      messageLength: inputMessage.length,
-      pageContext,
-      pillarContext,
-    });
+    if (selectedHero && sessionId) {
+      trackMessageSent(selectedHero.id, sessionId);
+    }
 
     try {
       // Simulate AI response (replace with actual API call to your AI service)
