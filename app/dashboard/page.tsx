@@ -23,7 +23,7 @@ import { Eye, Palette, ScrollText, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { StabilityMonitor } from '@/components/tsrc';
-import './dashboard-cockpit.css';
+import '../dashboard-cockpit.css';
 
 export const dynamic = 'force-dynamic';
 
