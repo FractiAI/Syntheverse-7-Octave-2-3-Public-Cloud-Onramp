@@ -12,6 +12,14 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔬 Latest Major Updates (Jan 11, 2026):** 
+> - **🔒 THALET Protocol Compliance (Complete)**: Atomic Data Sovereignty model implemented for unassailable scoring integrity:
+>   - **AtomicScorer Singleton**: Single backend source of truth for all scoring (eliminates split-brain execution)
+>   - **Immutable Payloads**: SHA-256 hashed, frozen atomic_score objects with cryptographic validation
+>   - **Multi-Level Neutralization Gate**: Score clamping [0, 10000] enforced at application and database layers
+>   - **Execution Context Determinism**: Full context (toggles, seed, timestamp_utc, pipeline_version) in every payload
+>   - **Dumb Terminal UI**: Frontend validation-only, fail-hard on integrity violations (zero client-side computation)
+>   - **Result**: Legal data certainty, bit-by-bit reproducibility, unified accountability
+>   - See `THALET_IMPLEMENTATION_COMPLETE_FINAL.md` for full audit certification and technical details
 > - **🤖 Hero Host System (Complete)**: Fully integrated collapsible hero/story catalog system with AI-assisted interactions across the platform:
 >   - **Consumer Component**: Collapsible bottom panel on landing, dashboard, and onboarding pages with hero selection, story browser, and AI chat interface
 >   - **Operator Component**: Integrated panel in Operator Lab™ for hero online/offline control, session launching, and active session monitoring
