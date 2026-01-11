@@ -167,7 +167,7 @@ export default function EnterpriseDashboard({
 
         {/* Header */}
         <div className="cockpit-panel mb-8 border-l-4 border-[var(--hydrogen-amber)] p-8">
-          <div className="cockpit-label mb-2">CREATOR/ENTERPRISE SANDBOX SETUP</div>
+          <div className="cockpit-label mb-2">CREATOR/ENTERPRISE CLOUD SETUP</div>
           <h1 className="cockpit-title mb-4 text-4xl">Define Your Nested Syntheverse Ecosystem</h1>
           <div className="cockpit-text space-y-3 text-base" style={{ lineHeight: 1.8 }}>
             <p>
@@ -254,7 +254,7 @@ export default function EnterpriseDashboard({
               <div className="cockpit-panel mb-8 p-8">
                 <div className="cockpit-label mb-4 flex items-center gap-2">
                   <Info className="h-4 w-4" />
-                  UNDERSTANDING YOUR SANDBOX
+                  UNDERSTANDING YOUR CLOUD
                 </div>
                 <div className="cockpit-text space-y-4 text-base" style={{ lineHeight: 1.8 }}>
                   <p>
@@ -303,7 +303,7 @@ export default function EnterpriseDashboard({
               <div className="cockpit-panel mb-8 p-8">
                 <div className="cockpit-label mb-4 flex items-center gap-2">
                   <Layers className="h-4 w-4" />
-                  STEP 1: DEFINE YOUR SANDBOX
+                  STEP 1: DEFINE YOUR CLOUD
                 </div>
                 <div className="cockpit-text mb-6 space-y-3 text-sm opacity-90">
                   <p>
@@ -388,7 +388,7 @@ export default function EnterpriseDashboard({
                 <div className="cockpit-label mb-4 flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <Target className="h-4 w-4" />
-                    YOUR SANDBOXES
+                    YOUR CLOUDS
                   </span>
                   <button
                     onClick={() => {

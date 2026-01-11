@@ -113,7 +113,7 @@ export default async function Dashboard() {
 
             {/* Navigators Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {/* Sandbox Navigator */}
+              {/* Cloud Navigator */}
               <PersistentDetails storageKey="sandbox-navigator" defaultOpen={true} className="cockpit-panel">
                 <summary className="cursor-pointer select-none list-none p-3 border-b border-[var(--keyline-primary)]">
                   <div className="flex items-center justify-between">

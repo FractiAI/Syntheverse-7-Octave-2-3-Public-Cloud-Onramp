@@ -293,7 +293,7 @@ export function FinancialAlignmentButton() {
                   expectation of profit or return.
                 </p>
                 <p>
-                  <strong>EXPERIMENTAL SANDBOX:</strong> Syntheverse is an experimental,
+                  <strong>EXPERIMENTAL CLOUD:</strong> Syntheverse is an experimental,
                   non-custodial sandbox. Participation does not confer ownership, equity, profit
                   rights, or guaranteed access.
                 </p>

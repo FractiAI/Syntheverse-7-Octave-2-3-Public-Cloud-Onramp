@@ -254,7 +254,7 @@ export default function EnterpriseSandboxDetail({
 
         <SectionWrapper
           id="sandbox-detail"
-          eyebrow="SANDBOX CONFIGURATION"
+          eyebrow="CLOUD CONFIGURATION"
           title="Define Your SYNTH-Based Ecosystem"
           background="default"
         >
@@ -264,7 +264,7 @@ export default function EnterpriseSandboxDetail({
               {!showWizard ? (
                 <div className="cockpit-panel border-l-4 border-[var(--hydrogen-amber)] p-6">
                   <div className="cockpit-label mb-4" style={{ color: '#ffb84d' }}>
-                    COMPREHENSIVE SANDBOX CONFIGURATION
+                    COMPREHENSIVE CLOUD CONFIGURATION
                   </div>
                   <p className="cockpit-text mb-6 text-sm">
                     Configure your sandbox as a self-similar ecosystem nested within Syntheverse.

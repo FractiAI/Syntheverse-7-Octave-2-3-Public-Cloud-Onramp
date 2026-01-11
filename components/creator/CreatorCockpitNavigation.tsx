@@ -138,7 +138,7 @@ export function CreatorCockpitNavigation() {
           <div>
             <div className="cockpit-label mb-4 flex items-center gap-2">
               <MessageCircle className="h-4 w-4" />
-              WORKCHAT - COLLABORATIVE SANDBOX CHAT
+              WORKCHAT - COLLABORATIVE CLOUD CHAT
             </div>
             <div className="cockpit-panel bg-[var(--cockpit-carbon)] p-0 overflow-hidden">
               <WorkChat embedded={true} />

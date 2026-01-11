@@ -1,6 +1,6 @@
 /**
  * WorkChat Navigator Component
- * Table-based chat room navigator similar to PoC Archive and Sandbox Navigator
+ * Table-based chat room navigator similar to PoC Archive and Cloud Navigator
  * Displays all accessible chat rooms in a cockpit-table format
  */
 

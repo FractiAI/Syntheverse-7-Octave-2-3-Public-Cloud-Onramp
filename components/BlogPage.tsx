@@ -130,7 +130,7 @@ export function BlogPage({
             <div>
               <div className="cockpit-label mb-2 flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                {sandboxId ? 'SANDBOX BLOG' : 'SYNTHEVERSE BLOG'}
+                {sandboxId ? 'CLOUD BLOG' : 'SYNTHEVERSE BLOG'}
               </div>
               <h1 className="cockpit-title text-2xl md:text-3xl">
                 {sandboxId ? 'Sandbox Blog' : 'Syntheverse Blog'}

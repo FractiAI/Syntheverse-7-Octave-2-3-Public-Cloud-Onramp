@@ -148,7 +148,7 @@ export function CreatorEnterpriseSandboxes() {
   if (loading) {
     return (
       <div className="cockpit-panel p-6">
-        <div className="cockpit-label mb-4">MY ENTERPRISE SANDBOXES</div>
+        <div className="cockpit-label mb-4">MY ENTERPRISE CLOUDS</div>
         <div className="cockpit-text opacity-60">Loading sandboxes...</div>
       </div>
     );
@@ -157,7 +157,7 @@ export function CreatorEnterpriseSandboxes() {
   if (sandboxes.length === 0) {
     return (
       <div className="cockpit-panel p-6">
-        <div className="cockpit-label mb-4">MY ENTERPRISE SANDBOXES</div>
+        <div className="cockpit-label mb-4">MY ENTERPRISE CLOUDS</div>
         <div className="cockpit-text mb-4 opacity-60">
           You don&apos;t have any enterprise sandboxes yet. Create one to get started.
         </div>
@@ -175,7 +175,7 @@ export function CreatorEnterpriseSandboxes() {
   return (
     <div className="cockpit-panel p-6">
       <div className="cockpit-label mb-4 flex items-center justify-between">
-        <span>MY ENTERPRISE SANDBOXES</span>
+        <span>MY ENTERPRISE CLOUDS</span>
         <Link
           href="/fractiai/enterprise-dashboard"
           className="cockpit-lever inline-flex items-center gap-2 text-sm"

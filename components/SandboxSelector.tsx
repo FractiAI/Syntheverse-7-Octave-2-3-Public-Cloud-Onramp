@@ -92,7 +92,7 @@ export function SandboxSelector() {
         <div className="flex-shrink-0 border-b border-[var(--keyline-primary)] bg-[var(--cockpit-carbon)] p-3">
           <DropdownMenuLabel className="cockpit-label mb-2 flex items-center gap-2 text-xs">
             <Layers className="h-4 w-4" />
-            SELECT SANDBOX
+            SELECT CLOUD
           </DropdownMenuLabel>
           
           {/* Search */}

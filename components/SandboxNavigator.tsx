@@ -1,5 +1,5 @@
 /**
- * Sandbox Navigator Component
+ * Cloud Navigator Component
  * Table-based sandbox selector similar to PoC Archive navigator
  * Displays all accessible sandboxes in a cockpit-table format
  * Supports delete (contributors: own sandboxes, creators/operators: any except Syntheverse)
@@ -214,8 +214,8 @@ export function SandboxNavigator({ userEmail, isCreator = false, isOperator = fa
         {/* Module Header */}
         <div className="mb-4 flex items-center justify-between border-b border-[var(--keyline-primary)] pb-3 md:mb-6 md:pb-4">
           <div>
-            <div className="cockpit-label">SANDBOX NAVIGATOR</div>
-            <div className="cockpit-title mt-1 text-2xl">SANDBOX SELECTOR</div>
+            <div className="cockpit-label">CLOUD NAVIGATOR</div>
+            <div className="cockpit-title mt-1 text-2xl">CLOUD SELECTOR</div>
           </div>
           <div className="flex items-center gap-3">
             <button
