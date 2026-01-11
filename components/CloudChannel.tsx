@@ -9,7 +9,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, ChevronDown, Zap } from 'lucide-react';
+import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, ChevronDown, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/utils/supabase/client';
