@@ -1222,7 +1222,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                             <div className="flex items-center justify-between">
                                               <span className="font-semibold text-blue-900">Final Score (clamped 0-10000):</span>
                                               <span className="text-lg font-bold text-blue-900">
-                                                {evaluationStatus.evaluation.score_trace.final_score.toLocaleString()}
+                                                {evaluationStatus.podScore.toLocaleString()}
                                               </span>
                                             </div>
                                           </div>
