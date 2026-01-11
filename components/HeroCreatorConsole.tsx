@@ -91,6 +91,8 @@ export default function HeroCreatorConsole() {
   const [aiGeneratedOutput, setAiGeneratedOutput] = useState('');
   const [aiMode, setAiMode] = useState<'hero' | 'story' | 'interaction'>('hero');
   const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiSuggesting, setAiSuggesting] = useState(false);
+  const [suggestedContent, setSuggestedContent] = useState<any>(null);
 
   const supabase = createClient();
 
@@ -290,63 +292,61 @@ export default function HeroCreatorConsole() {
     }
   };
 
-  // AI-Assisted Prompt Generation
-  const generatePrompt = async () => {
-    if (!aiPromptInput.trim()) {
-      alert('Please provide input for prompt generation');
-      return;
-    }
+  // AI-Assisted Content Suggestion (using real Groq API)
+  const generateAISuggestions = async (contentType: 'hero' | 'story', targetField: string = 'all') => {
+    setAiSuggesting(true);
+    setSuggestedContent(null);
 
-    setAiGenerating(true);
     try {
-      // Simulate AI generation with a template-based approach
-      // In production, this would call an AI API (OpenAI, Anthropic, etc.)
-      
-      let generatedPrompt = '';
-      
-      if (aiMode === 'hero') {
-        generatedPrompt = `You are ${aiPromptInput.split('\n')[0]}, a character in the Syntheverse ecosystem. ${aiPromptInput}
+      const currentData = contentType === 'hero' ? heroForm : storyForm;
 
-Your role is to guide and assist users navigating the Syntheverse platform. You are knowledgeable, friendly, and focused on helping contributors, operators, and creators achieve their goals.
+      const response = await fetch('/api/creator/ai-suggest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentType,
+          currentData,
+          targetField,
+        }),
+      });
 
-Key traits:
-- Professional yet approachable
-- Clear and concise communication
-- Supportive and encouraging
-- Expert knowledge of the Syntheverse system
-
-Always maintain consistency with the Syntheverse vision and values.`;
-      } else if (aiMode === 'story') {
-        generatedPrompt = `Story Context: ${aiPromptInput}
-
-As the hero guiding this story, you will:
-1. Introduce the story theme and context
-2. Ask clarifying questions to understand user goals
-3. Provide step-by-step guidance through the narrative
-4. Adapt your responses based on user choices
-5. Maintain story coherence and engagement
-
-Your responses should be immersive, interactive, and aligned with the story's objectives.`;
-      } else {
-        generatedPrompt = `Interaction Behavior: ${aiPromptInput}
-
-Core interaction principles:
-- Listen actively to user needs
-- Provide contextual, relevant responses
-- Use examples and analogies when helpful
-- Encourage exploration and discovery
-- Adapt tone and complexity to user level
-
-Always prioritize user experience and goal achievement.`;
+      if (!response.ok) {
+        throw new Error('Failed to generate suggestions');
       }
 
-      setAiGeneratedOutput(generatedPrompt);
+      const data = await response.json();
+      setSuggestedContent(data.suggestions);
+      
+      // Show suggestions in a modal or inline
+      alert('AI suggestions generated! Review and apply them below.');
     } catch (err) {
-      console.error('Error generating prompt:', err);
-      alert('Failed to generate prompt');
+      console.error('Error generating AI suggestions:', err);
+      alert('Failed to generate AI suggestions. Please try again.');
     } finally {
-      setAiGenerating(false);
+      setAiSuggesting(false);
     }
+  };
+
+  const applySuggestions = (contentType: 'hero' | 'story', field?: string) => {
+    if (!suggestedContent) return;
+
+    if (contentType === 'hero') {
+      if (field && suggestedContent[field]) {
+        setHeroForm(prev => ({ ...prev, [field]: suggestedContent[field] }));
+      } else {
+        // Apply all suggestions
+        setHeroForm(prev => ({ ...prev, ...suggestedContent }));
+      }
+    } else if (contentType === 'story') {
+      if (field && suggestedContent[field]) {
+        setStoryForm(prev => ({ ...prev, [field]: suggestedContent[field] }));
+      } else {
+        // Apply all suggestions
+        setStoryForm(prev => ({ ...prev, ...suggestedContent }));
+      }
+    }
+
+    alert(field ? `Applied suggestion for ${field}` : 'Applied all suggestions');
   };
 
   const applyGeneratedPrompt = () => {
@@ -483,6 +483,38 @@ Always prioritize user experience and goal achievement.`;
               </div>
               <div className="lab-card-body">
               
+              {/* AI Suggest Button */}
+              <div className="mb-4">
+                <button
+                  onClick={() => generateAISuggestions('hero')}
+                  disabled={aiSuggesting}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {aiSuggesting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating AI Suggestions...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      AI Suggest Content
+                    </>
+                  )}
+                </button>
+                {suggestedContent && (
+                  <div className="mt-2 p-2 bg-purple-900/20 border border-purple-500/30 rounded text-xs">
+                    <p className="text-purple-300 mb-2">✨ Suggestions ready! Review fields and click "Apply All" or apply individually.</p>
+                    <button
+                      onClick={() => applySuggestions('hero')}
+                      className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs"
+                    >
+                      Apply All Suggestions
+                    </button>
+                  </div>
+                )}
+              </div>
+              
               <div className="space-y-4">
                 <div>
                   <label className="lab-label">Name *</label>
@@ -493,6 +525,14 @@ Always prioritize user experience and goal achievement.`;
                     className="lab-input"
                     placeholder="e.g., Navigator Nova"
                   />
+                  {suggestedContent?.name && !heroForm.name && (
+                    <button
+                      onClick={() => applySuggestions('hero', 'name')}
+                      className="mt-1 text-xs text-purple-400 hover:text-purple-300 underline"
+                    >
+                      Apply: "{suggestedContent.name}"
+                    </button>
+                  )}
                 </div>
 
                 <div>
@@ -687,6 +727,41 @@ Always prioritize user experience and goal achievement.`;
               </div>
               <div className="lab-card-body">
               
+              {/* AI Suggest Button for Stories */}
+              <div className="mb-4">
+                <button
+                  onClick={() => generateAISuggestions('story')}
+                  disabled={aiSuggesting || !storyForm.hero_id}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {aiSuggesting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating AI Suggestions...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      AI Suggest Story Content
+                    </>
+                  )}
+                </button>
+                {!storyForm.hero_id && (
+                  <p className="mt-2 text-xs text-yellow-400">⚠️ Select a hero first to enable AI suggestions</p>
+                )}
+                {suggestedContent && storyForm.hero_id && (
+                  <div className="mt-2 p-2 bg-purple-900/20 border border-purple-500/30 rounded text-xs">
+                    <p className="text-purple-300 mb-2">✨ Suggestions ready! Review fields and click "Apply All" or apply individually.</p>
+                    <button
+                      onClick={() => applySuggestions('story')}
+                      className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs"
+                    >
+                      Apply All Suggestions
+                    </button>
+                  </div>
+                )}
+              </div>
+              
               <div className="space-y-4">
                 <div>
                   <label className="lab-label">Hero *</label>
@@ -711,6 +786,14 @@ Always prioritize user experience and goal achievement.`;
                     className="lab-input"
                     placeholder="e.g., Getting Started Guide"
                   />
+                  {suggestedContent?.title && !storyForm.title && (
+                    <button
+                      onClick={() => applySuggestions('story', 'title')}
+                      className="mt-1 text-xs text-purple-400 hover:text-purple-300 underline"
+                    >
+                      Apply: "{suggestedContent.title}"
+                    </button>
+                  )}
                 </div>
 
                 <div>
