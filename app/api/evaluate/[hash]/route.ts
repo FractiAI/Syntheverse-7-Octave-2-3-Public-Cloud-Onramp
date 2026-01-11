@@ -264,6 +264,16 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
 
     // THALET Protocol: Extract atomic_score (Single Source of Truth)
     const atomicScore = (evaluation as any).atomic_score || null;
+    
+    // 🔥 MAREK & SIMBA DIAGNOSTIC: Verify THALET emission
+    debug('THALET_DIAGNOSTIC', 'Evaluation object inspection', {
+      has_atomic_score: !!atomicScore,
+      atomic_score_final: atomicScore?.final,
+      atomic_score_integrity_hash: atomicScore?.integrity_hash?.substring(0, 16),
+      evaluation_keys: Object.keys(evaluation),
+      pod_score: evaluation.pod_score,
+      has_score_trace: !!evaluation.score_trace,
+    });
 
     // Update contribution with evaluation results and vector data
     await db

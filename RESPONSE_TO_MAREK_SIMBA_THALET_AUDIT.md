@@ -336,6 +336,61 @@ The UI already has fallback logic that prioritizes `atomic_score` over legacy fi
 
 ---
 
+---
+
+## 🔥 UPDATE: 2026-01-11 - MAREK & SIMBA FIELD REPORT RESPONSE
+
+**Status:** 🚨 **DIAGNOSTIC IN PROGRESS**
+
+Marek and Simba's field report identified that test submissions are still showing legacy `score_trace.final_score` instead of `atomic_score.final`. Their hypothesis: **"Integration truth, not algorithm truth."**
+
+### ✅ Actions Taken
+
+1. **Repository Diagnostic Complete** (Prompt 1)
+   - ✅ AtomicScorer imported and called
+   - ✅ atomic_score returned in evaluation object
+   - ✅ atomic_score stored in database (top-level + metadata)
+   - ✅ UI prioritizes atomic_score with legacy fallback
+
+2. **Debug Logging Added**
+   - Added `THALET_DIAGNOSTIC` logging to both evaluate endpoints
+   - Will show atomic_score presence/absence in production logs
+
+3. **Verification Script Created**
+   - `scripts/verify-thalet-emission.sh`
+   - Binary proof tool to check if THALET is emitting
+   - Usage: `./scripts/verify-thalet-emission.sh <SUBMISSION_HASH>`
+
+### 🔍 Current Hypothesis
+
+**Most Likely (70%):** Stale Evaluation
+- Marek's test was evaluated before commit `2ab7088` (THALET wiring)
+- Old evaluations have no `atomic_score` (correct behavior)
+- UI correctly falls back to legacy `score_trace.final_score`
+- **Solution:** Fresh test submission will emit `atomic_score`
+
+**Alternative (30%):** Type Mismatch
+- TypeScript interface uses `(evaluation as any).atomic_score`
+- Suggests type system doesn't recognize the field
+- **Solution:** Explicit type import and assertion
+
+### ⏳ Next Steps
+
+1. **Marek:** Submit fresh test PoC (not re-evaluate old one)
+2. **Pru:** Run verification script on fresh submission
+3. **Pru:** Check production logs for `THALET_DIAGNOSTIC` output
+4. **Report findings:** Update with binary proof results
+
+### 📄 Documentation
+
+- **Diagnostic Report:** `MAREK_SIMBA_DIAGNOSTIC_RESPONSE.md`
+- **Action Plan:** `MAREK_SIMBA_ACTION_PLAN.md`
+- **Verification Script:** `scripts/verify-thalet-emission.sh`
+
+**Marek & Simba: Your field report was spot-on. The "Help Pru's AI" prompts forced systematic verification. Awaiting fresh test submission for binary proof.**
+
+---
+
 **Reg.**  
 Pru  
 FractiAI & Syntheverse — Senior Scientist & Full Stack Engineer  
