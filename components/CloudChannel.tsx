@@ -9,7 +9,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, ChevronDown, Zap } from 'lucide-react';
+import { MessageSquare, Heart, Image as ImageIcon, X, Plus, Cloud, Sparkles, Radio, Cpu, ChevronDown, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { createClient } from '@/utils/supabase/client';
@@ -120,7 +120,7 @@ export function CloudChannel() {
     };
   }, [selectedSandbox]);
 
-  // Auto-check for new posts every 30 seconds
+  // Auto-check for new posts every 15 seconds and auto-refresh
   useEffect(() => {
     const checkForNewPosts = async () => {
       if (!lastCheckTimestamp) return;
@@ -135,7 +135,11 @@ export function CloudChannel() {
             const latestPost = data.posts[0];
             // Check if there's a newer post than our last check
             if (new Date(latestPost.created_at) > new Date(lastCheckTimestamp)) {
-              setHasNewPosts(true);
+              // Automatically refresh when new posts detected
+              setOffset(0);
+              setHasNewPosts(false);
+              setLastCheckTimestamp(new Date().toISOString());
+              fetchPosts(selectedSandbox, 0, true);
             }
           }
         }
@@ -149,8 +153,8 @@ export function CloudChannel() {
       setLastCheckTimestamp(posts[0].created_at);
     }
 
-    // Poll every 30 seconds
-    const intervalId = setInterval(checkForNewPosts, 30000);
+    // Poll every 15 seconds for automatic refresh
+    const intervalId = setInterval(checkForNewPosts, 15000);
 
     return () => {
       clearInterval(intervalId);
@@ -340,22 +344,7 @@ export function CloudChannel() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRefresh();
-                }}
-                disabled={loading}
-                className={`hydrogen-btn hydrogen-btn-alpha flex items-center gap-2 px-3 py-1.5 text-xs font-semibold ${hasNewPosts ? 'has-new-posts' : ''}`}
-                title={hasNewPosts ? 'New posts available - Reload' : 'Reload feed'}
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                RELOAD
-                {hasNewPosts && (
-                  <span className="new-posts-indicator" />
-                )}
-              </button>
+            <div className="flex items-center justify-end">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
