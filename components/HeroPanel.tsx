@@ -93,21 +93,29 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
         status: 'active',
       });
       
+      console.log('[HeroPanel] Loading heroes with params:', { page: pageContext, pillar: pillarContext });
+      
       const response = await fetch(`/api/heroes?${params}`);
       const data = await response.json();
       
+      console.log('[HeroPanel] Heroes API response:', data);
+      
       if (data.success) {
         setHeroes(data.heroes);
+        console.log('[HeroPanel] Loaded heroes:', data.heroes.length);
+        
         // Auto-select default hero if available
         const defaultHero = data.heroes.find((h: Hero) => h.metadata?.is_default);
         if (defaultHero) {
           setSelectedHero(defaultHero);
+          console.log('[HeroPanel] Selected default hero:', defaultHero.name);
         } else if (data.heroes.length > 0) {
           setSelectedHero(data.heroes[0]);
+          console.log('[HeroPanel] Selected first hero:', data.heroes[0].name);
         }
       }
     } catch (error) {
-      console.error('Error loading heroes:', error);
+      console.error('[HeroPanel] Error loading heroes:', error);
     }
   };
 
@@ -239,9 +247,9 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
   };
 
   if (!isExpanded) {
-    // Collapsed state - minimal bar
+    // Collapsed state - minimal bar (ALWAYS VISIBLE)
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--keyline-primary)] bg-[var(--cockpit-black)] backdrop-blur-sm">
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-[var(--hydrogen-alpha)] bg-[var(--cockpit-black)] shadow-lg">
         <div className="container mx-auto px-4 py-3">
           <button
             onClick={() => {
@@ -253,7 +261,7 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
             className="flex w-full items-center justify-between text-sm hover:opacity-80 transition-opacity"
           >
             <div className="flex items-center gap-3">
-              {selectedHero && (
+              {selectedHero ? (
                 <>
                   <span className="text-2xl">{selectedHero.icon}</span>
                   <div className="text-left">
@@ -265,13 +273,16 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
                     </div>
                   </div>
                 </>
-              )}
-              {!selectedHero && (
+              ) : (
                 <>
                   <Sparkles className="h-5 w-5 text-[var(--hydrogen-alpha)]" />
                   <div className="text-left">
-                    <div className="font-semibold text-[var(--hydrogen-alpha)]">Hero Guide</div>
-                    <div className="text-xs text-[var(--text-secondary)]">Click to interact</div>
+                    <div className="font-semibold text-[var(--hydrogen-alpha)]">
+                      Hero Guide {heroes.length > 0 ? `(${heroes.length} available)` : '(Loading...)'}
+                    </div>
+                    <div className="text-xs text-[var(--text-secondary)]">
+                      {heroes.length > 0 ? 'Click to select a hero and interact' : 'Click to explore'}
+                    </div>
                   </div>
                 </>
               )}
