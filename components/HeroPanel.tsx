@@ -185,7 +185,7 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     setMessages(prev => [...prev, storyMessage]);
     createSession(selectedHero!.id, story.id);
     
-    trackStorySelection(selectedHero!.id, story.id, sessionId);
+    trackStorySelection(selectedHero!.id, story.id, sessionId ?? undefined);
     
     // Focus input after story selection
     setTimeout(() => inputRef.current?.focus(), 100);
