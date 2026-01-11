@@ -606,8 +606,6 @@ Always prioritize user experience and goal achievement.`;
                 </div>
               </div>
             </div>
-
-          </div>
           </div>
           
           {/* Heroes List */}
@@ -660,7 +658,6 @@ Always prioritize user experience and goal achievement.`;
                           <Trash2 className="inline h-3 w-3 mr-1" /> Delete
                         </button>
                       </div>
-                    </div>
                     </div>
                   ))}
                 </div>
@@ -833,7 +830,7 @@ Always prioritize user experience and goal achievement.`;
                         </div>
                       </div>
                     </div>
-                      );
+                    );
                   })}
                 </div>
               </div>
@@ -955,17 +952,18 @@ Always prioritize user experience and goal achievement.`;
                   </div>
                 </div>
               ) : (
-                <div className="h-full flex items-center justify-center text-slate-500">
+                <div className="h-full flex items-center justify-center text-[var(--lab-text-label)]">
                   <div className="text-center">
-                    <div className="text-5xl mb-4">🤖</div>
+                    <Sparkles className="h-16 w-16 mx-auto mb-4 text-[var(--lab-primary)]" />
                     <p>AI-generated prompt will appear here</p>
                   </div>
                 </div>
               )}
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
