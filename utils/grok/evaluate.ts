@@ -28,6 +28,8 @@ import {
 } from '@/utils/vectors';
 import { SYNTHEVERSE_SYSTEM_PROMPT } from '@/utils/grok/system-prompt';
 import crypto from 'crypto';
+// THALET Protocol: Import AtomicScorer for single source of truth
+import { AtomicScorer } from '@/utils/scoring/AtomicScorer';
 // SCALABILITY FIX: Removed archive utilities - using vectors-only approach for infinite scalability
 
 // TSRC: Import snapshot and operator utilities
@@ -1526,31 +1528,24 @@ ${answer}`;
       evaluationDensity: evaluation.density,
     });
 
-    // Calculate composite/total score from all individual category scores
-    // G) Ensure scoring formula is always followed: Composite = N + D + C + A
-    const compositeScore = finalNoveltyScore + densityFinal + coherenceScore + alignmentScore;
-
-    // CRITICAL FIX (Marek/Simba): ALWAYS use compositeScore as base
-    // Do NOT use Groq's total_score as it may have penalties/bonuses already applied
-    // This was causing double-application of penalties/bonuses and non-reproducible scores
-    const basePodScore = compositeScore;
-
-    // G) Apply correct formula: Final = (Composite × (1 - penalty%/100)) × bonus_multiplier × seed_multiplier × edge_multiplier
-    // Seed and Edge submissions receive multipliers based on CONTENT analysis by AI (not timing)
-    // AI determines if content exhibits seed/edge characteristics
+    // =============================================================================
+    // THALET PROTOCOL: ATOMIC SCORING (Single Source of Truth)
+    // =============================================================================
+    // ALL scoring computation happens in AtomicScorer.computeScore()
+    // This section ONLY fetches config and calls the atomic scorer
+    // NO calculation, normalization, or interpretation permitted here
     
-    // Fetch scoring config from database (Marek/Simba: explicit versioning + tunable parameters)
+    // Fetch scoring config from database
     let seedMultiplierEnabled = true;
     let edgeMultiplierEnabled = true;
     let overlapAdjustmentsEnabled = true;
     let scoreConfigVersion = 'v1.0.0';
-    let sweetSpotCenter = 0.142; // 14.2% default (Λ_edge ≈ 1.42 bridge)
-    let sweetSpotTolerance = 0.05; // ±5% default
-    let penaltyThreshold = 0.30; // 30% default
-    let overlapOperator = 'embedding_cosine'; // Explicit operator declaration
+    let sweetSpotCenter = 0.142;
+    let sweetSpotTolerance = 0.05;
+    let penaltyThreshold = 0.30;
+    let overlapOperator = 'embedding_cosine';
     
     try {
-      // Use direct database query to avoid dynamic import issues
       const { db } = await import('@/utils/db/db');
       const { scoringConfigTable } = await import('@/utils/db/schema');
       const { eq } = await import('drizzle-orm');
@@ -1565,106 +1560,85 @@ ${answer}`;
         const config = configResult[0];
         const configValue = config.config_value;
         
-        // Mode toggles
         seedMultiplierEnabled = configValue.seed_enabled !== false;
         edgeMultiplierEnabled = configValue.edge_enabled !== false;
         overlapAdjustmentsEnabled = configValue.overlap_enabled !== false;
-        
-        // Versioning (Marek/Simba requirement)
         scoreConfigVersion = config.version || 'v1.0.0';
-        
-        // Sweet spot parameters (tunable per config, not dogmatic)
         sweetSpotCenter = configValue.sweet_spot_center ?? 0.142;
         sweetSpotTolerance = configValue.sweet_spot_tolerance ?? 0.05;
         penaltyThreshold = configValue.penalty_threshold ?? 0.30;
-        
-        // Operator declaration (Marek/Simba: must be explicit)
         overlapOperator = configValue.overlap_operator || 'embedding_cosine';
       }
     } catch (error) {
-      // Default to enabled if config fetch fails (table might not exist yet)
       console.warn('Failed to fetch scoring config, using defaults:', error);
     }
     
-    const SEED_MULTIPLIER = 1.15; // 15% bonus for seed submissions
-    const EDGE_MULTIPLIER = 1.15; // 15% bonus for edge submissions
-    const isSeedFromAI = evaluation.is_seed_submission === true; // Trust AI's content-based determination
-    const isEdgeFromAI = evaluation.is_edge_submission === true; // Trust AI's content-based determination
-    
-    // Note: seedMultiplier and edgeMultiplier are now computed below after toggle validation
+    const isSeedFromAI = evaluation.is_seed_submission === true;
+    const isEdgeFromAI = evaluation.is_edge_submission === true;
 
-    // Apply overlap adjustments (penalty/bonus) only if enabled by config
-    let effectivePenaltyPercent = overlapAdjustmentsEnabled ? penaltyPercent : 0;
-    let effectiveBonusMultiplier = overlapAdjustmentsEnabled ? bonusMultiplier : 1.0;
-    
-    // MAREK/SIMBA FIX: Validate toggle enforcement (prevent bugs where toggles are OFF but still applying)
-    if (!overlapAdjustmentsEnabled) {
-      if (effectivePenaltyPercent !== 0) {
-        debugError('EvaluateWithGroq', '[SCORER BUG] overlap_on=false but penalty applied - forcing to 0', {
-          effectivePenaltyPercent,
-          overlapAdjustmentsEnabled,
-        });
-        effectivePenaltyPercent = 0; // Force to 0
-      }
-      if (effectiveBonusMultiplier !== 1.0) {
-        debugError('EvaluateWithGroq', '[SCORER BUG] overlap_on=false but bonus applied - forcing to 1.0', {
-          effectiveBonusMultiplier,
-          overlapAdjustmentsEnabled,
-        });
-        effectiveBonusMultiplier = 1.0; // Force to 1.0
-      }
-    }
-    
-    let seedMultiplier = (isSeedFromAI && seedMultiplierEnabled) ? SEED_MULTIPLIER : 1.0;
-    let edgeMultiplier = (isEdgeFromAI && edgeMultiplierEnabled) ? EDGE_MULTIPLIER : 1.0;
-    
-    // MAREK/SIMBA FIX: Validate seed/edge multiplier enforcement
-    if (!seedMultiplierEnabled && seedMultiplier !== 1.0) {
-      debugError('EvaluateWithGroq', '[SCORER BUG] seed_on=false but multiplier applied - forcing to 1.0', {
-        seedMultiplier,
-        seedMultiplierEnabled,
-        isSeedFromAI,
-      });
-      seedMultiplier = 1.0; // Force to 1.0
-    }
-    
-    if (!edgeMultiplierEnabled && edgeMultiplier !== 1.0) {
-      debugError('EvaluateWithGroq', '[SCORER BUG] edge_on=false but multiplier applied - forcing to 1.0', {
-        edgeMultiplier,
-        edgeMultiplierEnabled,
-        isEdgeFromAI,
-      });
-      edgeMultiplier = 1.0; // Force to 1.0
-    }
-    
-    // Combined multiplier: if both seed AND edge (and both enabled), multiply both (1.15 × 1.15 = 1.3225 = 32.25% bonus)
-    const combinedMultiplier = seedMultiplier * edgeMultiplier;
-
-    const afterPenalty = basePodScore * (1 - effectivePenaltyPercent / 100);
-    const afterBonus = afterPenalty * effectiveBonusMultiplier;
-    const afterSeedAndEdge = afterBonus * combinedMultiplier;
-    
-    // Marek/Simba: final_preclamp MUST be tracked before clamping (for k-factor hygiene)
-    const final_preclamp = Math.round(afterSeedAndEdge);
-    const pod_score = Math.max(0, Math.min(10000, final_preclamp));
-    const wasClamped = pod_score !== final_preclamp;
-
-    // H) Score trace for transparency (Marek/Simba enhanced specification)
-    const scoreTrace = {
-      // === IDs (Versioning + Traceability) - Marek/Simba P0 ===
-      score_config_id: scoreConfigVersion,
-      sandbox_id: sandboxContext?.id || 'main',
-      archive_snapshot_id: `snapshot_${new Date().toISOString().split('T')[0].replace(/-/g, '')}`, // TODO: Implement proper snapshot versioning
-      
-      // === Operator Declaration - Marek/Simba P0 (must be explicit) ===
-      overlap_operator: overlapOperator, // "embedding_cosine", "axis", "kiss", etc.
-      
-      // === Mode Toggles State - Marek/Simba requirement ===
+    // =============================================================================
+    // CALL ATOMIC SCORER (ONLY place where scoring happens)
+    // =============================================================================
+    const atomicScore = AtomicScorer.computeScore({
+      novelty: finalNoveltyScore,
+      density: densityFinal,
+      coherence: coherenceScore,
+      alignment: alignmentScore,
+      redundancy_overlap_percent: redundancyOverlapPercent,
+      is_seed_from_ai: isSeedFromAI,
+      is_edge_from_ai: isEdgeFromAI,
       toggles: {
         overlap_on: overlapAdjustmentsEnabled,
         seed_on: seedMultiplierEnabled,
         edge_on: edgeMultiplierEnabled,
-        metal_policy_on: true, // Currently always on
+        metal_policy_on: true,
+      },
+      // Let AtomicScorer generate seed (deterministic)
+    });
+
+    // Extract values from atomic score for backward compatibility
+    const pod_score = atomicScore.final;
+    const compositeScore = atomicScore.trace.composite;
+    const effectivePenaltyPercent = atomicScore.trace.penalty_percent;
+    const effectiveBonusMultiplier = atomicScore.trace.bonus_multiplier;
+    const seedMultiplier = atomicScore.trace.seed_multiplier;
+    const edgeMultiplier = atomicScore.trace.edge_multiplier;
+    const combinedMultiplier = seedMultiplier * edgeMultiplier;
+    const afterPenalty = atomicScore.trace.intermediate_steps.after_penalty;
+    const afterBonus = atomicScore.trace.intermediate_steps.after_bonus;
+    const afterSeedAndEdge = atomicScore.trace.intermediate_steps.after_seed;
+    const final_preclamp = atomicScore.trace.intermediate_steps.raw_final;
+    const wasClamped = atomicScore.trace.intermediate_steps.clamped_final !== atomicScore.trace.intermediate_steps.raw_final;
+
+    debug('EvaluateWithGroq', 'AtomicScorer result', {
+      final: pod_score,
+      composite: compositeScore,
+      integrity_hash: atomicScore.integrity_hash.substring(0, 12),
+      execution_context: atomicScore.execution_context,
+    });
+
+    // H) Score trace for transparency (THALET + Marek/Simba enhanced specification)
+    const scoreTrace = {
+      // === THALET Protocol Fields ===
+      thalet_compliant: true,
+      atomic_score_hash: atomicScore.integrity_hash,
+      execution_context: atomicScore.execution_context,
+      
+      // === IDs (Versioning + Traceability) - Marek/Simba P0 ===
+      score_config_id: scoreConfigVersion,
+      sandbox_id: sandboxContext?.id || 'main',
+      archive_snapshot_id: `snapshot_${new Date().toISOString().split('T')[0].replace(/-/g, '')}`,
+      
+      // === Operator Declaration - Marek/Simba P0 (must be explicit) ===
+      overlap_operator: overlapOperator,
+      
+      // === Mode Toggles State - Marek/Simba requirement ===
+      // NOTE: These are duplicated from execution_context for backward compatibility
+      toggles: {
+        overlap_on: overlapAdjustmentsEnabled,
+        seed_on: seedMultiplierEnabled,
+        edge_on: edgeMultiplierEnabled,
+        metal_policy_on: true,
       },
       
       // === Sweet Spot Parameters (HHF Bridge - tunable) ===
@@ -2084,6 +2058,8 @@ ${answer}`;
       // Deterministic Score Contract (Marek requirement)
       scoring_metadata: scoringMetadata,
       pod_composition: podComposition,
+      // THALET Protocol: Atomic Score (Single Source of Truth)
+      atomic_score: atomicScore,
     };
   } catch (error) {
     debugError('EvaluateWithGroq', 'Groq API call failed', error);

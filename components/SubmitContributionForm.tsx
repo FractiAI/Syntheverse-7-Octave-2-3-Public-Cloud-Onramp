@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { IntegrityValidator } from '@/utils/validation/IntegrityValidator';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -136,13 +137,35 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             setSuccess(true);
 
             const metadata = submission.metadata || {};
-            // SINGLE SOURCE OF TRUTH: Use score_trace.final_score as the authoritative PoC Score
-            const pocScore = metadata.score_trace?.final_score ?? metadata.pod_score ?? 0;
+            
+            // THALET PROTOCOL: Validate atomic score integrity
+            let pocScore = 0;
+            let validationError = null;
+            
+            try {
+              if (metadata.atomic_score) {
+                // New THALET-compliant path
+                pocScore = IntegrityValidator.getValidatedScore(metadata.atomic_score);
+              } else if (metadata.score_trace?.final_score) {
+                // Legacy fallback (pre-THALET)
+                pocScore = metadata.score_trace.final_score;
+                console.warn('[THALET] Using legacy score_trace.final_score - atomic_score not found');
+              } else {
+                pocScore = metadata.pod_score ?? 0;
+                console.warn('[THALET] Using fallback pod_score - no atomic_score or score_trace');
+              }
+            } catch (error) {
+              console.error('[THALET] Score validation failed:', error);
+              validationError = error instanceof Error ? error.message : 'Invalid score data';
+              pocScore = 0;
+            }
+            
             setEvaluationStatus({
               completed: true,
               podScore: pocScore,
               qualified: submission.status === 'qualified',
               evaluation: metadata,
+              validationError,
             });
           } else if (submission.status === 'payment_pending') {
             // Payment not yet processed - continue polling

@@ -1113,11 +1113,21 @@ export function PoCArchive({ userEmail }: PoCArchiveProps) {
                                 Final PoC Score
                               </span>
                               <span className="text-lg font-bold">
-                                {/* MAREK/SIMBA FIX: Read from score_trace.final_score (authoritative) first */}
-                                {(selectedSubmission.metadata?.score_trace?.final_score ?? 
-                                  selectedSubmission.metadata?.pod_score ?? 
-                                  selectedSubmission.pod_score ?? 
-                                  0).toLocaleString()} / 10,000
+                                {/* THALET PROTOCOL: Use validated atomic score */}
+                                {(() => {
+                                  try {
+                                    if (selectedSubmission.metadata?.atomic_score) {
+                                      return IntegrityValidator.getValidatedScore(selectedSubmission.metadata.atomic_score).toLocaleString();
+                                    } else if (selectedSubmission.metadata?.score_trace?.final_score) {
+                                      return (selectedSubmission.metadata.score_trace.final_score).toLocaleString();
+                                    } else {
+                                      return (selectedSubmission.pod_score ?? 0).toLocaleString();
+                                    }
+                                  } catch (error) {
+                                    console.error('[THALET] Validation failed:', error);
+                                    return 'INVALID';
+                                  }
+                                })()} / 10,000
                               </span>
                             </div>
                           </div>

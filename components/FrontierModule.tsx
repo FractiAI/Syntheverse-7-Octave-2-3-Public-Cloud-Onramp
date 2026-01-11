@@ -7,6 +7,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { IntegrityValidator } from '@/utils/validation/IntegrityValidator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -822,11 +823,21 @@ export function FrontierModule({ userEmail }: FrontierModuleProps) {
                             <div className="flex items-center justify-between">
                               <span className="cockpit-text font-medium">Final PoC Score</span>
                               <span className="cockpit-number cockpit-number-medium">
-                                {/* MAREK/SIMBA FIX: Read from score_trace.final_score (authoritative) first */}
-                                {(selectedSubmission.metadata?.score_trace?.final_score ?? 
-                                  selectedSubmission.metadata?.pod_score ?? 
-                                  selectedSubmission.pod_score ?? 
-                                  0).toLocaleString()} / 10,000
+                                {/* THALET PROTOCOL: Use validated atomic score */}
+                                {(() => {
+                                  try {
+                                    if (selectedSubmission.metadata?.atomic_score) {
+                                      return IntegrityValidator.getValidatedScore(selectedSubmission.metadata.atomic_score).toLocaleString();
+                                    } else if (selectedSubmission.metadata?.score_trace?.final_score) {
+                                      return (selectedSubmission.metadata.score_trace.final_score).toLocaleString();
+                                    } else {
+                                      return (selectedSubmission.pod_score ?? 0).toLocaleString();
+                                    }
+                                  } catch (error) {
+                                    console.error('[THALET] Validation failed:', error);
+                                    return 'INVALID';
+                                  }
+                                })()} / 10,000
                               </span>
                             </div>
                           </div>
