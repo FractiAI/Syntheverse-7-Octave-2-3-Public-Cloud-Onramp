@@ -2,6 +2,7 @@ import FractiAIBulletin from '@/components/FractiAIBulletin';
 import { createClient } from '@/utils/supabase/server';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { QuickActionsPanel } from '@/components/QuickActionsPanel';
+import { HeroPanel } from '@/components/HeroPanel';
 import '../dashboard-cockpit.css';
 
 export const dynamic = 'force-dynamic';
@@ -23,6 +24,13 @@ export default async function FractiAIPage() {
       <div className="flex-1">
         <FractiAIBulletin isAuthenticated={!!user} />
       </div>
+      
+      {/* Hero Panel - The Outcast Hero (Fire & Bison) - Mission Control */}
+      <HeroPanel 
+        pageContext="fractiai" 
+        pillarContext="contributor" 
+        userEmail={user?.email || ''} 
+      />
     </div>
   );
 }
