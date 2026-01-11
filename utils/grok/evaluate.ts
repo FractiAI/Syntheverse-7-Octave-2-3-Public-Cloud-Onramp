@@ -257,6 +257,60 @@ export async function evaluateWithGroq(
     excludeHash,
   });
 
+  // 🔥 CRITICAL FIX: Load toggle config EARLY (before building AI prompt)
+  // This ensures AI prompt shows APPLIED values, not COMPUTED values
+  let seedMultiplierEnabled = true;
+  let edgeMultiplierEnabled = true;
+  let overlapAdjustmentsEnabled = true;
+  let scoreConfigVersion = 'v1.0.0';
+  let sweetSpotCenter = 0.142;
+  let sweetSpotTolerance = 0.05;
+  let penaltyThreshold = 0.30;
+  let overlapOperator = 'embedding_cosine';
+  
+  try {
+    const { db } = await import('@/utils/db/db');
+    const { scoringConfigTable } = await import('@/utils/db/schema');
+    const { eq } = await import('drizzle-orm');
+    
+    const configResult = await db
+      .select()
+      .from(scoringConfigTable)
+      .where(eq(scoringConfigTable.config_key, 'multiplier_toggles'))
+      .limit(1);
+    
+    if (configResult && configResult.length > 0) {
+      const config = configResult[0];
+      const configValue = config.config_value;
+      
+      // 🔥 FIX: Explicit boolean checks (=== true instead of !== false)
+      seedMultiplierEnabled = configValue.seed_enabled === true;
+      edgeMultiplierEnabled = configValue.edge_enabled === true;
+      overlapAdjustmentsEnabled = configValue.overlap_enabled === true;
+      
+      debug('ToggleConfig', 'Early toggle load (before AI prompt)', {
+        raw_config: {
+          seed_enabled: configValue.seed_enabled,
+          edge_enabled: configValue.edge_enabled,
+          overlap_enabled: configValue.overlap_enabled,
+        },
+        computed_states: {
+          seedMultiplierEnabled,
+          edgeMultiplierEnabled,
+          overlapAdjustmentsEnabled,
+        },
+      });
+      
+      scoreConfigVersion = config.version || 'v1.0.0';
+      sweetSpotCenter = configValue.sweet_spot_center ?? 0.142;
+      sweetSpotTolerance = configValue.sweet_spot_tolerance ?? 0.05;
+      penaltyThreshold = configValue.penalty_threshold ?? 0.30;
+      overlapOperator = configValue.overlap_operator || 'embedding_cosine';
+    }
+  } catch (error) {
+    console.warn('Failed to fetch scoring config (early load), using defaults:', error);
+  }
+
   // Generate vector embedding and 3D coordinates for current submission
   // SCALABILITY FIX: Using vectors-only approach - removed archive data extraction and top3Matches
   // Vector-based redundancy is sufficient and scales infinitely without bloating the prompt
@@ -561,16 +615,23 @@ ${sandboxContext.metal_focus ? `
 
   // Add calculated redundancy information if available (compact, vector-based).
   // Include enhanced distribution data (Marek's requirements)
+  // 🔥 CRITICAL FIX: Show APPLIED values (respecting toggles), not COMPUTED values
+  const appliedPenaltyPercent = overlapAdjustmentsEnabled ? calculatedRedundancy?.penalty_percent || 0 : 0;
+  const appliedBonusMultiplier = overlapAdjustmentsEnabled ? calculatedRedundancy?.bonus_multiplier || 1.0 : 1.0;
+  
   const calculatedRedundancyContext = calculatedRedundancy
     ? `Vector redundancy (HHF 3D):
 - overlap_percent=${calculatedRedundancy.overlap_percent.toFixed(1)}%
-- penalty_percent=${calculatedRedundancy.penalty_percent.toFixed(1)}%
-- bonus_multiplier=${calculatedRedundancy.bonus_multiplier.toFixed(3)}
+- penalty_percent_APPLIED=${appliedPenaltyPercent.toFixed(1)}% ${!overlapAdjustmentsEnabled ? '(overlap toggle OFF - not applied)' : ''}
+- bonus_multiplier_APPLIED=${appliedBonusMultiplier.toFixed(3)} ${!overlapAdjustmentsEnabled ? '(overlap toggle OFF - not applied)' : ''}
+${overlapAdjustmentsEnabled && (appliedPenaltyPercent !== calculatedRedundancy.penalty_percent || appliedBonusMultiplier !== calculatedRedundancy.bonus_multiplier) ? `- penalty_percent_computed=${calculatedRedundancy.penalty_percent.toFixed(1)}% (for reference)` : ''}
+${overlapAdjustmentsEnabled && (appliedPenaltyPercent !== calculatedRedundancy.penalty_percent || appliedBonusMultiplier !== calculatedRedundancy.bonus_multiplier) ? `- bonus_multiplier_computed=${calculatedRedundancy.bonus_multiplier.toFixed(3)} (for reference)` : ''}
 - similarity=${(calculatedRedundancy.similarity_score * 100).toFixed(1)}%
 - closest="${calculatedRedundancy.closest_vectors[0]?.title || 'N/A'}"
 ${calculatedRedundancy.overlap_percentile !== undefined ? `- overlap_percentile=${calculatedRedundancy.overlap_percentile}th percentile` : ''}
 ${calculatedRedundancy.nearest_10_neighbors ? `- nearest_10_neighbors: μ=${calculatedRedundancy.nearest_10_neighbors.mean.toFixed(3)} ± ${calculatedRedundancy.nearest_10_neighbors.std_dev.toFixed(3)} (min=${calculatedRedundancy.nearest_10_neighbors.min.toFixed(3)}, max=${calculatedRedundancy.nearest_10_neighbors.max.toFixed(3)})` : ''}
-- computation_context=${calculatedRedundancy.computation_context || 'per-sandbox'}`
+- computation_context=${calculatedRedundancy.computation_context || 'per-sandbox'}
+- overlap_adjustments_enabled=${overlapAdjustmentsEnabled}`
     : '';
   
   // Generate scoring config ID (versioned)
@@ -1538,63 +1599,12 @@ ${answer}`;
     // THALET PROTOCOL: ATOMIC SCORING (Single Source of Truth)
     // =============================================================================
     // ALL scoring computation happens in AtomicScorer.computeScore()
-    // This section ONLY fetches config and calls the atomic scorer
+    // This section ONLY calls the atomic scorer (config already loaded early)
     // NO calculation, normalization, or interpretation permitted here
     
-    // Fetch scoring config from database
-    let seedMultiplierEnabled = true;
-    let edgeMultiplierEnabled = true;
-    let overlapAdjustmentsEnabled = true;
-    let scoreConfigVersion = 'v1.0.0';
-    let sweetSpotCenter = 0.142;
-    let sweetSpotTolerance = 0.05;
-    let penaltyThreshold = 0.30;
-    let overlapOperator = 'embedding_cosine';
-    
-    try {
-      const { db } = await import('@/utils/db/db');
-      const { scoringConfigTable } = await import('@/utils/db/schema');
-      const { eq } = await import('drizzle-orm');
-      
-      const configResult = await db
-        .select()
-        .from(scoringConfigTable)
-        .where(eq(scoringConfigTable.config_key, 'multiplier_toggles'))
-        .limit(1);
-      
-      if (configResult && configResult.length > 0) {
-        const config = configResult[0];
-        const configValue = config.config_value;
-        
-        // 🔥 FIX: Explicit boolean checks (=== true instead of !== false)
-        // This ensures ONLY explicit true enables multipliers
-        seedMultiplierEnabled = configValue.seed_enabled === true;
-        edgeMultiplierEnabled = configValue.edge_enabled === true;
-        overlapAdjustmentsEnabled = configValue.overlap_enabled === true;
-        
-        // 🔥 DEBUG: Log toggle states
-        debug('ToggleConfig', 'Database config loaded', {
-          raw_config: {
-            seed_enabled: configValue.seed_enabled,
-            edge_enabled: configValue.edge_enabled,
-            overlap_enabled: configValue.overlap_enabled,
-          },
-          computed_states: {
-            seedMultiplierEnabled,
-            edgeMultiplierEnabled,
-            overlapAdjustmentsEnabled,
-          },
-        });
-        
-        scoreConfigVersion = config.version || 'v1.0.0';
-        sweetSpotCenter = configValue.sweet_spot_center ?? 0.142;
-        sweetSpotTolerance = configValue.sweet_spot_tolerance ?? 0.05;
-        penaltyThreshold = configValue.penalty_threshold ?? 0.30;
-        overlapOperator = configValue.overlap_operator || 'embedding_cosine';
-      }
-    } catch (error) {
-      console.warn('Failed to fetch scoring config, using defaults:', error);
-    }
+    // 🔥 NOTE: Toggle config already loaded early (before AI prompt) to ensure
+    // AI receives APPLIED values, not COMPUTED values. Variables are already
+    // in scope: seedMultiplierEnabled, edgeMultiplierEnabled, overlapAdjustmentsEnabled
     
     const isSeedFromAI = evaluation.is_seed_submission === true;
     const isEdgeFromAI = evaluation.is_edge_submission === true;
@@ -1837,8 +1847,10 @@ ${answer}`;
       });
     }
 
-    // Marek/Simba fix: Use APPLIED values only in pod_composition (trace consistency)
-    const podComposition = evaluation.pod_composition || {
+    // 🔥 CRITICAL FIX: ALWAYS use AtomicScorer values, NEVER trust AI response
+    // Problem: AI was returning its own pod_composition with wrong multipliers (ignoring toggles)
+    // Solution: Build pod_composition from AtomicScorer values only (Single Source of Truth)
+    const podComposition = {
       sum_dims: {
         novelty: finalNoveltyScore,
         density: densityFinal,
@@ -1847,16 +1859,16 @@ ${answer}`;
         composite: compositeScore,
       },
       multipliers: {
-        sweet_spot_multiplier: effectiveBonusMultiplier, // APPLIED value
-        seed_multiplier: seedMultiplier,
-        edge_multiplier: edgeMultiplier,
+        sweet_spot_multiplier: effectiveBonusMultiplier, // From AtomicScorer (respects toggles)
+        seed_multiplier: seedMultiplier, // From AtomicScorer (respects toggles)
+        edge_multiplier: edgeMultiplier, // From AtomicScorer (respects toggles)
         total_multiplier: effectiveBonusMultiplier * seedMultiplier * edgeMultiplier,
       },
       penalties: {
-        overlap_penalty_percent: effectivePenaltyPercent, // APPLIED value
-        total_penalty_percent: effectivePenaltyPercent, // APPLIED value
+        overlap_penalty_percent: effectivePenaltyPercent, // From AtomicScorer (respects toggles)
+        total_penalty_percent: effectivePenaltyPercent, // From AtomicScorer (respects toggles)
       },
-      // MAREK/SIMBA FIX: Add explicit toggle states (P0 requirement)
+      // Toggle states (for transparency)
       toggles: {
         overlap_on: overlapAdjustmentsEnabled,
         seed_on: seedMultiplierEnabled,
