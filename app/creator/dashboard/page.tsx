@@ -288,14 +288,27 @@ export default async function CreatorLab() {
               borderLeft: '4px solid #32CD32',
               background: 'linear-gradient(135deg, rgba(50, 205, 50, 0.1) 0%, rgba(0, 0, 0, 0) 100%)',
             }}>
-              <div className="flex items-center gap-3 mb-4">
-                <Hexagon className="h-6 w-6 text-[#32CD32]" />
-                <div>
-                  <h2 className="text-xl font-bold text-[#32CD32]">Enterprise Cloud Structures</h2>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    Nested reality configuration & management
-                  </p>
+              <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <Hexagon className="h-6 w-6 text-[#32CD32]" />
+                  <div>
+                    <h2 className="text-xl font-bold text-[#32CD32]">Enterprise Cloud Structures</h2>
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      Nested reality configuration & management
+                    </p>
+                  </div>
                 </div>
+                {isCreator && (
+                  <Link 
+                    href="/operator/dashboard" 
+                    className="inline-flex items-center gap-2 px-3 py-2 bg-[#4169E1]/10 hover:bg-[#4169E1]/20 text-[#4169E1] border border-[#4169E1] rounded transition-colors text-sm whitespace-nowrap"
+                    title="Access Faraday Operator Console for cloud operations"
+                  >
+                    <Settings className="h-4 w-4" />
+                    <span className="hidden sm:inline">Operate Clouds</span>
+                    <span className="sm:hidden">Operate</span>
+                  </Link>
+                )}
               </div>
               <div className="mb-4 p-3 bg-[#32CD32]/5 border-l-2 border-[#32CD32] rounded">
                 <p className="text-sm text-[var(--text-secondary)] italic">
@@ -303,6 +316,14 @@ export default async function CreatorLab() {
                   lying on the surface of a sphere. The interconnections provide structural integrity."
                   <span className="block mt-2 text-xs text-[#32CD32]">— R. Buckminster Fuller</span>
                 </p>
+                {isCreator && (
+                  <div className="mt-3 pt-3 border-t border-[#32CD32]/20">
+                    <p className="text-xs text-[var(--text-secondary)]">
+                      💡 <strong>Creator Tip:</strong> Use the <span className="text-[#4169E1] font-semibold">Faraday Operator Console</span> to 
+                      perform electromagnetic field measurements and experimental operations on your nested clouds.
+                    </p>
+                  </div>
+                )}
               </div>
               <CreatorEnterpriseSandboxes />
             </div>
