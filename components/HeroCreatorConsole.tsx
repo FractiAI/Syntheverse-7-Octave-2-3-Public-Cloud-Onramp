@@ -663,6 +663,7 @@ Always prioritize user experience and goal achievement.`;
                         </button>
                       </div>
                     </div>
+                    </div>
                   ))}
                 </div>
               </div>
