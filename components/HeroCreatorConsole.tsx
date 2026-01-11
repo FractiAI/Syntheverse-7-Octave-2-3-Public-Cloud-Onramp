@@ -395,7 +395,12 @@ Always prioritize user experience and goal achievement.`;
       pillar_assignment: hero.pillar_assignment || '',
       default_system_prompt: hero.default_system_prompt || '',
       status: hero.status,
-      metadata: hero.metadata || ({ personality: '', capabilities: [], tone: '', style: '' } as { personality: string; capabilities: string[]; tone: string; style: string }),
+      metadata: {
+        personality: hero.metadata?.personality || '',
+        capabilities: hero.metadata?.capabilities || [],
+        tone: hero.metadata?.tone || '',
+        style: hero.metadata?.style || '',
+      } as { personality: string; capabilities: string[]; tone: string; style: string },
     });
   };
 
