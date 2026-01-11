@@ -6453,14 +6453,12 @@ export function OnboardingNavigator() {
               <div className="text-lg leading-relaxed">{modules[currentModule].content}</div>
             </div>
 
-            {/* AI Instructor - In Full View */}
-            {wingTrack && (
-              <OnboardingAIManager
-                moduleTitle={modules[currentModule].title}
-                moduleNumber={modules[currentModule].number || currentModule + 1}
-                wingTrack={wingTrack}
-              />
-            )}
+            {/* AI Guide - Humboldt Explorer (Full View) */}
+            <HeroAIManager
+              pageContext="onboarding"
+              moduleTitle={modules[currentModule].title}
+              moduleNumber={modules[currentModule].number || currentModule + 1}
+            />
 
             {/* Full View Navigation */}
             <div className="flex items-center justify-between mt-6 sticky bottom-4 academy-panel p-4">

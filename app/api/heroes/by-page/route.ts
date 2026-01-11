@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/utils/db/db';
-import { heroCatalog } from '@/utils/db/schema';
+import { heroCatalogTable } from '@/utils/db/hero-schema';
 import { eq, sql } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
@@ -41,8 +41,8 @@ export async function GET(request: NextRequest) {
     // Fetch hero from database
     const heroes = await db
       .select()
-      .from(heroCatalog)
-      .where(eq(heroCatalog.id, heroId))
+      .from(heroCatalogTable)
+      .where(eq(heroCatalogTable.id, heroId))
       .limit(1);
 
     if (heroes.length === 0) {

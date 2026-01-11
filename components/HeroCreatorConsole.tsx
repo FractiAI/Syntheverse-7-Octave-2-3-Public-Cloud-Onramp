@@ -51,7 +51,7 @@ export default function HeroCreatorConsole() {
   const [heroes, setHeroes] = useState<Hero[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [templates, setTemplates] = useState<AIPromptTemplate[]>([]);
-  const [activeTab, setActiveTab] = useState<'heroes' | 'stories' | 'ai-assistant'>('heroes');
+  const [activeTab, setActiveTab] = useState<'heroes' | 'stories'>('heroes');
   const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
@@ -86,11 +86,7 @@ export default function HeroCreatorConsole() {
     interaction_style: '',
   });
 
-  // AI Assistant state
-  const [aiPromptInput, setAiPromptInput] = useState('');
-  const [aiGeneratedOutput, setAiGeneratedOutput] = useState('');
-  const [aiMode, setAiMode] = useState<'hero' | 'story' | 'interaction'>('hero');
-  const [aiGenerating, setAiGenerating] = useState(false);
+  // AI Suggestion state (for new Groq-powered suggestions)
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [suggestedContent, setSuggestedContent] = useState<any>(null);
 
@@ -455,16 +451,6 @@ export default function HeroCreatorConsole() {
             }`}
           >
             Stories ({stories.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('ai-assistant')}
-            className={`px-6 py-3 font-semibold text-sm uppercase tracking-wider transition-all ${
-              activeTab === 'ai-assistant'
-                ? 'text-[var(--lab-primary)] border-b-2 border-[var(--lab-primary)] -mb-[2px]'
-                : 'text-[var(--lab-text-secondary)] hover:text-[var(--lab-text-primary)]'
-            }`}
-          >
-            <Sparkles className="inline h-4 w-4 mr-1" /> AI Assistant
           </button>
         </div>
       </div>
@@ -926,130 +912,6 @@ export default function HeroCreatorConsole() {
         </div>
       )}
 
-      {/* AI Assistant Tab */}
-      {activeTab === 'ai-assistant' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Input */}
-          <div className="lab-card">
-            <div className="lab-card-header">
-              <h3 className="lab-card-title">
-                <Sparkles className="inline h-4 w-4 mr-2" /> AI-Assisted Prompt Creator
-              </h3>
-            </div>
-            <div className="lab-card-body">
-              
-                <div className="space-y-4">
-                  <div>
-                    <label className="lab-label">Generation Mode</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => setAiMode('hero')}
-                        className={`px-4 py-2 rounded font-medium transition-all ${
-                          aiMode === 'hero'
-                            ? 'lab-button'
-                            : 'lab-button-secondary'
-                        }`}
-                      >
-                        Hero Persona
-                      </button>
-                      <button
-                        onClick={() => setAiMode('story')}
-                        className={`px-4 py-2 rounded font-medium transition-all ${
-                          aiMode === 'story'
-                            ? 'lab-button'
-                            : 'lab-button-secondary'
-                        }`}
-                      >
-                        Story
-                      </button>
-                      <button
-                        onClick={() => setAiMode('interaction')}
-                        className={`px-4 py-2 rounded font-medium transition-all ${
-                          aiMode === 'interaction'
-                            ? 'lab-button'
-                            : 'lab-button-secondary'
-                        }`}
-                      >
-                        Interaction
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="lab-label">
-                      Describe your {aiMode === 'hero' ? 'hero' : aiMode === 'story' ? 'story' : 'interaction behavior'}
-                    </label>
-                    <textarea
-                      value={aiPromptInput}
-                      onChange={(e) => setAiPromptInput(e.target.value)}
-                      className="lab-textarea h-32"
-                      placeholder={
-                        aiMode === 'hero'
-                          ? "Describe the hero's name, personality, role, expertise, and tone..."
-                          : aiMode === 'story'
-                          ? "Describe the story narrative, objectives, user journey, and desired outcomes..."
-                          : "Describe the interaction patterns, user engagement style, and behavioral guidelines..."
-                      }
-                    />
-                  </div>
-
-                  <button
-                    onClick={generatePrompt}
-                    disabled={aiGenerating}
-                    className="lab-button w-full disabled:opacity-50"
-                  >
-                    {aiGenerating ? (
-                      <><Loader2 className="inline h-4 w-4 mr-2" /> Generating...</>
-                    ) : (
-                      <><Sparkles className="inline h-4 w-4 mr-2" /> Generate System Prompt</>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Output */}
-            <div className="lab-card">
-              <div className="lab-card-header">
-                <h3 className="lab-card-title">Generated System Prompt</h3>
-              </div>
-              <div className="lab-card-body">
-              
-              {aiGeneratedOutput ? (
-                <div className="space-y-4">
-                  <div className="p-4 bg-[var(--lab-bg-instrument)] border border-[var(--lab-border)] rounded">
-                    <pre className="whitespace-pre-wrap text-sm text-[var(--lab-text-primary)] font-mono">
-                      {aiGeneratedOutput}
-                    </pre>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={applyGeneratedPrompt}
-                      className="flex-1 px-4 py-2 bg-[var(--lab-success)] hover:bg-[var(--lab-success)]/90 text-white font-semibold rounded transition-all"
-                    >
-                      <Save className="inline h-4 w-4 mr-2" /> Apply to Form
-                    </button>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(aiGeneratedOutput)}
-                      className="lab-button-secondary"
-                    >
-                      📋 Copy
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="h-full flex items-center justify-center text-[var(--lab-text-label)]">
-                  <div className="text-center">
-                    <Sparkles className="h-16 w-16 mx-auto mb-4 text-[var(--lab-primary)]" />
-                    <p>AI-generated prompt will appear here</p>
-                  </div>
-                </div>
-              )}
-              </div>
-            </div>
-          </div>
-      )}
     </div>
   );
 }

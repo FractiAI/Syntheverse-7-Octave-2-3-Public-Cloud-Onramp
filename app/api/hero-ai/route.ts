@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 import { db } from '@/utils/db/db';
-import { heroCatalog } from '@/utils/db/schema';
+import { heroCatalogTable } from '@/utils/db/hero-schema';
 import { eq } from 'drizzle-orm';
 
 const groq = new Groq({ 
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     // Fetch hero from database
     const heroes = await db
       .select()
-      .from(heroCatalog)
-      .where(eq(heroCatalog.id, heroId))
+      .from(heroCatalogTable)
+      .where(eq(heroCatalogTable.id, heroId))
       .limit(1);
 
     if (heroes.length === 0) {
