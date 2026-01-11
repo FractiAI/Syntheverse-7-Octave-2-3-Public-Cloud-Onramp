@@ -22,7 +22,11 @@ export default async function FractiAIPage() {
       
       {/* Main Content */}
       <div className="flex-1">
-        <FractiAIBulletin isAuthenticated={!!user} />
+        <FractiAIBulletin 
+          isAuthenticated={!!user}
+          isCreator={isCreator}
+          isOperator={isOperator}
+        />
       </div>
       
       {/* Hero Panel - The Outcast Hero (Fire & Bison) - Mission Control */}

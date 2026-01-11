@@ -23,6 +23,8 @@ import { NovelConstantsNavigator } from './NovelConstantsNavigator';
 
 type FractiAIBulletinProps = {
   isAuthenticated?: boolean;
+  isCreator?: boolean;
+  isOperator?: boolean;
 };
 
 type EpochInfo = {
@@ -46,7 +48,11 @@ function formatTokens(tokens: number): string {
   return tokens.toLocaleString();
 }
 
-export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBulletinProps) {
+export default function FractiAIBulletin({ 
+  isAuthenticated = false,
+  isCreator = false,
+  isOperator = false
+}: FractiAIBulletinProps) {
   const [epochInfo, setEpochInfo] = useState<EpochInfo | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -169,13 +175,24 @@ export default function FractiAIBulletin({ isAuthenticated = false }: FractiAIBu
                       <LayoutDashboard className="h-3.5 w-3.5" />
                       Dashboard
                     </Link>
-                    <Link
-                      href="/creator/dashboard"
-                      className="cockpit-lever inline-flex items-center gap-2 text-xs"
-                    >
-                      <Settings className="h-3.5 w-3.5" />
-                      Creator
-                    </Link>
+                    {isCreator && (
+                      <Link
+                        href="/creator/dashboard"
+                        className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                      >
+                        <Settings className="h-3.5 w-3.5" />
+                        Creator Studio
+                      </Link>
+                    )}
+                    {isOperator && !isCreator && (
+                      <Link
+                        href="/operator/dashboard"
+                        className="cockpit-lever inline-flex items-center gap-2 text-xs"
+                      >
+                        <Settings className="h-3.5 w-3.5" />
+                        Operator
+                      </Link>
+                    )}
                   </>
                 ) : (
                   <>
