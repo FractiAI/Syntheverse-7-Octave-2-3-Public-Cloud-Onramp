@@ -19,7 +19,7 @@ import { HeroPanel } from '@/components/HeroPanel';
 import { ObservationalStudiesNavigator } from '@/components/contributor/ObservationalStudiesNavigator';
 import { WorkshopToolsNavigator } from '@/components/contributor/WorkshopToolsNavigator';
 import { InventionNotebooksNavigator } from '@/components/contributor/InventionNotebooksNavigator';
-import { Eye, Palette, ScrollText, Settings } from 'lucide-react';
+import { Eye, Palette, ScrollText, Settings, Database } from 'lucide-react';
 import Image from 'next/image';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
 import { StabilityMonitor } from '@/components/tsrc';
@@ -140,29 +140,82 @@ export default async function Dashboard() {
             <MobileStatusIndicators />
           </div>
 
-          {/* Leonardo's Welcome Message */}
-          <div className="cockpit-panel p-6 mb-6" style={{
-            background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1) 0%, rgba(218, 165, 32, 0.05) 100%)',
-            borderLeft: '4px solid #CD853F',
+          {/* SYNTH 90T ERC-20 MOTHERLODE - Compact Display at Top */}
+          <div className="cockpit-panel p-4 mb-6" style={{
+            borderLeft: '4px solid #B8860B',
+            background: 'linear-gradient(135deg, rgba(184, 134, 11, 0.08) 0%, rgba(0, 0, 0, 0) 100%)',
           }}>
-            <div className="flex items-start gap-4">
-              <div className="text-4xl">🎨</div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold mb-2" style={{color: '#CD853F', fontFamily: 'Georgia, serif'}}>
-                  The Workshop of Universal Genius
-                </h3>
-                <p className="text-sm text-[var(--text-secondary)] mb-2">
-                  This laboratory embodies Leonardo's principles: <strong>observation</strong>, 
-                  <strong> experimentation</strong>, and <strong>artistic expression</strong>. Each section below 
-                  represents an instrument in the grand workshop of human potential.
-                </p>
-                <p className="text-xs italic" style={{color: 'rgba(218, 165, 32, 0.8)', fontFamily: 'Georgia, serif'}}>
-                  "The noblest pleasure is the joy of understanding. Where the spirit does not work with the hand, 
-                  there is no art."
-                </p>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <Database className="h-5 w-5 text-[#B8860B]" />
+                <div>
+                  <div className="text-xs uppercase tracking-wider text-[#B8860B] font-bold">
+                    SYNTH 90T ERC-20 MOTHERLODE BLOCKMINE
+                  </div>
+                  <div className="text-xs text-[var(--text-secondary)] mt-1">
+                    <span className="font-semibold">AWARENESS KEY:</span> AWARENESSVERSE v2.0 · Fractal Holographic Hydrogen Awareness · Outcast Hero Story
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <div className="text-xs text-[var(--text-secondary)]">Total Supply</div>
+                  <div className="text-lg font-bold text-[#B8860B]">90T</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-[var(--text-secondary)]">Remaining</div>
+                  <div className="text-lg font-bold text-[#FFD700]">90.00T</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-[var(--text-secondary)]">Status</div>
+                  <div className="text-sm font-bold text-green-500">ACTIVE</div>
+                </div>
               </div>
             </div>
+            <div className="mt-3 text-xs text-[var(--text-secondary)] p-2 bg-amber-900/10 border border-amber-900/30 rounded">
+              <strong>ERC-20 BOUNDARY:</strong> SYNTH tokens are internal coordination units for protocol accounting only. Not an investment, security, or financial instrument. No guaranteed value, no profit expectation, no external exchange planned.
+            </div>
           </div>
+
+          {/* Renaissance Navigation Paths - Moved to Top */}
+          {(isCreator || isOperator) && (
+            <div className="cockpit-panel p-4 mb-6" style={{
+              borderLeft: '4px solid #D2691E',
+              background: 'linear-gradient(135deg, rgba(210, 105, 30, 0.1) 0%, rgba(0, 0, 0, 0) 100%)',
+            }}>
+              <div className="flex items-center gap-3 mb-3">
+                <ScrollText className="h-5 w-5 text-[#D2691E]" />
+                <div>
+                  <h2 className="text-base font-bold text-[#D2691E]" style={{fontFamily: 'Georgia, serif'}}>
+                    Master's Studio Access
+                  </h2>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Advanced workshops for system architects and operators
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {isCreator && (
+                  <Link 
+                    href="/creator/dashboard" 
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFD700]/10 hover:bg-[#FFD700]/20 text-[#FFD700] border border-[#FFD700] rounded transition-colors"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span>Fuller Creator Studio</span>
+                  </Link>
+                )}
+                {(isCreator || isOperator) && (
+                  <Link 
+                    href="/operator/dashboard" 
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#4169E1]/10 hover:bg-[#4169E1]/20 text-[#4169E1] border border-[#4169E1] rounded transition-colors"
+                  >
+                    <Settings className="h-4 w-4" />
+                    <span>Faraday Operator Console</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Cloud Channel - Collapsible Top Panel */}
           <div className="mb-6">
@@ -174,7 +227,20 @@ export default async function Dashboard() {
             <OperatorBroadcastBanner />
           </div>
 
-          {/* TSRC Stability Monitor */}
+          {/* Observational Studies Navigator */}
+          <ObservationalStudiesNavigator />
+
+          {/* Workshop Tools Navigator */}
+          <WorkshopToolsNavigator 
+            userEmail={user.email!} 
+            isCreator={isCreator} 
+            isOperator={isOperator} 
+          />
+
+          {/* Invention Notebooks Navigator */}
+          <InventionNotebooksNavigator userEmail={user.email!} />
+
+          {/* TSRC Stability Monitor - Moved to Bottom */}
           <div className="cockpit-panel mb-6" style={{
             borderLeft: '4px solid #B8860B',
             background: 'linear-gradient(135deg, rgba(184, 134, 11, 0.08) 0%, rgba(0, 0, 0, 0) 100%)',
@@ -205,65 +271,6 @@ export default async function Dashboard() {
               />
             </div>
           </div>
-
-          {/* Observational Studies Navigator */}
-          <ObservationalStudiesNavigator />
-
-          {/* Workshop Tools Navigator */}
-          <WorkshopToolsNavigator 
-            userEmail={user.email!} 
-            isCreator={isCreator} 
-            isOperator={isOperator} 
-          />
-
-          {/* Invention Notebooks Navigator */}
-          <InventionNotebooksNavigator userEmail={user.email!} />
-
-          {/* Renaissance Navigation Paths */}
-          {(isCreator || isOperator) && (
-            <div className="cockpit-panel p-6" style={{
-              borderLeft: '4px solid #D2691E',
-              background: 'linear-gradient(135deg, rgba(210, 105, 30, 0.1) 0%, rgba(0, 0, 0, 0) 100%)',
-            }}>
-              <div className="flex items-center gap-3 mb-4">
-                <ScrollText className="h-6 w-6 text-[#D2691E]" />
-                <div>
-                  <h2 className="text-xl font-bold text-[#D2691E]" style={{fontFamily: 'Georgia, serif'}}>
-                    Master's Studio Access
-                  </h2>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    Advanced workshops for system architects and operators
-                  </p>
-                </div>
-              </div>
-              <div className="mb-4 p-3 bg-[#D2691E]/5 border-l-2 border-[#D2691E] rounded">
-                <p className="text-sm text-[var(--text-secondary)] italic">
-                  "The painter has the Universe in his mind and hands. He who can go to the fountain does not go to the water-jar."
-                  <span className="block mt-2 text-xs text-[#D2691E]">— Leonardo da Vinci</span>
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {isCreator && (
-                  <Link 
-                    href="/creator/dashboard" 
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFD700]/10 hover:bg-[#FFD700]/20 text-[#FFD700] border border-[#FFD700] rounded transition-colors"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span>Fuller Creator Studio</span>
-                  </Link>
-                )}
-                {(isCreator || isOperator) && (
-                  <Link 
-                    href="/operator/dashboard" 
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#4169E1]/10 hover:bg-[#4169E1]/20 text-[#4169E1] border border-[#4169E1] rounded transition-colors"
-                  >
-                    <Settings className="h-4 w-4" />
-                    <span>Faraday Operator Console</span>
-                  </Link>
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Leonardo's Closing Wisdom */}
           <div className="cockpit-panel p-6 text-center" style={{
