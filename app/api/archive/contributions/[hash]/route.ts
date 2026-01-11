@@ -40,7 +40,13 @@ export async function GET(request: NextRequest, { params }: { params: { hash: st
       status: contrib.status,
       category: contrib.category,
       metals: (contrib.metals as string[]) || [],
-      metadata: contrib.metadata || {},
+      // THALET Protocol: Include atomic_score as top-level field
+      atomic_score: contrib.atomic_score || null,
+      metadata: {
+        ...(contrib.metadata || {}),
+        // ALSO include in metadata for UI compatibility
+        atomic_score: contrib.atomic_score || null,
+      },
       registered: contrib.registered ?? false,
       registration_date: contrib.registration_date?.toISOString() || null,
       registration_tx_hash: contrib.registration_tx_hash || null,

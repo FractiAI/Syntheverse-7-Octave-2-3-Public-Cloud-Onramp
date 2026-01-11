@@ -59,6 +59,8 @@ export async function GET(request: NextRequest) {
         status: contributionsTable.status,
         category: contributionsTable.category,
         metals: contributionsTable.metals,
+        // THALET Protocol: Include atomic_score column (CRITICAL for UI)
+        atomic_score: contributionsTable.atomic_score,
         // Extract only the lightweight metadata fields needed for list view.
         // This avoids transferring the full metadata JSON (which can contain large Grok responses).
         meta_pod_score: sql<
@@ -178,6 +180,8 @@ export async function GET(request: NextRequest) {
         status: displayStatus, // Use corrected status
         category: contrib.category,
         metals: Array.isArray(contrib.metals) ? (contrib.metals as string[]) : [],
+        // THALET Protocol: Include atomic_score for UI consumption
+        atomic_score: contrib.atomic_score || null,
         // Extract scores from metadata
         pod_score: contrib.meta_pod_score ?? null,
         novelty: contrib.meta_novelty ?? null,
