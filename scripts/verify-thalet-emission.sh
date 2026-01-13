@@ -33,8 +33,10 @@ echo -e "API Base URL: ${YELLOW}${API_BASE_URL}${NC}"
 echo ""
 
 # Step 1: Fetch contribution record
+# NOTE: The canonical public read endpoint in this repo is /api/archive/contributions/<hash>
+# (There is no /api/contributions/<hash> route.)
 echo -e "${BLUE}📡 Step 1: Fetching contribution record...${NC}"
-RESPONSE=$(curl -s "${API_BASE_URL}/api/contributions/${SUBMISSION_HASH}")
+RESPONSE=$(curl -s "${API_BASE_URL}/api/archive/contributions/${SUBMISSION_HASH}")
 
 # Check if response is valid JSON
 if ! echo "$RESPONSE" | jq empty 2>/dev/null; then
@@ -44,15 +46,15 @@ if ! echo "$RESPONSE" | jq empty 2>/dev/null; then
 fi
 
 # Step 2: Extract atomic_score
-echo -e "${BLUE}🔍 Step 2: Extracting atomic_score from metadata...${NC}"
-ATOMIC_SCORE=$(echo "$RESPONSE" | jq '.metadata.atomic_score')
+echo -e "${BLUE}🔍 Step 2: Extracting atomic_score (metadata preferred)...${NC}"
+ATOMIC_SCORE=$(echo "$RESPONSE" | jq '.metadata.atomic_score // .atomic_score')
 
 if [ "$ATOMIC_SCORE" = "null" ] || [ -z "$ATOMIC_SCORE" ]; then
   echo -e "${RED}❌ THALET NOT EMITTING${NC}"
   echo ""
   echo -e "${YELLOW}Fallback check: Looking for legacy score_trace...${NC}"
   SCORE_TRACE=$(echo "$RESPONSE" | jq '.metadata.score_trace.final_score')
-  POD_SCORE=$(echo "$RESPONSE" | jq '.pod_score')
+  POD_SCORE=$(echo "$RESPONSE" | jq '.metadata.pod_score // .pod_score')
   
   echo -e "  Legacy score_trace.final_score: ${YELLOW}${SCORE_TRACE}${NC}"
   echo -e "  Top-level pod_score: ${YELLOW}${POD_SCORE}${NC}"
@@ -127,14 +129,28 @@ echo -e "      formula: ${YELLOW}${FORMULA}${NC}"
 # Step 4: Verify pod_score matches atomic_score.final
 echo ""
 echo -e "${BLUE}🔍 Step 4: Verifying pod_score consistency...${NC}"
-POD_SCORE=$(echo "$RESPONSE" | jq '.pod_score')
+POD_SCORE=$(echo "$RESPONSE" | jq '.metadata.pod_score // .pod_score')
 
-if [ "$POD_SCORE" != "$FINAL" ]; then
+if [ "$POD_SCORE" = "null" ] || [ -z "$POD_SCORE" ]; then
+  echo -e "  ${YELLOW}⚠️${NC}  No top-level pod_score found in this response shape; comparing to legacy score_trace if present."
+  SCORE_TRACE_FINAL=$(echo "$RESPONSE" | jq '.metadata.score_trace.final_score')
+  if [ "$SCORE_TRACE_FINAL" = "null" ]; then
+    echo -e "${RED}❌ Missing both pod_score and legacy score_trace.final_score; cannot assert Zero-Delta.${NC}"
+    exit 1
+  fi
+  if [ "$SCORE_TRACE_FINAL" != "$FINAL" ]; then
+    echo -e "${RED}❌ MISMATCH: score_trace.final_score ($SCORE_TRACE_FINAL) != atomic_score.final ($FINAL)${NC}"
+    exit 1
+  fi
+  echo -e "  ${GREEN}✅${NC} score_trace.final_score matches atomic_score.final: ${GREEN}${FINAL}${NC}"
+else
+  if [ "$POD_SCORE" != "$FINAL" ]; then
   echo -e "${RED}❌ MISMATCH: pod_score ($POD_SCORE) != atomic_score.final ($FINAL)${NC}"
   echo -e "${YELLOW}⚠️  This indicates split-brain scoring (THALET violation)${NC}"
   exit 1
+  fi
+  echo -e "  ${GREEN}✅${NC} pod_score matches atomic_score.final: ${GREEN}${POD_SCORE}${NC}"
 fi
-echo -e "  ${GREEN}✅${NC} pod_score matches atomic_score.final: ${GREEN}${POD_SCORE}${NC}"
 
 # Step 5: Check for legacy score_trace (should still exist for backward compat)
 echo ""

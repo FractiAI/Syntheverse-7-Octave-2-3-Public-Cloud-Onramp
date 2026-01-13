@@ -1,0 +1,7 @@
+[0;34m🔬 THALET EMISSION VERIFICATION[0m
+[0;34m================================[0m
+
+Submission Hash: [1;33m9fa21ebda2549be6c566f9873480417506b78300a3d33e98131d0a2bc8e3c90a[0m
+API Base URL: [1;33mhttps://syntheverse-poc.vercel.app[0m
+
+[0;34m📡 Step 1: Fetching contribution record...[0m

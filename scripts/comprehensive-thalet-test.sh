@@ -70,7 +70,7 @@ test_submission() {
   fi
   
   # Extract fields
-  POD_SCORE=$(echo "$RESPONSE" | jq -r '.pod_score // "null"')
+  POD_SCORE=$(echo "$RESPONSE" | jq -r '.metadata.pod_score // .pod_score // "null"')
   HAS_ATOMIC=$(echo "$RESPONSE" | jq -r '.atomic_score != null')
   ATOMIC_FINAL=$(echo "$RESPONSE" | jq -r '.atomic_score.final // "null"')
   HAS_METADATA_ATOMIC=$(echo "$RESPONSE" | jq -r '.metadata.atomic_score != null')

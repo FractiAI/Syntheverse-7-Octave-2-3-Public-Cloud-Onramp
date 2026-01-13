@@ -31,6 +31,10 @@ export async function GET(request: NextRequest, { params }: { params: { hash: st
 
     const allocationAmount = allocations.reduce((sum, a) => sum + Number(a.reward), 0);
 
+    // MAREK/SIMBA AUDIT: Enforce atomic_score.final as SOVEREIGN SOURCE
+    // Zero-Delta Invariant: All score fields MUST derive from atomic_score.final
+    const sovereignScore = contrib.atomic_score?.final ?? null;
+    
     const formatted = {
       submission_hash: contrib.submission_hash,
       title: contrib.title,
@@ -40,10 +44,23 @@ export async function GET(request: NextRequest, { params }: { params: { hash: st
       status: contrib.status,
       category: contrib.category,
       metals: (contrib.metals as string[]) || [],
-      // THALET Protocol: Include atomic_score as top-level field
+      
+      // ZERO-DELTA ENFORCEMENT: All score fields derive from atomic_score.final (SOVEREIGN)
+      // If atomic_score exists, use atomic_score.final as the ONLY source of truth
+      // If atomic_score missing (legacy data), fall back to metadata.pod_score
+      pod_score: sovereignScore ?? ((contrib.metadata as any)?.pod_score ?? null) as any,
+      novelty: ((contrib.metadata as any)?.novelty ?? null) as any,
+      density: ((contrib.metadata as any)?.density ?? null) as any,
+      coherence: ((contrib.metadata as any)?.coherence ?? null) as any,
+      alignment: ((contrib.metadata as any)?.alignment ?? null) as any,
+      
+      // THALET Protocol: atomic_score is the Single Source of Truth
       atomic_score: contrib.atomic_score || null,
+      
       metadata: {
         ...(contrib.metadata || {}),
+        // Ensure metadata.pod_score matches atomic_score.final (Zero-Delta)
+        pod_score: sovereignScore ?? ((contrib.metadata as any)?.pod_score ?? null),
         // ALSO include in metadata for UI compatibility
         atomic_score: contrib.atomic_score || null,
       },

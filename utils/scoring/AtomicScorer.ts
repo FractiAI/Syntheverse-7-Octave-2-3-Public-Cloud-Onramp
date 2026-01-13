@@ -28,21 +28,26 @@ export interface ExecutionContext {
 }
 
 export interface AtomicScore {
-  final: number; // [0, 10000] - SOVEREIGN FIELD
+  final: number; // [0, 10000] - SOVEREIGN FIELD (full precision)
+  final_clamped: number; // Integer clamped version for display
   execution_context: ExecutionContext;
   trace: {
     composite: number;
-    penalty_percent: number;
-    bonus_multiplier: number;
+    penalty_percent: number; // Full precision
+    penalty_percent_exact: number; // Exact value for recomputation (Marek/Simba audit requirement)
+    bonus_multiplier: number; // Full precision
+    bonus_multiplier_exact: number; // Exact value for recomputation
     seed_multiplier: number;
     edge_multiplier: number;
     formula: string;
     intermediate_steps: {
-      after_penalty: number;
-      after_bonus: number;
+      after_penalty: number; // Full precision
+      after_penalty_exact: number; // Exact value
+      after_bonus: number; // Full precision
+      after_bonus_exact: number; // Exact value
       after_seed: number;
-      raw_final: number;
-      clamped_final: number;
+      raw_final: number; // Full precision before clamp
+      clamped_final: number; // Integer after clamp
     };
   };
   integrity_hash: string; // SHA-256 of deterministic payload
@@ -212,17 +217,21 @@ class AtomicScorerSingleton {
     // Set failHard=true to block emission instead of clamping
     const finalScore = this.neutralizationGate(rawFinal, false);
 
-    // 8. Build trace for auditability
+    // 8. Build trace for auditability (with full precision for Marek/Simba audit)
     const trace = {
       composite,
       penalty_percent: penaltyPercent,
+      penalty_percent_exact: penaltyPercent, // Store exact value for recomputation
       bonus_multiplier: bonusMultiplier,
+      bonus_multiplier_exact: bonusMultiplier, // Store exact value for recomputation
       seed_multiplier: seedMultiplier,
       edge_multiplier: edgeMultiplier,
       formula: this.buildFormula(composite, penaltyPercent, bonusMultiplier, seedMultiplier, edgeMultiplier, finalScore),
       intermediate_steps: {
         after_penalty: afterPenalty,
+        after_penalty_exact: afterPenalty, // Exact value before any display rounding
         after_bonus: afterBonus,
+        after_bonus_exact: afterBonus, // Exact value before any display rounding
         after_seed: afterSeed,
         raw_final: rawFinal,
         clamped_final: finalScore,
@@ -242,6 +251,7 @@ class AtomicScorerSingleton {
     // 11. Construct final immutable atomic score
     const atomicScore: AtomicScore = {
       ...payloadWithoutHash,
+      final_clamped: Math.round(finalScore), // Integer version for display
       integrity_hash: integrityHash,
     };
 

@@ -458,6 +458,10 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
     // Return success with CORS and rate limit headers
     const corsHeaders = createCorsHeaders(request);
     corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value));
+    // MAREK/SIMBA AUDIT: Enforce Zero-Delta Invariant
+    // SOVEREIGN SOURCE: atomic_score.final (if present) overrides all other score fields
+    const sovereignScore = atomicScore?.final ?? evaluation.pod_score;
+    
     return NextResponse.json(
       {
         success: true,
@@ -469,9 +473,16 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           novelty: evaluation.novelty,
           alignment: evaluation.alignment,
           metals: evaluation.metals,
-          pod_score: evaluation.pod_score,
-          // 🔥 THALET Protocol: Include atomic_score in response
+          
+          // ZERO-DELTA ENFORCEMENT: pod_score MUST equal atomic_score.final
+          pod_score: sovereignScore,
+          
+          // 🔥 THALET Protocol: atomic_score is the Single Source of Truth
           atomic_score: atomicScore,
+          
+          // Include score_trace for transparency (but atomic_score.final is authoritative)
+          score_trace: evaluation.score_trace || null,
+          
           status: qualified ? 'qualified' : 'unqualified',
           qualified_founder: qualified,
           qualified_epoch: displayEpoch, // Epoch this submission qualifies for (based on pod_score)

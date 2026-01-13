@@ -75,7 +75,28 @@ export default function EnterpriseSubmitForm({
         </div>
         {submissionHash && (
           <div className="cockpit-text text-xs opacity-75">
-            Submission ID: {submissionHash.substring(0, 16)}...
+            <div className="mb-2">
+              <strong>Submission Hash (HHF-AI):</strong>
+              <div className="font-mono mt-1 break-all">{submissionHash}</div>
+            </div>
+            <div className="flex gap-3">
+              <a 
+                href={`/api/archive/contributions/${submissionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 underline"
+              >
+                📊 View JSON Record
+              </a>
+              <a 
+                href={`/enterprise/contribution/${submissionHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-400 hover:text-green-300 underline"
+              >
+                🔍 View Full Report
+              </a>
+            </div>
           </div>
         )}
         <button

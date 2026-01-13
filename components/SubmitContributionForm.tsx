@@ -632,9 +632,19 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                       </div>
                     </div>
                     <div className="mri-scan-status">
-                      <div className="mri-scan-status-label">Exam ID</div>
-                      <div className="mri-scan-id">
-                        {submissionHash?.substring(0, 12)}...
+                      <div className="mri-scan-status-label">Exam ID (HHF-AI HASH)</div>
+                      <div className="mri-scan-id font-mono text-xs break-all">
+                        {submissionHash}
+                      </div>
+                      <div className="mt-1 text-xs opacity-70">
+                        <a 
+                          href={`/api/archive/contributions/${submissionHash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-cyan-400 hover:text-cyan-300 underline"
+                        >
+                          📊 View JSON
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -914,10 +924,20 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                     Redundancy Overlap:{' '}
                                     {evaluationStatus.evaluation.redundancy.toFixed(1)}%
                                     {evaluationStatus.evaluation.redundancy >= 9.2 && evaluationStatus.evaluation.redundancy <= 19.2 && (
-                                      <span className="ml-2 text-green-600 font-medium">⚡ Sweet Spot Bonus</span>
+                                      <span className="ml-2 text-green-600 font-medium">
+                                        ⚡ Sweet Spot Detected
+                                        {evaluationStatus.evaluation.score_trace?.toggles?.overlap_on 
+                                          ? ' (Bonus Applied)' 
+                                          : ' (Computed, toggle OFF)'}
+                                      </span>
                                     )}
                                     {evaluationStatus.evaluation.redundancy > 30 && (
-                                      <span className="ml-2 text-orange-600 font-medium">⚠ Excess Penalty Applied</span>
+                                      <span className="ml-2 text-orange-600 font-medium">
+                                        ⚠ Excess Overlap Detected
+                                        {evaluationStatus.evaluation.score_trace?.toggles?.overlap_on 
+                                          ? ' (Penalty Applied)' 
+                                          : ' (Computed, toggle OFF)'}
+                                      </span>
                                     )}
                                   </div>
                                 )}

@@ -139,20 +139,20 @@ METAL ALIGNMENT
 
 DETERMINISTIC SCORE CONTRACT
 Every evaluation MUST include:
-1. **scoring_metadata**: score_config_id, sandbox_id, archive_version, evaluation_timestamp
+1. **scoring_metadata**: score_config_id, sandbox_id, archive_version (evaluation_timestamp will be added by backend)
 2. **pod_composition**: Complete calculation path showing sum_dims, multipliers, penalties, sandbox_factor, final_clamped
 3. **archive_similarity_distribution**: overlap_percentile, nearest_10_neighbors (μ ± σ), computation_context (global/per-user/per-sandbox), top_3_matches
 
 REQUIRED JSON OUTPUT
 Return valid JSON (may be in markdown code block). All scores MUST be NUMBERS (not strings/null/undefined).
+NOTE: Do NOT include evaluation_timestamp in your response - this will be added by the backend with the actual execution time.
 
 {
   "classification": ["Research"|"Development"|"Alignment"],
   "scoring_metadata": {
     "score_config_id": "v2.0.13(overlap_penalty_start=30%, sweet_spot=14.2%±5%, weights:N=1.0/D=1.0/C=1.0/A=1.0)",
     "sandbox_id": "<sandbox identifier>",
-    "archive_version": "<version or snapshot>",
-    "evaluation_timestamp": "<ISO 8601>"
+    "archive_version": "<version or snapshot>"
   },
   "pod_composition": {
     "sum_dims": {

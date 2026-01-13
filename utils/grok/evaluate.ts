@@ -1831,26 +1831,28 @@ ${answer}`;
 
     // Extract scoring_metadata and pod_composition from Groq response (if provided)
     // These provide full transparency into Groq's internal calculation
-    const scoringMetadata = evaluation.scoring_metadata || {
-      score_config_id: scoreConfigId,
-      sandbox_id: sandboxContext?.id || 'pru-default',
-      archive_version: archiveVersion,
-      evaluation_timestamp: new Date().toISOString(),
+    // 
+    // MAREK/SIMBA AUDIT FIX: ALWAYS use backend-generated timestamp, NEVER trust LLM timestamp
+    // The LLM cannot know the actual execution time and may generate placeholders
+    // Sovereign timestamp source: atomic_score.execution_context.timestamp_utc
+    const actualTimestamp = new Date().toISOString();
+    const scoringMetadata = {
+      score_config_id: evaluation.scoring_metadata?.score_config_id || scoreConfigId,
+      sandbox_id: evaluation.scoring_metadata?.sandbox_id || sandboxContext?.id || 'pru-default',
+      archive_version: evaluation.scoring_metadata?.archive_version || archiveVersion,
+      evaluation_timestamp: actualTimestamp, // ALWAYS backend-generated, never from LLM
     };
 
-    // MAREK/SIMBA FIX: Validate timestamp isn't a placeholder (catch test fixtures with wrong years)
-    // Current year is 2026, so any timestamp from before current year is suspicious
-    const currentYear = new Date().getFullYear();
-    const timestampYear = parseInt(scoringMetadata.evaluation_timestamp.substring(0, 4));
-    if (timestampYear < currentYear) {
-      const oldTimestamp = scoringMetadata.evaluation_timestamp;
-      scoringMetadata.evaluation_timestamp = new Date().toISOString();
-      debugError('EvaluateWithGroq', '[SCORER WARNING] evaluation_timestamp uses old year (placeholder), replacing with actual time', {
-        oldTimestamp,
-        newTimestamp: scoringMetadata.evaluation_timestamp,
-        expectedYear: currentYear,
-        foundYear: timestampYear,
-      });
+    // Log if LLM tried to provide a timestamp (for debugging)
+    if (evaluation.scoring_metadata?.evaluation_timestamp) {
+      const llmTimestamp = evaluation.scoring_metadata.evaluation_timestamp;
+      if (llmTimestamp !== actualTimestamp) {
+        debug('EvaluateWithGroq', 'LLM provided evaluation_timestamp (ignored, using backend timestamp)', {
+          llm_timestamp: llmTimestamp,
+          actual_timestamp: actualTimestamp,
+          note: 'LLM timestamps are not audited and may be placeholders',
+        });
+      }
     }
 
     // 🔥 CRITICAL FIX: ALWAYS use AtomicScorer values, NEVER trust AI response
