@@ -968,10 +968,11 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                               </div>
                             ) : null}
                           </div>
-                        )}
+                          );
+                        })()}
 
-                            {/* Archive Snapshot Display - TSRC Protocol */}
-                            {(evaluationStatus.evaluation?.tsrc?.archive_snapshot || evaluationStatus.evaluation?.archive_data) && (
+                        {/* Archive Snapshot Display - TSRC Protocol */}
+                        {(evaluationStatus.evaluation?.tsrc?.archive_snapshot || evaluationStatus.evaluation?.archive_data) && (
                               <div className="rounded-lg border border-slate-300 bg-slate-50 p-4">
                                 <div className="mb-2 text-sm font-semibold text-slate-700">Archive Snapshot (TSRC)</div>
                                 {(() => {
