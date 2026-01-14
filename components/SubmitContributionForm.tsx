@@ -1519,7 +1519,6 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                                             </div>
                                           )}
                                         </div>
-                                      </div>
 
                                         {/* Formula String */}
                                         <div className="rounded border border-blue-300 bg-white p-2 text-xs font-mono text-slate-700">
