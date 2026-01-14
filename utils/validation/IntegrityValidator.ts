@@ -85,13 +85,16 @@ export class IntegrityValidator {
     }
 
     // 2. Validate hash integrity (bit-by-bit equality)
+    // CRITICAL: final_clamped is NOT part of the hash (it's for display only)
+    // Backend excludes final_clamped when computing hash, so we must too
     let hashMatch = false;
     if (payload.integrity_hash && errors.length === 0) {
       try {
-        const { integrity_hash, ...payloadWithoutHash } = payload;
+        // Exclude integrity_hash and final_clamped (final_clamped is display-only, not part of hash)
+        const { integrity_hash, final_clamped, ...payloadForHash } = payload;
         const deterministicPayload = JSON.stringify(
-          payloadWithoutHash,
-          Object.keys(payloadWithoutHash).sort()
+          payloadForHash,
+          Object.keys(payloadForHash).sort()
         );
         const computedHash = crypto
           .createHash('sha256')

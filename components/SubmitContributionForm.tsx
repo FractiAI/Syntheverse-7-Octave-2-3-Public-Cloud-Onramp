@@ -151,34 +151,63 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             setSuccess(true);
 
             const metadata = submission.metadata || {};
+            const atomicScore = submission.atomic_score || metadata.atomic_score;
             
             // THALET PROTOCOL: Use centralized extractor (NSP-First pattern eliminates fractalized errors)
-            const scoreResult = extractSovereignScoreWithValidation({
-              atomic_score: submission.atomic_score || metadata.atomic_score,
-              metadata,
-              pod_score: submission.pod_score,
-              evaluation: metadata,
-            });
-            
-            const pocScore = scoreResult.score;
-            let scoreMismatch = scoreResult.hasMismatch;
-            let mismatchDetails = scoreResult.mismatchDetails;
+            // Wrap in try-catch to handle validation errors gracefully (don't hang on hash mismatch)
+            let scoreResult;
+            let pocScore: number | null = null;
+            let scoreMismatch = false;
+            let mismatchDetails: string | null = null;
             let validationError: string | null = null;
             
-            // Set validation warning based on source
-            if (scoreResult.source === 'score_trace') {
-              validationError = 'WARNING: Legacy evaluation format (atomic_score missing). Please re-evaluate.';
-              console.warn('[THALET] Using legacy score_trace.final_score - atomic_score not found');
-            } else if (scoreResult.source === 'pod_score') {
-              validationError = 'ERROR: No atomic_score found. Evaluation may be incomplete or corrupted.';
-              console.warn('[THALET] Using fallback pod_score - no atomic_score or score_trace');
-            } else if (scoreResult.source === 'none') {
-              validationError = 'ERROR: No score data found. Evaluation may be incomplete.';
-              console.error('[THALET] No score data found in submission');
-            }
-            
-            if (scoreMismatch) {
-              console.error('[THALET_ZERO_DELTA_VIOLATION]', mismatchDetails);
+            try {
+              scoreResult = extractSovereignScoreWithValidation({
+                atomic_score: atomicScore,
+                metadata,
+                pod_score: submission.pod_score,
+                evaluation: metadata,
+              });
+              
+              pocScore = scoreResult.score;
+              scoreMismatch = scoreResult.hasMismatch;
+              mismatchDetails = scoreResult.mismatchDetails;
+              
+              // Set validation warning based on source
+              if (scoreResult.source === 'score_trace') {
+                validationError = 'WARNING: Legacy evaluation format (atomic_score missing). Please re-evaluate.';
+                console.warn('[THALET] Using legacy score_trace.final_score - atomic_score not found');
+              } else if (scoreResult.source === 'pod_score') {
+                validationError = 'ERROR: No atomic_score found. Evaluation may be incomplete or corrupted.';
+                console.warn('[THALET] Using fallback pod_score - no atomic_score or score_trace');
+              } else if (scoreResult.source === 'none') {
+                validationError = 'ERROR: No score data found. Evaluation may be incomplete.';
+                console.error('[THALET] No score data found in submission');
+              }
+              
+              if (scoreMismatch) {
+                console.error('[THALET_ZERO_DELTA_VIOLATION]', mismatchDetails);
+              }
+            } catch (validationErr) {
+              // Hash validation failed - show error but don't hang
+              console.error('[THALET] atomic_score validation failed:', validationErr);
+              validationError = validationErr instanceof Error 
+                ? validationErr.message 
+                : 'Integrity hash validation failed. Score may be corrupted.';
+              
+              // Try to extract score anyway (for display, but mark as invalid)
+              if (atomicScore && typeof atomicScore.final === 'number') {
+                pocScore = atomicScore.final;
+                scoreMismatch = true;
+                mismatchDetails = 'Integrity hash mismatch detected. Score displayed but registration blocked.';
+              } else {
+                // Fallback to pod_score if atomic_score invalid
+                pocScore = submission.pod_score ?? null;
+                if (pocScore !== null) {
+                  scoreMismatch = true;
+                  mismatchDetails = 'atomic_score validation failed. Using pod_score fallback (registration blocked).';
+                }
+              }
             }
             
             // Determine qualification based on atomic_score.final ONLY (not metadata.pod_score)
@@ -193,6 +222,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
               console.error('[THALET_QUALIFICATION_MISMATCH]', mismatchDetails);
             }
             
+            // Always set completed: true to clear loading state (even if validation failed)
             setEvaluationStatus({
               completed: true,
               podScore: pocScore,
