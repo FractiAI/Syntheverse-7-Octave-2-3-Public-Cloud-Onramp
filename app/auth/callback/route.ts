@@ -47,10 +47,19 @@ export async function GET(request: NextRequest) {
   // Create the redirect response FIRST - we'll set cookies on it
   const redirectResponse = NextResponse.redirect(new URL(redirectUrl));
 
+  // Validate environment variables before use
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('OAuth callback: Missing Supabase environment variables');
+    return NextResponse.redirect(new URL('/login?error=config', origin));
+  }
+
   // Create Supabase client with cookie handlers that write directly to redirectResponse
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
