@@ -1761,7 +1761,7 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                         </div>
                       </div>
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="flex justify-end gap-2 border-t pt-4">
                     {evaluationStatus.completed || evaluationStatus.error ? (
