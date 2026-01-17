@@ -11,19 +11,26 @@ export const metadata = {
 };
 
 export default async function LandingPage() {
-  const { user, isOperator, isCreator } = await getAuthenticatedUserWithRole();
+  const auth = await getAuthenticatedUserWithRole();
+  const user = auth?.user || null;
+  const isOperator = !!auth?.isOperator;
+  const isCreator = !!auth?.isCreator;
 
   // Redirect approved testers automatically if logged in
   if (user && (isOperator || isCreator)) {
     redirect('/operator/dashboard');
   }
 
+  const systemNoticeText = (user && !isOperator && !isCreator) 
+    ? "WE ARE IN TEST AND WILL BE BACK ONLINE SHORTLY" 
+    : undefined;
+
   return (
     <FractiAILanding
       variant="fractiai"
       isAuthenticated={!!user}
       isApprovedTester={isOperator || isCreator}
-      systemNotice={user && !isOperator && !isCreator ? "WE ARE IN TEST AND WILL BE BACK ONLINE SHORTLY" : undefined}
+      notice={systemNoticeText}
       cta={{
         primaryHref: '/login?redirect=/operator/dashboard',
         primaryLabel: 'TESTER LOGIN',
