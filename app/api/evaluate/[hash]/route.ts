@@ -555,17 +555,22 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
       created_at: new Date(),
     });
 
-    // Update status to unqualified on error
+    // Update status to error on actual execution failure
     try {
       await db
         .update(contributionsTable)
         .set({
-          status: 'unqualified',
+          status: 'error',
           updated_at: new Date(),
+          metadata: {
+            ...((contrib.metadata as any) || {}),
+            evaluation_error: errorMessage,
+            evaluation_failed_at: new Date().toISOString(),
+          } as any
         })
         .where(eq(contributionsTable.submission_hash, submissionHash));
 
-      // Log status change to unqualified
+      // Log status change to error
       const statusChangeLogId = crypto.randomUUID();
       await db.insert(pocLogTable).values({
         id: statusChangeLogId,
@@ -576,14 +581,14 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         title,
         request_data: {
           old_status: 'evaluating',
-          new_status: 'unqualified',
+          new_status: 'error',
           reason: 'evaluation_error',
         },
-        response_data: { status: 'unqualified' },
+        response_data: { status: 'error' },
         created_at: new Date(),
       });
     } catch (updateError) {
-      debugError('EvaluateContribution', 'Error updating status', updateError);
+      debugError('EvaluateContribution', 'Error updating status to error', updateError);
     }
 
     const corsHeaders = createCorsHeaders(request);
@@ -592,7 +597,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
         success: false,
         error: errorMessage,
         submission_hash: submissionHash,
-        status: 'unqualified',
+        status: 'error',
         qualified: false,
       },
       { status: 500, headers: corsHeaders }

@@ -668,55 +668,63 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
           {/* Evaluation Status Dialog - Shows automatically while evaluation is in progress */}
           {evaluationStatus && (
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
               onClick={(e) => {
                 // Close dialog when clicking backdrop (only if evaluation completed or errored)
                 if (evaluationStatus.completed || evaluationStatus.error) {
                   if (e.target === e.currentTarget) {
                     setEvaluationStatus(null);
-                    window.location.href = '/dashboard';
                   }
                 }
               }}
             >
-              <div className="mri-report-card w-full max-w-5xl max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="mri-report-card w-full max-w-5xl max-h-[90vh] overflow-y-auto relative shadow-[0_0_50px_rgba(0,255,255,0.2)] border-2 border-[#00FFFF]/30" onClick={(e) => e.stopPropagation()}>
                 {/* Close Button - Output Delivery Popup X */}
                 {(evaluationStatus.completed || evaluationStatus.error) && (
                   <button 
                     onClick={() => {
                       setEvaluationStatus(null);
-                      // Don't redirect, just close the modal
                     }}
-                    className="absolute top-6 right-6 p-2 bg-slate-800/50 hover:bg-slate-700 text-white rounded-full transition-all z-50 shadow-lg border border-white/10"
+                    className="absolute top-4 right-4 p-2 bg-black border-2 border-slate-700 hover:border-[#00FFFF] text-slate-400 hover:text-[#00FFFF] rounded-full transition-all z-50 shadow-[0_0_15px_rgba(0,0,0,0.5)] group"
                     aria-label="Close"
                   >
-                    <X className="h-5 w-5" />
+                    <X className="h-6 w-6 group-hover:scale-110 transition-transform" />
                   </button>
                 )}
                 {/* MRI Report Header */}
-                <div className="mri-report-header">
+                <div className="mri-report-header bg-black border-b-2 border-[#00FFFF]/50">
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="mri-report-system-label">SYNTHSCAN™ MRI IMAGING REPORT</div>
-                      <div className="flex items-center gap-3">
-                        {evaluationStatus.completed ? (
+                      <div className="mri-report-system-label text-[#00FFFF] font-black italic tracking-[0.3em]">SYNTHSCAN™ MRI IMAGING REPORT</div>
+                      <div className="flex items-center gap-3 mt-2">
+                        {evaluationStatus.completed && evaluationStatus.podScore !== null ? (
                           <>
-                            <div className="mri-scan-icon-complete">
+                            <div className="mri-scan-icon-complete bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]">
                               <CheckCircle2 className="h-6 w-6 text-white" />
                             </div>
                             <div>
-                              <div className="mri-report-title">Examination Complete</div>
-                              <div className="mri-report-subtitle">Diagnostic results available</div>
+                              <div className="mri-report-title text-white">Examination Complete</div>
+                              <div className="mri-report-subtitle text-slate-400">Diagnostic results available</div>
+                            </div>
+                          </>
+                        ) : evaluationStatus.error ? (
+                          <>
+                            <div className="mri-scan-icon-error bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)] p-2 rounded-full">
+                              <AlertTriangle className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <div className="mri-report-title text-red-400">Examination Failed</div>
+                              <div className="mri-report-subtitle text-slate-400">Error encountered during scan</div>
                             </div>
                           </>
                         ) : (
                           <>
-                            <div className="mri-scan-icon-scanning">
-                              <Loader2 className="h-6 w-6 text-white" />
+                            <div className="mri-scan-icon-scanning bg-[#00FFFF] shadow-[0_0_15px_rgba(0,255,255,0.5)] p-2 rounded-full">
+                              <Loader2 className="h-6 w-6 text-black animate-spin" />
                             </div>
                             <div>
-                              <div className="mri-report-title">Scanning in Progress</div>
-                              <div className="mri-report-subtitle">Acquiring imaging data...</div>
+                              <div className="mri-report-title text-[#00FFFF] animate-pulse">Scanning in Progress</div>
+                              <div className="mri-report-subtitle text-slate-400">Acquiring imaging data...</div>
                             </div>
                           </>
                         )}
@@ -1679,91 +1687,74 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                       </div>
                     </>
                   ) : evaluationStatus.error ? (
-                    <div className="rounded-lg border border-orange-500 bg-orange-50 p-4">
-                      <div className="mb-3 flex items-center gap-2 font-semibold text-orange-800">
-                        <AlertTriangle className="h-5 w-5" />
-                        Evaluation Temporarily Unavailable
+                    <div className="rounded-lg border-2 border-red-500/50 bg-red-500/5 p-6 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]">
+                      <div className="mb-4 flex items-center gap-3">
+                        <div className="p-2 bg-red-500 rounded-lg">
+                          <AlertTriangle className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="text-xl font-black text-red-400 uppercase tracking-tighter italic">
+                          Evaluation Failed
+                        </div>
                       </div>
-                      <div className="space-y-2 text-sm text-orange-700">
+                      <div className="space-y-4 text-sm text-slate-300">
+                        <div className="p-4 bg-black/40 border-l-4 border-red-500 rounded">
+                          <p className="font-mono text-red-400">{evaluationStatus.error}</p>
+                        </div>
                         <p>
-                          The AI evaluation service encountered an issue processing your submission.
-                          This is typically a temporary problem with the evaluation provider.
+                          The AI evaluation service encountered a critical error. This may be due to an invalid configuration or temporary service disruption.
                         </p>
-                        <p className="font-medium">
-                          Your submission has been saved and will be automatically retried.
-                        </p>
-                      </div>
-                      <div className="mt-4 rounded border border-orange-200 bg-white p-3 text-xs text-orange-700">
-                        <strong>What to do:</strong>
-                        <ul className="mt-2 list-inside list-disc space-y-1">
-                          <li>
-                            Check your dashboard in a few minutes - evaluation may complete
-                            automatically
-                          </li>
-                          <li>If the issue persists, try submitting again with the same content</li>
-                          <li>Your submission is safely stored and will not be lost</li>
-                        </ul>
+                        <div className="rounded border border-red-500/20 bg-red-500/5 p-4 text-xs">
+                          <strong className="text-red-400 block mb-2">Diagnostic Action:</strong>
+                          <ul className="list-inside list-disc space-y-1 text-slate-400">
+                            <li>Verify Groq API Key configuration in system environment</li>
+                            <li>Your submission has been saved and can be retried from the dashboard</li>
+                            <li>Check the system console for detailed trace logs</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  ) : (
+                  ) : (!evaluationStatus.completed || (evaluationStatus.podScore === null && !evaluationStatus.error)) ? (
                     <div className="space-y-4">
                       {/* Holographic Hydrogen Fractal AI Evaluation Dialog - Loading State */}
-                      <div className="rounded-lg border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-6">
+                      <div className="rounded-lg border-2 border-[#00FFFF]/20 bg-gradient-to-br from-[#00FFFF]/5 via-[#9370DB]/10 to-[#00FFFF]/5 p-6">
                         <div className="flex items-start gap-4">
                           <div className="relative">
-                            <Brain className="h-8 w-8 animate-pulse text-primary" />
-                            <Loader2 className="absolute -right-1 -top-1 h-4 w-4 text-primary" />
+                            <Brain className="h-10 w-10 animate-pulse text-[#00FFFF]" />
+                            <Loader2 className="absolute -right-1 -top-1 h-5 w-5 text-[#00FFFF] animate-spin" />
                           </div>
-                          <div className="flex-1 space-y-3">
+                          <div className="flex-1 space-y-4">
                             <div>
-                              <div className="text-lg font-semibold text-primary">
-                                Syntheverse PoC Evaluation in Progress
+                              <div className="text-xl font-black text-[#00FFFF] uppercase tracking-tighter italic">
+                                HHF-AI Evaluation in Progress
                               </div>
+                              <p className="text-xs text-slate-400 mt-1">Analyzing NSPFRP Matrix Source for Zero-Delta Compliance</p>
                             </div>
 
-                            <div className="space-y-2 text-sm">
-                              <div className="flex items-center gap-2">
-                                <div className="h-2 w-2 animate-pulse rounded-full bg-primary"></div>
-                                <span>Analyzing contribution content...</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="h-2 w-2 animate-pulse rounded-full bg-primary"
-                                  style={{ animationDelay: '0.2s' }}
-                                ></div>
-                                <span>Checking redundancy against archived PoCs...</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="h-2 w-2 animate-pulse rounded-full bg-primary"
-                                  style={{ animationDelay: '0.4s' }}
-                                ></div>
-                                <span>
-                                  Scoring dimensions (Novelty, Density, Coherence, Alignment)...
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="h-2 w-2 animate-pulse rounded-full bg-primary"
-                                  style={{ animationDelay: '0.6s' }}
-                                ></div>
-                                <span>
-                                  Determining metal alignment and Founder qualification...
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="h-2 w-2 animate-pulse rounded-full bg-primary"
-                                  style={{ animationDelay: '0.8s' }}
-                                ></div>
-                                <span>Generating evaluation report...</span>
-                              </div>
+                            <div className="space-y-3 text-sm">
+                              {[
+                                { label: 'Analyzing contribution content...', delay: '0s' },
+                                { label: 'Checking redundancy against archived PoCs...', delay: '0.2s' },
+                                { label: 'Scoring dimensions (Novelty, Density, Coherence, Alignment)...', delay: '0.4s' },
+                                { label: 'Determining metal alignment and Founder qualification...', delay: '0.6s' },
+                                { label: 'Generating evaluation report...', delay: '0.8s' },
+                              ].map((step, idx) => (
+                                <div key={idx} className="flex items-center gap-3">
+                                  <div 
+                                    className="h-2 w-2 rounded-full bg-[#00FFFF] shadow-[0_0_8px_#00FFFF]"
+                                    style={{ 
+                                      animation: 'pulse 2s infinite',
+                                      animationDelay: step.delay 
+                                    }}
+                                  ></div>
+                                  <span className="text-slate-300 font-mono text-xs">{step.label}</span>
+                                </div>
+                              ))}
                             </div>
 
-                            <div className="border-t border-primary/20 pt-3">
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Loader2 className="h-3 w-3" />
-                                <span>This may take a few moments. Please wait...</span>
+                            <div className="border-t border-[#00FFFF]/20 pt-4">
+                              <div className="flex items-center gap-3 text-xs text-[#00FFFF]">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span className="font-bold uppercase tracking-widest">Awaiting Sovereign Signal...</span>
                               </div>
                             </div>
                           </div>
@@ -1870,14 +1861,16 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
 
             {/* Progress Panel - Visible during initial submission */}
             {loading && (
-              <div className="mri-input-section bg-blue-50 border-blue-200 animate-pulse">
+              <div className="mri-input-section bg-[#00FFFF]/5 border-[#00FFFF]/20 animate-pulse">
                 <div className="flex items-center gap-4">
-                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                  <div className="p-2 bg-[#00FFFF]/20 rounded-full">
+                    <Loader2 className="h-8 w-8 text-[#00FFFF] animate-spin" />
+                  </div>
                   <div>
-                    <div className="font-bold text-blue-900 uppercase text-xs tracking-widest">
+                    <div className="font-black text-[#00FFFF] uppercase text-xs tracking-[0.2em]">
                       Transmission in Progress
                     </div>
-                    <div className="text-[10px] text-blue-700 mt-1">
+                    <div className="text-[10px] text-slate-400 mt-1 font-mono">
                       Initializing HHF-AI Handshake... Establishing secure resonance channel...
                     </div>
                   </div>
