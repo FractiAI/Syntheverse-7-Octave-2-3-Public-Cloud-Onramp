@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Navigation } from '@/components/Navigation';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { Footer } from '@/components/Footer';
-import { GlobalSupportButton } from '@/components/GlobalSupportButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,20 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      {/* Required for pricing table */}
-      <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
       <body className={inter.className}>
-        <ErrorBoundary>
-          <div className="flex min-h-screen flex-col bg-background">
-            {/* Navigation component hides itself on dashboard routes */}
-            <Navigation />
-            <main className="flex-1">{children}</main>
-            <Footer />
-
-            {/* Global floating support button */}
-            <GlobalSupportButton />
-          </div>
-        </ErrorBoundary>
+        <div className="flex min-h-screen flex-col bg-[#0a0e1a]">
+          <main className="flex-1">{children}</main>
+        </div>
       </body>
     </html>
   );
