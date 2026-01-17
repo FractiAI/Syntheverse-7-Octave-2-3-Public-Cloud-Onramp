@@ -91,14 +91,14 @@ class AtomicScorerSingleton {
   private neutralizationGate(score: number, failHard: boolean = false): number {
     if (score < 0 || score > 10000) {
       const violation = `Score ${score} outside authorized range [0, 10000]`;
-      
+
       if (failHard) {
         throw new Error(
           `THALET_VIOLATION: ${violation}. ` +
           `Emission blocked per Multi-Level Neutralization Gating.`
         );
       }
-      
+
       // Hard clamp if fail-hard disabled
       console.error(`[THALET_WARNING] ${violation}. Applying hard clamp.`);
       return Math.max(0, Math.min(10000, score));
@@ -144,7 +144,7 @@ class AtomicScorerSingleton {
     final: number
   ): string {
     const parts: string[] = [`Composite=${composite}`];
-    
+
     if (penalty > 0) {
       parts.push(`Penalty=${penalty.toFixed(2)}%`);
     }
@@ -162,107 +162,68 @@ class AtomicScorerSingleton {
   }
 
   /**
-   * ATOMIC SCORE COMPUTATION
-   * This is the ONLY method that produces scores.
+   * ATOMIC SCORE COMPUTATION: INSTRUMENT GRADE RAW
    * 
-   * All scoring logic is centralized here. UI components are prohibited
-   * from performing any calculation, normalization, or interpretation.
-   * 
-   * @param params - Scoring input parameters
-   * @returns Immutable atomic score with integrity hash
+   * Returns ONLY the raw HHF-AI MRI sum of novelty, density, coherence, and alignment.
+   * NO bonuses, NO penalties, NO multipliers.
    */
   public computeScore(params: ScoringInput): AtomicScore {
     this.executionCount++;
 
-    // Generate execution context FIRST
+    // Generate execution context
     const executionContext = this.generateExecutionContext(params.toggles, params.seed);
 
-    // 1. Composite score (immutable sum of dimensions)
+    // RAW SUMMATION (The "No Nothing" logic)
     const composite = params.novelty + params.density + params.coherence + params.alignment;
+    const rawFinal = composite;
 
-    // 2. Penalty calculation (only if overlap toggle ON)
-    let penaltyPercent = 0;
-    if (params.toggles.overlap_on && params.redundancy_overlap_percent > 30) {
-      const excessOverlap = params.redundancy_overlap_percent - 30;
-      const penaltyRange = 98 - 30; // 68%
-      penaltyPercent = (excessOverlap / penaltyRange) * 20; // Max 20% penalty
-      penaltyPercent = Math.max(0, Math.min(20, penaltyPercent));
-    }
-
-    // 3. Bonus calculation (only if overlap toggle ON and in sweet spot)
-    let bonusMultiplier = 1.0;
-    if (params.toggles.overlap_on) {
-      const sweetSpotCenter = 14.2;
-      const sweetSpotTolerance = 5.0;
-      const distanceFromSweet = Math.abs(params.redundancy_overlap_percent - sweetSpotCenter);
-      if (distanceFromSweet <= sweetSpotTolerance) {
-        const bonus = (sweetSpotTolerance - distanceFromSweet) / sweetSpotTolerance;
-        bonusMultiplier = 1.0 + (bonus * 0.10); // Max 10% bonus
-      }
-    }
-
-    // 4. Seed multiplier (only if seed toggle ON AND AI detected seed)
-    const seedMultiplier = (params.toggles.seed_on && params.is_seed_from_ai) ? 1.15 : 1.0;
-
-    // 5. Edge multiplier (only if edge toggle ON AND AI detected edge)
-    const edgeMultiplier = (params.toggles.edge_on && params.is_edge_from_ai) ? 1.12 : 1.0;
-
-    // 6. Compute intermediate scores (step by step)
-    const afterPenalty = composite * (1 - penaltyPercent / 100);
-    const afterBonus = afterPenalty * bonusMultiplier;
-    const afterSeed = afterBonus * seedMultiplier;
-    const rawFinal = afterSeed * edgeMultiplier;
-
-    // 7. MULTI-LEVEL NEUTRALIZATION GATE
-    // Set failHard=true to block emission instead of clamping
+    // TRINARY NEUTRALIZATION GATE (Range protection only)
     const finalScore = this.neutralizationGate(rawFinal, false);
 
-    // 8. Build trace for auditability (with full precision for Marek/Simba audit)
+    // Build trace for auditability (Raw metrics only)
     const trace = {
       composite,
-      penalty_percent: penaltyPercent,
-      penalty_percent_exact: penaltyPercent, // Store exact value for recomputation
-      bonus_multiplier: bonusMultiplier,
-      bonus_multiplier_exact: bonusMultiplier, // Store exact value for recomputation
-      seed_multiplier: seedMultiplier,
-      edge_multiplier: edgeMultiplier,
-      formula: this.buildFormula(composite, penaltyPercent, bonusMultiplier, seedMultiplier, edgeMultiplier, finalScore),
+      penalty_percent: 0,
+      penalty_percent_exact: 0,
+      bonus_multiplier: 1.0,
+      bonus_multiplier_exact: 1.0,
+      seed_multiplier: 1.0,
+      edge_multiplier: 1.0,
+      formula: `(${params.novelty} + ${params.density} + ${params.coherence} + ${params.alignment}) = ${finalScore}`,
       intermediate_steps: {
-        after_penalty: afterPenalty,
-        after_penalty_exact: afterPenalty, // Exact value before any display rounding
-        after_bonus: afterBonus,
-        after_bonus_exact: afterBonus, // Exact value before any display rounding
-        after_seed: afterSeed,
+        after_penalty: composite,
+        after_penalty_exact: composite,
+        after_bonus: composite,
+        after_bonus_exact: composite,
+        after_seed: composite,
         raw_final: rawFinal,
         clamped_final: finalScore,
       },
     };
 
-    // 9. Build atomic payload (without hash)
+    // Build atomic payload
     const payloadWithoutHash: Omit<AtomicScore, 'integrity_hash'> = {
       final: finalScore,
       execution_context: executionContext,
       trace,
     };
 
-    // 10. Generate integrity hash for validation
+    // Generate integrity hash
     const integrityHash = this.generateIntegrityHash(payloadWithoutHash);
 
-    // 11. Construct final immutable atomic score
+    // Construct final immutable atomic score
     const atomicScore: AtomicScore = {
       ...payloadWithoutHash,
-      final_clamped: Math.round(finalScore), // Integer version for display
+      final_clamped: Math.round(finalScore),
       integrity_hash: integrityHash,
     };
 
     console.log(
-      `[AtomicScorer] Execution #${this.executionCount} | ` +
+      `[AtomicScorer] RAW Execution #${this.executionCount} | ` +
       `Final: ${finalScore} | ` +
-      `Hash: ${integrityHash.substring(0, 8)}... | ` +
-      `Toggles: O=${params.toggles.overlap_on} S=${params.toggles.seed_on} E=${params.toggles.edge_on}`
+      `Hash: ${integrityHash.substring(0, 8)}...`
     );
 
-    // Return frozen (immutable) object
     return Object.freeze(atomicScore) as AtomicScore;
   }
 

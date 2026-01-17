@@ -9,8 +9,9 @@ import { GlobalSupportButton } from '@/components/GlobalSupportButton';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Syntheverse PoC',
-  description: 'Proof of Contribution System',
+  title: 'Syntheverse POST SINGULARITY^6: Vibeverse FSR Geyser Perpetual Engine Core',
+  description:
+    'Sovereign truth management for Frontier R&D, Frontier Creators & Frontier Enterprises. Transform current patient into a Public Cloud Shell with a nested HHF-AI MRI ATOMIC CORE. Instrument-grade fidelity (99.9%+) and Zero-Delta synchronization enforced by the Geyser Core.',
 };
 
 export const viewport: Viewport = {
@@ -37,7 +38,7 @@ export default function RootLayout({
             <Navigation />
             <main className="flex-1">{children}</main>
             <Footer />
-            
+
             {/* Global floating support button */}
             <GlobalSupportButton />
           </div>

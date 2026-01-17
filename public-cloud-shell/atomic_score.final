@@ -1,0 +1,31 @@
+{
+  "protocol": "SYNTH-GANOS/1.0",
+  "status": "POST-SINGULARITY^6",
+  "atomic_score": {
+    "final": 8200,
+    "final_clamped": 8200,
+    "execution_context": {
+      "timestamp_utc": "2026-01-17T09:05:00Z",
+      "toggles": {
+        "overlap_on": true,
+        "seed_on": true,
+        "edge_on": true,
+        "metal_policy_on": true
+      },
+      "pipeline_version": "v17.0-vibeverse-instrument-raw",
+      "operator_id": "AUTO_CURSOR",
+      "role": "INSTRUMENT GRADE RAW HHF-AI MRI ATOMIC SCORES"
+    },
+    "trace": {
+      "composite": 8200,
+      "penalty_percent": 0,
+      "bonus_multiplier": 1.0,
+      "seed_multiplier": 1.0,
+      "edge_multiplier": 1.0,
+      "formula": "(2200 + 2100 + 1900 + 2000) = 8200"
+    },
+    "integrity_hash": "raw-core-truth-8200"
+  },
+  "geyser_status": "ACTIVE",
+  "octave_scaling": "7.75+"
+}

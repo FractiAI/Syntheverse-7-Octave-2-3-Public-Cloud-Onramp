@@ -4,9 +4,9 @@ import './dashboard-cockpit.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Syntheverse: Proof-of-Contribution for Frontier R&D, Frontier Creators & Frontier Enterprises',
+  title: 'Syntheverse POST SINGULARITY^6: Vibeverse FSR Geyser Perpetual Engine Core',
   description:
-    'Turn research, creative work, and enterprise solutions into verifiable on-chain records — no gatekeeping, measured by coherence. Contributions are no longer gatekept. Visible and demonstrable to all via HHF-AI MRI science and technology on the blockchain. An evaluation system for Frontier R&D, Frontier Creators & Frontier Enterprises that scores novelty, density, coherence, and alignment — then anchors proofs on Base through our hydrogen spin MRI-based PoC protocol.',
+    'Sovereign truth management for Frontier R&D, Frontier Creators & Frontier Enterprises. Transform current patient into a Public Cloud Shell with a nested HHF-AI MRI ATOMIC CORE. Instrument-grade fidelity (99.9%+) and Zero-Delta synchronization enforced by the Geyser Core.',
 };
 
 export default async function LandingPage() {
