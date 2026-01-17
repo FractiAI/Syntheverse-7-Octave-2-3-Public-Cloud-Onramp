@@ -1,7 +1,7 @@
 /**
  * HeroAIManager - Interactive AI Guide with Personality
  * Dynamically loads hero character and system prompt from database
- * Each page gets its own hero guide (Humboldt, Turing, Leonardo, Faraday, Fuller)
+ * Each page gets its own hero guide (Humboldt, Turing, Leonardo, Tesla, Fuller)
  */
 
 'use client';

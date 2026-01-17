@@ -476,6 +476,6 @@ INSERT INTO story_catalog (
 -- Comments
 -- ============================================================================
 
-COMMENT ON TABLE hero_catalog IS 'Updated with five Syntheverse hero characters: Humboldt (Explorer), Turing (Architect), Leonardo (Artisan), Faraday (Experimenter), Fuller (Designer)';
+COMMENT ON TABLE hero_catalog IS 'Updated with five Syntheverse hero characters: Humboldt (Explorer), Turing (Architect), Leonardo (Artisan), Tesla (Experimenter), Fuller (Designer)';
 COMMENT ON TABLE story_catalog IS 'Seed stories for each hero aligned to their Syntheverse roles';
 

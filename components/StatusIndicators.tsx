@@ -160,25 +160,28 @@ export function StatusIndicators() {
   }, [mounted]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 w-full justify-between">
-      {/* System Component Status Lights */}
-      <div className="flex items-center gap-2 border-r border-[var(--keyline-primary)] pr-3">
-        <div className="cockpit-label text-[10px] whitespace-nowrap" style={{ opacity: 0.7 }}>
-          STATUS
+    <div className="flex flex-wrap items-center gap-3 w-full justify-between bg-black/20 p-2 rounded border border-[#4169E1]/20 shadow-inner">
+      {/* System Component Status Lights - NSPFRP v17 FSR layer */}
+      <div className="flex items-center gap-3 border-r border-[#4169E1]/30 pr-4">
+        <div className="cockpit-label text-[9px] font-black tracking-[0.2em] text-[#4169E1] whitespace-nowrap">
+          SYSTEM_FLUX
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
           {/* System Components */}
           {syntheverseComponents.map((component) => (
             <div
               key={component.name}
-              className="group relative flex items-center gap-1"
+              className="group relative flex items-center gap-1.5"
               title={component.label}
             >
               <div
-                className="h-3 w-3 flex-shrink-0 animate-pulse rounded-full bg-green-500"
-                style={{ boxShadow: '0 0 8px #22c55e, 0 0 12px rgba(34, 197, 94, 0.5)' }}
+                className="h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-green-500"
+                style={{ 
+                  boxShadow: '0 0 10px #22c55e, 0 0 20px rgba(34, 197, 94, 0.4)',
+                  border: '1px solid rgba(255,255,255,0.2)'
+                }}
               ></div>
-              <div className="hidden items-center gap-1 text-[9px] text-green-400 md:flex">
+              <div className="hidden items-center gap-1 text-[8px] font-bold text-green-400/80 md:flex uppercase tracking-tighter">
                 {component.icon}
                 <span className="whitespace-nowrap">{component.label}</span>
               </div>

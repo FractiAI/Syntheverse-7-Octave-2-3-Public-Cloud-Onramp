@@ -29,7 +29,7 @@
 |>   - **Unpublish Protocol (Snap)**: One-click tactical archival for purging test scans from the protocol registry and TSRC snapshots.
 |> - **📦 Repository Optimization (Expanded)**: Streamlined production environment by archiving legacy octaves:
 |>   - **Local Storage Migration**: Alan Turing Command Center™, Leonardo da Vinci Contributors Lab™, and Buckminster Fuller Creator Studio™ (with associated API/components) moved to local desktop archive.
-|>   - **Console Focus**: Primary navigation and resources now strictly prioritize Michael Faraday Operator's Console™ for system calibration.
+|>   - **Console Focus**: Primary navigation and resources now strictly prioritize Nikola Tesla Operator's Console™ for system calibration.
 |> - **📢 Minimalist Test Landing (Enhanced)**: Transformed the landing experience into a dedicated system announcement for "Test & Calibration Mode". Integrated **Google OAuth** as a primary "Cloud Core Shell" access method for secure tester authentication.
 |> - **🔒 THALET Protocol Compliance (Complete)**: Atomic Data Sovereignty model implemented for unassailable scoring integrity:
 >   - **AtomicScorer Singleton**: Single backend source of truth for all scoring (eliminates split-brain execution)

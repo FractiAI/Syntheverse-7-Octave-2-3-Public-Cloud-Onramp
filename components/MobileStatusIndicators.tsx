@@ -45,18 +45,18 @@ export function MobileStatusIndicators() {
   ];
 
   return (
-    <div className="cockpit-panel mb-4 p-3 md:p-4">
-      <div className="mb-3 flex items-center justify-between border-b border-[var(--keyline-primary)] pb-2">
-        <div className="cockpit-label text-[10px] md:text-xs uppercase tracking-wider">
-          STATUS
+    <div className="cockpit-panel mb-4 p-4 bg-black/40 border-[#4169E1]/30">
+      <div className="mb-3 flex items-center justify-between border-b border-[#4169E1]/20 pb-2">
+        <div className="cockpit-label text-[9px] font-black tracking-[0.2em] text-[#4169E1]">
+          SYSTEM_FLUX
         </div>
         {currentTime && (
-          <div className="cockpit-text text-[10px] opacity-70">
+          <div className="cockpit-text text-[9px] font-mono opacity-70 text-[#4169E1]">
             {currentTime}
           </div>
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         {indicators.map((indicator) => {
           const isHealthy = indicator.status === 'healthy';
           const isAttention = indicator.status === 'attention';
@@ -64,11 +64,11 @@ export function MobileStatusIndicators() {
           return (
             <div
               key={indicator.name}
-              className="flex items-center gap-1.5"
+              className="flex items-center gap-2"
               title={indicator.name}
             >
               <div
-                className={`h-2.5 w-2.5 rounded-full ${
+                className={`h-2 w-2 rounded-full ${
                   isHealthy
                     ? 'bg-green-500'
                     : isAttention
@@ -77,13 +77,13 @@ export function MobileStatusIndicators() {
                 }`}
                 style={
                   isHealthy
-                    ? { boxShadow: '0 0 6px #22c55e' }
+                    ? { boxShadow: '0 0 8px #22c55e, 0 0 12px rgba(34, 197, 94, 0.3)' }
                     : isAttention
-                      ? { boxShadow: '0 0 8px #ef4444, 0 0 12px rgba(239, 68, 68, 0.5)' }
-                      : { boxShadow: '0 0 6px #eab308' }
+                      ? { boxShadow: '0 0 10px #ef4444, 0 0 15px rgba(239, 68, 68, 0.5)' }
+                      : { boxShadow: '0 0 8px #eab308' }
                 }
               />
-              <span className="cockpit-text text-[10px] md:text-xs opacity-80 whitespace-nowrap">
+              <span className="cockpit-text text-[8px] font-bold uppercase tracking-tighter text-slate-400">
                 {indicator.name}
               </span>
             </div>

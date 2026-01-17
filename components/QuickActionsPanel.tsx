@@ -33,7 +33,7 @@ export function QuickActionsPanel({
                 className="cockpit-lever inline-flex items-center border-[#4169E1] text-[#4169E1] whitespace-nowrap py-1.5 px-3 text-xs font-bold"
               >
                 <Settings className="mr-1.5 h-3 w-3" />
-                <span>Faraday Console</span>
+                <span>Tesla Console</span>
               </Link>
             )}
 

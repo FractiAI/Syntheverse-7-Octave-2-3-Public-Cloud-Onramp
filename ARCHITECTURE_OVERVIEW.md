@@ -257,7 +257,7 @@ Update `contributions` table:
 The system uses a multi-modal UI themed after historical figures, organized by "Octaves":
 
 - **ACTIVE (Current Octaves)**:
-    - **Michael Faraday Operator's Console™** (`/operator/dashboard`): Admin/Operator interface. Employs Victorian experimental science aesthetics. Focus: System management & diagnostics (SynthScan™ MRI).
+    - **Nikola Tesla Operator's Console™** (`/operator/dashboard`): Admin/Operator interface. Employs high-frequency wireless transmission aesthetics. Focus: System management & diagnostics (SynthScan™ MRI).
     - **Buckminster Fuller Creator Studio™** (`/creator/dashboard`): System architect interface. Employs futuristic geodesic design aesthetics. Focus: System architecture & evolution.
 
 - **ARCHIVE (Local Storage)**:
