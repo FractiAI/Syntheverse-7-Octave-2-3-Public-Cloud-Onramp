@@ -20,7 +20,7 @@ import { FieldMeasurementsNavigator } from '@/components/operator/FieldMeasureme
 import { LaboratoryApparatusNavigator } from '@/components/operator/LaboratoryApparatusNavigator';
 import { ExperimentalRecordsNavigator } from '@/components/operator/ExperimentalRecordsNavigator';
 import { HeroAIManager } from '@/components/HeroAIManager';
-import { Settings, Zap, FlaskConical, BookOpen } from 'lucide-react';
+import { Settings, Zap, FlaskConical, BookOpen, Activity } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MobileStatusIndicators } from '@/components/MobileStatusIndicators';
