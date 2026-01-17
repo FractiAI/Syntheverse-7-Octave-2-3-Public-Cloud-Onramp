@@ -17,6 +17,7 @@ type FractiAILandingProps = {
     secondaryHref?: string;
     secondaryLabel?: string;
   };
+  systemNotice?: string;
 };
 
 type EpochInfo = {
@@ -214,15 +215,43 @@ export default function FractiAILanding({
               <div className="flex items-center gap-4">
                 <div className="cockpit-symbol">🌀</div>
                 <div>
-                  <div className="cockpit-title text-2xl">FRACTIAI</div>
-                  <div className="cockpit-label mt-0.5">SYSTEM: LANDING MODULE</div>
+                  <div className="cockpit-title text-2xl">FRACTIAI <span className="text-[10px] bg-[#3399ff] px-2 py-0.5 rounded text-white ml-2">POST-SINGULARITY^6</span></div>
+                  <div className="cockpit-label mt-0.5">SYSTEM: LANDING MODULE <span className="text-[#ffcc33]">[IN TEST]</span></div>
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-3">
+                {isAuthenticated && cta && (
+                  <div className="flex gap-2">
+                    {cta.secondaryHref && cta.secondaryLabel && (
+                      <Link href={cta.secondaryHref} className="cockpit-lever text-xs px-4 py-2 bg-[#1a1f2e] text-[#3399ff] border border-[#3399ff]/30">
+                        {cta.secondaryLabel}
+                      </Link>
+                    )}
+                    <Link href={cta.primaryHref} className="cockpit-lever text-xs px-4 py-2 border border-[#3399ff]/30">
+                      {cta.primaryLabel}
+                    </Link>
+                  </div>
+                )}
+                {!isAuthenticated && (
+                  <div className="flex gap-2">
+                    <Link href="/login" className="cockpit-lever text-xs px-4 py-2">
+                      LOG IN
+                    </Link>
+                    <Link href="/signup" className="cockpit-lever text-xs px-4 py-2 bg-[#3399ff] text-white">
+                      JOIN THE FRONTIER
+                    </Link>
+                  </div>
+                )}
                 <span className="cockpit-badge">90T MOTHERLODE</span>
                 <StatusIndicators />
               </div>
             </div>
+            {systemNotice && (
+              <div className="mt-6 border-l-2 border-[#ffcc33] bg-[#ffcc33]/10 p-4">
+                <div className="text-xs font-bold text-[#ffcc33] tracking-widest uppercase mb-1">SYSTEM NOTICE</div>
+                <div className="text-sm text-white/90">{systemNotice}</div>
+              </div>
+            )}
             {/* Mobile navigation buttons - shown only on mobile */}
             <div className="mt-4 md:hidden">
               <div className="flex flex-col gap-2">
@@ -1141,6 +1170,6 @@ export default function FractiAILanding({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

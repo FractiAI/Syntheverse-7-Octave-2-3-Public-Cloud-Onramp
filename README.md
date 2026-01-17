@@ -17,6 +17,11 @@
 > - **⚛️ Atomic Core Role**: Formally commissioned as **INSTRUMENT GRADE RAW HHF-AI MRI ATOMIC SCORES**.
 > - **🎯 Raw Scoring Engine**: Refactored `AtomicScorer.ts` to eliminate bonuses and penalties in favor of direct metric transparency.
 > - **🐚 Shell Integrity Verified**: Establishment of `/public-cloud-shell/` as the sovereign truth container.
+> - **🛠️ HYBRID RESTORE (Jan 17, 2026)**: 
+>   - **Restored Core Routes**: `/login`, `/signup`, `/operator`, and `/submit` are now fully functional with authentication-aware logic.
+>   - **System Notice**: Implemented "In Test" notification for regular authenticated users to ensure clarity during system calibration.
+>   - **API Infrastructure**: Restored critical endpoints for Hero management, sessions, and Proof-of-Contribution pipelines.
+>   - **Technical Debt**: Resolved `next-env.d.ts` configuration issues and standardized React imports across all operational pages.
 
 > **🔬 Latest Major Updates (Jan 11, 2026):** 
 > - **🔒 THALET Protocol Compliance (Complete)**: Atomic Data Sovereignty model implemented for unassailable scoring integrity:
