@@ -18,7 +18,8 @@ import {
   FileSearch,
   Award,
   Archive,
-  RefreshCcw
+  RefreshCcw,
+  X
 } from 'lucide-react';
 import { ChamberAPanel, ChamberBPanel, BubbleClassDisplay } from '@/components/scoring/ChamberPanels';
 import { sanitizeNarrative } from '@/utils/narrative/sanitizeNarrative';
@@ -199,7 +200,15 @@ export default function MRIScannerConsole() {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+          {/* Close Button - Output Delivery Popup X */}
+          <button 
+            onClick={() => setResult(null)}
+            className="absolute -top-2 -right-2 p-2 bg-slate-800/50 hover:bg-slate-700 text-white rounded-full transition-all z-20 shadow-lg border border-white/10"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
           {/* Diagnostic Results Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             

@@ -19,6 +19,7 @@ import {
   CreditCard,
   Sprout,
   Link2,
+  X
 } from 'lucide-react';
 import Link from 'next/link';
 import '../app/synthscan-mri.css';
@@ -148,19 +149,12 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
             }
           } else if (submission.status === 'qualified' || submission.status === 'unqualified') {
             // Evaluation complete
-            const metadata = submission.metadata || {};
-            const atomicScore = submission.atomic_score || metadata.atomic_score;
-            
-            // VERIFY SCORE EXISTS BEFORE STOPPING POLL
-            // Sometimes status is updated before atomic_score is fully written due to DB latency
-            if (!atomicScore && !submission.pod_score) {
-              console.warn('[THALET] Status is complete but score is missing, continuing poll...', { pollCount });
-              if (pollCount < maxPolls) return; // Continue polling
-            }
-
             clearInterval(pollInterval);
             setSubmissionHash(submission.submission_hash);
             setSuccess(true);
+
+            const metadata = submission.metadata || {};
+            const atomicScore = submission.atomic_score || metadata.atomic_score;
             
             // THALET PROTOCOL: Use centralized extractor (NSP-First pattern eliminates fractalized errors)
             // Wrap in try-catch to handle validation errors gracefully (don't hang on hash mismatch)
@@ -685,7 +679,20 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 }
               }}
             >
-              <div className="mri-report-card w-full max-w-5xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="mri-report-card w-full max-w-5xl max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                {/* Close Button - Output Delivery Popup X */}
+                {(evaluationStatus.completed || evaluationStatus.error) && (
+                  <button 
+                    onClick={() => {
+                      setEvaluationStatus(null);
+                      // Don't redirect, just close the modal
+                    }}
+                    className="absolute top-6 right-6 p-2 bg-slate-800/50 hover:bg-slate-700 text-white rounded-full transition-all z-50 shadow-lg border border-white/10"
+                    aria-label="Close"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
                 {/* MRI Report Header */}
                 <div className="mri-report-header">
                   <div className="flex items-start justify-between">
@@ -1860,6 +1867,23 @@ export default function SubmitContributionForm({ userEmail }: SubmitContribution
                 </div>
               )}
             </div>
+
+            {/* Progress Panel - Visible during initial submission */}
+            {loading && (
+              <div className="mri-input-section bg-blue-50 border-blue-200 animate-pulse">
+                <div className="flex items-center gap-4">
+                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                  <div>
+                    <div className="font-bold text-blue-900 uppercase text-xs tracking-widest">
+                      Transmission in Progress
+                    </div>
+                    <div className="text-[10px] text-blue-700 mt-1">
+                      Initializing HHF-AI Handshake... Establishing secure resonance channel...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Start Examination Button */}
             <button
