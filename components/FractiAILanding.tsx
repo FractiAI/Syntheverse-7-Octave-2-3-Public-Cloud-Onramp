@@ -32,7 +32,7 @@ export default function FractiAILanding({
             <Lock className="h-12 w-12 text-[#3399ff]" />
           </div>
           <h1 className="text-4xl font-black tracking-tighter text-white uppercase">
-            Syntheverse <span className="text-[#3399ff]">Test Mode</span>
+            Syntheverse <span className="text-[#3399ff]">Sovereign Mode</span>
           </h1>
           <div className="h-px w-full bg-gradient-to-r from-transparent via-[#3399ff]/50 to-transparent" />
         </div>
@@ -64,7 +64,7 @@ export default function FractiAILanding({
                   href={cta?.primaryHref || '/login'} 
                   className="cockpit-lever w-full py-4 flex items-center justify-center gap-3 bg-[#3399ff] text-white hover:bg-[#3399ff]/80 transition-all font-black text-sm tracking-widest"
                 >
-                  {cta?.primaryLabel || 'TESTER LOGIN'}
+                  {cta?.primaryLabel || 'SHELL ACCESS'}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
 
@@ -95,7 +95,7 @@ export default function FractiAILanding({
             ) : (
               <div className="text-center p-4 border border-slate-800 rounded bg-slate-900/50">
                 <p className="text-xs text-slate-500 italic">
-                  Authorization Required: Your account is not registered as an Approved Tester.
+                  Authorization Required: Your account is not registered as an Approved Operator.
                 </p>
               </div>
             )}
