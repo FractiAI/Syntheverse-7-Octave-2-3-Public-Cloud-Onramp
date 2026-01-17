@@ -2,7 +2,9 @@ import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const { origin } = new URL(request.url);
+  const host = request.headers.get('host');
+  const protocol = host?.includes('localhost') ? 'http' : 'https';
+  const origin = host ? `${protocol}://${host}` : new URL(request.url).origin;
 
   // Determine the correct callback URL using request origin (works for both local and production)
   const callbackUrl = `${origin}/auth/callback`;

@@ -8,7 +8,11 @@ import { sendWelcomeEmail } from '@/utils/email/send-welcome-email';
 import { debug, debugError } from '@/utils/debug';
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const host = request.headers.get('host');
+  const protocol = host?.includes('localhost') ? 'http' : 'https';
+  const origin = host ? `${protocol}://${host}` : new URL(request.url).origin;
+  
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/operator/dashboard';
 
