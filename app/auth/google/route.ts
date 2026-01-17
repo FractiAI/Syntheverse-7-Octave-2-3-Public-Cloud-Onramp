@@ -7,14 +7,11 @@ export async function GET(request: Request) {
   // Determine the correct callback URL using request origin (works for both local and production)
   const callbackUrl = `${origin}/auth/callback`;
 
-  // Fallback to environment variable if needed (for edge cases)
-  // Sanitize environment variables - remove whitespace and newlines
-  const fallbackUrl = (
-    process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL
-  )?.trim();
-  const redirectTo = fallbackUrl ? `${fallbackUrl}/auth/callback` : callbackUrl;
+  // Always use the dynamic origin for preview branches and local dev
+  // to avoid PKCE code verifier mismatch
+  const redirectTo = callbackUrl;
 
-  console.log('Google OAuth redirect:', { origin, callbackUrl, redirectTo, fallbackUrl });
+  console.log('Google OAuth redirect:', { origin, callbackUrl, redirectTo });
 
   const supabase = createClient();
 

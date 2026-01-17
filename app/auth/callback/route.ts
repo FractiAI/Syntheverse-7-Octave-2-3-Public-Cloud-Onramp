@@ -17,29 +17,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/login?error=no_code', origin));
   }
 
-  // Determine redirect URL - use same logic as Google OAuth route
-  const forwardedHost = request.headers.get('x-forwarded-host');
-  // Sanitize environment variables - remove whitespace and newlines
-  const fallbackUrl = (
-    process.env.NEXT_PUBLIC_WEBSITE_URL || process.env.NEXT_PUBLIC_SITE_URL
-  )?.trim();
-  const isLocalEnv = process.env.NODE_ENV === 'development';
-
-  let redirectUrl: string;
-  if (isLocalEnv) {
-    redirectUrl = `${origin}${next}`;
-  } else if (forwardedHost) {
-    redirectUrl = `https://${forwardedHost}${next}`;
-  } else if (fallbackUrl) {
-    redirectUrl = `${fallbackUrl}${next}`;
-  } else {
-    redirectUrl = `${origin}${next}`;
+  // Determine redirect URL
+  // Priority: 1. Current Request Origin, 2. Forwarded Host, 3. Fallback Env Var
+  let redirectUrl = `${origin}${next}`;
+  
+  if (!origin.includes('localhost')) {
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    if (forwardedHost) {
+      redirectUrl = `https://${forwardedHost}${next}`;
+    }
   }
 
   console.log('OAuth callback redirect:', {
     origin,
-    forwardedHost,
-    fallbackUrl,
     redirectUrl,
     next,
   });
