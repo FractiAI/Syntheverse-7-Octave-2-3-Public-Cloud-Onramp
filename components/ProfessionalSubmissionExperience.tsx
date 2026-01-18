@@ -583,7 +583,7 @@ export default function ProfessionalSubmissionExperience({ userEmail, isCreator 
                           ? 'text-green-400'
                           : 'text-slate-500'
                       }`}>
-                        {stepNames[step]}
+                        {stepNames[step as keyof typeof stepNames]}
                       </span>
                     </div>
                     {index < allSteps.length - 1 && (

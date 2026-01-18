@@ -98,7 +98,7 @@ export class InstrumentationAPIClient {
     options?: Record<string, any>
   ): Promise<any> {
     const formData = new FormData();
-    formData.append('image', new Blob([imageBuffer.buffer]));
+    formData.append('image', new Blob([imageBuffer]));
     formData.append('coreOutput', JSON.stringify(coreOutput));
     if (options) {
       formData.append('options', JSON.stringify(options));

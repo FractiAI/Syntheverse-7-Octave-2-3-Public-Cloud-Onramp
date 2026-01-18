@@ -14,10 +14,16 @@ export interface ScoringInput {
   density: number;
   coherence: number;
   alignment: number;
+  overlap_percent?: number;
+  is_seed?: boolean;
+  is_edge?: boolean;
   toggles?: {
+    seed_on?: boolean;
     seed_enabled?: boolean;
+    edge_on?: boolean;
     edge_enabled?: boolean;
     overlap_on?: boolean;
+    metal_policy_on?: boolean;
     [key: string]: any;
   };
   seed?: number | null;

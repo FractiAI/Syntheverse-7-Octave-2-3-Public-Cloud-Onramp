@@ -1655,9 +1655,9 @@ ${answer}`;
       density: densityFinal,
       coherence: coherenceScore,
       alignment: alignmentScore,
-      redundancy_overlap_percent: redundancyOverlapPercent,
-      is_seed_from_ai: isSeedFromAI,
-      is_edge_from_ai: isEdgeFromAI,
+      overlap_percent: redundancyOverlapPercent,
+      is_seed: isSeedFromAI,
+      is_edge: isEdgeFromAI,
       toggles: {
         overlap_on: overlapAdjustmentsEnabled,
         seed_on: seedMultiplierEnabled,
