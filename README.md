@@ -1,16 +1,16 @@
-# Post-Singularity^7 Syntheverse FSR^7 Octave 2-3 Public Cloud Shell
+# Syntheverse^7 Octave 2-3 Public Cloud Onramp
 
-**Repository Branding:** Post-Singularity^7 Syntheverse FSR^7 Octave 2-3 Public Cloud Shell  
+**Repository Name:** Syntheverse^7 Octave 2-3 Public Cloud Onramp  
 **Octave Level:** 2-3 (Public Network Shell)  
 **Status:** POST-SINGULARITY^7 ACTIVE  
-**Purpose:** Public cloud infrastructure and network operations  
+**Purpose:** Public cloud infrastructure and network operations onramp  
 **Full Fidelity Animation Experience Console:** Renamed from Operator Console  
 **Payment Methods:** Stripe, Venmo, Cash App, MetaMask (initial), then NSPFRP Auto Mode  
 **Status:** ACTIVE
 
-> **Public Network Shell** - A production-ready Next.js application for Proof-of-Contribution (PoC) submissions, public network operations, and blockchain anchoring on Base Mainnet. Provides full fidelity animation experiences through the Full Fidelity Animation Experience Console.
+> **Public Cloud Onramp** - A production-ready Next.js application for Proof-of-Contribution (PoC) submissions, public network operations, and blockchain anchoring on Base Mainnet. Provides full fidelity animation experiences through the Full Fidelity Animation Experience Console.
 
-> **Instrumentation Core:** The Instrumentation Core has been extracted to a **standalone repository**: [**Instrumentation-Shell-API**](https://github.com/FractiAI/Instrumentation-Shell-API). Post-Singularity^7 Syntheverse FSR^7 Octave 2-3 Public Cloud Shell calls that API for instrument-grade measurements and verification. The API is deployed at `https://instrumentation-shell-api.vercel.app`. See `docs/INSTRUMENTATION_SHELL_API_COMPLETE.md` for details.
+> **Instrumentation Core:** The Instrumentation Core has been extracted to a **standalone repository**: [**Instrumentation-Shell-API**](https://github.com/FractiAI/Instrumentation-Shell-API). Syntheverse^7 Octave 2-3 Public Cloud Onramp calls that API for instrument-grade measurements and verification. The API is deployed at `https://instrumentation-shell-api.vercel.app`. See `docs/INSTRUMENTATION_SHELL_API_COMPLETE.md` for details.
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
@@ -22,6 +22,8 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔬 Latest Major Updates (January 2025):**
+> - **🔐 API Authentication & Paywall Authorization**: Confirmed paywall authorization system - payment authorizes API access, creators/operators bypassed. API authentication configurable via `ENABLE_API_AUTH` environment variable. See `PAYWALL_AUTHORIZATION_CONFIRMATION.md` and `instrumentation-shell-api/API_AUTHENTICATION_CONFIGURATION.md` for details.
+> - **📝 Repository Renamed**: Repository renamed to **Syntheverse^7 Octave 2-3 Public Cloud Onramp** to better reflect its role as an onramp to the Syntheverse^7 platform.
 > - **🔧 Instrumentation Shell API**: Complete NSPFRP-compliant API implementation created in `instrumentation-shell-api/` directory. Ready for deployment to separate Vercel server with closed API access (authorized callers only). See `docs/INSTRUMENTATION_SHELL_API_COMPLETE.md`.
 > - **🌌 Syntheverse^7 Surface**: New comprehensive landing page at `/syntheverse7` showcasing full post-singularity^7 offering with C-S surfaces, marketplaces, experiences, services, enterprise ecosystems, and FSR experience theaters. Safe access anywhere, anytime.
 > - **💾 NSPFRP Local Memory System**: All internal memory (team info, knowledge base) migrated to NSPFRP-compliant local storage in `.agentic-memory/`. Single source of truth for agentic platform continuity. See `docs/AGENTIC_LOCAL_MEMORY_STORAGE_RETRIEVAL_SYSTEM.md`.
