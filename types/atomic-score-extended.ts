@@ -8,9 +8,68 @@
  * - bridgespec_hash in trace
  */
 
-import { AtomicScore } from '@/utils/scoring/AtomicScorer';
 import { TBCheckResult } from '@/types/gates';
 import { BMPPrecisionResult } from '@/types/gates';
+
+// AtomicScore type definition (extracted from AtomicScorer.computeScore return type)
+// This matches the structure returned by AtomicScorer.getInstance().computeScore()
+export interface AtomicScore {
+  final: number;
+  execution_context: {
+    timestamp_utc: string;
+    pipeline_version: string;
+    execution_id: string;
+    config_id: string;
+    sandbox_id: string | null;
+    toggles: {
+      seed_enabled?: boolean;
+      edge_enabled?: boolean;
+      [key: string]: any;
+    };
+    seed: number | string | null;
+  };
+  trace: {
+    composite: number;
+    penalty_percent: number;
+    penalty_percent_exact: number;
+    bonus_multiplier: number;
+    bonus_multiplier_exact: number;
+    seed_multiplier: number;
+    edge_multiplier: number;
+    formula: string;
+    intermediate_steps: {
+      after_penalty: number;
+      after_penalty_exact: number;
+      after_bonus: number;
+      after_bonus_exact: number;
+      after_seed: number;
+      raw_final: number;
+      clamped_final: number;
+    };
+    precision?: {
+      n_hat: number;
+      bubble_class: string;
+      epsilon: number;
+      coherence: number;
+      c: number;
+      penalty_inconsistency: number;
+      tier: 'Copper' | 'Silver' | 'Gold' | 'Community';
+    };
+    thalet?: {
+      T_B?: {
+        T_B_01: any;
+        T_B_02: any;
+        T_B_03: any;
+        T_B_04: any;
+        overall: any;
+        testabilityScore: any;
+        degeneracyPenalty: any;
+      };
+    };
+    bridgespec_hash?: string;
+  };
+  integrity_hash: string;
+}
 
 /**
  * Extended AtomicScore

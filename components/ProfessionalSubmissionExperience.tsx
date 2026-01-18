@@ -42,7 +42,8 @@ import {
   Sparkles,
   Zap,
   Star,
-  Rocket
+  Rocket,
+  Shield
 } from 'lucide-react';
 import Link from 'next/link';
 import { PaymentMethodSelector, type PaymentMethod } from '@/components/PaymentMethodSelector';
@@ -829,7 +830,7 @@ export default function ProfessionalSubmissionExperience({ userEmail }: Professi
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {evaluationStatus.completed && evaluationStatus.podScore !== null && (
+                  {evaluationStatus.completed && evaluationStatus.podScore !== undefined && evaluationStatus.podScore !== null && (
                     <div className="text-center mb-6">
                       <div className="text-6xl font-black mb-2 bg-gradient-to-r from-green-400 to-blue-400 text-transparent bg-clip-text">
                         {evaluationStatus.podScore.toLocaleString()}

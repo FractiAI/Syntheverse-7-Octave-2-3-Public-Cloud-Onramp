@@ -103,13 +103,14 @@ export function calculateFacingSurfaceFidelity(
   );
 
   // Calculate infinite octave fidelity
-  const fidelity = calculateInfiniteOctaveFidelity(
+  const fidelityResult = calculateInfiniteOctaveFidelity(
     surface.octave,
+    7.75,
     recursiveDepth
   );
 
   // Determine if full fidelity achieved
-  const achieved = fidelity >= 1.0 && nspfrpLevel.convergence && nspfrpLevel.stability;
+  const achieved = fidelityResult.fidelity >= 1.0 && fidelityResult.convergence && fidelityResult.stability;
 
   // Scientific peer capture
   const scientificPeerCapture = {
@@ -150,12 +151,12 @@ export function calculateFacingSurfaceFidelity(
   return {
     surface: {
       ...surface,
-      fidelity: achieved ? 1.0 : fidelity,
+      fidelity: achieved ? 1.0 : fidelityResult.fidelity,
       recursiveDepth,
       nspfrpApplied: true,
     },
     fidelity: {
-      current: fidelity,
+      current: fidelityResult.fidelity,
       target: 1.0,
       achieved,
       octave: surface.octave >= 7.75 ? 7.75 : surface.octave,
@@ -164,8 +165,8 @@ export function calculateFacingSurfaceFidelity(
     nspfrp: {
       applied: true,
       recursiveLevel: nspfrpLevel,
-      convergence: nspfrpLevel.convergence,
-      stability: nspfrpLevel.stability,
+      convergence: fidelityResult.convergence,
+      stability: fidelityResult.stability,
     },
     scientificPeerCapture,
     genesis,

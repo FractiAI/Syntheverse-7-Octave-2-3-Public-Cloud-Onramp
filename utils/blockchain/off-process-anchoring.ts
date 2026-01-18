@@ -21,6 +21,9 @@ export interface OffProcessAnchoringRequest {
     alignment?: number;
     pod_score?: number;
     qualified_epoch?: string;
+    state_image_id?: string;
+    state_image_hash?: string;
+    encryption_key_hash?: string;
   };
   metals: string[];
   submissionText?: string | null;

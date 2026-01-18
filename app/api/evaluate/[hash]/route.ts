@@ -550,6 +550,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
     // Get contribution for logging
     let contributor = 'unknown';
     let title = 'unknown';
+    let contribMetadata: any = {};
     try {
       const contrib = await db
         .select()
@@ -559,6 +560,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
       if (contrib && contrib.length > 0) {
         contributor = contrib[0].contributor;
         title = contrib[0].title;
+        contribMetadata = (contrib[0].metadata as any) || {};
       }
     } catch (e) {
       // Ignore error getting contribution
@@ -590,7 +592,7 @@ export async function POST(request: NextRequest, { params }: { params: { hash: s
           status: 'error',
           updated_at: new Date(),
           metadata: {
-            ...((contrib.metadata as any) || {}),
+            ...contribMetadata,
             evaluation_error: errorMessage,
             evaluation_failed_at: new Date().toISOString(),
           } as any

@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       facingSurface: result,
-      snap: snap.snap,
+      snap: snap,
       message: `Facing surface ${surfaceData.id} brought to full infinite octave fidelity`,
     });
   } catch (error) {
