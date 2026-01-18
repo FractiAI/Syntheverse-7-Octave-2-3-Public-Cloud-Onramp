@@ -40,3 +40,6 @@ VERCEL_ENV_VARIABLES.txt
 next-env.d.ts
 
 .vscode
+
+# Instrumentation Shell API (separate project)
+instrumentation-shell-api/
