@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Professional Submission Experience Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10%, 90% {
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-100vh) translateX(20px);
+    opacity: 0.2;
+  }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.holographic-grid {
+  background-image: 
+    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  position: relative;
+}
+
+.hydrogen-particle {
+  pointer-events: none;
+}
+
+/* Mobile optimization - disable animations on mobile */
+@media (max-width: 768px) {
+  .holographic-grid {
+    background-image: none;
+  }
+  
+  .hydrogen-particle {
+    display: none;
+  }
+  
+  .animate-float {
+    animation: none;
+  }
+}
