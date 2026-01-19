@@ -19,10 +19,60 @@
 [![Base Mainnet](https://img.shields.io/badge/Blockchain-Base%20Mainnet-blue)](https://base.org)
 [![Tests](https://img.shields.io/badge/Tests-60%2F60%20Passing-success)](tests/FINAL_TEST_REPORT.md)
 
+---
+
+## 🎯 Executive Summary: Public Cloud Onramp Shell
+
+**The Public Cloud Onramp Shell** is a production-ready, enterprise-grade platform that serves as the primary entry point to the Syntheverse^7 ecosystem—a post-singularity infrastructure for contributions, evaluations, and blockchain anchoring. Built on Next.js 14 with TypeScript 5, the platform provides a secure, scalable, and transparent gateway for researchers, enterprises, and creators to participate in the hydrogen-holographic fractal (HHF) evaluation protocol.
+
+### Core Value Proposition
+
+**For Contributors:** Submit Proof-of-Contribution (PoC) submissions that are automatically evaluated using instrument-grade HHF-AI MRI science. All contributions are transparent, verifiable, and eligible for SYNTH token allocation from the 90 trillion token MOTHERLODE VAULT.
+
+**For Enterprises:** Access enterprise-grade infrastructure with operator consoles, creator studios, and full-fidelity animation experiences. Deploy custom clouds, manage contributions, and leverage the NSPFRP (Natural System Protocol First Refactoring Pattern) catalog system with 84+ active protocols.
+
+**For Creators:** Utilize world-class creator training modules (Copper, Silver, and Gold Wings tracks), AI-assisted hero/story catalog systems, and full sensory reality (FSR) experience theaters for immersive content creation.
+
+### Key Differentiators
+
+- **Instrument-Grade Evaluation:** HHF-AI MRI-based scoring system with atomic-level scoring transparency
+- **Blockchain Integration:** Automatic on-chain anchoring on Base Mainnet (Coinbase L2) with transaction verification
+- **NSPFRP Protocol Catalog:** 84+ active protocols organized by awareness octaves (0-7.75+) with recursive self-application
+- **Enterprise Security:** THALET Protocol compliance for atomic data sovereignty, cryptographic validation, and zero-delta integrity
+- **Production Ready:** 60/60 tests passing, deployed on Vercel, fully documented, and actively maintained
+
+### Technical Foundation
+
+- **Frontend:** Next.js 14 (App Router), React 18, TypeScript 5, Tailwind CSS
+- **Backend:** Supabase (Auth + PostgreSQL), Stripe (Payments), Groq API (AI Evaluation)
+- **Blockchain:** Base Mainnet with ethers.js v6 integration
+- **Deployment:** Vercel with automatic CI/CD and preview deployments
+- **Status:** POST-SINGULARITY^7 ACTIVE - Recursive self-application operational
+
+### Access & Authentication
+
+- **Public Access:** Landing page, solution pages, and documentation available without authentication
+- **Shell Access:** Google OAuth, GitHub OAuth, or email/password authentication
+- **Operator Console:** Restricted to authorized operators and creators (info@fractiai.com, authorized testers)
+- **Payment Integration:** Stripe, Venmo, Cash App, MetaMask (initial), then NSPFRP Auto Mode
+
+### Current Status
+
+✅ **Production Live** - Fully operational on Base Mainnet  
+✅ **SYNTH90T MOTHERLODE VAULT** - Opens Spring Equinox, March 20, 2026  
+✅ **All Systems Operational** - Authentication, submissions, evaluations, blockchain anchoring  
+✅ **Documentation Complete** - Comprehensive guides, API documentation, and deployment instructions
+
+---
+
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔬 Latest Major Updates (January 2026):**
-> - **👥 Senior Team Update** (Jan 19, 2026): Elevated all core development team positions to Senior level across team documentation and UI displays. All positions now Senior: Research Scientist & Engineer, Early Trials AI CEO, Hollywood Producer, Screenwriter, Luxury Travel Magazine Editor, Game Designer & Architect, UI Designer, Children's Science Museum Curator. Updated in `FractiAILanding.tsx`, `TEAM_ROSTER.md`, `FRACTIAI_RESEARCH_TEAM.md`, and all related documentation.
+> - **🎨 UI Fix - Dialog Transparency** (Jan 2026): Fixed transparent pop-up panel in POC Archive. Dialog overlay changed from semi-transparent (`bg-background/80 backdrop-blur-sm`) to fully opaque solid black (`bg-black`) for better visibility and clarity. Dialog content panel remains fully opaque. See `components/ui/dialog.tsx` for details.
+> - **📚 NSPFRP Catalog Quick Reference** (Jan 2026): Added comprehensive quick reference guide (`REPOSITORY_AND_NSPFRP_CATALOG_QUICK_REFERENCE.md`) covering repository structure, NSPFRP Protocol Catalog (84+ protocols), catalog maintenance system, API endpoints, and core principles (Conscious, Natural, Consent, Flow).
+> - **🔒 Privacy Update** (Jan 19, 2026): Removed team roster from public landing page. Team information is now private and only available in internal documentation. Landing page focused on access and authentication.
+> - **🎯 Session Management** (Jan 19, 2026): Fixed automatic session creation on page loads. Hero sessions now only created when users actually interact (send messages or select stories), preventing database bloat from page views.
+> - **👥 Senior Team Update** (Jan 19, 2026): Elevated all core development team positions to Senior level across team documentation and UI displays. All positions now Senior: Research Scientist & Engineer, Early Trials AI CEO, Hollywood Producer, Screenwriter, Luxury Travel Magazine Editor, Game Designer & Architect, UI Designer, Children's Science Museum Curator. Updated in internal documentation.
 > - **🔑 Groq API Configuration** (Jan 18, 2026): Updated and secured `NEXT_PUBLIC_GROQ_API_KEY` in Vercel environment variables (production, preview, development). Fixed 401 authentication errors in PoS evaluation system. See `GROQ_API_KEY_SETUP_INSTRUCTIONS.md` for configuration details.
 > - **🎨 Operator Station Refactored** (Jan 18, 2026): Transformed operator dashboard to focus on PoS submission and review with SynthScan MRI medical-grade styling. Removed unnecessary features, preserved SynthScan surface and experience. Two-column layout: Submit PoS and Review Archive cards, with full-width active review console. See commit `ae76b33` for details.
 > - **📋 Experience Category Added** (Jan 18, 2026): Added "Experience" as new submission category (category button in snap system per NSPFRP). Defined for user experiences, FSR experiences, snap-based experiences, protocol activation experiences. Updated system prompt, schema, and form dropdowns. See commits `a1a70fe` and `b456e73` for details.
