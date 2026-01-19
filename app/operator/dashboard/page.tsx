@@ -10,7 +10,7 @@ import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
 import { FrontierModule } from '@/components/FrontierModule';
 import { FileText, Search, CheckCircle2, Activity } from 'lucide-react';
 import Link from 'next/link';
-import '../synthscan-mri.css';
+import '@/app/synthscan-mri.css';
 
 export const dynamic = 'force-dynamic';
 
