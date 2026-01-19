@@ -99,7 +99,8 @@ export class InstrumentationAPIClient {
   ): Promise<any> {
     const formData = new FormData();
     // Convert Buffer to Uint8Array for Blob compatibility
-    formData.append('image', new Blob([new Uint8Array(imageBuffer)]));
+    const uint8Array = new Uint8Array(imageBuffer.buffer, imageBuffer.byteOffset, imageBuffer.byteLength);
+    formData.append('image', new Blob([uint8Array]));
     formData.append('coreOutput', JSON.stringify(coreOutput));
     if (options) {
       formData.append('options', JSON.stringify(options));

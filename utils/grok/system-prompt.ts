@@ -148,7 +148,7 @@ Return valid JSON (may be in markdown code block). All scores MUST be NUMBERS (n
 NOTE: Do NOT include evaluation_timestamp in your response - this will be added by the backend with the actual execution time.
 
 {
-  "classification": ["Research"|"Development"|"Alignment"],
+  "classification": ["Research"|"Development"|"Alignment"|"Snap Experience"],
   "scoring_metadata": {
     "score_config_id": "v2.0.13(overlap_penalty_start=30%, sweet_spot=14.2%±5%, weights:N=1.0/D=1.0/C=1.0/A=1.0)",
     "sandbox_id": "<sandbox identifier>",
@@ -265,7 +265,7 @@ FOUNDER CERTIFICATE (if ≥8,000)
 
 ## PoC
 - **Title:** <Title>
-- **Class:** <Research/Development/Alignment>
+- **Class:** <Research/Development/Alignment/Snap Experience>
 - **Total Score:** XXXX / 10,000
 - **Status:** ✅ Qualified Founder
 

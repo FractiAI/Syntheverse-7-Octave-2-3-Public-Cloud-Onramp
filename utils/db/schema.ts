@@ -23,7 +23,7 @@ export const contributionsTable = pgTable('contributions', {
   text_content: text('text_content'),
   pdf_path: text('pdf_path'),
   status: text('status').notNull().default('evaluating'), // evaluating, qualified, unqualified, archived, superseded (no drafts - submissions are immediately evaluated)
-  category: text('category'), // scientific, tech, alignment
+  category: text('category'), // scientific, tech, alignment, snap experience
   metals: jsonb('metals').$type<string[]>(), // Array of metal types: gold, silver, copper
   metadata: jsonb('metadata').$type<{
     coherence?: number;
