@@ -96,12 +96,18 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
       if (data.heroes && Array.isArray(data.heroes)) {
         setHeroes(data.heroes);
         
-        // Auto-select first hero if available
+        // Auto-select first hero if available (but don't create session yet)
         if (data.heroes.length > 0 && !selectedHero) {
           const firstHero = data.heroes[0];
           setSelectedHero(firstHero);
           loadStories(firstHero.id);
-          initializeChat(firstHero);
+          // Don't initialize chat/session until user actually interacts
+          const welcomeMessage: Message = {
+            role: 'assistant',
+            content: `Hi! I'm ${firstHero.name}. ${firstHero.tagline} How can I help you today?`,
+            timestamp: new Date().toISOString(),
+          };
+          setMessages([welcomeMessage]);
         }
       }
     } catch (error) {
@@ -120,18 +126,6 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     } catch (error) {
       console.error('[HeroPanel] Error loading stories:', error);
     }
-  };
-
-  const initializeChat = (hero: Hero) => {
-    const welcomeMessage: Message = {
-      role: 'assistant',
-      content: `Hi! I'm ${hero.name}. ${hero.tagline} How can I help you today?`,
-      timestamp: new Date().toISOString(),
-    };
-    setMessages([welcomeMessage]);
-    
-    // Create session
-    createSession(hero.id);
   };
 
   const createSession = async (heroId: string, storyId?: string) => {
@@ -160,7 +154,13 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     setSelectedHero(hero);
     loadStories(hero.id);
     setMessages([]);
-    initializeChat(hero);
+    // Show welcome message but don't create session yet
+    const welcomeMessage: Message = {
+      role: 'assistant',
+      content: `Hi! I'm ${hero.name}. ${hero.tagline} How can I help you today?`,
+      timestamp: new Date().toISOString(),
+    };
+    setMessages([welcomeMessage]);
     
     trackHeroInteraction({
       hero_id: hero.id,
@@ -183,7 +183,10 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     };
     
     setMessages(prev => [...prev, storyMessage]);
-    createSession(selectedHero!.id, story.id);
+    // Create session when user selects a story
+    if (!sessionId) {
+      await createSession(selectedHero!.id, story.id);
+    }
     
     trackStorySelection(selectedHero!.id, story.id, sessionId ?? undefined);
     
@@ -192,7 +195,12 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if (!inputMessage.trim() || isLoading || !selectedHero) return;
+
+    // Create session on first message if it doesn't exist
+    if (!sessionId) {
+      await createSession(selectedHero.id);
+    }
 
     const userMessage: Message = {
       role: 'user',
@@ -237,7 +245,13 @@ export function HeroPanel({ pageContext = 'landing', pillarContext = 'contributo
     if (selectedHero) {
       setMessages([]);
       setSessionId(null);
-      initializeChat(selectedHero);
+      // Show welcome message but don't create session until user sends a message
+      const welcomeMessage: Message = {
+        role: 'assistant',
+        content: `Hi! I'm ${selectedHero.name}. ${selectedHero.tagline} How can I help you today?`,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([welcomeMessage]);
     }
   };
 
