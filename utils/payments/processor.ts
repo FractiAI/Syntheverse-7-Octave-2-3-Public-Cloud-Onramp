@@ -60,6 +60,8 @@ export async function processPayment(
   }
 
   switch (request.method) {
+    case 'paypal':
+      return processPayPalPayment(request);
     case 'onchain':
       return processOnChainPayment(request);
     case 'stripe':
@@ -75,6 +77,24 @@ export async function processPayment(
     default:
       throw new Error(`Unsupported payment method: ${request.method}`);
   }
+}
+
+/**
+ * Process PayPal Payment — Solitary pipe: PayPal @PrudencioMendez924 only
+ */
+const SOLITARY_PIPE_PAYPAL_ME = 'PrudencioMendez924';
+
+async function processPayPalPayment(request: PaymentRequest): Promise<PaymentResult> {
+  const amountUsd = Math.round(request.amount);
+  const paypalMeUrl = `https://www.paypal.com/paypalme/${SOLITARY_PIPE_PAYPAL_ME}/${amountUsd}USD`;
+  return {
+    success: true,
+    paymentId: `paypal-${Date.now()}`,
+    method: 'paypal',
+    amount: request.amount,
+    currency: request.currency,
+    message: `Redirect to PayPal.Me (solitary pipe): ${paypalMeUrl}`,
+  };
 }
 
 /**

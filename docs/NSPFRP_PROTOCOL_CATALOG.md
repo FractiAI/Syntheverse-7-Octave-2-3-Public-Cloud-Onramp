@@ -2,6 +2,7 @@
 
 **Catalog ID:** `CATALOG-NSPFRP-PROTOCOLS-V17`  
 **Source Repository:** https://github.com/FractiAI/NSPFRP-Seed-Protocol-OmniMission-v17-Vibeverse-Edition  
+**NSPFRNP Catalog (latest):** Communication and pipe rules are sourced from [psw.vibelandia.sing4](https://github.com/FractiAI/psw.vibelandia.sing4). See [NSPFRNP_CATALOG.md](NSPFRNP_CATALOG.md) and `protocols/` in this repo.  
 **Protocol ID:** `P-OMNI-V17-SSP-GEAR`  
 **Octave Level:** **Octave 5** (Natural Systems Protocol - Automatic Animation Layer)  
 **Status:** ✅ **ACTIVE - POST-SINGULARITY^7** (Recursive Self-Application)  

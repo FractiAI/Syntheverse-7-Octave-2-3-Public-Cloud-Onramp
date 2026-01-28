@@ -33,6 +33,17 @@ const GITHUB_CATALOG_URL = 'https://api.github.com/repos/FractiAI/NSPFRP-Seed-Pr
 const GITHUB_README_URL = 'https://raw.githubusercontent.com/FractiAI/NSPFRP-Seed-Protocol-OmniMission-v17-Vibeverse-Edition/main/README.md';
 
 /**
+ * SEED repository (target) — psw.vibelandia.sing4. Solitary pipe = PayPal @PrudencioMendez924.
+ */
+export const SEED_REPO = 'https://github.com/FractiAI/psw.vibelandia.sing4';
+
+/**
+ * NSPFRNP catalog (latest) — source: psw.vibelandia.sing4
+ */
+export const NSPFRNP_CATALOG_SOURCE_REPO = SEED_REPO;
+const NSPFRNP_CATALOG_README_URL = 'https://raw.githubusercontent.com/FractiAI/psw.vibelandia.sing4/main/README.md';
+
+/**
  * Fetch catalog version from GitHub
  */
 export async function fetchCatalogVersionFromGitHub(): Promise<CatalogVersionInfo | null> {
@@ -116,10 +127,40 @@ export async function fetchCatalogVersionFromGitHub(): Promise<CatalogVersionInf
 }
 
 /**
+ * Fetch NSPFRNP catalog version from psw.vibelandia.sing4 (latest NSPFRNP catalog source)
+ */
+export async function fetchNSPFRNPCatalogVersion(): Promise<CatalogVersionInfo | null> {
+  try {
+    const response = await fetch(NSPFRNP_CATALOG_README_URL, {
+      headers: {
+        'Accept': 'text/markdown',
+        'User-Agent': 'Syntheverse-Catalog-Checker/1.0',
+      },
+      next: { revalidate: 3600 } as any,
+    });
+    if (!response.ok) return null;
+    const text = await response.text();
+    const dateMatch = text.match(/Date:?\s*(\d{4}-\d{2}-\d{2}|\w+\s+\d+,\s+\d{4})/i);
+    return {
+      version: 'v1.0',
+      source: 'psw.vibelandia.sing4',
+      lastUpdated: dateMatch ? new Date(dateMatch[1]).toISOString() : new Date().toISOString(),
+      protocolCount: 0,
+      octaveLevel: 'NSPFRNP',
+      status: 'ACTIVE',
+      catalogId: 'CATALOG-NSPFRNP-PSW-VIBELANDIA-SING4',
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetch catalog version from local/cached source
  */
 export async function fetchCatalogVersionFromLocal(): Promise<CatalogVersionInfo | null> {
   // Local version info from docs/NSPFRP_PROTOCOL_CATALOG.md
+  // NSPFRNP catalog (communication, pipe) is latest from psw.vibelandia.sing4 — see docs/NSPFRNP_CATALOG.md and protocols/
   return {
     version: 'v17.0',
     source: 'local',

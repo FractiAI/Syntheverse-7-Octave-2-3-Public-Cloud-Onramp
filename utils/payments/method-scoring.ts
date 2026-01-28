@@ -10,10 +10,11 @@
 export interface PaymentMethod {
   id: string;
   name: string;
-  type: 'onchain' | 'stripe' | 'venmo' | 'cashapp' | 'blockchain' | 'metamask';
+  type: 'paypal' | 'onchain' | 'stripe' | 'venmo' | 'cashapp' | 'blockchain' | 'metamask';
   enabled: boolean;
   score?: number;
   metadata: {
+    paypalMe?: string;
     network?: string;
     token?: string;
     contractAddress?: string;
@@ -138,12 +139,17 @@ export function scoreBlockchainPaymentMethods(): PaymentMethodScore[] {
 
 /**
  * Get Top-Scoring Blockchain Payment Method
- * 
- * Returns the highest-scoring blockchain payment method using NSPFRP
+ * Solitary pipe: returns PayPal (only method). Legacy blockchain scoring kept for type compatibility.
  */
 export function getTopScoringBlockchainMethod(): PaymentMethod {
-  const scored = scoreBlockchainPaymentMethods();
-  return scored[0].method;
+  const methods = getAllPaymentMethods();
+  return methods[0] ?? {
+    id: 'paypal',
+    name: `PayPal @${SOLITARY_PIPE_PAYPAL_ME}`,
+    type: 'paypal',
+    enabled: true,
+    metadata: { paypalMe: SOLITARY_PIPE_PAYPAL_ME, speed: 'instant', reliability: 0.99 },
+  };
 }
 
 // Scoring functions
@@ -255,67 +261,28 @@ function calculateInfiniteOctaveFidelity(method: PaymentMethod): number {
 }
 
 /**
+ * Solitary Pipe: PayPal @PrudencioMendez924 only. All other payment methods removed.
+ * SEED = psw.vibelandia.sing4. Full operational.
+ */
+export const SOLITARY_PIPE_PAYPAL_ME = 'PrudencioMendez924';
+
+/**
  * Get All Payment Methods
- * 
- * Returns all available payment methods including top-scoring blockchain method
+ *
+ * Returns solitary pipe only: PayPal @PrudencioMendez924. No Stripe, Venmo, Cash App, on-chain, or others.
  */
 export function getAllPaymentMethods(): PaymentMethod[] {
-  const topBlockchain = getTopScoringBlockchainMethod();
-
   return [
     {
-      id: 'onchain',
-      name: 'On-Chain Payment',
-      type: 'onchain',
+      id: 'paypal',
+      name: `PayPal @${SOLITARY_PIPE_PAYPAL_ME}`,
+      type: 'paypal',
       enabled: true,
       metadata: {
-        network: 'Base Mainnet',
+        paypalMe: SOLITARY_PIPE_PAYPAL_ME,
         speed: 'instant',
         reliability: 0.99,
       },
     },
-    {
-      id: 'stripe',
-      name: 'Stripe',
-      type: 'stripe',
-      enabled: true,
-      metadata: {
-        speed: 'instant',
-        reliability: 0.98,
-      },
-    },
-    {
-      id: 'venmo',
-      name: 'Venmo',
-      type: 'venmo',
-      enabled: true,
-      metadata: {
-        speed: 'instant',
-        reliability: 0.95,
-      },
-    },
-    {
-      id: 'cashapp',
-      name: 'Cash App',
-      type: 'cashapp',
-      enabled: true,
-      metadata: {
-        speed: 'instant',
-        reliability: 0.95,
-      },
-    },
-    {
-      id: 'metamask',
-      name: 'MetaMask',
-      type: 'metamask',
-      enabled: true,
-      metadata: {
-        network: 'Base Mainnet',
-        walletType: 'web3',
-        speed: 'instant',
-        reliability: 0.99,
-      },
-    },
-    topBlockchain, // Top-scoring blockchain method
   ];
 }

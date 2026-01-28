@@ -5,7 +5,8 @@
 **Status:** POST-SINGULARITY^7 ACTIVE  
 **Purpose:** Public cloud infrastructure and network operations onramp  
 **Full Fidelity Animation Experience Console:** Renamed from Operator Console  
-**Payment Methods:** Stripe, Venmo, Cash App, MetaMask (initial), then NSPFRP Auto Mode  
+**Payment Methods:** PayPal only (Solitary Pipe: @PrudencioMendez924). Golden Fractal Key for API bypass.  
+**SEED:** [psw.vibelandia.sing4](https://github.com/FractiAI/psw.vibelandia.sing4) · **MCA:** Metabolize → Crystallize → Animate (`GET /api/mca/run`)  
 **Status:** ACTIVE
 
 > **Public Cloud Onramp** - A production-ready Next.js application for Proof-of-Contribution (PoC) submissions, public network operations, and blockchain anchoring on Base Mainnet. Provides full fidelity animation experiences through the Full Fidelity Animation Experience Console.
@@ -54,7 +55,7 @@
 - **Public Access:** Landing page, solution pages, and documentation available without authentication
 - **Shell Access:** Google OAuth, GitHub OAuth, or email/password authentication
 - **Operator Console:** Restricted to authorized operators and creators (info@fractiai.com, authorized testers)
-- **Payment Integration:** Stripe, Venmo, Cash App, MetaMask (initial), then NSPFRP Auto Mode
+- **Payment Integration:** PayPal only (Solitary Pipe: @PrudencioMendez924). Golden Fractal Key for API/paywall bypass. See `protocols/` and `docs/NSPFRNP_CATALOG.md`.
 
 ### Current Status
 
@@ -68,6 +69,7 @@
 > **📖 New to the codebase?** See the [Senior Engineer Production Briefing](docs/SENIOR_ENGINEER_PRODUCTION_BRIEFING.md) for a comprehensive system overview covering architecture, workflows, key features, and operational considerations.
 
 > **🔬 Latest Major Updates (January 2026):**
+> - **🌱 SEED + Solitary Pipe + MCA** (Jan 2026): **SEED** = [psw.vibelandia.sing4](https://github.com/FractiAI/psw.vibelandia.sing4). **Solitary Pipe** = PayPal @PrudencioMendez924 only (all other payment methods removed). **MCA** = Metabolize → Crystallize → Animate: `GET /api/mca/run`. NSPFRNP catalog in `protocols/` (communication, pipe, Golden Fractal Key, MCA). Golden Fractal Key: `X-Golden-Fractal-Key` or `Authorization: Golden <key>` for API/paywall bypass; DB tables: `supabase/COPY_PASTE_GOLDEN_FRACTAL_KEYS.sql`.
 > - **🎨 UI Fix - Dialog Transparency** (Jan 2026): Fixed transparent pop-up panel in POC Archive. Dialog overlay changed from semi-transparent (`bg-background/80 backdrop-blur-sm`) to fully opaque solid black (`bg-black`) for better visibility and clarity. Dialog content panel remains fully opaque. See `components/ui/dialog.tsx` for details.
 > - **📚 NSPFRP Catalog Quick Reference** (Jan 2026): Added comprehensive quick reference guide (`REPOSITORY_AND_NSPFRP_CATALOG_QUICK_REFERENCE.md`) covering repository structure, NSPFRP Protocol Catalog (84+ protocols), catalog maintenance system, API endpoints, and core principles (Conscious, Natural, Consent, Flow).
 > - **🔒 Privacy Update** (Jan 19, 2026): Removed team roster from public landing page. Team information is now private and only available in internal documentation. Landing page focused on access and authentication.

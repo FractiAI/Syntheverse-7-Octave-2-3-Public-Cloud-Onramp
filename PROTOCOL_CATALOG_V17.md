@@ -11,6 +11,8 @@
 
 **Operators & Syntax Catalog:** See [`docs/CREATOR_STUDIO_OPERATORS_SYNTAX_CATALOG.md`](docs/CREATOR_STUDIO_OPERATORS_SYNTAX_CATALOG.md) for complete button and layer catalog.
 
+**NSPFRNP Catalog (latest):** Communication and pipe rules are sourced from [psw.vibelandia.sing4](https://github.com/FractiAI/psw.vibelandia.sing4). See [docs/NSPFRNP_CATALOG.md](docs/NSPFRNP_CATALOG.md) and `protocols/`.
+
 ---
 
 ## 🎛️ Octave 5: Natural Systems Protocol

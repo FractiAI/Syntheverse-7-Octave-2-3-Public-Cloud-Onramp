@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import Stripe from 'stripe';
 import { debug, debugError } from '@/utils/debug';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
+import { hasValidGoldenFractalKey } from '@/utils/auth/gold-keys';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,9 +63,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Payment exemption: Creator bypasses all, Operator bypasses only their own sandboxes
-    const isExemptFromPayment = isCreator || (isOperator && sandbox.operator === user.email);
+    // NSPFRNP catalog: valid Golden Fractal Key (gold key) also authorizes API access
+    const hasGoldKey = hasValidGoldenFractalKey(request);
+    const isExemptFromPayment =
+      isCreator || (isOperator && sandbox.operator === user.email) || hasGoldKey;
 
-    // Check if sandbox vault is active (unless creator/operator testing)
+    // Check if sandbox vault is active (unless creator/operator/gold-key testing)
     if (sandbox.vault_status !== 'active' && !isExemptFromPayment) {
       return NextResponse.json(
         { error: 'Sandbox vault is not active. Please activate the vault first.' },
@@ -74,10 +78,17 @@ export async function POST(request: NextRequest) {
 
     // If exempt from payment, skip Stripe checkout and directly evaluate
     if (isExemptFromPayment) {
-      debug('EnterpriseSubmit', 'Creator/Operator mode: exempt from payment', {
+      const paymentStatus = isCreator
+        ? 'creator_exempt'
+        : isOperator
+          ? 'operator_exempt'
+          : 'gold_key_exempt';
+      debug('EnterpriseSubmit', 'Exempt from payment', {
         email: user.email,
         isCreator,
         isOperator,
+        hasGoldKey,
+        paymentStatus,
         sandboxId: sandbox_id,
       });
 
@@ -90,9 +101,9 @@ export async function POST(request: NextRequest) {
         content_hash: contentHash,
         text_content: text_content,
         category: category || null,
-        status: 'evaluating', // Direct to evaluation for creator/operator
+        status: 'evaluating', // Direct to evaluation
         metadata: {
-          payment_status: isCreator ? 'creator_exempt' : 'operator_exempt',
+          payment_status: paymentStatus,
           user_email: user.email,
           submission_timestamp: new Date().toISOString(),
           creator_mode: isCreator,
@@ -114,7 +125,10 @@ export async function POST(request: NextRequest) {
         success: true,
         submission_hash: submissionHash,
         exempt: true,
-        message: 'Creator/Operator: Payment bypassed, evaluation started',
+        gold_key_accepted: hasGoldKey,
+        message: hasGoldKey
+          ? 'Golden Fractal Key accepted. Evaluation started.'
+          : 'Creator/Operator: Payment bypassed, evaluation started',
       });
     }
 

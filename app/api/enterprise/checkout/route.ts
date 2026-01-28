@@ -5,6 +5,7 @@ import { db } from '@/utils/db/db';
 import { enterpriseSandboxesTable } from '@/utils/db/schema';
 import crypto from 'crypto';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
+import { hasValidGoldenFractalKey } from '@/utils/auth/gold-keys';
 import { debug } from '@/utils/debug';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -62,14 +63,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is creator or operator - exempt from payment for testing
+    // NSPFRNP catalog: valid Golden Fractal Key (gold key) also authorizes API access
     const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
-    const isExemptFromPayment = isCreator || isOperator;
+    const hasGoldKey = hasValidGoldenFractalKey(request);
+    const isExemptFromPayment = isCreator || isOperator || hasGoldKey;
 
     if (isExemptFromPayment) {
-      debug('EnterpriseCheckout', 'Creator/Operator mode: exempt from payment', {
+      debug('EnterpriseCheckout', 'Exempt from payment', {
         email: user.email,
         isCreator,
         isOperator,
+        hasGoldKey,
       });
 
       // Return success without creating checkout session
@@ -106,17 +110,21 @@ export async function POST(request: NextRequest) {
             metadata: {
               creator_exempt: isCreator,
               operator_exempt: isOperator,
+              gold_key_exempt: hasGoldKey,
               payment_bypassed: true,
             },
           });
-        
+
         sandboxId = newSandboxId;
       }
 
       return NextResponse.json({
         success: true,
         exempt: true,
-        message: 'Creator/Operator: Payment bypassed for testing',
+        gold_key_accepted: hasGoldKey,
+        message: hasGoldKey
+          ? 'Golden Fractal Key accepted. Payment bypassed.'
+          : 'Creator/Operator: Payment bypassed for testing',
         checkout_url: null,
         session_id: null,
         sandbox_id: sandboxId,

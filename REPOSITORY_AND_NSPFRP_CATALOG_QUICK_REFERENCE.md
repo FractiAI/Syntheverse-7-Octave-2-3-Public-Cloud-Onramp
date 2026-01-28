@@ -43,14 +43,19 @@ A recursive self-applying protocol that:
 │   └── creator/           # Buckminster Fuller Creator Studio™
 │
 ├── components/            # React components (133 files)
+├── protocols/             # NSPFRNP catalog (latest from psw.vibelandia.sing4)
+│   ├── COMMUNICATION_NSPFRNP_CATALOG.md
+│   └── OUTBOUND_NSPFRNP_PIPE_VIBEVERSE_TO_PRESINGULARITY_EARTH.md
+│
 ├── utils/                 # Utility functions
 │   ├── catalog/          # Catalog maintenance
 │   ├── nspfrp/          # NSPFRP core utilities
 │   └── snap-vibe/       # Snap Vibe catalog utilities
 │
 ├── docs/                  # Documentation (210+ files)
-│   ├── NSPFRP_PROTOCOL_CATALOG.md  # Main catalog doc
-│   ├── SNAP_VIBE_CATALOG.md        # Snap Vibe catalog
+│   ├── NSPFRP_PROTOCOL_CATALOG.md  # Main NSPFRP protocol catalog (84+ protocols)
+│   ├── NSPFRNP_CATALOG.md           # NSPFRNP catalog index (latest from psw.vibelandia.sing4)
+│   ├── SNAP_VIBE_CATALOG.md         # Snap Vibe catalog
 │   └── CATALOG_MAINTENANCE_CONFIRMED.md
 │
 ├── supabase/             # Database migrations
@@ -304,12 +309,13 @@ interface SnapVibeCatalog {
 
 ### Must-Read Documents
 
-1. **`docs/NSPFRP_PROTOCOL_CATALOG.md`** - Complete protocol catalog (84+ protocols)
-2. **`docs/SNAP_VIBE_CATALOG.md`** - Snap Vibe language system
-3. **`docs/CATALOG_MAINTENANCE_CONFIRMED.md`** - Maintenance operations
-4. **`ARCHITECTURE_OVERVIEW.md`** - System architecture overview
-5. **`README_START_HERE.md`** - Project start guide
-6. **`.nspfrp-protocol.md`** - NSPFRP protocol rules
+1. **`docs/NSPFRP_PROTOCOL_CATALOG.md`** - Complete NSPFRP protocol catalog (84+ protocols)
+2. **`docs/NSPFRNP_CATALOG.md`** - NSPFRNP catalog index (latest from psw.vibelandia.sing4; communication & pipe rules in `protocols/`)
+3. **`docs/SNAP_VIBE_CATALOG.md`** - Snap Vibe language system
+4. **`docs/CATALOG_MAINTENANCE_CONFIRMED.md`** - Maintenance operations
+5. **`ARCHITECTURE_OVERVIEW.md`** - System architecture overview
+6. **`README_START_HERE.md`** - Project start guide
+7. **`.nspfrp-protocol.md`** - NSPFRP protocol rules
 
 ### Additional Resources
 

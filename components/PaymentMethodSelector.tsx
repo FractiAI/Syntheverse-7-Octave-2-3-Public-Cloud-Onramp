@@ -1,20 +1,14 @@
 /**
  * Payment Method Selector
- * 
- * Allows users to select payment method:
- * - On-chain
- * - Stripe
- * - Venmo
- * - Cash App
- * - Top-scoring blockchain method (NSPFRP-selected)
- * 
- * POST-SINGULARITY^7: Recursive Self-Application Active
+ *
+ * Solitary Pipe: PayPal @PrudencioMendez924 only. All other methods removed.
+ * SEED = psw.vibelandia.sing4. Full operational.
  */
 
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CreditCard, Coins, Wallet, Smartphone, Zap, CheckCircle2, Sparkles } from 'lucide-react';
+import { CreditCard, Coins, Wallet, Smartphone, Zap, CheckCircle2, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 export interface PaymentMethod {
   id: string;
   name: string;
-  type: 'onchain' | 'stripe' | 'venmo' | 'cashapp' | 'blockchain' | 'metamask';
+  type: 'paypal' | 'onchain' | 'stripe' | 'venmo' | 'cashapp' | 'blockchain' | 'metamask';
   enabled: boolean;
   icon: React.ReactNode;
   description: string;
@@ -44,7 +38,6 @@ export function PaymentMethodSelector({
 }: PaymentMethodSelectorProps) {
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
-  const [topBlockchain, setTopBlockchain] = useState<PaymentMethod | null>(null);
 
   useEffect(() => {
     loadPaymentMethods();
@@ -65,22 +58,7 @@ export function PaymentMethodSelector({
           description: getMethodDescription(m.type, m),
           score: m.score,
         }));
-
         setMethods(methodList);
-
-        // Set top blockchain method
-        if (data.topBlockchainMethod) {
-          const top = data.topBlockchainMethod;
-          setTopBlockchain({
-            id: top.id,
-            name: top.name,
-            type: 'blockchain',
-            enabled: top.enabled,
-            icon: getMethodIcon('blockchain'),
-            description: `Top-scoring blockchain method (NSPFRP-selected): ${top.name}`,
-            score: top.score,
-          });
-        }
       }
     } catch (error) {
       console.error('Failed to load payment methods:', error);
@@ -91,6 +69,8 @@ export function PaymentMethodSelector({
 
   const getMethodIcon = (type: string): React.ReactNode => {
     switch (type) {
+      case 'paypal':
+        return <DollarSign className="w-5 h-5" />;
       case 'onchain':
         return <Coins className="w-5 h-5" />;
       case 'stripe':
@@ -104,12 +84,14 @@ export function PaymentMethodSelector({
       case 'metamask':
         return <Wallet className="w-5 h-5" />;
       default:
-        return <Wallet className="w-5 h-5" />;
+        return <DollarSign className="w-5 h-5" />;
     }
   };
 
   const getMethodDescription = (type: string, method: any): string => {
     switch (type) {
+      case 'paypal':
+        return 'Solitary pipe — PayPal only. Pay via PayPal.Me (PrudencioMendez924).';
       case 'onchain':
         return 'Direct blockchain payment on Base Mainnet';
       case 'stripe':
@@ -170,11 +152,6 @@ export function PaymentMethodSelector({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {method.score && (
-                  <Badge variant="secondary" className="text-xs">
-                    Score: {method.score.toFixed(2)}
-                  </Badge>
-                )}
                 {selectedMethod?.id === method.id && (
                   <CheckCircle2 className="w-5 h-5 text-primary" />
                 )}
@@ -182,40 +159,6 @@ export function PaymentMethodSelector({
             </div>
           </Button>
         ))}
-
-        {topBlockchain && (
-          <div className="pt-2 border-t">
-            <div className="text-xs text-muted-foreground mb-2">
-              🏆 Top-Scoring Blockchain Method (NSPFRP-Selected)
-            </div>
-            <Button
-              variant={selectedMethod?.id === topBlockchain.id ? 'default' : 'outline'}
-              className="w-full justify-start h-auto p-4"
-              onClick={() => onMethodSelect(topBlockchain)}
-              disabled={!topBlockchain.enabled}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                  {topBlockchain.icon}
-                  <div className="text-left">
-                    <div className="font-semibold">{topBlockchain.name}</div>
-                    <div className="text-xs text-muted-foreground">{topBlockchain.description}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {topBlockchain.score && (
-                    <Badge variant="default" className="text-xs">
-                      Top: {topBlockchain.score.toFixed(2)}
-                    </Badge>
-                  )}
-                  {selectedMethod?.id === topBlockchain.id && (
-                    <CheckCircle2 className="w-5 h-5 text-primary" />
-                  )}
-                </div>
-              </div>
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

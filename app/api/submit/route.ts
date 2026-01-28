@@ -9,6 +9,7 @@ import { vectorizeSubmission } from '@/utils/vectors';
 import { sendApprovalRequestEmail } from '@/utils/email/send-approval-request';
 import { isQualifiedForOpenEpoch, getOpenEpochInfo } from '@/utils/epochs/qualification';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
+import { hasValidGoldenFractalKey } from '@/utils/auth/gold-keys';
 import * as crypto from 'crypto';
 import Stripe from 'stripe';
 import {
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
     // Category is determined by evaluation, not user input
     const category = null;
     const text_content = (formData.get('text_content') as string | null) || '';
-    const payment_method = (formData.get('payment_method') as string | null) || 'stripe'; // Default to Stripe
+    const payment_method = (formData.get('payment_method') as string | null) || 'paypal'; // Solitary pipe: PayPal only
     const stateImageFile = formData.get('state_image') as File | null;
     const useStateImageEncryption = formData.get('use_state_image_encryption') === 'true';
 
@@ -285,18 +286,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is creator or operator - exempt from payment for testing
+    // NSPFRNP catalog: valid Golden Fractal Key (gold key) also authorizes API access (paywall bypass)
     const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
-    const isExemptFromPayment = isCreator || isOperator;
+    const hasGoldKey = hasValidGoldenFractalKey(request);
+    const isExemptFromPayment = isCreator || isOperator || hasGoldKey;
 
     if (isExemptFromPayment) {
-      debug('SubmitContribution', 'Creator/Operator mode: exempt from payment', {
+      const paymentStatus = isCreator
+        ? 'creator_exempt'
+        : isOperator
+          ? 'operator_exempt'
+          : 'gold_key_exempt';
+      debug('SubmitContribution', 'Exempt from payment', {
         email: user.email,
         isCreator,
         isOperator,
+        hasGoldKey,
+        paymentStatus,
         submissionHash,
       });
 
-      // Save submission directly with evaluating status (operator exempt)
+      // Save submission directly with evaluating status (exempt)
       try {
         await db.insert(contributionsTable).values({
           submission_hash: submissionHash,
@@ -305,14 +315,15 @@ export async function POST(request: NextRequest) {
           content_hash: contentHash,
           category: category,
           metals: [], // Will be determined during evaluation
-          status: 'evaluating', // Direct to evaluation for operator
+          status: 'evaluating', // Direct to evaluation
           text_content: text_content.trim(),
           metadata: {
-            payment_status: isCreator ? 'creator_exempt' : 'operator_exempt',
+            payment_status: paymentStatus,
             user_email: user.email,
             submission_timestamp: new Date().toISOString(),
             creator_mode: isCreator,
             operator_mode: isOperator,
+            gold_key_exempt: hasGoldKey,
             use_state_image_encryption: useStateImageEncryption,
             state_image_path: stateImagePath,
           },
@@ -337,6 +348,7 @@ export async function POST(request: NextRequest) {
             user_email: user.email,
             creator_mode: isCreator,
             operator_mode: isOperator,
+            gold_key_exempt: hasGoldKey,
           },
           created_at: new Date(),
         });
@@ -366,9 +378,12 @@ export async function POST(request: NextRequest) {
             submission_hash: submissionHash,
             message: isCreator
               ? 'Creator submission accepted. Evaluation in progress.'
-              : 'Operator submission accepted. Evaluation in progress.',
+              : isOperator
+                ? 'Operator submission accepted. Evaluation in progress.'
+                : 'Golden Fractal Key accepted. Evaluation in progress.',
             creator_mode: isCreator,
             operator_mode: isOperator,
+            gold_key_accepted: hasGoldKey,
           },
           { headers: rateLimitHeaders }
         );
@@ -438,16 +453,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create checkout session for $500 submission fee
+    // Solitary pipe: PayPal @PrudencioMendez924 only. $500 submission fee.
+    const SUBMISSION_FEE_USD = 500;
+    const PAYPAL_ME = 'PrudencioMendez924';
+    const paypalMeUrl = `https://www.paypal.com/paypalme/${PAYPAL_ME}/${SUBMISSION_FEE_USD}USD`;
+
+    if (payment_method === 'paypal') {
+      // Redirect to PayPal.Me — solitary pipe. No Stripe.
+      debug('SubmitContribution', 'PayPal solitary pipe: redirect to PayPal.Me', {
+        submissionHash,
+        paypalMe: PAYPAL_ME,
+      });
+      const corsHeaders = createCorsHeaders(request);
+      corsHeaders.forEach((value, key) => rateLimitHeaders.set(key, value));
+      return NextResponse.json(
+        {
+          checkout_url: paypalMeUrl,
+          session_id: `paypal-${submissionHash}`,
+          submission_hash: submissionHash,
+          message: 'Redirect to PayPal (solitary pipe). Complete payment at PayPal.Me, then contact to confirm evaluation.',
+          payment_method: 'paypal',
+        },
+        { headers: rateLimitHeaders }
+      );
+    }
+
+    // Legacy: Stripe (not in UI — solitary pipe is PayPal only)
     const sanitizedTitle = title.substring(0, 100).replace(/[^\w\s-]/g, '');
     const productName = `PoC Submission: ${sanitizedTitle}`;
     const productDescription = `AI evaluation and scoring service for your Proof-of-Contribution submission`;
 
-    // Handle different payment methods
     let session;
     try {
       if (payment_method === 'stripe') {
-        // Create Stripe checkout session
         session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
           line_items: [
@@ -476,10 +514,6 @@ export async function POST(request: NextRequest) {
           },
         });
       } else {
-        // For non-Stripe methods, create a placeholder session that will be handled by payment processor
-        // The actual payment will be processed via /api/payments/process
-        // For non-Stripe methods, create a placeholder session
-        // The actual payment will be processed via /api/payments/process in the frontend
         session = {
           id: `session-${submissionHash}`,
           url: `${baseUrl}/submit?session_id=payment-pending&status=pending&hash=${submissionHash}&method=${payment_method}`,

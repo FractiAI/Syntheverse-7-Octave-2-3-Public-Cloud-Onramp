@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import Stripe from 'stripe';
 import { debug, debugError } from '@/utils/debug';
 import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
+import { hasValidGoldenFractalKey } from '@/utils/auth/gold-keys';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -27,21 +28,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is creator or operator - exempt from payment for testing
+    // NSPFRNP catalog: valid Golden Fractal Key (gold key) also authorizes API access
     const { isCreator, isOperator } = await getAuthenticatedUserWithRole();
-    const isExemptFromPayment = isCreator || isOperator;
+    const hasGoldKey = hasValidGoldenFractalKey(request);
+    const isExemptFromPayment = isCreator || isOperator || hasGoldKey;
 
     if (isExemptFromPayment) {
-      debug('SynthScanCheckout', 'Creator/Operator mode: exempt from payment', {
+      debug('SynthScanCheckout', 'Exempt from payment', {
         email: user.email,
         isCreator,
         isOperator,
+        hasGoldKey,
       });
 
       // Return success without creating checkout session
       return NextResponse.json({
         success: true,
         exempt: true,
-        message: 'Creator/Operator: Payment bypassed for testing',
+        gold_key_accepted: hasGoldKey,
+        message: hasGoldKey
+          ? 'Golden Fractal Key accepted. Payment bypassed.'
+          : 'Creator/Operator: Payment bypassed for testing',
         checkout_url: null,
         session_id: null,
       });

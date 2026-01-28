@@ -58,7 +58,7 @@ export interface CorsConfig {
 const DEFAULT_CORS_CONFIG: Required<CorsConfig> = {
   allowedOrigins: getAllowedOrigins(),
   allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Golden-Fractal-Key'],
   exposeHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset'],
   maxAge: 86400, // 24 hours
   credentials: true,
