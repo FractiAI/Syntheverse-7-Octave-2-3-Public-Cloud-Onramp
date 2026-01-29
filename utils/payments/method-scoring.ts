@@ -10,7 +10,7 @@
 export interface PaymentMethod {
   id: string;
   name: string;
-  type: 'paypal' | 'onchain' | 'stripe' | 'venmo' | 'cashapp' | 'blockchain' | 'metamask';
+  type: 'paypal' | 'onchain' | 'venmo' | 'cashapp' | 'blockchain' | 'metamask';
   enabled: boolean;
   score?: number;
   metadata: {

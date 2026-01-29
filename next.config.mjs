@@ -8,6 +8,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Resolve sharp on server without bundling (used by omnibeam/fiberoptic-state-extractor)
+  serverExternalPackages: ['sharp'],
   // Exclude syntheverse-ui subdirectory from compilation
   webpack: (config, { isServer }) => {
     // Exclude syntheverse-ui from compilation

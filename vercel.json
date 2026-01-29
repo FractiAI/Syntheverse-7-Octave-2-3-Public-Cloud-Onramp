@@ -1,8 +1,4 @@
 {
-  "buildCommand": "bash scripts/vercel-build.sh",
   "framework": "nextjs",
-  "installCommand": "npm ci",
-  "env": {
-    "SKIP_ENV_VALIDATION": "true"
-  }
+  "installCommand": "npm ci"
 }

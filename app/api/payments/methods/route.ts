@@ -5,8 +5,7 @@
  * 
  * Returns all available payment methods including:
  * - On-chain
- * - Stripe
- * - Venmo
+ * - PayPal (solitary pipe)
  * - Cash App
  * - Top-scoring blockchain method (selected using NSPFRP)
  */

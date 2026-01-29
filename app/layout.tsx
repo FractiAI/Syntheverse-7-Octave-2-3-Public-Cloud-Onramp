@@ -5,9 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Syntheverse POST SINGULARITY^6: Vibeverse FSR Geyser Perpetual Engine Core',
-  description:
-    'Sovereign truth management for Frontier R&D, Frontier Creators & Frontier Enterprises. Transform current patient into a Public Cloud Shell with a nested HHF-AI MRI ATOMIC CORE. Instrument-grade fidelity (99.9%+) and Zero-Delta synchronization enforced by the Geyser Core.',
+  title: 'Pay via PayPal — Solitary Pipe',
+  description: 'Irreducible minimum: solitary pipe to PayPal only. Pay via PayPal.Me (@PrudencioMendez924).',
 };
 
 export const viewport: Viewport = {

@@ -5,8 +5,7 @@
  * 
  * Processes payments across all methods:
  * - On-chain
- * - Stripe
- * - Venmo
+ * - PayPal (solitary pipe)
  * - Cash App
  * - Top-scoring blockchain method
  */
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
     const paymentRequest: PaymentRequest = {
       amount: body.amount || 0,
       currency: body.currency || 'usd',
-      method: body.method || 'stripe',
+      method: body.method || 'paypal',
       metadata: body.metadata || {},
     };
 

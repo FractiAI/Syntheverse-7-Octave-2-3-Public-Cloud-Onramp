@@ -1,7 +1,0 @@
-# Agentic Memory Storage Directory
-# 
-# This directory contains NSPFRP-compliant local memory storage.
-# All internal memory (team info, knowledge, context) stored here.
-# 
-# Single Source of Truth - no duplication allowed.
-# All memory access through utils/agentic/memory-*.ts utilities.

@@ -1,57 +1,45 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
+/**
+ * Database pass-through pipe.
+ * This repo does not own the DB or schema — it is a conduit for the user UI and API calls.
+ * Queries and requests from the UI/API pass through here to the backing database.
+ */
+
 import postgres from 'postgres';
-import { requireEnvironmentVariables } from '@/utils/env-validation';
+import { requireEnvForDb, getDatabaseUrl } from '@/utils/env-validation';
 
-// Validate all required environment variables at startup
-try {
-  requireEnvironmentVariables();
-} catch (error) {
-  console.error('Environment validation failed:', error instanceof Error ? error.message : error);
-  // In production, fail fast. In development, warn but continue.
-  if (process.env.NODE_ENV === 'production') {
-    throw error;
-  } else {
-    console.warn('Continuing in development mode despite validation failures');
-  }
+const isBuild =
+  process.env.NEXT_PHASE === 'phase-production-build' ||
+  (process.env.VERCEL === '1' && !process.env.DATABASE_URL);
+
+function createClient() {
+  requireEnvForDb();
+  const url = getDatabaseUrl();
+  if (!url) throw new Error('DATABASE_URL is not set');
+  return postgres(url, {
+    max: 2,
+    connect_timeout: 10,
+    idle_timeout: 20,
+  });
 }
 
-// Validate DATABASE_URL before creating connection
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not set');
+/** Lazy client: only created when used at runtime (not during build). */
+let _sql: ReturnType<typeof postgres> | null = null;
+
+function getSql(): ReturnType<typeof postgres> | null {
+  if (isBuild) return null;
+  if (!_sql) _sql = createClient();
+  return _sql;
 }
 
-// Parse and validate the connection string
-let databaseUrl = process.env.DATABASE_URL;
-try {
-  const url = new URL(databaseUrl);
-  if (!url.hostname || !url.port) {
-    throw new Error('Invalid DATABASE_URL format: missing hostname or port');
-  }
-} catch (error) {
-  throw new Error(
-    `Invalid DATABASE_URL format: ${error instanceof Error ? error.message : String(error)}`
-  );
+/** Run a simple query to verify DB connectivity. */
+export async function checkDb(): Promise<{ ok: true }> {
+  const sql = getSql();
+  if (!sql) return { ok: true }; // build phase
+  await sql`SELECT 1`;
+  return { ok: true };
 }
 
-// Disable prefetch as it is not supported for "Transaction" pool mode
-// Add connection timeout and error handling
-const maxConnections = (() => {
-  const raw = (process.env.DATABASE_POOL_MAX || '').trim();
-  const parsed = raw ? Number(raw) : NaN;
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    // Default to a small pool to prevent request starvation/timeouts under concurrency.
-    // In serverless, each warm instance has its own pool; keeping this modest avoids DB overload.
-    return process.env.NODE_ENV === 'production' ? 5 : 2;
-  }
-  return Math.floor(parsed);
-})();
-
-const client = postgres(databaseUrl, {
-  prepare: false,
-  connect_timeout: 10, // 10 second connection timeout
-  max: maxConnections, // Prevent global request starvation; configurable via DATABASE_POOL_MAX
-  idle_timeout: 20,
-  max_lifetime: 60 * 30,
-});
-
-export const db = drizzle(client);
+/** DB pipe: pass-through client for user UI and API calls. Use for queries; no schema ownership here. */
+export function getDb(): ReturnType<typeof postgres> | null {
+  return getSql();
+}

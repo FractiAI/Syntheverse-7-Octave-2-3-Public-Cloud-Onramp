@@ -1,41 +1,35 @@
-import { redirect } from 'next/navigation';
-import FractiAILanding from '@/components/FractiAILanding';
-import { getAuthenticatedUserWithRole } from '@/utils/auth/permissions';
-import { HolographicBlackholeSymbol } from '@/components/HolographicBlackholeSymbol';
+/**
+ * Irreducible minimum: Solitary pipe to PayPal only.
+ * One landing page — pay via PayPal.Me (PrudencioMendez924).
+ */
 
-export const dynamic = 'force-dynamic';
+import PayForm from './PayForm';
 
 export const metadata = {
-  title: 'Syntheverse POST SINGULARITY^6: Vibeverse FSR Geyser Perpetual Engine Core',
-  description:
-    'Sovereign truth management for Frontier R&D, Frontier Creators & Frontier Enterprises. Public Cloud Shell with a nested HHF-AI MRI ATOMIC CORE.',
+  title: 'Pay via PayPal — Solitary Pipe',
+  description: 'Solitary pipe: PayPal only. Pay via PayPal.Me.',
 };
 
-export default async function LandingPage() {
-  const auth = await getAuthenticatedUserWithRole();
-  const user = auth?.user || null;
-  const isOperator = !!auth?.isOperator;
-  const isCreator = !!auth?.isCreator;
-
-  // Redirect approved testers automatically if logged in
-  if (user && (isOperator || isCreator)) {
-    redirect('/operator/dashboard');
-  }
-
-  const systemNoticeText = (user && !isOperator && !isCreator) 
-    ? "SOVEREIGN ACCESS ONLY DURING CALIBRATION" 
-    : undefined;
-
+export default function LandingPage() {
   return (
-    <FractiAILanding
-      variant="fractiai"
-      isAuthenticated={!!user}
-      isApprovedTester={isOperator || isCreator}
-      notice={systemNoticeText}
-      cta={{
-        primaryHref: '/auth/google',
-        primaryLabel: 'SHELL ACCESS',
-      }}
-    />
+    <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
+      <h1 className="mb-2 text-2xl font-semibold text-white">
+        Pay via PayPal
+      </h1>
+      <p className="mb-6 text-neutral-400">
+        Solitary pipe: PayPal only — @PrudencioMendez924
+      </p>
+      <PayForm />
+      <p className="mt-8 text-sm text-neutral-500">
+        <a
+          href="https://www.paypal.com/paypalme/PrudencioMendez924"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-neutral-400"
+        >
+          Open PayPal.Me directly
+        </a>
+      </p>
+    </div>
   );
 }
